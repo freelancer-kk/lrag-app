@@ -1,0 +1,22 @@
+@if (data.type === 0) {
+  <h2 mat-dialog-title>{{ 'DOWNLOAD' | translate }}&nbsp;{{ data.params.model }}</h2>
+  <mat-dialog-content class="mat-typography">
+    <h3>{{ 'WARNING' | translate }}</h3>
+    <p>{{ 'PAGES.DETAIL.DOWNLOAD_MSG' | translate }}</p>    
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button matButton [mat-dialog-close]="true" cdkFocusInitial>{{ 'DOWNLOAD' | translate }}</button>
+    <button matButton mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+  </mat-dialog-actions>
+} @else if (data.type === 1) {
+  <h2 mat-dialog-title>{{ 'QUESTION' | translate }}</h2>
+  <mat-dialog-content class="mat-typography">
+    <h3>{{ 'WARNING' | translate }}</h3>
+    <p>{{ data.params.message }}</p>    
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button matButton [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
+    <button matButton mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+  </mat-dialog-actions>
+}
+

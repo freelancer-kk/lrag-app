@@ -1,0 +1,71 @@
+<mat-toolbar>
+  <mat-icon class="main-menu" (click)="rotate($event)">keyboard_arrow_right</mat-icon>  
+	<h1>{{ 'APP.TITLE' | translate }}&nbsp;v{{ 'APP.VERSION' | translate }}</h1>
+  <span class="spacer"></span>
+  
+  {{ 'PAGES.HOME.STATUS' | translate }}:
+  @if (!(
+        (systemService.overallStatus === 'running: healthy') ||
+        (systemService.overallStatus === 'running: unhealthy') 
+      )) {
+    <div [class]="systemService.getClassFromStatus(systemService.overallStatus)">
+      <mat-spinner diameter="30"></mat-spinner>
+      <span class="spacer"></span>
+      {{ systemService.overallStatus }}
+    </div>
+  } @else {            
+    <div [class]="systemService.getClassFromStatus(systemService.overallStatus)">
+      <mat-icon>{{ systemService.getIconFromStatus(systemService.overallStatus) }}</mat-icon>
+      {{ systemService.overallStatus }}
+    </div>
+  }
+  @if (systemService.recommendRestart) {
+    <button [matTooltip]="'PAGES.HOME.RESTART_TIP' | translate" matIconButton (click)="restart($event)">
+      <mat-icon>replay</mat-icon>
+    </button>
+  }    
+  <span class="spacer"></span>
+  
+  <mat-slide-toggle [checked]="systemService.dark" (change)="switchTheme($event)">
+  {{ 'DARK' | translate }}
+  </mat-slide-toggle>  
+</mat-toolbar>
+<mat-sidenav-container class="app-container" autosize>
+	<mat-sidenav #sidenav [class]="isExpanded ? 'menu-sidenav' : 'menu-sidenav-narrow'" mode="side" opened="true">
+    <mat-nav-list>
+			<a mat-list-item [routerLink]="'home'">
+        @if (isExpanded) {
+          <span>{{ 'PAGES.HOME.TITLE' | translate }}</span>        
+        }
+				<mat-icon matListItemIcon>home</mat-icon>
+			</a>
+      <a mat-list-item [routerLink]="'detail'">
+        @if (isExpanded) {
+          <span>{{ 'PAGES.DETAIL.TITLE' | translate }}</span>        
+        }
+				<mat-icon matListItemIcon>settings</mat-icon>
+      </a>      		
+			<a mat-list-item [routerLink]="'ingest'">
+        @if (isExpanded) {
+          <span>{{ 'PAGES.INGEST.TITLE' | translate }}</span>        
+        }
+				<mat-icon matListItemIcon>model_training</mat-icon>
+      </a>      		
+			<a mat-list-item [routerLink]="'insights'">
+        @if (isExpanded) {
+          <span>{{ 'PAGES.INSIGHT.TITLE' | translate }}</span>        
+        }
+				<mat-icon matListItemIcon>insights</mat-icon>
+      </a>      		
+			<a mat-list-item [routerLink]="'help'">
+        @if (isExpanded) {
+          <span>{{ 'PAGES.HELP.TITLE' | translate }}</span>        
+        }
+				<mat-icon matListItemIcon>help</mat-icon>
+      </a>      		
+    </mat-nav-list>     
+	</mat-sidenav>
+	<div class="menu-sidenav-content">
+		<router-outlet></router-outlet>
+	</div>
+</mat-sidenav-container>

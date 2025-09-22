@@ -1,0 +1,80 @@
+<mat-toolbar>
+<h1 class="title">
+  {{ 'PAGES.DETAIL.MAIN_TITLE' | translate }}
+</h1>
+<span class="spacer"></span>
+<mat-slide-toggle [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="systemService.gpuAcceleration" (change)="switchGPUAccel($event)">
+  {{ 'GPU_ACCEL' | translate }}
+</mat-slide-toggle>  
+</mat-toolbar>
+  <mat-toolbar>
+    <mat-toolbar-row>
+      <mat-form-field>
+        <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
+        <mat-select [disabled]="!this.systemService.isHealthy()" [(value)]="systemService.selectedModel" (selectionChange)="modelChange($event)">
+          @for (model of systemService.models; track model) {
+            <mat-option [value]="model.value">{{ model.viewValue }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <span class="spacer"></span>
+      @if (this.systemService.isHealthy()) {
+        <mat-label>
+          {{ 'PAGES.DETAIL.MODEL_STATUS' | translate }}:
+        </mat-label>
+        @if (systemService.modelStatus !== 'llm running') {
+          <div [class]="systemService.getClassFromStatus(systemService.modelStatus)">
+            <mat-spinner diameter="30"></mat-spinner>
+            {{ systemService.modelStatus }}
+          </div>
+        } @else {
+          <div [class]="systemService.getClassFromStatus(systemService.modelStatus)">
+            <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus) }}</mat-icon>
+            {{ systemService.modelStatus }}
+          </div>
+        }
+      }
+    </mat-toolbar-row>    
+  </mat-toolbar>
+  @if (showModelList) {
+    <div class="vertscroll">
+      <table mat-table class="model_table">
+        <tr mat-header-row>
+          <td class="underline" mat-col>
+            {{ 'PAGES.DETAIL.MODEL_NAME' | translate }}
+          </td>
+          <td class="underline" mat-col>
+            {{ 'PAGES.DETAIL.MODEL_SIZE' | translate }}
+          </td>
+
+          <td class="underline" mat-col>
+            {{ 'PAGES.DETAIL.MODEL_USAGE' | translate }}
+          </td>
+        </tr>      
+        @for (entry of systemService.availableModels; track entry.name) {
+          <tr mat-row>
+            <td class="centercol" mat-col>
+              {{ entry.name }}              
+              @if (
+                systemService.isHealthy() && 
+                systemService.modelStatus === 'llm running' &&
+                !entry.name.startsWith('embedding') &&
+                !entry.name.startsWith('gemma3:1b') &&
+                entry.name !== systemService.selectedModel
+              ) {
+                <button matButton (click)="removeModel($event, $index)">
+                  <mat-icon class="danger">cancel</mat-icon>
+                </button>
+              }              
+            </td>
+            <td mat-col>
+              {{ entry.size }}
+            </td>
+            <td mat-col>
+              {{ entry.usage }}
+            </td>
+          </tr>          
+        }         
+      </table>    
+    </div>
+  }

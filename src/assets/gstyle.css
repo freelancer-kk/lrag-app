@@ -1,0 +1,41 @@
+::ng-deep .onerow {
+  display: flex;
+  flex-direction: row; 
+  padding: 5px;
+}
+
+::ng-deep .chip {
+  display: flex;
+  flex-direction: row;  
+  padding: 5px;
+  border-radius: 15px;
+  background-color: var(--mat-sys-outline);  
+}
+
+::ng-deep .chip-success {
+  display: flex;
+  flex-direction: row;  
+  padding: 5px;
+  border-radius: 15px;
+  background-color: green;  
+}
+
+::ng-deep .chip-warning {
+  display: flex;
+  flex-direction: row;  
+  padding: 5px;
+  border-radius: 15px;
+  background-color: darkkhaki;  
+}
+
+::ng-deep .chip-error {
+  display: flex;
+  flex-direction: row;  
+  padding: 5px;
+  border-radius: 15px;
+  background-color: red;  
+}
+
+.spacer {
+  flex: 1 1 auto;
+}

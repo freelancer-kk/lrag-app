@@ -1,0 +1,41 @@
+@import '../../assets/gstyle.css';
+
+.home-card {
+  max-width: 100%;
+}
+
+.card-img {
+  max-width: 100%;
+}
+
+mat-slider {
+  width: 90%;
+}
+
+::ng-deep .yellow .mdc-slider__thumb-knob {
+  border-color: yellow !important;  
+}
+
+::ng-deep .yellow .mdc-slider__track .mdc-slider__track--active_fill {
+  border-color: yellow;  
+}
+
+::ng-deep .green .mdc-slider__thumb-knob {
+  border-color: green !important;  
+}
+
+::ng-deep .green .mdc-slider__track .mdc-slider__track--active_fill {
+  border-color: green
+}
+
+::ng-deep .red .mdc-slider__thumb-knob {
+  border-color: red !important;
+}
+
+::ng-deep .red .mdc-slider__track .mdc-slider__track--active_fill {
+  border-color: red
+}
+
+::ng-deep .mat-mdc-slider.mdc-slider--disabled {
+  opacity: 100% !important;
+}

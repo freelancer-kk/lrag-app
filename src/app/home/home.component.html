@@ -1,0 +1,49 @@
+<mat-card class="home-card" appearance="outlined">
+  <mat-card-header>
+    <mat-icon fontIcon="info"></mat-icon>
+    <mat-card-subtitle>      
+      {{ 'PAGES.HOME.SUB_TITLE' | translate }}
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-slider [class]="systemService.power > 70 ? 'green' : systemService.power > 35 ? 'yellow' : 'red'" disabled min="0" max="100" step="5" showTickMarks discrete [displayWith]="formatLabel">
+    <input matSliderThumb [value]="systemService.power">
+  </mat-slider>
+  <mat-card-content>
+      <mat-accordion>
+        <mat-expansion-panel expanded="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ 'PAGES.HOME.DETAIL' | translate }}</mat-panel-title>
+            <mat-panel-description>
+              {{ 'PAGES.HOME.DETAIL_DESC' | translate }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="onerow">
+            {{ 'PAGES.HOME.LLM' | translate }}
+            <span class="spacer"></span>
+            <div [class]="systemService.getClassFromStatus(systemService.ollamaStatus)">  
+              @if (systemService.ollamaStatus.startsWith('downloading')) {
+                <mat-spinner diameter="30"></mat-spinner>
+              } @else {            
+                <mat-icon>{{ systemService.getIconFromStatus(systemService.ollamaStatus) }}</mat-icon>
+              }
+              {{ systemService.ollamaStatus }}
+            </div>            
+          </div>          
+        </mat-expansion-panel>        
+      </mat-accordion>
+    <mat-accordion>
+      <mat-expansion-panel expanded="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ 'PAGES.HOME.YOUR_PC' | translate }}</mat-panel-title>
+          <mat-panel-description>
+            {{ 'PAGES.HOME.TECHNICAL_DETAILS' | translate }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <nxt-json-view #cpu [data]="systemService.cpu"></nxt-json-view>
+        <nxt-json-view #gpu [data]="systemService.gpu"></nxt-json-view>
+        <nxt-json-view #mem [data]="systemService.mem"></nxt-json-view>
+        <nxt-json-view #disks [data]="systemService.disks"></nxt-json-view>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-card-content>  
+</mat-card>

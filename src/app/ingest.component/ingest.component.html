@@ -1,0 +1,68 @@
+  <mat-toolbar>
+    <mat-toolbar-row>
+      <h1 class="title">
+        {{ 'PAGES.INGEST.MAIN_TITLE' | translate }}
+      </h1>
+      <div class="small">
+      ({{ 'PAGES.INGEST.MAX_FILES_TEXT' | translate }}:{{ systemService.MAX_FILES }})
+      </div>
+      <span class="spacer"></span>
+      <mat-label>
+      {{ 'PAGES.INGEST.INGEST_STATUS' | translate }}:
+      </mat-label>      
+      @if (systemService.unstructuredStatus() === 'running' || systemService.unstructuredStatus().startsWith('downloading')) {
+        <div [class]="systemService.getClassFromStatus(systemService.unstructuredStatus())">
+          <mat-spinner diameter="30"></mat-spinner>
+          {{ systemService.unstructuredStatus() }}
+        </div>
+      } @else {
+        <div [class]="systemService.getClassFromStatus(systemService.unstructuredStatus())">
+          <mat-icon>{{ systemService.getIconFromStatus(systemService.unstructuredStatus()) }}</mat-icon>
+          {{ systemService.unstructuredStatus() }}
+        </div>
+      }
+    </mat-toolbar-row>  
+  </mat-toolbar>
+  @if (isUploading) {
+    <div class="progress">
+      <mat-progress-bar #progress mode="determinate" [value]="fileProgress"></mat-progress-bar>
+      <mat-label>{{fileProgress}}%</mat-label>
+    </div>
+  }
+  <div class="dropzone">
+  <ngx-file-drop 
+    accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt"
+    dropZoneClassName="dropzone"
+    (onFileDrop)="dropped($event)"
+    [disabled]="!systemService.isHealthy()"
+    >
+      <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+        <mat-icon>file_upload</mat-icon>
+        <mat-label>{{ (systemService.isHealthy() ? 'PAGES.INGEST.DROP_HERE': 'PAGES.INGEST.PLEASE_WAIT') | translate }}</mat-label><br/>
+        @if (systemService.isHealthy()) {
+          <button matButton (click)="openFileSelector()">{{ 'PAGES.INGEST.SELECT_FILE' | translate }}</button>
+        }
+      </ng-template>    
+    </ngx-file-drop>  
+  </div>
+  <div class="vertscroll">
+  <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">
+    @for (entry of systemService.ragFiles; track $index) {
+      <mat-grid-tile class="gridtile" colspan="1" rowspan="1">
+        <mat-list-item (click)="fileRemove($event, $index)">
+          <mat-icon matListItemIcon>upload_file</mat-icon>
+          <div matListItemTitle>
+            {{ entry}}
+          </div>
+          <div matListItemLine>
+            <button matButton>
+              @if (systemService.isHealthy()) {
+                <mat-icon class="danger">cancel</mat-icon>
+              }
+            </button>
+          </div>
+        </mat-list-item>
+      </mat-grid-tile>      
+    }         
+  </mat-grid-list>
+  </div>
