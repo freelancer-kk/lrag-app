@@ -4,9 +4,7 @@ import * as fs from 'fs';
 import unzipper from 'unzipper';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, Ollama, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse } from 'ollama';
-import EventEmitter from 'events';
-
-export const emitter: EventEmitter = new EventEmitter();
+import { model } from '@angular/core';
 
 export default class OllamaService {
   archivePath: string = '';
@@ -22,19 +20,7 @@ export default class OllamaService {
       this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
     } else if (process.platform === 'darwin') {
       this.archivePath = path.join(assetsFolderPath, 'ollama-darwin.zip');
-    }
-
-    emitter.on('event', (args: any) => {
-      try {
-        const ev: any = JSON.parse(args);
-        console.log('event:', ev);
-        this.webContents?.send('event', {
-          response: args
-        })                
-      } catch (e) {
-        console.error(e);
-      }
-    })     
+    }    
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
@@ -44,12 +30,20 @@ export default class OllamaService {
       console.log('ollama:', callbackId, command, params)
       let response: any = {}
       switch (command) {
-        case "hasStarted": {
-          response = this.ollamaProcess ? true : false;
+        case "isRunning": {
+          try {
+            this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
+            response = await this.ollama.ps();
+            this.isReady = true;            
+          } catch (e) {
+            this.isReady = false;
+            this.ollama = undefined;            
+          }
+          response = { isReady: this.isReady };
         }
         break;
         case "isReady": {
-          response = this.isReady;
+          response = { isReady: this.isReady };
         }
         break;
         case "start": {
@@ -65,11 +59,11 @@ export default class OllamaService {
         }
         break;
         case "pull": {
-          response = await this.pull(params as PullRequest);
+          response = await this.pull(params as PullRequest);          
         }
         break;
         case "rm": {
-          response = await this.rm(params as DeleteRequest); 
+          response = await this.rm(params as DeleteRequest);          
         }
         break;
         case "list": {
@@ -85,13 +79,15 @@ export default class OllamaService {
         }
         break;        
         case "abort": {
-          response = this.abort();
+          this.abort();
         }
         break;        
         default: {
           response = { error: 'unknown command' };
         } 
       }
+      response.command = command;
+      response.params = params;
       event.reply('reply', {
         callbackId,
         response: JSON.stringify(response)
@@ -100,7 +96,11 @@ export default class OllamaService {
   }
 
   emit = (args: any) => {
-    emitter.emit('event', JSON.stringify(args));
+    // const ev: any = JSON.parse(args);
+    // console.log('event:', ev);
+    this.webContents?.send('event', {
+      response: args
+    })                
   } 
 
   extract = () => {
@@ -116,49 +116,91 @@ export default class OllamaService {
     }    
   }
 
-  start = () => {
-    this.ollamaProcess = spawn(path.join(this.unzipPath, 'ollama-serve.bat'));
-    if (this.ollamaProcess) {
-      this.ollamaProcess.stdout.on('data', (data: any) => {
-          console.log(`stdout:\n${data}`);
-          // Send event
-          this.emit({ type: 'ollama-stdout', data: data.toString() });
-      })
-      this.ollamaProcess.stderr.on("data", (data: any) => {
-          console.error(`stderr: ${data}`);
-          // Send event
-          this.emit({ type: 'ollama-stderr', data: data.toString() });
+  start = (): any => {
+    try {
+      this.ollamaProcess = spawn('ollama-serve.bat', {
+        shell: true,
+        cwd: this.unzipPath,
+        stdio: ['pipe', 'pipe', 'pipe']
       });
-      this.ollamaProcess.on('exit', (code: number | null) => {
-          console.log(`Ollama process ended with ${code}`);
-          // Send event
-          emitter.emit('event', { type: 'ollama-ended', data: code?.toString() });
-      });
-      setTimeout(() => {
-        this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
-        // event Ollama connection is ready
-        this.isReady = true;
-        this.emit({ type: 'ollama-ready', data: 'ok' });
-      }, 5000)
-    } else {
-      console.error('No valid process for Ollama!');
-    }
+      if (this.ollamaProcess) {
+        this.ollamaProcess.stdout.on('data', (data: string) => {
+            console.log(`stdout: ${data}`);
+            // Send event
+            this.emit({ type: 'ollama-stdout', data: Buffer.from(data).toString() });
+        })
+        this.ollamaProcess.stderr.on("data", (data: string) => {
+            console.error(`stderr: ${data}`);
+            // Send event
+            this.emit({ type: 'ollama-stderr', data: Buffer.from(data).toString() });
+        });
+        this.ollamaProcess.on('exit', (code: number | null) => {
+            console.log(`Ollama process ended with ${code}`);
+            // Send event
+            this.emit({ type: 'ollama-ended', data: code ? code.toString() : '0' });
+        });
+        setTimeout(() => {
+          this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
+          // event Ollama connection is ready
+          this.isReady = true;
+          this.emit({ type: 'ollama-ready', data: 'ok' });
+        }, 5000)
+      } else {
+        console.error('No valid process for Ollama!');
+      }
+      return { status: 'starting' };
+    } catch (e) {
+      console.error('Ollama start error:', e);
+      return { status: 'error', error: e };
+    } 
   }
 
-  stop = () => {
+  stop = (): any => {
     if (this.ollamaProcess) {
-      this.ollamaProcess.kill();
+      this.ollamaProcess.kill();      
     } else {
       console.error('No valid process for Ollama!');
     }
+    return { status: 'stopping' };
   }
 
   generate = (request: any): Promise<AbortableAsyncIterator<GenerateResponse>> => {
     return this.ollama ? this.ollama.generate(request) : Promise.reject('no service');
   }
 
-  pull = (request: any): Promise<AbortableAsyncIterator<ProgressResponse>> => {
-    return this.ollama ? this.ollama.pull(request) : Promise.reject('no service');
+  pull = async (request: any): Promise<any> => {
+    if (this.ollama) {
+      const stream: AbortableAsyncIterator<ProgressResponse> = await this.ollama.pull(request);
+      let currentDigestDone: boolean = false;
+      console.log('pulling started model:', request.model);
+      this.emit( { type: 'ollama-pull-start', data: { model: request.model, percent: 0 } })
+      for await (const part of stream) {
+        if (part.digest) {
+          let percent = 0
+          if (part.completed && part.total) {
+            percent = Math.round((part.completed / part.total) * 100)
+          }
+          // console.log(`${part.status} ${percent}%...`)
+          this.emit( { type: 'ollama-pull-progress', data: { model: request.model, percent } })
+          if (percent === 100 && !currentDigestDone) {
+            this.emit( { type: 'ollama-pull-complete', data: { model: request.model, percent } })
+          } else {
+            currentDigestDone = false
+          }
+        } else {
+          console.log(part.status)
+          this.emit( { type: 'ollama-pull-part', data: { model: request.model, partStatus: part.status } })
+        }        
+      }
+      console.log('pulling done model:', request.model);
+      this.emit( { type: 'ollama-pull-done', data: { model: request.model } })
+      return {
+        model: request.model,
+        status: 'ollama-pull-done',
+      }      
+    } else  {
+      Promise.reject('no service')
+    }           
   }
 
   rm = (request: DeleteRequest): Promise<StatusResponse> => {

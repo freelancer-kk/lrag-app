@@ -44,6 +44,7 @@ export class AppComponent implements OnInit {
   isExpanded: boolean = true;
   dockerConnectInterval: any;
   wt: any;
+  firstTime: boolean = true;
 
   constructor(
     private electronService: ElectronService,
@@ -70,20 +71,65 @@ export class AppComponent implements OnInit {
       console.log('Running in browser');
     }
     this.bridgeService.registerListener();
-    this.bridgeService.eventCallback((ev: any, result: any) => {
+    this.bridgeService.eventCallback((ev: any, eventObj: any) => {
       try {          
-        const eventObj: any = JSON.parse(result.response);
-        const name = eventObj.Actor.Attributes.name;        
-        const { Action, status } = eventObj;
-        console.log('de:', 'action', Action, 'name', name, 'status', status);        
+        const { type, data } = eventObj;
+        console.log('type', type, 'data', data);        
+        switch(type) {
+          case 'ollama-ready': {
+            this.ngZone.run(() => {
+              this.systemService.ollamaStatus.update(() => 'running');
+            })
+          }
+          break;
+          case 'ollama-pull-start': {
+            this.ngZone.run(() => {
+              this.systemService.modelStatus.update(() => `downloading 0%`);
+            })
+          }
+          break;
+          case 'ollama-pull-progress': {
+            this.ngZone.run(() => {
+              this.systemService.modelStatus.update(() => `downloading ${data.percent}%`);              
+            })            
+          }
+          break;          
+          case 'ollama-pull-complete': {
+            this.ngZone.run(() => {
+              this.systemService.modelStatus.update(() => `finalising...`);              
+            })            
+          }
+          break;
+          case 'ollama-pull-part': {
+            this.ngZone.run(() => {              
+              this.systemService.modelStatus.update(() => `${data.partStatus}`);              
+            })            
+          }
+          break;
+          case 'ollama-pull-done': {
+            this.ngZone.run(() => {
+              this.systemService.modelStatus.update(() => 'running');
+              this.systemService.getAvailableLLMs();
+            })            
+          }
+          break;
+        } 
       } catch (e) {
         console.error(e);
       }
     })
 
     effect(() => {
-      if (this.systemService.isHealthy()) {
-        this.pullModelsIfNecessary();
+      console.log('ollama status:', this.systemService.ollamaStatus());
+      console.log('model status:', this.systemService.modelStatus());
+      this.systemService.calcOverallStatus();
+      console.log('overall status:', this.systemService.overallStatus());
+      if (this.systemService.overallStatus() === "running: unhealthy") {
+        if (this.firstTime) {
+          this.pullModelsIfNecessary().then(() => {
+            this.firstTime = false;
+          })
+        }
       }
     })
   }
@@ -102,7 +148,8 @@ export class AppComponent implements OnInit {
     this.systemService.cpu = await this.systemService.getCpu();
     this.systemService.gpu = await this.systemService.getGpu();
     this.systemService.mem = await this.systemService.getTotalMemory();
-    this.systemService.disks = await this.systemService.getDisks();    
+    this.systemService.disks = await this.systemService.getDisks(); 
+    this.startServicesIfNecessary();   
   }
 
   rotate = (event: any) => {
@@ -134,38 +181,37 @@ export class AppComponent implements OnInit {
   }
 
   startServicesIfNecessary = async () => {    
-    // Check if ollama is running      
-  } 
-
-  restart = async (event: any) => {
-    this.systemService.recommendRestart = false;
-    this.systemService.commandOllama('stop');
-    /*
-      console.log('all services removed:', result);
-      // Remove data directory
-      await this.mediaService.cleanData();
-      await this.startServicesIfNecessary();    
-    */
-  }
+    // Check if ollama is running
+    const { isReady } = await this.systemService.commandOllama('isRunning');
+    console.log('ollama is running:', isReady);
+    if (!isReady) {
+      this.systemService.ollamaStatus.update(() => 'starting');
+      await this.systemService.commandOllama('start');
+    } else {
+      this.systemService.ollamaStatus.update(() => 'running');      
+    }
+  }   
 
   pullModelsIfNecessary = async () => {
     try {
-      let firstTime = false;
       if (this.systemService.selectedModel === '') {
         this.systemService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
-          console.log('env llm:', value);
+          console.log('environment llm:', value);
           this.systemService.selectedModel = value;
-          this.systemService.downloadedLLM = value;
-          firstTime = true;
+          this.systemService.downloadedLLM = value;          
         })
       }
       await this.systemService.getAvailableLLMs();
       if (this.systemService.availableModels.length === 0) {
-        await this.systemService.commandOllama('pull', { model: this.systemService.embeddings });
-        await this.systemService.commandOllama('pull', { model: this.systemService.models[0].value});
+        this.systemService.modelStatus.update(() => 'downloading model');
+        await this.systemService.commandOllama('pull', { model: this.systemService.embeddings, stream: true});
+        await this.systemService.commandOllama('pull', { model: this.systemService.models[0].value, stream: true});
+        this.systemService.modelStatus.update(() => 'running');
+      } else {
+        this.systemService.modelStatus.update(() => 'running');
       }
       // Run selected model
-      if (firstTime) {
+      if (this.firstTime) {
         await this.systemService.getRunningModelsUsage();
       }
     } catch (e) {

@@ -51,7 +51,7 @@ function createWindow(): BrowserWindow {
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: (size.width/2),
+    width: (size.width/2.5),
     height: size.height,
     minWidth: 400, // Optional: Set a minimum width
     minHeight: 300, // Optional: Set a minimum height
@@ -132,8 +132,23 @@ try {
       
       dockerEnv.register();      
       systemInfo.register();
-    }, 400)
-});
+    }, 400)    
+  });  
+
+  app.on("before-quit", (e) => {
+    console.log("App: before-quit: abort any transactions ollama may be doing");
+    ollamaService.abort();
+  });
+
+  /*
+  process.on("SIGINT", () => {
+    console.log("Detected SIGINT/SIGTERM");
+    if (ollamaService) {
+      ollamaService.stop();
+    }
+    app.quit();
+  });
+  */
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
@@ -150,7 +165,7 @@ try {
     if (win === null) {
       createWindow();
     }
-  });
+  });  
 
 } catch (e) {
   // Catch Error

@@ -84,17 +84,17 @@ export class IngestComponent implements OnInit {
   startUnstructured = async () => {
     await this.getUnstructuredStatus();
     try {
-      if (this.systemService.unstructuredStatus() === 'not running') {
-        this.systemService.unstructuredStatus.update(() => "starting");    
+      if (this.systemService.ingestStatus() === 'not running') {
+        this.systemService.ingestStatus.update(() => "starting");    
 
-      } else if (this.systemService.unstructuredStatus() === 'exited' || this.systemService.unstructuredStatus() === 'die') {
+      } else if (this.systemService.ingestStatus() === 'exited' || this.systemService.ingestStatus() === 'die') {
         this.showDownloadImageWarning(await this.systemService.get('PAGES.INGEST.DURATION_WARNING'));
-        this.systemService.unstructuredStatus.update(() => "running");
+        this.systemService.ingestStatus.update(() => "running");
       }
     } catch(e: any) {
       console.error(e);
       if (e.result && e.result.json && e.result.json.message && e.result.json.message.toLowerCase().startsWith('no such image')) {
-        this.systemService.unstructuredStatus.update(() =>'downloading unstructured image');
+        this.systemService.ingestStatus.update(() =>'downloading unstructured image');
         this.showDownloadImageWarning(await this.systemService.get('APP.DOWNLOAD_IMAGE_WARNING'));                
       }
     }
@@ -183,7 +183,7 @@ export class IngestComponent implements OnInit {
   }
 
   fileRemove = async (event: any, index: number) => {
-    if ((this.systemService.isHealthy())) {
+    if ((this.systemService.overallStatus())) {
       console.log('remove file:', this.systemService.ragFiles[index]);
       await this.mediaService.remove(this.systemService.ragFiles[index]);
       await this.startUnstructured();

@@ -47,7 +47,8 @@
           "STREAMLIT": "Insights",
           "PAUSE_TIP": "Pause services to reduce load on your PC",
           "UNPAUSE_TIP": "Resume paused services to be able to use LRag",
-          "RESTART_TIP": "Some services have failed a complete services restart is recommended"
+          "RESTART_TIP": "Some services have failed a complete services restart is recommended",
+          "RATING_TIP": "Your PC rating is based on CPU, Memory, GPU and VRAM. LRag works best with a rating of 60% or higher"
       },
       "DETAIL": {
         "TITLE": "Config",
@@ -84,7 +85,7 @@
         "TITLE": "AI Insights",
         "MAIN_TITLE": "Document Insights",
         "INSIGHT_STATUS": "INSIGHT status",
-        "RESET_CONTEXT_TIP": "Improve results by resetting the context before asking questions about a different domain",
+        "RESET_CONTEXT_TIP": "Improve results by waiting a minute before asking questions about a different domain. This will allow the context to reset",
         "RESET_ARE_YOU_SURE": "Resetting the context will flush the LLM service, reload and rerun the model, this may take a minute"
       },
       "HELP": {

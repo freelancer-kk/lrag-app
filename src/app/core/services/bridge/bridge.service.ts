@@ -46,7 +46,8 @@ export class BridgeService {
         }
       }) 
       this.electronService.ipcRenderer.on('event', (_event: any, result: any) => {
-        this.cb(_event, result);        
+        // console.log('bridge:event', result.response);
+        this.cb(_event, result.response);        
       }) 
     }
   }

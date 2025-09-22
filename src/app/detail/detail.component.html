@@ -3,34 +3,36 @@
   {{ 'PAGES.DETAIL.MAIN_TITLE' | translate }}
 </h1>
 <span class="spacer"></span>
+<!--
 <mat-slide-toggle [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="systemService.gpuAcceleration" (change)="switchGPUAccel($event)">
   {{ 'GPU_ACCEL' | translate }}
-</mat-slide-toggle>  
+</mat-slide-toggle>
+-->
 </mat-toolbar>
   <mat-toolbar>
     <mat-toolbar-row>
       <mat-form-field>
         <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
-        <mat-select [disabled]="!this.systemService.isHealthy()" [(value)]="systemService.selectedModel" (selectionChange)="modelChange($event)">
-          @for (model of systemService.models; track model) {
-            <mat-option [value]="model.value">{{ model.viewValue }}</mat-option>
+        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="systemService.selectedModel" (selectionChange)="modelChange($event)">
+          @for (entry of systemService.models; track $index) {
+            <mat-option [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
       <span class="spacer"></span>
-      @if (this.systemService.isHealthy()) {
+      @if (this.systemService.overallStatus()) {
         <mat-label>
           {{ 'PAGES.DETAIL.MODEL_STATUS' | translate }}:
         </mat-label>
-        @if (systemService.modelStatus !== 'llm running') {
-          <div [class]="systemService.getClassFromStatus(systemService.modelStatus)">
+        @if (systemService.modelStatus() !== 'running') {
+          <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
             <mat-spinner diameter="30"></mat-spinner>
-            {{ systemService.modelStatus }}
+            {{ systemService.modelStatus() }}
           </div>
         } @else {
-          <div [class]="systemService.getClassFromStatus(systemService.modelStatus)">
-            <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus) }}</mat-icon>
-            {{ systemService.modelStatus }}
+          <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
+            <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus()) }}</mat-icon>
+            {{ systemService.modelStatus() }}
           </div>
         }
       }
@@ -51,13 +53,13 @@
             {{ 'PAGES.DETAIL.MODEL_USAGE' | translate }}
           </td>
         </tr>      
-        @for (entry of systemService.availableModels; track entry.name) {
+        @for (entry of systemService.availableModels; track $index) {
           <tr mat-row>
             <td class="centercol" mat-col>
               {{ entry.name }}              
               @if (
-                systemService.isHealthy() && 
-                systemService.modelStatus === 'llm running' &&
+                systemService.ollamaStatus() === 'running' && 
+                systemService.modelStatus() === 'running' &&
                 !entry.name.startsWith('embedding') &&
                 !entry.name.startsWith('gemma3:1b') &&
                 entry.name !== systemService.selectedModel
@@ -68,10 +70,10 @@
               }              
             </td>
             <td mat-col>
-              {{ entry.size }}
+              {{ entry.size ? entry.size : '-' }}&nbsp;MB
             </td>
             <td mat-col>
-              {{ entry.usage }}
+              {{ entry.usage ? entry.usage : '-' }}
             </td>
           </tr>          
         }         

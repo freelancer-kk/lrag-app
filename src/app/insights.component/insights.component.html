@@ -3,10 +3,10 @@
   {{ 'PAGES.INSIGHT.MAIN_TITLE' | translate }}
 </h1>
 <span class="spacer"></span>
-<div [class]="systemService.getClassFromStatus(systemService.modelStatus)">
-  {{ systemService.modelStatus }}
+<div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
+  {{ systemService.modelStatus() }}
 </div>
-<button [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate" matIconButton (click)="reset($event)">
+<button [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate" matIconButton>
   <mat-icon>restart_alt</mat-icon>
 </button>
 </mat-toolbar>
@@ -18,8 +18,8 @@
       </h1>    
     </mat-toolbar>
   } @else {
-    @if (systemService.isHealthy()) {
-      <iframe [class]="" width=100% height=80% frameBorder="0" [src]="urlSafe"></iframe>
+    @if (systemService.overallStatus()) {
+      
     } @else {
       <div class="noaccess">
         <ngx-skeleton-loader count="30" [animation]="systemService.dark ? 'progress-dark': 'progress'" appearance="line" [theme]="{height: '20px', background: 'kahki'}" />

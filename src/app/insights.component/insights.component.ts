@@ -51,7 +51,7 @@ export class InsightsComponent implements OnInit {
     this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
 
     effect(() => {
-      if (this.systemService.isHealthy()) {
+      if (this.systemService.overallStatus()) {
         this.check();
       }
     })
@@ -80,8 +80,7 @@ export class InsightsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (result: boolean) => {
       console.log(`Dialog result: ${result}`);
       if (result === true) {
-        // Remove ollama and restart
-          await this.systemService.getRunningModelsUsage();
+        // Remove ollama and restart          
       }
     });
   }

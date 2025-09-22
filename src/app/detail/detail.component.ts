@@ -43,14 +43,7 @@ export class DetailComponent implements OnInit {
   constructor(
     public systemService: SystemService,
   ) {
-    /*
-    effect(() => {
-      if (this.systemService.isHealthy() && this.systemService.isDockerConnected() === 1) {
-        // console.log('PULLING MODELS!!!')
-        this.pullModelsIfNecessary();
-      }
-    })
-      */
+    effect(() => {})    
   }
 
   async ngOnInit() {}  
@@ -92,6 +85,7 @@ export class DetailComponent implements OnInit {
       console.log(`Dialog result: ${result}`);
       if (result === true) {
         this.systemService.commandOllama('rm', { model: this.systemService.availableModels[index].name });
+        this.systemService.availableModels.splice(index, 1);
       }
     });
   }
@@ -118,7 +112,7 @@ export class DetailComponent implements OnInit {
       dialogRef.afterClosed().subscribe(async (result) => {
         console.log(`Dialog result: ${result}`);
         if (result === true) {
-          await this.systemService.commandOllama('pull', { model: this.systemService.selectedModel });
+          await this.systemService.commandOllama('pull', { model: this.systemService.selectedModel, stream: true });
           await this.writeModelToEnv();          
           this.systemService.downloadedLLM = this.systemService.selectedModel;
         } else {

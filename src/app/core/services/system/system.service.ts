@@ -14,10 +14,12 @@ export class SystemService {
   mem: any;
   disks: any;
   availableModels: any[] = [];
-  overallStatus: string = 'not created';
-  modelStatus: string = 'unknown';
-  ollamaStatus: string = 'not created';
-  recommendRestart: boolean = false;
+  overallStatus = signal<any>('not running');
+  modelStatus = signal<any>('unknown');
+  ollamaStatus = signal<any>('not running');
+  ingestStatus = signal<any>('not running');
+  insightStatus = signal<any>("not running");
+
   selectedModel: string = ''
   downloadedLLM: string = '';
   MAX_FILES: number = 15;
@@ -26,18 +28,13 @@ export class SystemService {
   docsEmpty: boolean = true;
   gpuAcceleration: boolean = true;
   osType: any;
-  isHealthy = signal<any>(false);
 
-  ingestStatus: string = 'not running';
-  insightStatus: string = "not running";
-
-  unstructuredStatus = signal<any>("not running");
   models: any[] = [
-    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', usage: '?% CPU'},
-    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', usage: '?% CPU'},
-    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', usage: '?% CPU'},    
-    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', usage: '?% CPU'},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', usage: '?% CPU'},
+    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)'},
+    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)'},
+    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)'},    
+    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)'},
+    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)'},
   ];
   embeddings: string = 'embeddinggemma:300m';
   
@@ -54,26 +51,28 @@ export class SystemService {
     })
   }
 
+  calcOverallStatus = () => {
+    if (this.ollamaStatus() === 'running') {
+      if (this.modelStatus() === 'running') {
+        this.overallStatus.update(() => 'running: healthy');
+      } else {
+        this.overallStatus.update(() => 'running: unhealthy');
+      }     
+    } else {
+      this.overallStatus.update(() => 'not running');
+    }
+  }
+
   getRunningModelsUsage = async (): Promise<void> => {
     const modelUsage: any = await this.commandOllama('ps');
-    // console.log('usage response:', modelUsage);
+    console.log('usage response:', modelUsage);
     try {
-      const lines: string[] = modelUsage.split('\n');
-      // console.log(lines);
-      lines.splice(0, 1);
-      lines.forEach((line: string) => {
-        const mextracts: string[] | null = line.match(/^[0-9|a-z|A-Z|:|\.-]*/);
-        const uextracts: string[] | null = line.match(/[0-9]+% (CPU|GPU)/);
-        if (mextracts && mextracts.length > 0 && uextracts && uextracts.length > 0) {
-          const llmName: string = mextracts[0].trim();
-          const usage: string = uextracts[0].trim();
-          const fIdx: number = this.availableModels.findIndex(f => f.name === llmName);
-          console.log('usage:', fIdx, llmName, usage);
-          if (fIdx > -1) {
-            this.availableModels[fIdx].usage = usage;
-          }
+      for await (const model of modelUsage.models) {
+        const fIdx: number = this.availableModels.findIndex(f => f.name === model.name);
+        if (fIdx > -1) {
+          this.availableModels[fIdx].usage = model.usage;
         }
-      });
+      }
     } catch (e) {
       console.error(e);
     }    
@@ -89,31 +88,19 @@ export class SystemService {
   }  
 
   getAvailableLLMs = async () => {
-    const availableModelsStr = await this.commandOllama('list');
+    const currentModels: any[] = this.availableModels;
     try {
-      this.availableModels = [];    
-      const lines: string[] = availableModelsStr.split('\n');
-      lines.splice(0, 1);
-      lines.splice(-1, 1);
-      lines.forEach((line: string) => {
-        const extracts: string[] | null = line.match(/^[0-9|a-z|A-Z|:|\.-]*/);
-        if (extracts) {
-          const modelName: string = extracts[0].trim();
-          const extracts1: string[] | null = line.match(/ [0-9|\.]* (GB|MB) /);
-          if (extracts1) {
-            const modelSize: string = extracts1[0].trim();
-            // console.log(modelName, '=>', modelSize);            
-            this.availableModels.push({
-              'name': modelName,
-              'size': modelSize,
-              'usage': ''
-            })      
-          }
+      this.availableModels = (await this.commandOllama('list')).models.map((model: any) => {
+        return {
+          name: model.name,
+          size: Math.floor(model.size / 1024 / 1000),
+          usage: model.usage
         }
-      });
+      });    
     } catch (e) {
       console.error(e);
-    }    
+      this.availableModels = currentModels;
+    }
   }
 
   getEnvValue = (key: string): Promise<string> => {
@@ -226,10 +213,6 @@ export class SystemService {
         });      
       });
     })    
-  }
-
-  getAccelerationCompose = (): string => {
-    return 'ollama' + (this.gpu && this.gpuAcceleration ? this.gpu.brand : '');
   }
 
   getGpu = (): Promise<any> => {

@@ -5,27 +5,21 @@
   
   {{ 'PAGES.HOME.STATUS' | translate }}:
   @if (!(
-        (systemService.overallStatus === 'running: healthy') ||
-        (systemService.overallStatus === 'running: unhealthy') 
+        (systemService.overallStatus() === 'running: healthy') ||
+        (systemService.overallStatus() === 'running: unhealthy') 
       )) {
-    <div [class]="systemService.getClassFromStatus(systemService.overallStatus)">
+    <div [class]="systemService.getClassFromStatus(systemService.overallStatus())">
       <mat-spinner diameter="30"></mat-spinner>
       <span class="spacer"></span>
-      {{ systemService.overallStatus }}
+      {{ systemService.overallStatus() }}
     </div>
   } @else {            
-    <div [class]="systemService.getClassFromStatus(systemService.overallStatus)">
-      <mat-icon>{{ systemService.getIconFromStatus(systemService.overallStatus) }}</mat-icon>
-      {{ systemService.overallStatus }}
+    <div [class]="systemService.getClassFromStatus(systemService.overallStatus())">
+      <mat-icon>{{ systemService.getIconFromStatus(systemService.overallStatus()) }}</mat-icon>
+      {{ systemService.overallStatus() }}
     </div>
   }
-  @if (systemService.recommendRestart) {
-    <button [matTooltip]="'PAGES.HOME.RESTART_TIP' | translate" matIconButton (click)="restart($event)">
-      <mat-icon>replay</mat-icon>
-    </button>
-  }    
-  <span class="spacer"></span>
-  
+  <span class="spacer"></span>  
   <mat-slide-toggle [checked]="systemService.dark" (change)="switchTheme($event)">
   {{ 'DARK' | translate }}
   </mat-slide-toggle>  

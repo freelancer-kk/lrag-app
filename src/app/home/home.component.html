@@ -1,6 +1,6 @@
 <mat-card class="home-card" appearance="outlined">
   <mat-card-header>
-    <mat-icon fontIcon="info"></mat-icon>
+    <mat-icon [matTooltip]="'PAGES.HOME.RATING_TIP' | translate" fontIcon="info"></mat-icon>
     <mat-card-subtitle>      
       {{ 'PAGES.HOME.SUB_TITLE' | translate }}
     </mat-card-subtitle>
@@ -20,13 +20,13 @@
           <div class="onerow">
             {{ 'PAGES.HOME.LLM' | translate }}
             <span class="spacer"></span>
-            <div [class]="systemService.getClassFromStatus(systemService.ollamaStatus)">  
-              @if (systemService.ollamaStatus.startsWith('downloading')) {
+            <div [class]="systemService.getClassFromStatus(systemService.ollamaStatus())">  
+              @if (systemService.ollamaStatus().startsWith('downloading')) {
                 <mat-spinner diameter="30"></mat-spinner>
               } @else {            
-                <mat-icon>{{ systemService.getIconFromStatus(systemService.ollamaStatus) }}</mat-icon>
+                <mat-icon>{{ systemService.getIconFromStatus(systemService.ollamaStatus()) }}</mat-icon>
               }
-              {{ systemService.ollamaStatus }}
+              {{ systemService.ollamaStatus() }}
             </div>            
           </div>          
         </mat-expansion-panel>        
