@@ -22,7 +22,10 @@
       "es2018",
       "dom"
     ],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths": {
+      "ollama/browser": ["./node_modules/@langchain/ollama/dist"]
+    },
   },
   "exclude": [
     "node_modules"

@@ -98,6 +98,10 @@ class DockerEnv {
         this.getModelName = () => {
             return this.llm;
         };
+        this.getKeyValue = (key) => {
+            var _a;
+            return this.kvFile ? (_a = this.kvFile.get(key)) === null || _a === void 0 ? void 0 : _a.toString() : undefined;
+        };
         this.generateEnvFile = () => {
             let envTemplate = fs.readFileSync(path.join(this.assetsFolderPath, 'template.env'), 'utf8');
             envTemplate = envTemplate.replace(new RegExp('#DOC_ROOT_PATH#', 'g'), this.dsp ? this.dsp : '');

@@ -21,9 +21,6 @@
       </mat-form-field>
       <span class="spacer"></span>
       @if (this.systemService.overallStatus()) {
-        <mat-label>
-          {{ 'PAGES.DETAIL.MODEL_STATUS' | translate }}:
-        </mat-label>
         @if (systemService.modelStatus() !== 'running') {
           <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
             <mat-spinner diameter="30"></mat-spinner>
@@ -47,11 +44,7 @@
           </td>
           <td class="underline" mat-col>
             {{ 'PAGES.DETAIL.MODEL_SIZE' | translate }}
-          </td>
-
-          <td class="underline" mat-col>
-            {{ 'PAGES.DETAIL.MODEL_USAGE' | translate }}
-          </td>
+          </td>          
         </tr>      
         @for (entry of systemService.availableModels; track $index) {
           <tr mat-row>
@@ -71,10 +64,7 @@
             </td>
             <td mat-col>
               {{ entry.size ? entry.size : '-' }}&nbsp;MB
-            </td>
-            <td mat-col>
-              {{ entry.usage ? entry.usage : '-' }}
-            </td>
+            </td>            
           </tr>          
         }         
       </table>    

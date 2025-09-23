@@ -63,20 +63,24 @@ export class SystemService {
     }
   }
 
-  getRunningModelsUsage = async (): Promise<void> => {
+  getRunningModelsUsage = async (): Promise<string> => {
     const modelUsage: any = await this.commandOllama('ps');
-    console.log('usage response:', modelUsage);
-    try {
-      for await (const model of modelUsage.models) {
-        const fIdx: number = this.availableModels.findIndex(f => f.name === model.name);
-        if (fIdx > -1) {
-          this.availableModels[fIdx].usage = model.usage;
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }    
+    for await (const entry of modelUsage.models) {      
+      if (entry.model === this.selectedModel) {
+        return `${entry.usage}`;
+      }         
+    }
+    return '';
   }
+
+  commandIngest = (command: string, options: any = {}): Promise<any> => {
+    return new Promise((resolve, reject) => { 
+      this.bridgeService.ingest(80, command, options, async (data: any) => {
+        console.log('ingest command response:', data);
+        resolve(data);
+      });
+    });
+  }  
   
   commandOllama = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
@@ -139,11 +143,11 @@ export class SystemService {
   }
 
   getClassFromStatus = (status: string): string => {
-    if (status === 'llm running' || status === 'running' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
+    if (status === 'running' || status === 'uploading' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'splitting' || status === 'chunking' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
-    } else if (status === 'llm downloading' || status === 'llm starting' || status === 'running: unhealthy') {
+    } else if (status === 'downloading' || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';
-    } else if ((status === 'die') || (status === 'destroy')) {
+    } else if ((status === 'die') || (status === 'error') || (status === 'destroy')) {
       return 'chip-error';
     } else {
       return 'chip';
@@ -152,7 +156,14 @@ export class SystemService {
 
   getIconFromStatus = (status: string) => {
     switch (status) {
-      case 'llm running':
+
+      case 'uploading':
+      case 'uploaded':
+      case 'loaded':
+      case 'loading':
+      case 'splitting':
+      case 'chunking':        
+      case 'adding':
       case 'running: healthy': 
       case 'running': {
         return 'directions_run';
@@ -168,6 +179,7 @@ export class SystemService {
       case 'restarting': {
         return 'restart_alt';
       }
+      case 'error':
       case 'destroy':
       case 'die':
       case 'running: unhealthy':
@@ -178,7 +190,6 @@ export class SystemService {
       case 'paused': {
         return 'pause';
       }
-      case 'llm downloading':
       case 'downloading': {
         return 'file_download';
       }

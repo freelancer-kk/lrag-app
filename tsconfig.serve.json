@@ -16,7 +16,10 @@
       "es2016",
       "es2015",
       "dom"
-    ]
+    ],
+    "paths": {
+      "ollama/browser": ["./node_modules/@langchain/ollama/dist"]
+    },
   },
   "files": [
     "app/main.ts"

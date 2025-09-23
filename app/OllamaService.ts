@@ -3,8 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import unzipper from 'unzipper';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import { AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, Ollama, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse } from 'ollama';
-import { model } from '@angular/core';
+import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse } from "ollama";
 
 export default class OllamaService {
   archivePath: string = '';

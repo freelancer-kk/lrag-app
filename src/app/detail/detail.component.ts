@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-detail',
@@ -37,8 +38,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   ]
 })
 export class DetailComponent implements OnInit {
+  private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
   showModelList: boolean = true;
+  wt: any;
   
   constructor(
     public systemService: SystemService,
@@ -48,6 +51,23 @@ export class DetailComponent implements OnInit {
 
   async ngOnInit() {}  
 
+  showDownloadImageWarning = (message: string = '') => {
+    this.wt = setTimeout(async () => {
+      this.wt = undefined
+      this._snackBar.open(
+        message === '' ? await this.systemService.get('APP.DOWNLOAD_IMAGE_WARNING') : message, 
+        await this.systemService.get('OK')
+      );
+    }, 1000)
+  }
+
+  clearDownloadImageWarning = () => {
+    if (this.wt) {
+      clearTimeout(this.wt);
+    }    
+  }
+
+  /*
   switchGPUAccel = async (event: any) => {    
     const dialogRef = this.dialog.open(
       AlertComponent, {
@@ -70,6 +90,7 @@ export class DetailComponent implements OnInit {
       }
     })
   }
+  */
 
   removeModel = async (event: any, index: number) => {
     const dialogRef = this.dialog.open(
@@ -113,7 +134,7 @@ export class DetailComponent implements OnInit {
         console.log(`Dialog result: ${result}`);
         if (result === true) {
           await this.systemService.commandOllama('pull', { model: this.systemService.selectedModel, stream: true });
-          await this.writeModelToEnv();          
+          await this.writeModelToEnv();
           this.systemService.downloadedLLM = this.systemService.selectedModel;
         } else {
           console.log('reverting:', this.systemService.downloadedLLM);

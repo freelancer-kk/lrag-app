@@ -13,6 +13,7 @@ import { MediaService } from '../core/services/media/media.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-ingest.component',
@@ -28,7 +29,8 @@ import { MatListModule } from '@angular/material/list';
     NgxFileDropModule,
     MatProgressBarModule,
     MatGridListModule,
-    MatListModule
+    MatListModule,
+    MatTooltipModule
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
@@ -39,31 +41,17 @@ export class IngestComponent implements OnInit {
   isUploading: boolean = false;
   breakpoint: number = 4;
   startIngestTimer: any;
-  wt: any;
+  ingestStatus: string = 'not running';
+  overallStatus: string = 'not running';
 
   constructor(
     public systemService: SystemService,
     private mediaService: MediaService
   ) {
     effect(() => {
-      
+      this.ingestStatus = this.systemService.ingestStatus();
+      this.overallStatus = this.systemService.overallStatus();
     })
-  }
-
-  showDownloadImageWarning = (message: string) => {
-    this.wt = setTimeout(async () => {
-      this.wt = undefined
-      this._snackBar.open(
-        message,        
-        await this.systemService.get('OK')
-      );
-    }, 1000)
-  }
-
-  clearDownloadImageWarning = () => {
-    if (this.wt) {
-      clearTimeout(this.wt);
-    }    
   }
 
   async ngOnInit() {
@@ -71,33 +59,28 @@ export class IngestComponent implements OnInit {
     console.log('breakpoint:', this.breakpoint);
     if (this.systemService.ragFiles.length === 0) {
       this.systemService.ragFiles = await this.mediaService.ls();
-    }
-    this.getUnstructuredStatus();
+    }    
     // console.log('FILES', this.ragFiles);
     this.systemService.MAX_FILES = Number.parseInt(await this.systemService.get('PAGES.INGEST.MAX_DOCS'));
     // console.log('MAX:', this.systemService.MAX_FILES)
   }
 
-  getUnstructuredStatus = async (): Promise<any> => {
-  }
-
-  startUnstructured = async () => {
-    await this.getUnstructuredStatus();
-    try {
-      if (this.systemService.ingestStatus() === 'not running') {
-        this.systemService.ingestStatus.update(() => "starting");    
-
-      } else if (this.systemService.ingestStatus() === 'exited' || this.systemService.ingestStatus() === 'die') {
-        this.showDownloadImageWarning(await this.systemService.get('PAGES.INGEST.DURATION_WARNING'));
-        this.systemService.ingestStatus.update(() => "running");
+  startIngestion = async () => {
+    this.systemService.ingestStatus.update(() => 'starting');
+    this.systemService.commandIngest('start').then(async (result: any) => {
+      console.log('ingest result:', result);
+      if (result && result.status === 'completed') {
+        this.systemService.ingestStatus.update(() => 'not running');
+        this.systemService.ragFiles = await this.mediaService.ls();
+      } else {
+        this.systemService.ingestStatus.update(() => 'error');
+        this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (result ? (': ' + JSON.stringify(result)) : ''));
       }
-    } catch(e: any) {
-      console.error(e);
-      if (e.result && e.result.json && e.result.json.message && e.result.json.message.toLowerCase().startsWith('no such image')) {
-        this.systemService.ingestStatus.update(() =>'downloading unstructured image');
-        this.showDownloadImageWarning(await this.systemService.get('APP.DOWNLOAD_IMAGE_WARNING'));                
-      }
-    }
+    }).catch(async (e) => {
+      console.error('ingest error:', e);
+      this.systemService.ingestStatus.update(() => 'error');
+      this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''));
+    })    
   }
 
   progress = async (file: File, data: string | ArrayBuffer | null) => {
@@ -119,11 +102,12 @@ export class IngestComponent implements OnInit {
         console.log('completed');
         await this.mediaService.completedUpload(file);
         this.isUploading = false;
+        this.systemService.ingestStatus.update(() => 'uploaded');
         if (this.startIngestTimer) {
           clearTimeout(this.startIngestTimer);
         }
         this.startIngestTimer = setTimeout(() => {          
-          this.startUnstructured();  
+          this.startIngestion();  
         }, 2500)        
       }
     }
@@ -148,13 +132,15 @@ export class IngestComponent implements OnInit {
             try {
               const reader: FileReader = new FileReader();          
               reader.onload = (event: any) => {
-                this.isUploading = true;              
+                this.isUploading = true;
+                this.systemService.ingestStatus.update(() => 'uploading');
                 this.progress(file, reader.result);
               };
               await this.mediaService.startUpload(file);
               reader.readAsArrayBuffer(file); // read file as data url
             } finally {
               this.isUploading = false;
+              this.systemService.ingestStatus.update(() => 'uploaded');
             }
             
           });          
@@ -183,10 +169,10 @@ export class IngestComponent implements OnInit {
   }
 
   fileRemove = async (event: any, index: number) => {
-    if ((this.systemService.overallStatus())) {
+    if (this.overallStatus === 'running: healthy' && this.ingestStatus === 'not running' && this.systemService.ragFiles.length <= this.systemService.MAX_FILES) {
       console.log('remove file:', this.systemService.ragFiles[index]);
       await this.mediaService.remove(this.systemService.ragFiles[index]);
-      await this.startUnstructured();
+      await this.startIngestion();
       this.systemService.ragFiles.splice(index, 1);
     }
   }

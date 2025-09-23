@@ -27,7 +27,8 @@ export class BridgeService {
           const cb: (response: any) => void = this.callbacks[cbIdx].cb;
           // console.log('bridge: found callback:', cb);          
           this.callbacks.splice(cbIdx, 1);
-          cb(JSON.parse(response));
+          // console.log('bridge: calling callback for id:', callbackId, response);
+          cb(JSON.parse(response ? response : '{}'));
         } else {
           console.error('bridge:reply cannot find callbackId:', callbackId);
         }
@@ -240,7 +241,17 @@ export class BridgeService {
           "response": "ok"
       })
     }
-  } 
+  }
+  
+  ingest = (callbackId: number, command: string, options: any, cb: (response: any) => void) => {
+    if (this.isElectronRendered) {
+      this.callNode('ingest', callbackId, cb, command, options, undefined); 
+    } else {
+      cb({
+          "response": "ok"
+      })
+    }
+  }
 
   removeListeners = () => {
     if (this.isElectronRendered) {

@@ -103,6 +103,10 @@ export default class DockerEnv {
     return this.llm;
   }
 
+  getKeyValue = (key: string): string | undefined => {
+    return this.kvFile ? this.kvFile.get(key)?.toString() : undefined;
+  }
+
   generateEnvFile = (): Promise<string> => {
     let envTemplate: string = fs.readFileSync(path.join(this.assetsFolderPath, 'template.env'), 'utf8');
     envTemplate = envTemplate.replace(new RegExp('#DOC_ROOT_PATH#','g'), this.dsp ? this.dsp : '');

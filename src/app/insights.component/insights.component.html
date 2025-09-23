@@ -1,14 +1,12 @@
 <mat-toolbar>
-<h1 class="title">
-  {{ 'PAGES.INSIGHT.MAIN_TITLE' | translate }}
-</h1>
-<span class="spacer"></span>
-<div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
-  {{ systemService.modelStatus() }}
-</div>
-<button [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate" matIconButton>
-  <mat-icon>restart_alt</mat-icon>
-</button>
+  <h1 class="title">
+    {{ 'PAGES.INSIGHT.MAIN_TITLE' | translate }}
+  </h1>
+  <span class="spacer"></span>
+  {{ modelUsage }}
+  <div [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate" [class]="systemService.getClassFromStatus(systemService.modelStatus())">
+    {{ systemService.modelStatus() }}
+  </div>  
 </mat-toolbar>
 
   @if (systemService.docsEmpty) {

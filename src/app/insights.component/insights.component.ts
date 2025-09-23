@@ -41,7 +41,7 @@ export class InsightsComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   url: string = 'http://localhost:8501';
   urlSafe: SafeResourceUrl;
-
+  modelUsage: string = '';
 
   constructor(
     public systemService: SystemService,
@@ -50,8 +50,8 @@ export class InsightsComponent implements OnInit {
   ) {
     this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
 
-    effect(() => {
-      if (this.systemService.overallStatus()) {
+    effect(() => {      
+      if (this.systemService.overallStatus() !== 'running: healthy') {
         this.check();
       }
     })
@@ -66,6 +66,8 @@ export class InsightsComponent implements OnInit {
       this.systemService.docsEmpty = (files.length === 0)
     })
   }
+
+  //TODO: When we submit a query perform a ps to get the model usage
 
   reset = async (event: any) => {
     const dialogRef = this.dialog.open(

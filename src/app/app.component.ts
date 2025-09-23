@@ -43,7 +43,6 @@ export class AppComponent implements OnInit {
   @ViewChild('sidenav', {static: true}) sidenav!: MatSidenav;
   isExpanded: boolean = true;
   dockerConnectInterval: any;
-  wt: any;
   firstTime: boolean = true;
 
   constructor(
@@ -113,6 +112,48 @@ export class AppComponent implements OnInit {
             })            
           }
           break;
+          case 'langchain-run-start': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'running');
+            })            
+          }
+          break;
+          case 'langchain-run-loaded': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'loaded');
+            })            
+          }
+          break;
+          case 'langchain-run-splitting': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'splitting');
+            })            
+          }
+          break;
+          case 'langchain-run-split': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'chunking');
+            })            
+          }
+          break;
+          case 'langchain-run-adding'  : {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'adding');
+            })            
+          }
+          break;
+          case 'langchain-run-complete'  : {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'not running');
+            })            
+          }
+          break;
+          case 'langchain-run-error'  : {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'error');
+            })            
+          }
+          break;
         } 
       } catch (e) {
         console.error(e);
@@ -164,22 +205,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  showDownloadImageWarning = (message: string = '') => {
-    this.wt = setTimeout(async () => {
-      this.wt = undefined
-      this._snackBar.open(
-        message === '' ? await this.systemService.get('APP.DOWNLOAD_IMAGE_WARNING') : message, 
-        await this.systemService.get('OK')
-      );
-    }, 1000)
-  }
-
-  clearDownloadImageWarning = () => {
-    if (this.wt) {
-      clearTimeout(this.wt);
-    }    
-  }
-
   startServicesIfNecessary = async () => {    
     // Check if ollama is running
     const { isReady } = await this.systemService.commandOllama('isRunning');
@@ -209,11 +234,7 @@ export class AppComponent implements OnInit {
         this.systemService.modelStatus.update(() => 'running');
       } else {
         this.systemService.modelStatus.update(() => 'running');
-      }
-      // Run selected model
-      if (this.firstTime) {
-        await this.systemService.getRunningModelsUsage();
-      }
+      }          
     } catch (e) {
       console.error(e);
     }    

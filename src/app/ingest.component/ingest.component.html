@@ -1,24 +1,18 @@
   <mat-toolbar>
     <mat-toolbar-row>
-      <h1 class="title">
+      <h1 class="title" [matTooltip]="'PAGES.INGEST.MAX_FILES_TEXT' | translate">
         {{ 'PAGES.INGEST.MAIN_TITLE' | translate }}
-      </h1>
-      <div class="small">
-      ({{ 'PAGES.INGEST.MAX_FILES_TEXT' | translate }}:{{ systemService.MAX_FILES }})
-      </div>
-      <span class="spacer"></span>
-      <mat-label>
-      {{ 'PAGES.INGEST.INGEST_STATUS' | translate }}:
-      </mat-label>      
-      @if (systemService.ingestStatus() === 'running' || systemService.ingestStatus().startsWith('downloading')) {
-        <div [class]="systemService.getClassFromStatus(systemService.ingestStatus())">
+      </h1>      
+      <span class="spacer"></span>      
+      @if (ingestStatus === 'running' || ingestStatus === 'loaded' || ingestStatus === 'splitting' || ingestStatus === 'chunking' || ingestStatus === 'adding') {
+        <div [class]="systemService.getClassFromStatus(ingestStatus)">
           <mat-spinner diameter="30"></mat-spinner>
-          {{ systemService.ingestStatus() }}
+          {{ ingestStatus }}
         </div>
       } @else {
-        <div [class]="systemService.getClassFromStatus(systemService.ingestStatus())">
-          <mat-icon>{{ systemService.getIconFromStatus(systemService.ingestStatus()) }}</mat-icon>
-          {{ systemService.ingestStatus() }}
+        <div [class]="systemService.getClassFromStatus(ingestStatus)">
+          <mat-icon>{{ systemService.getIconFromStatus(ingestStatus) }}</mat-icon>
+          {{ ingestStatus }}
         </div>
       }
     </mat-toolbar-row>  
@@ -34,12 +28,12 @@
     accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt"
     dropZoneClassName="dropzone"
     (onFileDrop)="dropped($event)"
-    [disabled]="!systemService.overallStatus()"
+    [disabled]="overallStatus !== 'running: healthy' || ingestStatus !== 'not running' || systemService.ragFiles.length >= systemService.MAX_FILES"
     >
       <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
         <mat-icon>file_upload</mat-icon>
-        <mat-label>{{ (systemService.overallStatus() ? 'PAGES.INGEST.DROP_HERE': 'PAGES.INGEST.PLEASE_WAIT') | translate }}</mat-label><br/>
-        @if (systemService.overallStatus()) {
+        <mat-label>{{ (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length < systemService.MAX_FILES ? 'PAGES.INGEST.DROP_HERE': 'PAGES.INGEST.PLEASE_WAIT') | translate }}</mat-label><br/>
+        @if (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length < systemService.MAX_FILES) {
           <button matButton (click)="openFileSelector()">{{ 'PAGES.INGEST.SELECT_FILE' | translate }}</button>
         }
       </ng-template>    
@@ -56,7 +50,7 @@
           </div>
           <div matListItemLine>
             <button matButton>
-              @if (systemService.overallStatus()) {
+              @if (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length <= systemService.MAX_FILES) {
                 <mat-icon class="danger">cancel</mat-icon>
               }
             </button>
