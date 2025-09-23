@@ -99,8 +99,8 @@ export default class DockerEnv {
     return this.ellm;
   }
 
-  getModelName = (): string | undefined => {
-    return this.llm;
+  getModelName = (): string => {
+    return this.llm ? this.llm : 'gemma3:1b';
   }
 
   getKeyValue = (key: string): string | undefined => {

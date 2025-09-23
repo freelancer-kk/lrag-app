@@ -431,8 +431,8 @@ class LangchainService {
                         }
                     }
                     else {
-                        this.emit({ type: 'langchain-run-error', data: { message: 'no documents loaded' } });
-                        return { status: 'error', message: 'no documents loaded' };
+                        this.emit({ type: 'langchain-run-error', data: { message: 'document(s) not loaded (incompatible)' } });
+                        return { status: 'error', message: 'document(s) not loaded (incompatible)' };
                     }
                 })).catch((err) => {
                     console.error('load error:', err);

@@ -7,6 +7,7 @@ import SystemInfo from './SystemInfo';
 import LRagFiles from './LragFiles';
 import OllamaService from './OllamaService';
 import LangchainService from './LangchainService';
+import ContextChat from './ContextChat';
 
 const userHomePath: string = app.getPath('home');
 const assetsPakFolderPath: string = app.getPath('assets');
@@ -21,6 +22,7 @@ let dockerEnv: DockerEnv;
 let lragFiles: LRagFiles;
 let ollamaService: OllamaService;
 let langchainService: LangchainService;
+let contextChat: ContextChat;
 
 let configPath: string = path.join(__dirname, '..');
 
@@ -31,6 +33,11 @@ const setDocPathsCB = (docPath: string | undefined, dataPath: string | undefined
   lragFiles.register();
   langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'));
   langchainService.register(win?.webContents);
+  ollamaService = new OllamaService(assetsFolderPath, appDataPath);
+  ollamaService.register(win?.webContents);
+  ollamaService.extract();        
+  contextChat = new ContextChat(langchainService, ollamaService);
+  contextChat.register();
 }
 
 let runType = 0;
@@ -130,9 +137,6 @@ try {
         assetsFolderPath = path.join(assetsPakFolderPath, 'resources', 'app.asar', 'assets')
       }    
       
-      ollamaService = new OllamaService(assetsFolderPath, appDataPath);
-      ollamaService.register(win?.webContents);
-      ollamaService.extract();      
       dockerEnv.register();      
       systemInfo.register();
     }, 400)    

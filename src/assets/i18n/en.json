@@ -87,14 +87,20 @@
         "MAIN_TITLE": "Document Insights",
         "INSIGHT_STATUS": "INSIGHT status",
         "RESET_CONTEXT_TIP": "Improve results by waiting a minute before asking questions about a different domain. This will allow the context to reset",
-        "RESET_ARE_YOU_SURE": "Resetting the context will flush the LLM service, reload and rerun the model, this may take a minute"
+        "RESET_ARE_YOU_SURE": "Resetting the context will flush the LLM service, reload and rerun the model, this may take a minute",
+        "CONTEXTUAL_PROMPT": "Given a chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.",
+        "SYSTEM_PROMPT": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use a maximum of three sentences and keep the answer concise."
       },
       "HELP": {
         "TITLE": "Help",
         "WHAT_IS_LRAG_TITLE": "What is LRag?",
         "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",
         "ACCURACY_TITLE": "How good is LRag?",
-        "ACCURACY": "LRag uses your prompt and documents as context for the corresponding LLM and is limited in accuracy, especially if you are mixing question domains e.g asking about accounts and then immediately asking health questions. The best approach is to stick to a single domain and then to use the Reset LLM feature before asking about a different domain",
+        "ACCURACY": "LRag uses your prompt and documents as context for the corresponding LLM and is limited in accuracy, especially if you are mixing question domains e.g asking about accounts and then immediately asking health questions. The best approach is wait a minute before asking questions about a different domain to allow the context to reset.",
+        "INGEST_TITLE": "What documents can I ingest?",
+        "INGEST": "You can ingest PDF, Word, Excel, Powerpoint and CSV files. Please avoid scanned documents as these are not supported in this version.",
+        "DATA_SECURITY_TITLE": "Is my data secure?",
+        "DATA_SECURITY": "Yes, your data and documents never leave your PC. LRag is a 100% local solution.",
         "HOW_FAST_TITLE": "How fast is LRag?",
         "HOW_FAST": "Please use a model size depending on your PC power. LRag should answer within seconds. First time start up, downloading initial models, creating services etc... may take some minutes",
         "GPU_TITLE": "Can LRag use my GPU (Graphics Processing Unit)?",

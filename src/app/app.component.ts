@@ -163,6 +163,7 @@ export class AppComponent implements OnInit {
     effect(() => {
       console.log('ollama status:', this.systemService.ollamaStatus());
       console.log('model status:', this.systemService.modelStatus());
+      console.log('ingest status:', this.systemService.ingestStatus());
       this.systemService.calcOverallStatus();
       console.log('overall status:', this.systemService.overallStatus());
       if (this.systemService.overallStatus() === "running: unhealthy") {

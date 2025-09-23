@@ -30,11 +30,11 @@ export class SystemService {
   osType: any;
 
   models: any[] = [
-    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)'},
-    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)'},
-    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)'},    
-    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)'},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)'},
+    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false},
+    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true},
+    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true},    
+    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true},
+    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true},
   ];
   embeddings: string = 'embeddinggemma:300m';
   
@@ -51,9 +51,18 @@ export class SystemService {
     })
   }
 
+  getThinkingForModel = (model: string): boolean => {
+    const idx = this.models.findIndex(m => m.value === model);
+    if (idx > -1) {
+      return this.models[idx].thinking;
+    } else {
+      return false;
+    }
+  }
+
   calcOverallStatus = () => {
     if (this.ollamaStatus() === 'running') {
-      if (this.modelStatus() === 'running') {
+      if (this.modelStatus() === 'running' && this.ingestStatus() === 'not running') {
         this.overallStatus.update(() => 'running: healthy');
       } else {
         this.overallStatus.update(() => 'running: unhealthy');
@@ -67,11 +76,27 @@ export class SystemService {
     const modelUsage: any = await this.commandOllama('ps');
     for await (const entry of modelUsage.models) {      
       if (entry.model === this.selectedModel) {
-        return `${entry.usage}`;
+        const { size, size_vram } = entry;
+        
+        let part = '';
+        if (size-size_vram > 0) {
+          part += `CPU ${Math.floor(size-size_vram / size * 100)}%`;
+        }
+        part += ` GPU ${Math.floor(size_vram / size * 100)}%`
+        return part;
       }         
     }
     return '';
   }
+
+  commandInsight = (command: string, options: any = {}): Promise<any> => {
+    return new Promise((resolve, reject) => { 
+      this.bridgeService.chat(70, command, options, async (data: any) => {
+        console.log('insight command response:', data);
+        resolve(data);
+      });
+    });
+  }  
 
   commandIngest = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
@@ -143,7 +168,7 @@ export class SystemService {
   }
 
   getClassFromStatus = (status: string): string => {
-    if (status === 'running' || status === 'uploading' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'splitting' || status === 'chunking' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
+    if (status === 'running' || status === 'thinking' || status === 'uploading' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'splitting' || status === 'chunking' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
     } else if (status === 'downloading' || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';
@@ -164,6 +189,7 @@ export class SystemService {
       case 'splitting':
       case 'chunking':        
       case 'adding':
+      case 'thinking':
       case 'running: healthy': 
       case 'running': {
         return 'directions_run';

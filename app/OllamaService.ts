@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import unzipper from 'unzipper';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse } from "ollama";
+import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse, ChatResponse } from "ollama";
 
 export default class OllamaService {
   archivePath: string = '';
@@ -100,7 +100,7 @@ export default class OllamaService {
     this.webContents?.send('event', {
       response: args
     })                
-  } 
+  }
 
   extract = () => {
     if (!fs.existsSync(this.unzipPath)) {
@@ -163,8 +163,51 @@ export default class OllamaService {
     return { status: 'stopping' };
   }
 
-  generate = (request: any): Promise<AbortableAsyncIterator<GenerateResponse>> => {
-    return this.ollama ? this.ollama.generate(request) : Promise.reject('no service');
+  generate = async (request: any): Promise<string> => {
+    if (this.ollama) {
+      this.emit( { type: 'ollama-generate-start', data: { prompt: request.prompt } })
+      const result: any = await this.ollama.generate(request);
+      let response = '';
+       for await (const part of result) {
+        console.log(part.response);
+        response += part.response;
+      }
+      this.emit( { type: 'ollama-generate-complete', data: { prompt: request.prompt, response } })
+      return response;
+
+    }
+    return Promise.reject('no service');
+  }
+
+  chat = async (request: any): Promise<string> => {
+    if (this.ollama) {
+      this.emit( { type: 'ollama-thinking-start', data: { prompt: request.prompt } })
+      const response: AbortableAsyncIterator<ChatResponse> = await this.ollama.chat(request);
+      let startedThinking = false;
+      let finishedThinking = false;
+
+      let answer = '';
+      for await (const chunk of response) {
+        if (chunk.message.thinking && !startedThinking) {
+          startedThinking = true
+          process.stdout.write('Thinking:\n========\n\n')          
+        } else if (chunk.message.content && startedThinking && !finishedThinking) {
+          finishedThinking = true
+          process.stdout.write('\n\nResponse:\n========\n\n')
+          this.emit( { type: 'ollama-thinking-answer', data: { chunk: chunk.message.content } })          
+          answer += chunk.message.content;
+        }
+        if (chunk.message.thinking) {
+          process.stdout.write(chunk.message.thinking)
+        } else if (chunk.message.content) {
+          process.stdout.write(chunk.message.content)
+          this.emit( { type: 'ollama-thinking-content', data: { chunk: chunk.message.content } })
+        }
+      }      
+      return answer;
+    } else {
+      return Promise.reject('no service');
+    }
   }
 
   pull = async (request: any): Promise<any> => {

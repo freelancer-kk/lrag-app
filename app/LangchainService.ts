@@ -7,6 +7,7 @@ import {
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
 import { PPTXLoader } from "@langchain/community/document_loaders/fs/pptx";
 import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
 import { OllamaEmbeddings } from "@langchain/ollama";
@@ -18,6 +19,10 @@ import * as path from 'path';
 import { LibSQLVectorStore } from "@langchain/community/vectorstores/libsql";
 import { Client, createClient, ResultSet } from "@libsql/client";
 import { VectorStore } from "@langchain/core/vectorstores";
+
+//TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
+// OR get ocrmypdf working on windows with auto install and mac os auto install
+// https://ocrmypdf.readthedocs.io/en/latest/installation.html#native-windows
 
 interface FileStat {
   path: string;
@@ -155,7 +160,7 @@ export default class LangchainService {
         ".xls": (path) => new CSVLoader(path),
         ".pdf": (path) => new PDFLoader(path, {
           splitPages: true,
-          parsedItemSeparator: ""        
+          parsedItemSeparator: ""  
         }),
         ".ppt": (path) => new PPTXLoader(path),
         ".pptx": (path) => new PPTXLoader(path),
@@ -316,8 +321,7 @@ export default class LangchainService {
     
     if (newChangedDocs) {
       this.emit( { type: 'langchain-run-start', data: {} } );
-      return this.load().then(async (docs: Document[]) => {
-      
+      return this.load().then(async (docs: Document[]) => {      
         this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
         if (docs.length > 0) {
           this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });        
@@ -339,8 +343,8 @@ export default class LangchainService {
             return { status: 'error', message: 'no chunks created' };
           }         
         } else {
-            this.emit( { type: 'langchain-run-error', data: { message: 'no documents loaded' } });
-            return { status: 'error', message: 'no documents loaded' };
+            this.emit( { type: 'langchain-run-error', data: { message: 'document(s) not loaded (incompatible)' } });
+            return { status: 'error', message: 'document(s) not loaded (incompatible)' };
         }
       }).catch((err) => {
         console.error('load error:', err);

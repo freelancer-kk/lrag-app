@@ -3,10 +3,13 @@
     {{ 'PAGES.INSIGHT.MAIN_TITLE' | translate }}
   </h1>
   <span class="spacer"></span>
-  {{ modelUsage }}
+  <span class="small">{{ modelUsage }}</span>
+  @if (this.systemService.insightStatus() === 'thinking') {    
+    <mat-spinner diameter="30"></mat-spinner>    
+  }
   <div [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate" [class]="systemService.getClassFromStatus(systemService.modelStatus())">
     {{ systemService.modelStatus() }}
-  </div>  
+  </div>
 </mat-toolbar>
 
   @if (systemService.docsEmpty) {

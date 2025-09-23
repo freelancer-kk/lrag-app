@@ -42,6 +42,7 @@ export class InsightsComponent implements OnInit {
   url: string = 'http://localhost:8501';
   urlSafe: SafeResourceUrl;
   modelUsage: string = '';
+  chatHistory: string[] = [];
 
   constructor(
     public systemService: SystemService,
@@ -59,6 +60,7 @@ export class InsightsComponent implements OnInit {
 
   ngOnInit(): void {
     this.check();
+    this.askQuestion('How are you today?');
   }
 
   check = () => {
@@ -68,6 +70,43 @@ export class InsightsComponent implements OnInit {
   }
 
   //TODO: When we submit a query perform a ps to get the model usage
+  askQuestion = async (question: string) => {
+    const contextPrompt = `Given a chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.
+
+    Chat History:
+    ${this.chatHistory.join('\n')}
+
+    Latest Question:
+    ${question}
+
+    Reformulated Question:`;
+
+    const options = {
+      model: this.systemService.selectedModel,
+      prompt: contextPrompt,
+      max_tokens: 256,
+      temperature: 0.7,
+      top_p: 0.9,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+      stop: ["\n"],
+      stream: true,
+      think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
+    };
+
+    this.systemService.insightStatus.update(() => 'thinking');
+    const answer: string = await this.systemService.commandInsight('question', options);
+    this.systemService.insightStatus.update(() => 'running');
+    console.log('Answer:', answer);
+    // Get the model usage  
+    const usageTimer = setInterval(async () => {
+      const usage = await this.systemService.getRunningModelsUsage();
+      if (usage) {
+        clearInterval(usageTimer);
+        this.modelUsage = usage;
+      }
+    }, 2000);    
+  }
 
   reset = async (event: any) => {
     const dialogRef = this.dialog.open(

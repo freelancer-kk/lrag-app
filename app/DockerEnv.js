@@ -96,7 +96,7 @@ class DockerEnv {
             return this.ellm;
         };
         this.getModelName = () => {
-            return this.llm;
+            return this.llm ? this.llm : 'gemma3:1b';
         };
         this.getKeyValue = (key) => {
             var _a;

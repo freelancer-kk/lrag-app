@@ -253,6 +253,16 @@ export class BridgeService {
     }
   }
 
+  chat = (callbackId: number, command: string, options: any, cb: (response: any) => void) => {
+    if (this.isElectronRendered) {
+      this.callNode('chat', callbackId, cb, command, options, undefined); 
+    } else {
+      cb({
+          "response": "ok"
+      })
+    }
+  }
+
   removeListeners = () => {
     if (this.isElectronRendered) {
       this.electronService.ipcRenderer.removeAllListeners('reply')

@@ -74,12 +74,18 @@ export class IngestComponent implements OnInit {
         this.systemService.ragFiles = await this.mediaService.ls();
       } else {
         this.systemService.ingestStatus.update(() => 'error');
-        this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (result ? (': ' + JSON.stringify(result)) : ''));
+        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (result ? (': ' + JSON.stringify(result)) : ''), 'OK' );
+        snackBarRef.onAction().subscribe(() => {
+          this.systemService.ingestStatus.update(() => 'not running');
+        });
       }
     }).catch(async (e) => {
       console.error('ingest error:', e);
       this.systemService.ingestStatus.update(() => 'error');
-      this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''));
+      const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK' );
+      snackBarRef.onAction().subscribe(() => {
+        this.systemService.ingestStatus.update(() => 'not running');
+      });
     })    
   }
 
