@@ -54,10 +54,10 @@
             <tr mat-row>
               @if (entry.who === 0) {
                   <mat-icon matListItemIcon class="user">face</mat-icon>
-                  <p>{{ entry.content }}</p>
+                  <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
               }          
               @if (entry.who === 1) {
-                  <p>{{ entry.content }}</p>
+                  <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
                   <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
               }              
             </tr>            

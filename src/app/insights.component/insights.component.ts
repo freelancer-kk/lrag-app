@@ -121,10 +121,10 @@ export class InsightsComponent implements OnInit {
       this.streamedResponse = '';
       this.streaming = false;
       this.systemService.insightStatus.update(() => 'running');
-      // console.log('Answer:', answer);
+      // console.log('Answer:', answer);      
       this.systemService.chatHistory.push({
         who: EWho.Assistant,
-        content: answer
+        content: this.reformat(answer)
       });
       this.scrollToBottom();
 
@@ -137,6 +137,25 @@ export class InsightsComponent implements OnInit {
         }
       }, 2000);    
     }
+  }
+
+  safeHTML(unsafe: string) {
+    return this.sanitizer.bypassSecurityTrustHtml(unsafe);
+  }
+
+  reformat = (answer: string): string => {
+    // Look for 'answer:' and add 2 line seps
+    const fIdx: number = answer.toLowerCase().indexOf('</think>');
+    if (fIdx > -1) {
+      console.log('splicing think');
+      answer = answer.substring(0, fIdx + 8) + '<br><br>' + answer.substring(fIdx + 8);
+    }
+    const fIdx1: number = answer.toLowerCase().indexOf('answer:');
+    if (fIdx1 > -1) {
+      console.log('splicing answer');
+      answer = answer.substring(0, fIdx1) + '<br><br>' + answer.substring(fIdx1);
+    }
+    return answer;
   }
 
   scrollToBottom = () => {

@@ -8,6 +8,7 @@ import { StringOutputParser } from "@langchain/core/output_parsers"
 import { Document } from "@langchain/core/documents";
 import { ChatRequest, GenerateRequest } from 'ollama'
 import { Ollama } from "@langchain/ollama";
+import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -96,7 +97,7 @@ export default class ContextChat {
         .pipe(this.ollamaLlm)
         .pipe(new StringOutputParser());
       
-      const llmResponse = await answerChain.stream({
+      const llmResponse: IterableReadableStream<string> = await answerChain.stream({
         prompt: options.prompt,
         context: combinedDocs,
         userQuestion: options.question
