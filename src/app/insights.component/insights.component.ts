@@ -1,7 +1,7 @@
 import { Component, OnInit, effect, inject } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { SystemService } from '../core/services/system/system.service';
+import { EWho, SystemService } from '../core/services/system/system.service';
 import {MatInputModule} from '@angular/material/input';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-insights.component',
@@ -33,6 +34,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
     MatTooltipModule,
     MatDialogModule,
     NgxSkeletonLoaderModule,
+    FormsModule
   ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'
@@ -42,15 +44,14 @@ export class InsightsComponent implements OnInit {
   url: string = 'http://localhost:8501';
   urlSafe: SafeResourceUrl;
   modelUsage: string = '';
-  chatHistory: string[] = [];
-
+  question: string = '';
+  
   constructor(
     public systemService: SystemService,
     private sanitizer: DomSanitizer,
     private mediaService: MediaService
   ) {
     this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
-
     effect(() => {      
       if (this.systemService.overallStatus() !== 'running: healthy') {
         this.check();
@@ -60,7 +61,7 @@ export class InsightsComponent implements OnInit {
 
   ngOnInit(): void {
     this.check();
-    this.askQuestion('How are you today?');
+    // this.askQuestion('How are you today?');
   }
 
   check = () => {
@@ -69,43 +70,59 @@ export class InsightsComponent implements OnInit {
     })
   }
 
+  clearHistory = () => {
+    this.systemService.chatHistory = [];
+  }
+
   //TODO: When we submit a query perform a ps to get the model usage
-  askQuestion = async (question: string) => {
-    const contextPrompt = `Given a chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.
+  askQuestion = async () => {
+    if (this.question) {
+      const question: string = this.question;
+      
+      this.systemService.chatHistory.unshift({
+        who: EWho.User,
+        content: question
+      });
+      const contextPrompt = `Given a chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.
 
-    Chat History:
-    ${this.chatHistory.join('\n')}
+      Chat History:
+      ${this.systemService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n')}
 
-    Latest Question:
-    ${question}
+      Latest Question:
+      ${question}
 
-    Reformulated Question:`;
+      Reformulated Question:`;
 
-    const options = {
-      model: this.systemService.selectedModel,
-      prompt: contextPrompt,
-      max_tokens: 256,
-      temperature: 0.7,
-      top_p: 0.9,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-      stop: ["\n"],
-      stream: true,
-      think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
-    };
+      const options = {
+        model: this.systemService.selectedModel,
+        prompt: contextPrompt,
+        max_tokens: 256,
+        temperature: 0.7,
+        top_p: 0.9,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        stop: ["\n"],
+        stream: true,
+        think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
+      };
 
-    this.systemService.insightStatus.update(() => 'thinking');
-    const answer: string = await this.systemService.commandInsight('question', options);
-    this.systemService.insightStatus.update(() => 'running');
-    console.log('Answer:', answer);
-    // Get the model usage  
-    const usageTimer = setInterval(async () => {
-      const usage = await this.systemService.getRunningModelsUsage();
-      if (usage) {
-        clearInterval(usageTimer);
-        this.modelUsage = usage;
-      }
-    }, 2000);    
+      this.systemService.insightStatus.update(() => 'thinking');
+      const answer: string = await this.systemService.commandInsight('question', options);
+      this.systemService.insightStatus.update(() => 'running');
+      console.log('Answer:', answer);
+      this.systemService.chatHistory.unshift({
+        who: EWho.Assistant,
+        content: answer
+      });
+      // Get the model usage  
+      const usageTimer = setInterval(async () => {
+        const usage = await this.systemService.getRunningModelsUsage();
+        if (usage) {
+          clearInterval(usageTimer);
+          this.modelUsage = usage + ' ';
+        }
+      }, 2000);    
+    }
   }
 
   reset = async (event: any) => {

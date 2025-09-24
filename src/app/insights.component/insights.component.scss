@@ -8,3 +8,39 @@
 .small {
   font-size: 0.6em;
 }
+
+.full-width-height {
+  width: 100%;
+  max-height: 60%;
+  overflow-y: scroll; 
+  font-family: Roboto;
+}
+
+.container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.user {
+  float: left !important;
+  margin-right: 20px !important;
+}
+
+.assistant {
+  float: right !important;
+  margin-left: 20px !important;  
+}
+
+.full-width {
+  width: 100%;
+}
+
+.double-width {
+  width: 200%;
+}
+
+::ng-deep .mat-list[dense] .mat-list-item .mat-line {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}

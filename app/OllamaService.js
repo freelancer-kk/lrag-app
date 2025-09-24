@@ -218,69 +218,81 @@ class OllamaService {
             var _a, e_1, _b, _c;
             if (this.ollama) {
                 this.emit({ type: 'ollama-generate-start', data: { prompt: request.prompt } });
-                const result = yield this.ollama.generate(request);
-                let response = '';
                 try {
-                    for (var _d = true, result_1 = __asyncValues(result), result_1_1; result_1_1 = yield result_1.next(), _a = result_1_1.done, !_a; _d = true) {
-                        _c = result_1_1.value;
-                        _d = false;
-                        const part = _c;
-                        console.log(part.response);
-                        response += part.response;
-                    }
-                }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
+                    const result = yield this.ollama.generate(request);
+                    let response = '';
                     try {
-                        if (!_d && !_a && (_b = result_1.return)) yield _b.call(result_1);
+                        for (var _d = true, result_1 = __asyncValues(result), result_1_1; result_1_1 = yield result_1.next(), _a = result_1_1.done, !_a; _d = true) {
+                            _c = result_1_1.value;
+                            _d = false;
+                            const part = _c;
+                            console.log(part.response);
+                            response += part.response;
+                        }
                     }
-                    finally { if (e_1) throw e_1.error; }
+                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    finally {
+                        try {
+                            if (!_d && !_a && (_b = result_1.return)) yield _b.call(result_1);
+                        }
+                        finally { if (e_1) throw e_1.error; }
+                    }
+                    this.emit({ type: 'ollama-generate-complete', data: { prompt: request.prompt, response } });
+                    return response;
                 }
-                this.emit({ type: 'ollama-generate-complete', data: { prompt: request.prompt, response } });
-                return response;
+                catch (e) {
+                    this.emit({ type: 'ollama-generate-error', error: e });
+                    return '';
+                }
             }
             return Promise.reject('no service');
         });
         this.chat = (request) => __awaiter(this, void 0, void 0, function* () {
             var _a, e_2, _b, _c;
             if (this.ollama) {
-                this.emit({ type: 'ollama-thinking-start', data: { prompt: request.prompt } });
-                const response = yield this.ollama.chat(request);
-                let startedThinking = false;
-                let finishedThinking = false;
-                let answer = '';
                 try {
-                    for (var _d = true, response_1 = __asyncValues(response), response_1_1; response_1_1 = yield response_1.next(), _a = response_1_1.done, !_a; _d = true) {
-                        _c = response_1_1.value;
-                        _d = false;
-                        const chunk = _c;
-                        if (chunk.message.thinking && !startedThinking) {
-                            startedThinking = true;
-                            process.stdout.write('Thinking:\n========\n\n');
-                        }
-                        else if (chunk.message.content && startedThinking && !finishedThinking) {
-                            finishedThinking = true;
-                            process.stdout.write('\n\nResponse:\n========\n\n');
-                            this.emit({ type: 'ollama-thinking-answer', data: { chunk: chunk.message.content } });
-                            answer += chunk.message.content;
-                        }
-                        if (chunk.message.thinking) {
-                            process.stdout.write(chunk.message.thinking);
-                        }
-                        else if (chunk.message.content) {
-                            process.stdout.write(chunk.message.content);
-                            this.emit({ type: 'ollama-thinking-content', data: { chunk: chunk.message.content } });
-                        }
-                    }
-                }
-                catch (e_2_1) { e_2 = { error: e_2_1 }; }
-                finally {
+                    this.emit({ type: 'ollama-thinking-start', data: { prompt: request.prompt } });
+                    const response = yield this.ollama.chat(request);
+                    let startedThinking = false;
+                    let finishedThinking = false;
+                    let answer = '';
                     try {
-                        if (!_d && !_a && (_b = response_1.return)) yield _b.call(response_1);
+                        for (var _d = true, response_1 = __asyncValues(response), response_1_1; response_1_1 = yield response_1.next(), _a = response_1_1.done, !_a; _d = true) {
+                            _c = response_1_1.value;
+                            _d = false;
+                            const chunk = _c;
+                            if (chunk.message.thinking && !startedThinking) {
+                                startedThinking = true;
+                                process.stdout.write('Thinking:\n========\n\n');
+                            }
+                            else if (chunk.message.content && startedThinking && !finishedThinking) {
+                                finishedThinking = true;
+                                process.stdout.write('\n\nResponse:\n========\n\n');
+                                this.emit({ type: 'ollama-thinking-answer', data: { chunk: chunk.message.content } });
+                                answer += chunk.message.content;
+                            }
+                            if (chunk.message.thinking) {
+                                process.stdout.write(chunk.message.thinking);
+                            }
+                            else if (chunk.message.content) {
+                                process.stdout.write(chunk.message.content);
+                                this.emit({ type: 'ollama-thinking-content', data: { chunk: chunk.message.content } });
+                            }
+                        }
                     }
-                    finally { if (e_2) throw e_2.error; }
+                    catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                    finally {
+                        try {
+                            if (!_d && !_a && (_b = response_1.return)) yield _b.call(response_1);
+                        }
+                        finally { if (e_2) throw e_2.error; }
+                    }
+                    return answer;
                 }
-                return answer;
+                catch (e) {
+                    this.emit({ type: 'ollama-thinking-error', error: e });
+                    return '';
+                }
             }
             else {
                 return Promise.reject('no service');

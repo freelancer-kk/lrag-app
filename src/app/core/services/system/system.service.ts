@@ -2,6 +2,15 @@ import { Injectable, inject, signal } from '@angular/core';
 import { BridgeService } from '../bridge/bridge.service';
 import { TranslateService } from '@ngx-translate/core';
 
+export enum EWho {
+  User = 0,
+  Assistant
+}
+export interface IChat {
+  who: EWho,
+  content: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,6 +37,7 @@ export class SystemService {
   docsEmpty: boolean = true;
   gpuAcceleration: boolean = true;
   osType: any;
+  chatHistory: IChat[] = [];
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false},

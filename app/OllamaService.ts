@@ -166,14 +166,19 @@ export default class OllamaService {
   generate = async (request: any): Promise<string> => {
     if (this.ollama) {
       this.emit( { type: 'ollama-generate-start', data: { prompt: request.prompt } })
-      const result: any = await this.ollama.generate(request);
-      let response = '';
-       for await (const part of result) {
-        console.log(part.response);
-        response += part.response;
+      try {
+        const result: any = await this.ollama.generate(request);
+        let response = '';
+        for await (const part of result) {
+          console.log(part.response);
+          response += part.response;
+        }
+        this.emit( { type: 'ollama-generate-complete', data: { prompt: request.prompt, response } })
+        return response;
+      } catch (e) {
+        this.emit( { type: 'ollama-generate-error', error: e })
+        return '';
       }
-      this.emit( { type: 'ollama-generate-complete', data: { prompt: request.prompt, response } })
-      return response;
 
     }
     return Promise.reject('no service');
@@ -181,30 +186,35 @@ export default class OllamaService {
 
   chat = async (request: any): Promise<string> => {
     if (this.ollama) {
-      this.emit( { type: 'ollama-thinking-start', data: { prompt: request.prompt } })
-      const response: AbortableAsyncIterator<ChatResponse> = await this.ollama.chat(request);
-      let startedThinking = false;
-      let finishedThinking = false;
+      try {
+        this.emit( { type: 'ollama-thinking-start', data: { prompt: request.prompt } })
+        const response: AbortableAsyncIterator<ChatResponse> = await this.ollama.chat(request);
+        let startedThinking = false;
+        let finishedThinking = false;
 
-      let answer = '';
-      for await (const chunk of response) {
-        if (chunk.message.thinking && !startedThinking) {
-          startedThinking = true
-          process.stdout.write('Thinking:\n========\n\n')          
-        } else if (chunk.message.content && startedThinking && !finishedThinking) {
-          finishedThinking = true
-          process.stdout.write('\n\nResponse:\n========\n\n')
-          this.emit( { type: 'ollama-thinking-answer', data: { chunk: chunk.message.content } })          
-          answer += chunk.message.content;
-        }
-        if (chunk.message.thinking) {
-          process.stdout.write(chunk.message.thinking)
-        } else if (chunk.message.content) {
-          process.stdout.write(chunk.message.content)
-          this.emit( { type: 'ollama-thinking-content', data: { chunk: chunk.message.content } })
-        }
-      }      
-      return answer;
+        let answer = '';
+        for await (const chunk of response) {
+          if (chunk.message.thinking && !startedThinking) {
+            startedThinking = true
+            process.stdout.write('Thinking:\n========\n\n')          
+          } else if (chunk.message.content && startedThinking && !finishedThinking) {
+            finishedThinking = true
+            process.stdout.write('\n\nResponse:\n========\n\n')
+            this.emit( { type: 'ollama-thinking-answer', data: { chunk: chunk.message.content } })          
+            answer += chunk.message.content;
+          }
+          if (chunk.message.thinking) {
+            process.stdout.write(chunk.message.thinking)
+          } else if (chunk.message.content) {
+            process.stdout.write(chunk.message.content)
+            this.emit( { type: 'ollama-thinking-content', data: { chunk: chunk.message.content } })
+          }
+        }      
+        return answer;
+      } catch (e) {
+        this.emit( { type: 'ollama-thinking-error', error: e })
+        return '';
+      }
     } else {
       return Promise.reject('no service');
     }

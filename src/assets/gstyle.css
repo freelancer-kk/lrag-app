@@ -9,6 +9,7 @@
   flex-direction: row;  
   padding: 5px;
   border-radius: 15px;
+  margin: 5px;
   background-color: var(--mat-sys-outline);  
 }
 
@@ -17,6 +18,7 @@
   flex-direction: row;  
   padding: 5px;
   border-radius: 15px;
+  margin: 5px;
   background-color: green;  
 }
 
@@ -25,6 +27,7 @@
   flex-direction: row;  
   padding: 5px;
   border-radius: 15px;
+  margin: 5px;
   background-color: darkkhaki;  
 }
 
@@ -33,6 +36,7 @@
   flex-direction: row;  
   padding: 5px;
   border-radius: 15px;
+  margin: 5px;
   background-color: red;  
 }
 

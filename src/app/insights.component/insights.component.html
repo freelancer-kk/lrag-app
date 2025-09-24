@@ -7,9 +7,17 @@
   @if (this.systemService.insightStatus() === 'thinking') {    
     <mat-spinner diameter="30"></mat-spinner>    
   }
-  <div [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate" [class]="systemService.getClassFromStatus(systemService.modelStatus())">
-    {{ systemService.modelStatus() }}
+  <div [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate" [class]="systemService.getClassFromStatus(systemService.insightStatus())">
+    @if (this.systemService.insightStatus() !== 'thinking') {
+      <mat-icon>{{ systemService.getIconFromStatus(systemService.insightStatus()) }}</mat-icon>
+    }    
+    {{ systemService.insightStatus() }}
   </div>
+  @if (systemService.chatHistory.length>0) {                  
+    <button [disabled]="this.systemService.insightStatus() === 'thinking'" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="clearHistory()">
+      <mat-icon>playlist_remove</mat-icon>
+    </button>          
+  }  
 </mat-toolbar>
 
   @if (systemService.docsEmpty) {
@@ -19,8 +27,41 @@
       </h1>    
     </mat-toolbar>
   } @else {
-    @if (systemService.overallStatus()) {
-      
+    @if (systemService.overallStatus() === 'running: healthy') {      
+      <tr mat-row class="full-width">
+        <td mat-col class="double-width">
+        <mat-form-field class="full-width">
+          <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
+          <input [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="question">
+          @if (question && question.length>0) {
+            <button matSuffix matIconButton aria-label="Clear" (click)="question=''">
+              <mat-icon>close</mat-icon>
+            </button>            
+          }
+        </mat-form-field>
+        </td>
+        <td mat-col>
+        @if (question && question.length>0) {                  
+          <button matIconButton (click)="askQuestion()">
+            <mat-icon>arrow_circle_right</mat-icon>
+          </button>          
+        }
+        </td>
+      </tr>      
+      <table mat-table class="full-width-height">
+      @for (entry of systemService.chatHistory; track $index) {
+        <tr mat-row>
+          @if (entry.who === 0) {
+              <mat-icon matListItemIcon class="user">face</mat-icon>
+              <p>{{ entry.content }}</p>
+          }          
+          @if (entry.who === 1) {
+              <p>{{ entry.content }}</p>
+              <mat-icon matListItemIcon class="assistant">assistant</mat-icon>            
+          }          
+        </tr>            
+      }         
+    </table>
     } @else {
       <div class="noaccess">
         <ngx-skeleton-loader count="30" [animation]="systemService.dark ? 'progress-dark': 'progress'" appearance="line" [theme]="{height: '20px', background: 'kahki'}" />
