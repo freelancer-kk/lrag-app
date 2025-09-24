@@ -51,5 +51,4 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-src/assets/ollama-win.zip
-src/assets/ollama-darwin.zip
+src/assets/*.zip
