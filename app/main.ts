@@ -8,6 +8,7 @@ import LRagFiles from './LragFiles';
 import OllamaService from './OllamaService';
 import LangchainService from './LangchainService';
 import ContextChat from './ContextChat';
+import { Systeminformation } from 'systeminformation';
 
 const userHomePath: string = app.getPath('home');
 const assetsPakFolderPath: string = app.getPath('assets');
@@ -23,22 +24,28 @@ let lragFiles: LRagFiles;
 let ollamaService: OllamaService;
 let langchainService: LangchainService;
 let contextChat: ContextChat;
+let systemInfo: SystemInfo;
 
 let configPath: string = path.join(__dirname, '..');
 
 const args = process.argv.slice(1), serve = args.some(val => val === '--serve');
 
 const setDocPathsCB = (docPath: string | undefined, dataPath: string | undefined) => {
-  lragFiles = new LRagFiles(docPath, dataPath);
-  lragFiles.register();
-  langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'));
-  langchainService.register(win?.webContents);
-  ollamaService = new OllamaService(assetsFolderPath, appDataPath);
-  ollamaService.register(win?.webContents);
-  ollamaService.extract();        
-  contextChat = new ContextChat(langchainService, ollamaService);
-  contextChat.register(win?.webContents);
-  // langchainService.inspect();
+  systemInfo = new SystemInfo();
+  systemInfo.register();
+  systemInfo.getGraphics().then((graphics: Systeminformation.GraphicsData) => {
+    console.log('graphics:', graphics.controllers.map(v => v.vendor));
+    lragFiles = new LRagFiles(docPath, dataPath);
+    lragFiles.register();
+    langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'));
+    langchainService.register(win?.webContents);
+    ollamaService = new OllamaService(assetsFolderPath, appDataPath, graphics.controllers.map(v => v.vendor));
+    ollamaService.register(win?.webContents);
+    ollamaService.extract();
+    contextChat = new ContextChat(langchainService, ollamaService);
+    contextChat.register(win?.webContents);
+    // langchainService.inspect();
+  })  
 }
 
 let runType = 0;
@@ -132,14 +139,12 @@ try {
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {    
     setTimeout(() => {
-      createWindow();
-      const systemInfo: SystemInfo = new SystemInfo();  
+      createWindow();      
       if (runType === 2) {
         assetsFolderPath = path.join(assetsPakFolderPath, 'resources', 'app.asar', 'assets')
       }    
       
-      dockerEnv.register();      
-      systemInfo.register();
+      dockerEnv.register();        
     }, 400)    
   });  
 

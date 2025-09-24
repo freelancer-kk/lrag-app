@@ -42,15 +42,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isLinux = exports.isWindows = exports.isMac = void 0;
 const electron_1 = require("electron");
 const systeminformation_1 = require("systeminformation");
 const nodeDiskInfo = __importStar(require("node-disk-info"));
 const os_1 = require("os");
-const isMac = (0, os_1.platform)() === "darwin";
-const isWindows = (0, os_1.platform)() === "win32";
-const isLinux = (0, os_1.platform)() === "linux";
+exports.isMac = (0, os_1.platform)() === "darwin";
+exports.isWindows = (0, os_1.platform)() === "win32";
+exports.isLinux = (0, os_1.platform)() === "linux";
 class SystemInfo {
     constructor() {
+        this.getGraphics = () => __awaiter(this, void 0, void 0, function* () {
+            this.graphics = yield (0, systeminformation_1.graphics)();
+            return this.graphics;
+        });
         this.register = () => {
             electron_1.ipcMain.on('system', (event, arg) => __awaiter(this, void 0, void 0, function* () {
                 const { callbackId, command, params } = arg;
@@ -78,7 +83,7 @@ class SystemInfo {
                         }
                         break;
                     default:
-                        response = yield (0, systeminformation_1.graphics)(); // 'basic' or 'complete'
+                        response = this.graphics;
                 }
                 event.reply('reply', {
                     callbackId,
@@ -88,9 +93,9 @@ class SystemInfo {
         };
         this.getOsTypes = () => {
             return {
-                isMac,
-                isWindows,
-                isLinux
+                isMac: exports.isMac,
+                isWindows: exports.isWindows,
+                isLinux: exports.isLinux
             };
         };
     }

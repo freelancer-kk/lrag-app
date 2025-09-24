@@ -1,14 +1,20 @@
 import { ipcMain } from 'electron';
-import { cpu, graphics, mem } from 'systeminformation';
+import { cpu, graphics, mem, Systeminformation } from 'systeminformation';
 import * as nodeDiskInfo from 'node-disk-info';
 import { platform } from 'os';
 
-const isMac: boolean = platform() === "darwin";
-const isWindows: boolean = platform() === "win32";
-const isLinux: boolean = platform() === "linux";
+export const isMac: boolean = platform() === "darwin";
+export const isWindows: boolean = platform() === "win32";
+export const isLinux: boolean = platform() === "linux";
 
 export default class SystemInfo {
+  private graphics: Systeminformation.GraphicsData | undefined;
   constructor() {}
+
+  getGraphics = async (): Promise<Systeminformation.GraphicsData> => {
+    this.graphics = await graphics();
+    return this.graphics;
+  }
 
   register = () => {
     ipcMain.on('system', async (event: any, arg: any) => {
@@ -33,7 +39,7 @@ export default class SystemInfo {
         }
         break;
         default:
-          response = await graphics(); // 'basic' or 'complete'
+          response = this.graphics;
       }
       event.reply('reply', {
         callbackId,

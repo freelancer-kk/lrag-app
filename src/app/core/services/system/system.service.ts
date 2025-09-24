@@ -127,19 +127,14 @@ export class SystemService {
   }  
 
   getAvailableLLMs = async () => {
-    const currentModels: any[] = this.availableModels;
-    try {
-      this.availableModels = (await this.commandOllama('list')).models.map((model: any) => {
-        return {
-          name: model.name,
-          size: Math.floor(model.size / 1024 / 1000),
-          usage: model.usage
-        }
-      });    
-    } catch (e) {
-      console.error(e);
-      this.availableModels = currentModels;
-    }
+    // const currentModels: any[] = this.availableModels;
+    this.availableModels = (await this.commandOllama('list')).models.map((model: any) => {
+      return {
+        name: model.name,
+        size: Math.floor(model.size / 1024 / 1000),
+        usage: model.usage
+      }
+    });     
   }
 
   getEnvValue = (key: string): Promise<string> => {

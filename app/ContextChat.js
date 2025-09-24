@@ -21,7 +21,7 @@ const prompts_1 = require("@langchain/core/prompts");
 const output_parsers_1 = require("@langchain/core/output_parsers");
 const ollama_1 = require("@langchain/ollama");
 const combineDocuments = (docs) => {
-    return docs.map((doc) => doc.pageContent).join('\n\n');
+    return docs.map((doc) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');
 };
 class ContextChat {
     constructor(langchainService, ollamaService) {
@@ -70,7 +70,10 @@ class ContextChat {
                 const contextQuestionChain = contextualizedQuestionPrompt
                     .pipe(this.ollamaLlm)
                     .pipe(new output_parsers_1.StringOutputParser())
-                    .pipe(this.vectorStore.asRetriever());
+                    .pipe(this.vectorStore.asRetriever({
+                    k: 3,
+                    searchType: "similarity",
+                }));
                 const documents = yield contextQuestionChain.invoke({
                     contextPrompt: options.contextPrompt,
                     chatHistory: options.chatHistory,

@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import unzipper from 'unzipper';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse, ChatResponse, ChatRequest } from "ollama";
+import { isMac, isWindows } from './SystemInfo';
 
 export default class OllamaService {
   archivePath: string = '';
@@ -12,13 +13,29 @@ export default class OllamaService {
   ollama: Ollama | undefined;
   webContents: Electron.WebContents | undefined;
   isReady: boolean = false;
-
-  constructor(assetsFolderPath: string, appDataPath: string ) {
+  startCommand: string = '';
+  isExtracting: boolean = false;
+  
+  constructor(assetsFolderPath: string, appDataPath: string, gpuBrands: string[]) {
     this.unzipPath = path.join(appDataPath, 'ollama');
-    if (process.platform === 'win32') {
-      this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
-    } else if (process.platform === 'darwin') {
+    if (isWindows) {
+      if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia') || f.toLowerCase().startsWith('amd'))) {
+        console.log('ollama choice: win');
+        this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
+        this.startCommand = 'ollama.exe serve';
+      } else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
+        console.log('ollama choice: win:ipx');
+        this.archivePath = path.join(assetsFolderPath, 'ollama-ipx-llm-win.zip');
+        this.startCommand = 'ollama-serve.bat';
+      } else {
+        console.log('ollama choice: win');
+        this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
+        this.startCommand = 'ollama.exe serve';
+      }
+    } else if (isMac) {
+      console.log('ollama choice: darwin');
       this.archivePath = path.join(assetsFolderPath, 'ollama-darwin.zip');
+      this.startCommand = 'ollama-darwin serve';
     }    
   }
 
@@ -46,7 +63,11 @@ export default class OllamaService {
         }
         break;
         case "start": {
-          response = this.start();
+          if (this.isExtracting) {
+            response = { status: 'error', error: 'extraction' };
+          } else {
+            response = this.start();
+          }
         }
         break;
         case "stop": {
@@ -108,6 +129,7 @@ export default class OllamaService {
 
   extract = () => {
     if (!fs.existsSync(this.unzipPath)) {
+      this.isExtracting = true;
       console.log("Extracting ollama files...", this.unzipPath);
       fs.mkdirSync(this.unzipPath, { recursive: true });
       fs.createReadStream(this.archivePath)
@@ -115,13 +137,14 @@ export default class OllamaService {
         .on("close", () => {
           console.log("Files unzipped successfully");
           this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
+          this.isExtracting = false;
         });      
     }    
   }
 
   start = (): any => {
     try {
-      this.ollamaProcess = spawn('ollama-serve.bat', {
+      this.ollamaProcess = spawn(this.startCommand, {
         shell: true,
         cwd: this.unzipPath,
         stdio: ['pipe', 'pipe', 'pipe']

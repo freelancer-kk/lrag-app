@@ -10,7 +10,7 @@ import { ChatRequest, GenerateRequest } from 'ollama'
 import { Ollama } from "@langchain/ollama";
 
 const combineDocuments = (docs: Document[]): string => {
-  return docs.map((doc: Document) => doc.pageContent).join('\n\n');
+  return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
 }
 export default class ContextChat {
   ollamaService: OllamaService;
@@ -71,7 +71,10 @@ export default class ContextChat {
       const contextQuestionChain = contextualizedQuestionPrompt
         .pipe(this.ollamaLlm)
         .pipe(new StringOutputParser())
-        .pipe(this.vectorStore.asRetriever());
+        .pipe(this.vectorStore.asRetriever({
+          k: 3,
+          searchType: "similarity",          
+        }));
 
       const documents = await contextQuestionChain.invoke({
         contextPrompt: options.contextPrompt,
