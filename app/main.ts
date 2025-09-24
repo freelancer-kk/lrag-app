@@ -37,7 +37,8 @@ const setDocPathsCB = (docPath: string | undefined, dataPath: string | undefined
   ollamaService.register(win?.webContents);
   ollamaService.extract();        
   contextChat = new ContextChat(langchainService, ollamaService);
-  contextChat.register();
+  contextChat.register(win?.webContents);
+  // langchainService.inspect();
 }
 
 let runType = 0;

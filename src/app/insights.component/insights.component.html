@@ -41,27 +41,35 @@
         </mat-form-field>
         </td>
         <td mat-col>
-        @if (question && question.length>0) {                  
+        @if (question && question.length>0 && this.systemService.insightStatus() !== 'thinking') {                  
           <button matIconButton (click)="askQuestion()">
             <mat-icon>arrow_circle_right</mat-icon>
           </button>          
         }
         </td>
-      </tr>      
-      <table mat-table class="full-width-height">
-      @for (entry of systemService.chatHistory; track $index) {
-        <tr mat-row>
-          @if (entry.who === 0) {
-              <mat-icon matListItemIcon class="user">face</mat-icon>
-              <p>{{ entry.content }}</p>
-          }          
-          @if (entry.who === 1) {
-              <p>{{ entry.content }}</p>
-              <mat-icon matListItemIcon class="assistant">assistant</mat-icon>            
-          }          
-        </tr>            
-      }         
-    </table>
+      </tr>
+      <div #chatDiv id="chatDiv" class="full-width-height">
+        <table mat-table>
+          @for (entry of systemService.chatHistory; track $index) {
+            <tr mat-row>
+              @if (entry.who === 0) {
+                  <mat-icon matListItemIcon class="user">face</mat-icon>
+                  <p>{{ entry.content }}</p>
+              }          
+              @if (entry.who === 1) {
+                  <p>{{ entry.content }}</p>
+                  <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
+              }              
+            </tr>            
+          }
+          @if (streaming) {
+            <tr mat-row>
+                <p>{{ streamedResponse }}</p>
+                <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
+            </tr>
+          }                   
+        </table>
+      </div>
     } @else {
       <div class="noaccess">
         <ngx-skeleton-loader count="30" [animation]="systemService.dark ? 'progress-dark': 'progress'" appearance="line" [theme]="{height: '20px', background: 'kahki'}" />

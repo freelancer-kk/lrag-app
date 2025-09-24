@@ -102,7 +102,7 @@ export class SystemService {
   commandInsight = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
       this.bridgeService.chat(70, command, options, async (data: any) => {
-        console.log('insight command response:', data);
+        // console.log('insight command response:', data);
         resolve(data);
       });
     });

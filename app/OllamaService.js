@@ -103,6 +103,11 @@ class OllamaService {
                             response = yield this.generate(params);
                         }
                         break;
+                    case "chat":
+                        {
+                            response = yield this.chat(params);
+                        }
+                        break;
                     case "pull":
                         {
                             response = yield this.pull(params);

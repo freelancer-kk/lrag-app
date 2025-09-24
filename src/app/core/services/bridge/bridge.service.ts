@@ -11,6 +11,7 @@ export class BridgeService {
   callbacks: any[] = [];
   matchCallbacks: any[] = [];
   cb: (ev: any, result: any) => void = () => {};
+  chatcb: (ev: any, result: any) => void = () => {};
   
   constructor(
     private electronService: ElectronService,    
@@ -50,11 +51,19 @@ export class BridgeService {
         // console.log('bridge:event', result.response);
         this.cb(_event, result.response);        
       }) 
+      this.electronService.ipcRenderer.on('chat', (_event: any, result: any) => {
+        // console.log('chat:event', result.response);
+        this.chatcb(_event, result.response);        
+      }) 
     }
   }
 
   eventCallback = (cb: (ev: any, result: any) => void) => {
     this.cb = cb;
+  }
+
+  chatCallback = (cb: (ev: any, result: any) => void) => {
+    this.chatcb = cb;
   }
 
   callNode = (
@@ -268,6 +277,7 @@ export class BridgeService {
       this.electronService.ipcRenderer.removeAllListeners('reply')
       this.electronService.ipcRenderer.removeAllListeners('message')
       this.electronService.ipcRenderer.removeAllListeners('event')
+      this.electronService.ipcRenderer.removeAllListeners('chat')
     }
   }
 }

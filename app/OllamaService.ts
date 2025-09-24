@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import unzipper from 'unzipper';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
-import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse, ChatResponse } from "ollama";
+import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse, ChatResponse, ChatRequest } from "ollama";
 
 export default class OllamaService {
   archivePath: string = '';
@@ -55,6 +55,10 @@ export default class OllamaService {
         break;        
         case "generate": {
           response = await this.generate(params as GenerateRequest);
+        }
+        break;
+        case "chat": {
+          response = await this.chat(params as ChatRequest);
         }
         break;
         case "pull": {
@@ -167,7 +171,7 @@ export default class OllamaService {
     if (this.ollama) {
       this.emit( { type: 'ollama-generate-start', data: { prompt: request.prompt } })
       try {
-        const result: any = await this.ollama.generate(request);
+        const result: AbortableAsyncIterator<GenerateResponse> = await this.ollama.generate(request);
         let response = '';
         for await (const part of result) {
           console.log(part.response);

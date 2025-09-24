@@ -76,6 +76,18 @@ export default class LangchainService {
     console.log('LangchainService initialized');
   }
 
+  inspect = async () => {
+    const docName: string = '2019_vish_python_finance_dev_cv.pdf';
+    console.log('inspecting for doc name:', docName);
+    const result: ResultSet = await this.libsqlClient.execute({
+      sql: "SELECT id, metadata FROM DOCUMENTS WHERE json_extract(metadata, '$.source') LIKE ?",
+      args: ['%' +  docName]
+    });
+    for await (const row of result.rows) {
+      console.log(row);
+    }
+  }
+
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
     ipcMain.on('ingest', async (event: any, arg: any) => {
@@ -213,10 +225,10 @@ export default class LangchainService {
     }
   }
 
-  getDocIdsForDoc = async (docPath: string): Promise<string[]> => {
+  getDocIdsForDoc = async (docName: string): Promise<string[]> => {
     const result: ResultSet = await this.libsqlClient.execute({
-      sql: "SELECT id FROM DOCUMENTS WHERE json_extract(metadata, '$.source') = ?",
-      args: [docPath]
+      sql: "SELECT id FROM DOCUMENTS WHERE json_extract(metadata, '$.source') LIKE ?",
+      args: ['%' + docName]
     });
     const ids: string[] = [];
     for await (const row of result.rows) {
@@ -306,10 +318,11 @@ export default class LangchainService {
     let newChangedDocs: boolean = false;
     for await (const action of actions) {
       if (action.action === 2) {
-        console.log('deleting doc:', action.path);
-        const ids: string[] = await this.getDocIdsForDoc(action.path);
-        if (ids.length > 0) {
-          console.log('deleting doc ids:', ids);
+        const docName: string = path.basename(action.path);
+        console.log('deleting doc:', docName);
+        const ids: string[] = await this.getDocIdsForDoc(docName);
+        console.log('deleting doc ids:', docName, ids);
+        if (ids.length > 0) {          
           await this.delDocuments(ids);
         }
       } else if (action.action === 0 || action.action === 1) {

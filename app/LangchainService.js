@@ -112,6 +112,30 @@ function walk(dir) {
 }
 class LangchainService {
     constructor(doc_path, db_dir, baseUrl = "http://localhost:11434", model = "embeddinggemma:300m") {
+        this.inspect = () => __awaiter(this, void 0, void 0, function* () {
+            var _a, e_2, _b, _c;
+            const docName = '2019_vish_python_finance_dev_cv.pdf';
+            console.log('inspecting for doc name:', docName);
+            const result = yield this.libsqlClient.execute({
+                sql: "SELECT id, metadata FROM DOCUMENTS WHERE json_extract(metadata, '$.source') LIKE ?",
+                args: ['%' + docName]
+            });
+            try {
+                for (var _d = true, _e = __asyncValues(result.rows), _f; _f = yield _e.next(), _a = _f.done, !_a; _d = true) {
+                    _c = _f.value;
+                    _d = false;
+                    const row = _c;
+                    console.log(row);
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (!_d && !_a && (_b = _e.return)) yield _b.call(_e);
+                }
+                finally { if (e_2) throw e_2.error; }
+            }
+        });
         this.register = (webContents) => {
             this.webContents = webContents;
             electron_1.ipcMain.on('ingest', (event, arg) => __awaiter(this, void 0, void 0, function* () {
@@ -198,7 +222,7 @@ class LangchainService {
         };
         this.split = (docs) => __awaiter(this, void 0, void 0, function* () {
             var _a, docs_1, docs_1_1;
-            var _b, e_2, _c, _d;
+            var _b, e_3, _c, _d;
             console.log('loaded:docs:split', docs.length);
             const splitter = new text_splitter_1.RecursiveCharacterTextSplitter({
                 chunkSize: 1000,
@@ -216,12 +240,12 @@ class LangchainService {
                     chunks = chunks.concat(docOutput);
                 }
             }
-            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
                     if (!_a && !_b && (_c = docs_1.return)) yield _c.call(docs_1);
                 }
-                finally { if (e_2) throw e_2.error; }
+                finally { if (e_3) throw e_3.error; }
             }
             console.log('chunks:', chunks.length);
             return chunks;
@@ -241,12 +265,12 @@ class LangchainService {
                 console.log(`${score.toFixed(3)} ${doc.pageContent} [${JSON.stringify(doc.metadata)}]`);
             }
         });
-        this.getDocIdsForDoc = (docPath) => __awaiter(this, void 0, void 0, function* () {
-            var _a, e_3, _b, _c;
+        this.getDocIdsForDoc = (docName) => __awaiter(this, void 0, void 0, function* () {
+            var _a, e_4, _b, _c;
             var _d;
             const result = yield this.libsqlClient.execute({
-                sql: "SELECT id FROM DOCUMENTS WHERE json_extract(metadata, '$.source') = ?",
-                args: [docPath]
+                sql: "SELECT id FROM DOCUMENTS WHERE json_extract(metadata, '$.source') LIKE ?",
+                args: ['%' + docName]
             });
             const ids = [];
             try {
@@ -260,17 +284,17 @@ class LangchainService {
                     }
                 }
             }
-            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            catch (e_4_1) { e_4 = { error: e_4_1 }; }
             finally {
                 try {
                     if (!_e && !_a && (_b = _f.return)) yield _b.call(_f);
                 }
-                finally { if (e_3) throw e_3.error; }
+                finally { if (e_4) throw e_4.error; }
             }
             return ids;
         });
         this.filesWalk = () => __awaiter(this, void 0, void 0, function* () {
-            var _a, e_4, _b, _c;
+            var _a, e_5, _b, _c;
             const files = [];
             try {
                 for (var _d = true, _e = __asyncValues(walk(this.doc_path)), _f; _f = yield _e.next(), _a = _f.done, !_a; _d = true) {
@@ -283,17 +307,17 @@ class LangchainService {
                     });
                 }
             }
-            catch (e_4_1) { e_4 = { error: e_4_1 }; }
+            catch (e_5_1) { e_5 = { error: e_5_1 }; }
             finally {
                 try {
                     if (!_d && !_a && (_b = _e.return)) yield _b.call(_e);
                 }
-                finally { if (e_4) throw e_4.error; }
+                finally { if (e_5) throw e_5.error; }
             }
             return files;
         });
         this.actionList = () => __awaiter(this, void 0, void 0, function* () {
-            var _a, e_5, _b, _c, _d, e_6, _e, _f;
+            var _a, e_6, _b, _c, _d, e_7, _e, _f;
             var _g, _h;
             const files = yield this.filesWalk();
             const action_list = [];
@@ -337,12 +361,12 @@ class LangchainService {
                     }
                 }
             }
-            catch (e_5_1) { e_5 = { error: e_5_1 }; }
+            catch (e_6_1) { e_6 = { error: e_6_1 }; }
             finally {
                 try {
                     if (!_j && !_a && (_b = _k.return)) yield _b.call(_k);
                 }
-                finally { if (e_5) throw e_5.error; }
+                finally { if (e_6) throw e_6.error; }
             }
             try {
                 for (var _m = true, files_1 = __asyncValues(files), files_1_1; files_1_1 = yield files_1.next(), _d = files_1_1.done, !_d; _m = true) {
@@ -362,17 +386,17 @@ class LangchainService {
                     }
                 }
             }
-            catch (e_6_1) { e_6 = { error: e_6_1 }; }
+            catch (e_7_1) { e_7 = { error: e_7_1 }; }
             finally {
                 try {
                     if (!_m && !_d && (_e = files_1.return)) yield _e.call(files_1);
                 }
-                finally { if (e_6) throw e_6.error; }
+                finally { if (e_7) throw e_7.error; }
             }
             return action_list;
         });
         this.run = () => __awaiter(this, void 0, void 0, function* () {
-            var _a, e_7, _b, _c;
+            var _a, e_8, _b, _c;
             const actions = yield this.actionList();
             (0, fs_1.rmSync)(this.input_path, { recursive: true, force: true });
             (0, fs_1.mkdirSync)(this.input_path, { recursive: true });
@@ -384,10 +408,11 @@ class LangchainService {
                     _d = false;
                     const action = _c;
                     if (action.action === 2) {
-                        console.log('deleting doc:', action.path);
-                        const ids = yield this.getDocIdsForDoc(action.path);
+                        const docName = path.basename(action.path);
+                        console.log('deleting doc:', docName);
+                        const ids = yield this.getDocIdsForDoc(docName);
+                        console.log('deleting doc ids:', docName, ids);
                         if (ids.length > 0) {
-                            console.log('deleting doc ids:', ids);
                             yield this.delDocuments(ids);
                         }
                     }
@@ -398,12 +423,12 @@ class LangchainService {
                     }
                 }
             }
-            catch (e_7_1) { e_7 = { error: e_7_1 }; }
+            catch (e_8_1) { e_8 = { error: e_8_1 }; }
             finally {
                 try {
                     if (!_d && !_a && (_b = actions_1.return)) yield _b.call(actions_1);
                 }
-                finally { if (e_7) throw e_7.error; }
+                finally { if (e_8) throw e_8.error; }
             }
             if (newChangedDocs) {
                 this.emit({ type: 'langchain-run-start', data: {} });

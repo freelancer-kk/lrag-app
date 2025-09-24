@@ -1,4 +1,4 @@
-import { Component, OnInit, effect, inject } from '@angular/core';
+import { Component, NgZone, OnInit, effect, inject } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { EWho, SystemService } from '../core/services/system/system.service';
@@ -17,6 +17,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FormsModule } from '@angular/forms';
+import { BridgeService } from '../core/services';
 
 @Component({
   selector: 'app-insights.component',
@@ -39,18 +40,31 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'
 })
-export class InsightsComponent implements OnInit {  
+export class InsightsComponent implements OnInit { 
   readonly dialog = inject(MatDialog);
   url: string = 'http://localhost:8501';
   urlSafe: SafeResourceUrl;
   modelUsage: string = '';
   question: string = '';
+  streaming: boolean = false;
+  streamedResponse: string = '';
   
   constructor(
+    private bridgeService: BridgeService,
     public systemService: SystemService,
     private sanitizer: DomSanitizer,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    private ngZone: NgZone
   ) {
+
+    this.bridgeService.chatCallback((ev: any, response: any) => {
+      // console.log('chat-event', response);
+      this.ngZone.run(() => {
+        this.streamedResponse += response.chunk;
+        this.scrollToBottom();
+      });
+    });
+
     this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
     effect(() => {      
       if (this.systemService.overallStatus() !== 'running: healthy') {
@@ -79,23 +93,12 @@ export class InsightsComponent implements OnInit {
     if (this.question) {
       const question: string = this.question;
       
-      this.systemService.chatHistory.unshift({
-        who: EWho.User,
-        content: question
-      });
-      const contextPrompt = `Given a chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.
-
-      Chat History:
-      ${this.systemService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n')}
-
-      Latest Question:
-      ${question}
-
-      Reformulated Question:`;
-
       const options = {
+        question,
         model: this.systemService.selectedModel,
-        prompt: contextPrompt,
+        prompt: await this.systemService.get('PAGES.INSIGHT.PROMPT'),
+        contextPrompt: await this.systemService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT'),
+        chatHistory: this.systemService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n'),
         max_tokens: 256,
         temperature: 0.7,
         top_p: 0.9,
@@ -106,14 +109,25 @@ export class InsightsComponent implements OnInit {
         think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
       };
 
+      this.systemService.chatHistory.push({
+        who: EWho.User,
+        content: question
+      });
+      this.scrollToBottom();
       this.systemService.insightStatus.update(() => 'thinking');
+      this.streaming = true;
+      this.streamedResponse = '';
       const answer: string = await this.systemService.commandInsight('question', options);
+      this.streamedResponse = '';
+      this.streaming = false;
       this.systemService.insightStatus.update(() => 'running');
-      console.log('Answer:', answer);
-      this.systemService.chatHistory.unshift({
+      // console.log('Answer:', answer);
+      this.systemService.chatHistory.push({
         who: EWho.Assistant,
         content: answer
       });
+      this.scrollToBottom();
+
       // Get the model usage  
       const usageTimer = setInterval(async () => {
         const usage = await this.systemService.getRunningModelsUsage();
@@ -122,6 +136,13 @@ export class InsightsComponent implements OnInit {
           this.modelUsage = usage + ' ';
         }
       }, 2000);    
+    }
+  }
+
+  scrollToBottom = () => {
+    const chatDiv = document.getElementById('chatDiv');
+    if (chatDiv) {
+      chatDiv.scrollTop = chatDiv.scrollHeight;
     }
   }
 
