@@ -54,8 +54,7 @@ const ollama_1 = require("@langchain/ollama");
 const text_splitter_1 = require("langchain/text_splitter");
 const fs_1 = require("fs");
 const path = __importStar(require("path"));
-const usearch_1 = require("@langchain/community/vectorstores/usearch");
-const usearch = __importStar(require("usearch"));
+const faiss_1 = require("@langchain/community/vectorstores/faiss");
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
 // OR get ocrmypdf working on windows with auto install and mac os auto install
 // https://ocrmypdf.readthedocs.io/en/latest/installation.html#native-windows
@@ -87,10 +86,10 @@ class LangchainService {
             });
         };
         this.getVectorStore = (docs) => {
-            return usearch_1.USearch.fromDocuments(docs, this.embeddings);
+            return faiss_1.FaissStore.fromDocuments(docs, this.embeddings);
         };
-        this.getUSearch = () => {
-            return usearch_1.USearch.load(this.db_path, this.embeddings);
+        this.getSearchableVectorStore = () => {
+            return faiss_1.FaissStore.load(this.db_path, this.embeddings);
         };
         this.load = () => {
             const loader = new directory_1.DirectoryLoader(this.doc_path, {
@@ -146,9 +145,9 @@ class LangchainService {
                     this.emit({ type: 'langchain-run-split', data: { chunks: chunks.length } });
                     if (chunks.length > 0) {
                         this.emit({ type: 'langchain-run-indexing', data: { chunks: chunks.length } });
-                        this.uSearch = yield this.getVectorStore(chunks);
+                        this.vectorStore = yield this.getVectorStore(chunks);
                         this.emit({ type: 'langchain-run-saving', data: { chunks: chunks.length } });
-                        this.uSearch.save(this.db_path);
+                        yield this.vectorStore.save(this.db_path);
                         return { status: 'completed', documents: chunks.length };
                     }
                     else {
@@ -180,16 +179,6 @@ class LangchainService {
             baseUrl
         });
         console.log('LangchainService initialized');
-        // @ts-ignore
-        const index = new usearch.Index({
-            dimensions: BigInt(16),
-            metric: 'l2sq',
-            quantization: 'f32',
-            capacity: BigInt(10),
-            connectivity: BigInt(10),
-            expansion_add: BigInt(5),
-            expansion_search: BigInt(6)
-        });
     }
 }
 exports.default = LangchainService;

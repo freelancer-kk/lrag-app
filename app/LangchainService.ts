@@ -16,9 +16,7 @@ import { Document } from "@langchain/core/documents";
 import { existsSync, unlinkSync, mkdirSync, promises, statSync, Stats, rmSync, copyFileSync } from 'fs';
 import * as path from 'path';
 
-import { USearch } from "@langchain/community/vectorstores/usearch";
-import { SaveableVectorStore, VectorStore } from "@langchain/core/vectorstores";
-import * as usearch from 'usearch';
+import { FaissStore } from "@langchain/community/vectorstores/faiss";
 
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
 // OR get ocrmypdf working on windows with auto install and mac os auto install
@@ -29,9 +27,8 @@ export default class LangchainService {
   db_path: string;
   input_path: string;
   embeddings: OllamaEmbeddings;
-  vectorStore: VectorStore | undefined;
+  vectorStore: FaissStore | undefined;
   webContents: Electron.WebContents | undefined;
-  uSearch: USearch | undefined;
 
   constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
@@ -53,17 +50,6 @@ export default class LangchainService {
     });
 
     console.log('LangchainService initialized');    
-
-    // @ts-ignore
-    const index: usearch.Index = new usearch.Index({
-      dimensions: BigInt(16),
-      metric: 'l2sq',
-      quantization: 'f32',
-      capacity: BigInt(10),
-      connectivity: BigInt(10),
-      expansion_add: BigInt(5),
-      expansion_search: BigInt(6)
-    });
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
@@ -91,21 +77,18 @@ export default class LangchainService {
     })                
   } 
 
-  getVectorStore = (docs: Document[]): Promise<USearch> => {
-    return USearch.fromDocuments(
+  getVectorStore = (docs: Document[]): Promise<FaissStore> => {
+    return FaissStore.fromDocuments(
       docs,
       this.embeddings
     );
   }
 
-  getSearchableVectorStore = (): USearch | undefined => {
-    return this.uSearch;
-    /*
-    return USearch.load(
+  getSearchableVectorStore = (): Promise<FaissStore> => {
+    return FaissStore.load(
       this.db_path,
       this.embeddings
-    )
-    */
+    )    
   }
 
   load = (): Promise<Document[]> => {
@@ -172,9 +155,9 @@ export default class LangchainService {
         this.emit( { type: 'langchain-run-split', data: { chunks: chunks.length } });
         if (chunks.length > 0) {        
           this.emit( { type: 'langchain-run-indexing', data: { chunks: chunks.length } });          
-          this.uSearch = await this.getVectorStore(chunks);
+          this.vectorStore = await this.getVectorStore(chunks);
           this.emit( { type: 'langchain-run-saving', data: { chunks: chunks.length } });
-          this.uSearch.save(this.db_path);
+          await this.vectorStore.save(this.db_path);
           return { status: 'completed', documents: chunks.length };
         } else {
           this.emit( { type: 'langchain-run-error', data: { message: 'no chunks created' } });

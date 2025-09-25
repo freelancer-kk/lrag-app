@@ -61,7 +61,11 @@ export default class ContextChat {
         model: options.model
       });
 
-      const vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever();
+      const vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore()).asRetriever({
+        k: 3,
+        searchType: "similarity",          
+      });
+
       if (vectorStoreRetriever) {
       
         const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
@@ -72,10 +76,7 @@ export default class ContextChat {
         const contextQuestionChain = contextualizedQuestionPrompt
           .pipe(this.ollamaLlm)
           .pipe(new StringOutputParser())
-          .pipe(vectorStoreRetriever({
-            k: 3,
-            searchType: "similarity",          
-          }));
+          .pipe(vectorStoreRetriever);
 
         const documents = await contextQuestionChain.invoke({
           contextPrompt: options.contextPrompt,
