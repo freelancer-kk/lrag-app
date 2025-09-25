@@ -15,8 +15,11 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { Document } from "@langchain/core/documents";
 import { existsSync, unlinkSync, mkdirSync, promises, statSync, Stats, rmSync, copyFileSync } from 'fs';
 import * as path from 'path';
-import { Chroma } from "@langchain/community/vectorstores/chroma";
-import { ChromaClient } from 'chromadb';
+import {
+  ElasticVectorSearch,
+  type ElasticClientArgs,
+} from "@langchain/community/vectorstores/elasticsearch";
+import { Client, type ClientOptions } from "@elastic/elasticsearch";
 
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
 // OR get ocrmypdf working on windows with auto install and mac os auto install
@@ -27,7 +30,7 @@ export default class LangchainService {
   db_path: string;
   input_path: string;
   embeddings: OllamaEmbeddings;
-  vectorStore: Chroma;
+  vectorStore: ElasticVectorSearch;
   webContents: Electron.WebContents | undefined;
 
   constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
@@ -49,10 +52,16 @@ export default class LangchainService {
         baseUrl
     });
 
-    this.vectorStore = new Chroma(
+    const clientArgs: ElasticClientArgs = {
+      client: new Client({
+        node: "http://127.0.0.1:9200"
+      }),
+      indexName: process.env.ELASTIC_INDEX ?? "vectorstore",
+    };
+
+    this.vectorStore = new ElasticVectorSearch(
       this.embeddings, {
-        collectionName: "general",
-        url: "http://127.0.0.1:8000"
+        
       }
     )
 
