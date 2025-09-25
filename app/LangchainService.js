@@ -41,6 +41,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const directory_1 = require("langchain/document_loaders/fs/directory");
@@ -54,7 +61,8 @@ const ollama_1 = require("@langchain/ollama");
 const text_splitter_1 = require("langchain/text_splitter");
 const fs_1 = require("fs");
 const path = __importStar(require("path"));
-const faiss_1 = require("@langchain/community/vectorstores/faiss");
+const chroma_1 = require("@langchain/community/vectorstores/chroma");
+const chromadb_1 = require("chromadb");
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
 // OR get ocrmypdf working on windows with auto install and mac os auto install
 // https://ocrmypdf.readthedocs.io/en/latest/installation.html#native-windows
@@ -85,11 +93,11 @@ class LangchainService {
                 response: args
             });
         };
-        this.getVectorStore = (docs) => {
-            return faiss_1.FaissStore.fromDocuments(docs, this.embeddings);
+        this.addDocuments = (docs) => {
+            return this.vectorStore.addDocuments(docs);
         };
         this.getSearchableVectorStore = () => {
-            return faiss_1.FaissStore.load(this.db_path, this.embeddings);
+            return Promise.resolve(this.vectorStore);
         };
         this.load = () => {
             const loader = new directory_1.DirectoryLoader(this.doc_path, {
@@ -132,22 +140,31 @@ class LangchainService {
         this.run = () => __awaiter(this, void 0, void 0, function* () {
             this.emit({ type: 'langchain-run-start', data: {} });
             return this.load().then((docs) => __awaiter(this, void 0, void 0, function* () {
+                var _a, e_1, _b, _c;
                 this.emit({ type: 'langchain-run-loaded', data: { documents: docs.length } });
                 if (docs.length > 0) {
                     this.emit({ type: 'langchain-run-splitting', data: { documents: docs.length } });
                     const chunks = yield this.split(docs);
-                    /*
-                    let uniqueNo: number = 0;
-                    for await (const chunk of chunks) {
-                      chunk.id = String(uniqueNo++);
+                    let uniqueNo = 0;
+                    try {
+                        for (var _d = true, chunks_1 = __asyncValues(chunks), chunks_1_1; chunks_1_1 = yield chunks_1.next(), _a = chunks_1_1.done, !_a; _d = true) {
+                            _c = chunks_1_1.value;
+                            _d = false;
+                            const chunk = _c;
+                            chunk.id = String(uniqueNo++);
+                        }
                     }
-                    */
+                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    finally {
+                        try {
+                            if (!_d && !_a && (_b = chunks_1.return)) yield _b.call(chunks_1);
+                        }
+                        finally { if (e_1) throw e_1.error; }
+                    }
                     this.emit({ type: 'langchain-run-split', data: { chunks: chunks.length } });
                     if (chunks.length > 0) {
                         this.emit({ type: 'langchain-run-indexing', data: { chunks: chunks.length } });
-                        this.vectorStore = yield this.getVectorStore(chunks);
-                        this.emit({ type: 'langchain-run-saving', data: { chunks: chunks.length } });
-                        yield this.vectorStore.save(this.db_path);
+                        yield this.addDocuments(chunks);
                         return { status: 'completed', documents: chunks.length };
                     }
                     else {
@@ -177,6 +194,29 @@ class LangchainService {
         this.embeddings = new ollama_1.OllamaEmbeddings({
             model,
             baseUrl
+        });
+        this.vectorStore = new chroma_1.Chroma(this.embeddings, {
+            collectionName: "general",
+            url: "http://127.0.0.1:8000"
+        });
+        const cc = new chromadb_1.ChromaClient({
+            host: "127.0.0.1",
+            port: 8000,
+            ssl: false
+        });
+        console.log('Issuing chroma heartbeat');
+        cc.heartbeat().then((value) => {
+            console.log('CHROMA IS alive:', value);
+        }).catch((reason) => {
+            console.error(reason);
+        });
+        console.log('Issuing test search query to vector store!');
+        this.vectorStore.similaritySearch("danny", 2, {
+            source: "https://example.com"
+        }).then((results) => {
+            console.log('VECTOR est search succeeded!:', results);
+        }).catch((reason) => {
+            console.error(reason);
         });
         console.log('LangchainService initialized');
     }

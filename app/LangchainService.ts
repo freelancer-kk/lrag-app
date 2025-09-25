@@ -15,8 +15,8 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { Document } from "@langchain/core/documents";
 import { existsSync, unlinkSync, mkdirSync, promises, statSync, Stats, rmSync, copyFileSync } from 'fs';
 import * as path from 'path';
-
-import { FaissStore } from "@langchain/community/vectorstores/faiss";
+import { Chroma } from "@langchain/community/vectorstores/chroma";
+import { ChromaClient } from 'chromadb';
 
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
 // OR get ocrmypdf working on windows with auto install and mac os auto install
@@ -27,7 +27,7 @@ export default class LangchainService {
   db_path: string;
   input_path: string;
   embeddings: OllamaEmbeddings;
-  vectorStore: FaissStore | undefined;
+  vectorStore: Chroma;
   webContents: Electron.WebContents | undefined;
 
   constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
@@ -49,7 +49,35 @@ export default class LangchainService {
         baseUrl
     });
 
-    console.log('LangchainService initialized');    
+    this.vectorStore = new Chroma(
+      this.embeddings, {
+        collectionName: "general",
+        url: "http://127.0.0.1:8000"
+      }
+    )
+
+    const cc: ChromaClient = new ChromaClient({
+      host: "127.0.0.1",
+      port: 8000,
+      ssl: false      
+    })
+
+    console.log('Issuing chroma heartbeat');
+    cc.heartbeat().then((value: number) => {
+      console.log('CHROMA IS alive:', value);
+    }).catch((reason: any) => {
+      console.error(reason);
+    })
+
+    console.log('Issuing test search query to vector store!');
+    this.vectorStore.similaritySearch("danny", 2, {
+      source: "https://example.com"
+    }).then((results) => {
+      console.log('VECTOR test search succeeded!:', results);
+    }).catch((reason: any) => {
+      console.error(reason);
+    })
+    console.log('LangchainService initialized');        
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
@@ -77,18 +105,12 @@ export default class LangchainService {
     })                
   } 
 
-  getVectorStore = (docs: Document[]): Promise<FaissStore> => {
-    return FaissStore.fromDocuments(
-      docs,
-      this.embeddings
-    );
+  addDocuments = (docs: Document[]): Promise<string[]> => {
+    return this.vectorStore.addDocuments(docs);    
   }
 
-  getSearchableVectorStore = (): Promise<FaissStore> => {
-    return FaissStore.load(
-      this.db_path,
-      this.embeddings
-    )    
+  getSearchableVectorStore = (): Promise<Chroma> => {
+    return Promise.resolve(this.vectorStore);    
   }
 
   load = (): Promise<Document[]> => {
@@ -146,18 +168,14 @@ export default class LangchainService {
       if (docs.length > 0) {
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });        
         const chunks = await this.split(docs);
-        /*
         let uniqueNo: number = 0;
         for await (const chunk of chunks) {
           chunk.id = String(uniqueNo++);
-        } 
-        */       
+        }         
         this.emit( { type: 'langchain-run-split', data: { chunks: chunks.length } });
         if (chunks.length > 0) {        
-          this.emit( { type: 'langchain-run-indexing', data: { chunks: chunks.length } });          
-          this.vectorStore = await this.getVectorStore(chunks);
-          this.emit( { type: 'langchain-run-saving', data: { chunks: chunks.length } });
-          await this.vectorStore.save(this.db_path);
+          this.emit( { type: 'langchain-run-indexing', data: { chunks: chunks.length } });
+          await this.addDocuments(chunks);          
           return { status: 'completed', documents: chunks.length };
         } else {
           this.emit( { type: 'langchain-run-error', data: { message: 'no chunks created' } });
