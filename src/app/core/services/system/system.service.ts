@@ -173,7 +173,7 @@ export class SystemService {
   }
 
   getClassFromStatus = (status: string): string => {
-    if (status === 'running' || status === 'thinking' || status === 'uploading' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'splitting' || status === 'chunking' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
+    if (status === 'running' || status === 'thinking' || status === 'uploading' || status === 'splitting' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'indexing' || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
     } else if (status === 'downloading' || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';
@@ -191,8 +191,9 @@ export class SystemService {
       case 'uploaded':
       case 'loaded':
       case 'loading':
+      case 'indexing':
       case 'splitting':
-      case 'chunking':        
+      case 'saving':        
       case 'adding':
       case 'thinking':
       case 'running: healthy': 

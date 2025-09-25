@@ -13,6 +13,7 @@ import { Systeminformation } from 'systeminformation';
 const userHomePath: string = app.getPath('home');
 const assetsPakFolderPath: string = app.getPath('assets');
 const userDataPath: string = app.getPath('userData');
+const resourcesPath: string = process.resourcesPath;
 const appDataPath: string = app.getPath('appData');
 const userTempPath: string = app.getPath('temp');
 const separator: string = path.sep;
@@ -39,7 +40,7 @@ const setDocPathsCB = (docPath: string | undefined, dataPath: string | undefined
     lragFiles.register();
     langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'));
     langchainService.register(win?.webContents);
-    ollamaService = new OllamaService(assetsFolderPath, appDataPath, graphics.controllers.map(v => v.vendor));
+    ollamaService = new OllamaService(resourcesPath, appDataPath, graphics.controllers.map(v => v.vendor));
     ollamaService.register(win?.webContents);
     ollamaService.extract();
     contextChat = new ContextChat(langchainService, ollamaService);

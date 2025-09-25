@@ -54,7 +54,7 @@ class ContextChat {
         };
         this.getAnswer = (options) => __awaiter(this, void 0, void 0, function* () {
             var _a, e_1, _b, _c;
-            if (!this.vectorStore || !this.ollamaService.isReady || !this.ollamaService.ollama) {
+            if (!this.ollamaService.isReady || !this.ollamaService.ollama) {
                 return 'Services not ready';
             }
             try {
@@ -62,6 +62,7 @@ class ContextChat {
                     baseUrl: "http://localhost:11434",
                     model: options.model
                 });
+                const vectorStore = yield this.langchainService.getUSearch();
                 const contextualizedQuestionPrompt = prompts_1.PromptTemplate.fromTemplate(`
         {contextPrompt}
         chatHistory: {chatHistory}
@@ -70,7 +71,7 @@ class ContextChat {
                 const contextQuestionChain = contextualizedQuestionPrompt
                     .pipe(this.ollamaLlm)
                     .pipe(new output_parsers_1.StringOutputParser())
-                    .pipe(this.vectorStore.asRetriever({
+                    .pipe(vectorStore.asRetriever({
                     k: 3,
                     searchType: "similarity",
                 }));
@@ -128,8 +129,7 @@ class ContextChat {
             }
             */
         });
-        this.vectorStore = langchainService.getVectorStore();
-        this.libsqlClient = langchainService.getSqlClient();
+        this.langchainService = langchainService;
         this.ollamaService = ollamaService;
     }
 }

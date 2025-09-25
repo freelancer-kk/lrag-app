@@ -12,7 +12,10 @@
     {
       "from": "../dist",
       "filter": ["**/*"]
-    }
+    }    
+  ],
+  "extraResources": [
+    "src/extraResources/*.zip"
   ],
   "win": {
     "icon": "dist/assets/icons",

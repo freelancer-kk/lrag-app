@@ -92,7 +92,8 @@
         "PROMPT": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use a maximum of three sentences and keep the answer concise.",
         "QUESTION": "Your Question",
         "INITIAL_PROMPT": "How can I help you?",
-        "CLEAR_HISTORY_TIP": "Clear the chat history"
+        "CLEAR_HISTORY_TIP": "Clear the chat history",
+        "LLM_ERROR": "Conversational chain failed ..."
       },
       "HELP": {
         "TITLE": "Help",

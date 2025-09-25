@@ -53,3 +53,5 @@ testem.log
 Thumbs.db
 src/assets/*.zip
 src/assets/*.tgz
+src/extraResources/*.zip
+src/extraResources/*.tgz

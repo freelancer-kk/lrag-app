@@ -135,9 +135,15 @@ export class AppComponent implements OnInit {
             })            
           }
           break;
-          case 'langchain-run-split': {
+          case 'langchain-run-indexing': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'chunking');
+              this.systemService.ingestStatus.update(() => 'indexing');
+            })            
+          }
+          break;
+          case 'langchain-run-saving': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'saving');
             })            
           }
           break;
