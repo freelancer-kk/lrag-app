@@ -48,14 +48,10 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path = __importStar(require("path"));
-const fs = __importStar(require("fs"));
-const unzipper_1 = __importDefault(require("unzipper"));
+// import unzipper from 'unzipper';
 const child_process_1 = require("child_process");
 const ollama_1 = require("ollama");
 const SystemInfo_1 = require("./SystemInfo");
@@ -167,18 +163,20 @@ class OllamaService {
             });
         };
         this.extract = () => {
+            /*
             if (!fs.existsSync(this.unzipPath)) {
-                this.isExtracting = true;
-                console.log("Extracting ollama files...", this.unzipPath);
-                fs.mkdirSync(this.unzipPath, { recursive: true });
-                fs.createReadStream(this.archivePath)
-                    .pipe(unzipper_1.default.Extract({ path: this.unzipPath }))
-                    .on("close", () => {
-                    console.log("Files unzipped successfully");
-                    this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
-                    this.isExtracting = false;
+              this.isExtracting = true;
+              console.log("Extracting ollama files...", this.unzipPath);
+              fs.mkdirSync(this.unzipPath, { recursive: true });
+              fs.createReadStream(this.archivePath)
+                .pipe(unzipper.Extract({ path: this.unzipPath }))
+                .on("close", () => {
+                  console.log("Files unzipped successfully");
+                  this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
+                  this.isExtracting = false;
                 });
             }
+                */
         };
         this.start = () => {
             try {

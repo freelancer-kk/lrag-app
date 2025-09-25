@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-import unzipper from 'unzipper';
+// import unzipper from 'unzipper';
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse, ChatResponse, ChatRequest } from "ollama";
 import { isMac, isWindows } from './SystemInfo';
@@ -128,6 +128,7 @@ export default class OllamaService {
   }
 
   extract = () => {
+    /*
     if (!fs.existsSync(this.unzipPath)) {
       this.isExtracting = true;
       console.log("Extracting ollama files...", this.unzipPath);
@@ -139,7 +140,8 @@ export default class OllamaService {
           this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
           this.isExtracting = false;
         });      
-    }    
+    } 
+        */   
   }
 
   start = (): any => {
