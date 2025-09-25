@@ -28,6 +28,7 @@ export default class LangchainService {
   embeddings: OllamaEmbeddings;
   vectorStore: MemoryVectorStore;
   webContents: Electron.WebContents | undefined;
+  hasAddedDocs = false;
 
   constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
@@ -85,7 +86,13 @@ export default class LangchainService {
   }
 
   getSearchableVectorStore = (): Promise<MemoryVectorStore> => {
-    return Promise.resolve(this.vectorStore);
+    if (!this.hasAddedDocs) {
+      return this.run().then((value: any) => {
+        return Promise.resolve(this.vectorStore);    
+      })
+    } else {
+      return Promise.resolve(this.vectorStore);
+    }
   }
 
   load = (): Promise<Document[]> => {
@@ -150,15 +157,17 @@ export default class LangchainService {
         this.emit( { type: 'langchain-run-split', data: { chunks: chunks.length } });
         if (chunks.length > 0) {        
           this.emit( { type: 'langchain-run-indexing', data: { chunks: chunks.length } });
-          await this.addDocuments(chunks);          
+          await this.addDocuments(chunks);
+          this.hasAddedDocs = true;
+          this.emit( { type: 'langchain-run-complete', data: { chunks: chunks.length } });
           return { status: 'completed', documents: chunks.length };
         } else {
           this.emit( { type: 'langchain-run-error', data: { message: 'no chunks created' } });
           return { status: 'error', message: 'no chunks created' };
         }
       } else {
-        this.emit( { type: 'langchain-run-error', data: { message: 'document(s) not loaded (incompatible)' } });
-        return { status: 'error', message: 'document(s) not loaded (incompatible)' };
+        this.emit( { type: 'langchain-run-error', data: { message: 'document(s) not loaded, empty or latest was incompatible' } });
+        return { status: 'error', message: 'document(s) not loaded, empty or latest was incompatible)' };
       }
     }).catch((err) => {
       console.error('load error:', err);

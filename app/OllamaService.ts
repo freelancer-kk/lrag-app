@@ -45,70 +45,75 @@ export default class OllamaService {
       const { callbackId, command, params }= arg;
       console.log('ollama:', callbackId, command, params)
       let response: any = {}
-      switch (command) {
-        case "isRunning": {
-          try {
-            this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
-            response = await this.ollama.ps();
-            this.isReady = true;            
-          } catch (e) {
-            this.isReady = false;
-            this.ollama = undefined;            
+      try {
+        switch (command) {
+          case "isRunning": {
+            try {
+              this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
+              response = await this.ollama.ps();
+              this.isReady = true;            
+            } catch (e) {
+              this.isReady = false;
+              this.ollama = undefined;
+            }
+            response = { isReady: this.isReady };
           }
-          response = { isReady: this.isReady };
-        }
-        break;
-        case "isReady": {
-          response = { isReady: this.isReady };
-        }
-        break;
-        case "start": {
-          if (this.isExtracting) {
-            response = { status: 'error', error: 'extraction' };
-          } else {
-            response = this.start();
+          break;
+          case "isReady": {
+            response = { isReady: this.isReady };
           }
+          break;
+          case "start": {
+            if (this.isExtracting) {
+              response = { status: 'error', error: 'extraction' };
+            } else {
+              response = this.start();
+            }
+          }
+          break;
+          case "stop": {
+            response = this.stop();
+          }
+          break;        
+          case "generate": {
+            response = await this.generate(params as GenerateRequest);
+          }
+          break;
+          case "chat": {
+            response = await this.chat(params as ChatRequest);
+          }
+          break;
+          case "pull": {
+            response = await this.pull(params as PullRequest);          
+          }
+          break;
+          case "rm": {
+            response = await this.rm(params as DeleteRequest);          
+          }
+          break;
+          case "list": {
+            response = await this.list();
+          }
+          break;
+          case "show": {
+            response = await this.show(params as ShowRequest);
+          }
+          break;
+          case "ps": {
+            response = await this.ps();
+          }
+          break;        
+          case "abort": {
+            this.abort();
+          }
+          break;        
+          default: {
+            response = { error: 'unknown command' };
+          } 
         }
-        break;
-        case "stop": {
-          response = this.stop();
-        }
-        break;        
-        case "generate": {
-          response = await this.generate(params as GenerateRequest);
-        }
-        break;
-        case "chat": {
-          response = await this.chat(params as ChatRequest);
-        }
-        break;
-        case "pull": {
-          response = await this.pull(params as PullRequest);          
-        }
-        break;
-        case "rm": {
-          response = await this.rm(params as DeleteRequest);          
-        }
-        break;
-        case "list": {
-          response = await this.list();
-        }
-        break;
-        case "show": {
-          response = await this.show(params as ShowRequest);
-        }
-        break;
-        case "ps": {
-          response = await this.ps();
-        }
-        break;        
-        case "abort": {
-          this.abort();
-        }
-        break;        
-        default: {
-          response = { error: 'unknown command' };
-        } 
+      } catch (e) {
+        console.error(e);
+        response.error = e;
       }
       response.command = command;
       response.params = params;
@@ -129,9 +134,10 @@ export default class OllamaService {
 
   extract = () => {
     console.log('extract:', this.archivePath, '=>', this.unzipPath);
-    this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath }});
+    this.emit({ type: 'ollama-extract-config', data: { from: this.archivePath, to: this.unzipPath }});
     if (!fs.existsSync(this.unzipPath) && fs.existsSync(this.archivePath)) {
       this.isExtracting = true;
+      this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath }});
       console.log("Extracting ollama files...", this.unzipPath);
       fs.mkdirSync(this.unzipPath, { recursive: true });    
       fs.createReadStream(this.archivePath)

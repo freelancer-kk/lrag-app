@@ -67,6 +67,7 @@ const memory_1 = require("langchain/vectorstores/memory");
 // https://ocrmypdf.readthedocs.io/en/latest/installation.html#native-windows
 class LangchainService {
     constructor(doc_path, db_dir, baseUrl = "http://localhost:11434", model = "embeddinggemma:300m") {
+        this.hasAddedDocs = false;
         this.register = (webContents) => {
             this.webContents = webContents;
             electron_1.ipcMain.on('ingest', (event, arg) => __awaiter(this, void 0, void 0, function* () {
@@ -96,7 +97,14 @@ class LangchainService {
             return this.vectorStore.addDocuments(docs);
         };
         this.getSearchableVectorStore = () => {
-            return Promise.resolve(this.vectorStore);
+            if (!this.hasAddedDocs) {
+                return this.run().then((value) => {
+                    return Promise.resolve(this.vectorStore);
+                });
+            }
+            else {
+                return Promise.resolve(this.vectorStore);
+            }
         };
         this.load = () => {
             const loader = new directory_1.DirectoryLoader(this.doc_path, {
@@ -164,6 +172,8 @@ class LangchainService {
                     if (chunks.length > 0) {
                         this.emit({ type: 'langchain-run-indexing', data: { chunks: chunks.length } });
                         yield this.addDocuments(chunks);
+                        this.hasAddedDocs = true;
+                        this.emit({ type: 'langchain-run-complete', data: { chunks: chunks.length } });
                         return { status: 'completed', documents: chunks.length };
                     }
                     else {
@@ -172,8 +182,8 @@ class LangchainService {
                     }
                 }
                 else {
-                    this.emit({ type: 'langchain-run-error', data: { message: 'document(s) not loaded (incompatible)' } });
-                    return { status: 'error', message: 'document(s) not loaded (incompatible)' };
+                    this.emit({ type: 'langchain-run-error', data: { message: 'document(s) not loaded, empty or latest was incompatible' } });
+                    return { status: 'error', message: 'document(s) not loaded, empty or latest was incompatible)' };
                 }
             })).catch((err) => {
                 console.error('load error:', err);

@@ -71,84 +71,90 @@ class OllamaService {
                 const { callbackId, command, params } = arg;
                 console.log('ollama:', callbackId, command, params);
                 let response = {};
-                switch (command) {
-                    case "isRunning":
-                        {
-                            try {
-                                this.ollama = new ollama_1.Ollama({ host: 'http://127.0.0.1:11434' });
-                                response = yield this.ollama.ps();
-                                this.isReady = true;
+                try {
+                    switch (command) {
+                        case "isRunning":
+                            {
+                                try {
+                                    this.ollama = new ollama_1.Ollama({ host: 'http://127.0.0.1:11434' });
+                                    response = yield this.ollama.ps();
+                                    this.isReady = true;
+                                }
+                                catch (e) {
+                                    this.isReady = false;
+                                    this.ollama = undefined;
+                                }
+                                response = { isReady: this.isReady };
                             }
-                            catch (e) {
-                                this.isReady = false;
-                                this.ollama = undefined;
+                            break;
+                        case "isReady":
+                            {
+                                response = { isReady: this.isReady };
                             }
-                            response = { isReady: this.isReady };
-                        }
-                        break;
-                    case "isReady":
-                        {
-                            response = { isReady: this.isReady };
-                        }
-                        break;
-                    case "start":
-                        {
-                            if (this.isExtracting) {
-                                response = { status: 'error', error: 'extraction' };
+                            break;
+                        case "start":
+                            {
+                                if (this.isExtracting) {
+                                    response = { status: 'error', error: 'extraction' };
+                                }
+                                else {
+                                    response = this.start();
+                                }
                             }
-                            else {
-                                response = this.start();
+                            break;
+                        case "stop":
+                            {
+                                response = this.stop();
                             }
+                            break;
+                        case "generate":
+                            {
+                                response = yield this.generate(params);
+                            }
+                            break;
+                        case "chat":
+                            {
+                                response = yield this.chat(params);
+                            }
+                            break;
+                        case "pull":
+                            {
+                                response = yield this.pull(params);
+                            }
+                            break;
+                        case "rm":
+                            {
+                                response = yield this.rm(params);
+                            }
+                            break;
+                        case "list":
+                            {
+                                response = yield this.list();
+                            }
+                            break;
+                        case "show":
+                            {
+                                response = yield this.show(params);
+                            }
+                            break;
+                        case "ps":
+                            {
+                                response = yield this.ps();
+                            }
+                            break;
+                        case "abort":
+                            {
+                                this.abort();
+                            }
+                            break;
+                        default: {
+                            response = { error: 'unknown command' };
                         }
-                        break;
-                    case "stop":
-                        {
-                            response = this.stop();
-                        }
-                        break;
-                    case "generate":
-                        {
-                            response = yield this.generate(params);
-                        }
-                        break;
-                    case "chat":
-                        {
-                            response = yield this.chat(params);
-                        }
-                        break;
-                    case "pull":
-                        {
-                            response = yield this.pull(params);
-                        }
-                        break;
-                    case "rm":
-                        {
-                            response = yield this.rm(params);
-                        }
-                        break;
-                    case "list":
-                        {
-                            response = yield this.list();
-                        }
-                        break;
-                    case "show":
-                        {
-                            response = yield this.show(params);
-                        }
-                        break;
-                    case "ps":
-                        {
-                            response = yield this.ps();
-                        }
-                        break;
-                    case "abort":
-                        {
-                            this.abort();
-                        }
-                        break;
-                    default: {
-                        response = { error: 'unknown command' };
                     }
+                }
+                catch (e) {
+                    console.error(e);
+                    response.error = e;
                 }
                 response.command = command;
                 response.params = params;
@@ -168,9 +174,10 @@ class OllamaService {
         };
         this.extract = () => {
             console.log('extract:', this.archivePath, '=>', this.unzipPath);
-            this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath } });
+            this.emit({ type: 'ollama-extract-config', data: { from: this.archivePath, to: this.unzipPath } });
             if (!fs.existsSync(this.unzipPath) && fs.existsSync(this.archivePath)) {
                 this.isExtracting = true;
+                this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath } });
                 console.log("Extracting ollama files...", this.unzipPath);
                 fs.mkdirSync(this.unzipPath, { recursive: true });
                 fs.createReadStream(this.archivePath)

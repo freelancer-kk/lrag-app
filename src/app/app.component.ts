@@ -75,6 +75,12 @@ export class AppComponent implements OnInit {
         const { type, data } = eventObj;
         console.log('type', type, 'data', data);        
         switch(type) {
+          case 'ollama-extract-starting': {
+            this.ngZone.run(() => {
+              this.systemService.ollamaStatus.update(() => `extracting`);
+            })
+          }
+          break;
           case 'ollama-extract-done': {
             this.ngZone.run(() => {
               this.startServicesIfNecessary();
@@ -178,7 +184,7 @@ export class AppComponent implements OnInit {
       this.systemService.calcOverallStatus();
       console.log('overall status:', this.systemService.overallStatus());
       if (this.systemService.overallStatus() === "running: unhealthy") {
-        if (this.firstTime) {
+        if (this.firstTime && (this.systemService.ollamaStatus() === "running")) {
           this.pullModelsIfNecessary();
         }
       }
@@ -220,10 +226,12 @@ export class AppComponent implements OnInit {
     const { isReady } = await this.systemService.commandOllama('isRunning');
     console.log('ollama is running:', isReady);
     if (!isReady) {
-      this.systemService.ollamaStatus.update(() => 'starting');
       const response = await this.systemService.commandOllama('start');
-      if (response.status === 'error' && response.status === 'extraction') {
+      if (response.status === 'error' && response.error === 'extraction') {
+        this.systemService.ollamaStatus.update(() => 'extracting');
         console.log('waiting for extraction to complete, then start...');
+      } else {
+        this.systemService.ollamaStatus.update(() => 'running');
       }
     } else {
       this.systemService.ollamaStatus.update(() => 'running');      
@@ -239,6 +247,7 @@ export class AppComponent implements OnInit {
           this.systemService.downloadedLLM = value;          
         })
       }
+      console.log('pullModelsIfNecessary:getAvailableLLMs()');
       await this.systemService.getAvailableLLMs();
       if (this.systemService.availableModels.length === 0) {
         this.systemService.modelStatus.update(() => 'downloading');
@@ -247,12 +256,13 @@ export class AppComponent implements OnInit {
         console.log('pull:', this.systemService.models[0].value);
         await this.systemService.commandOllama('pull', { model: this.systemService.models[0].value, stream: true});
         console.log('models loaded! setting model status to running')
+        this.firstTime = false;
         this.systemService.modelStatus.update(() => 'running');
       } else {
-        console.log('models available! setting model status to running')
+        this.firstTime = false;
         this.systemService.modelStatus.update(() => 'running');
-      }
-      this.firstTime = false;   
+        console.log('models already pulled!');
+      }      
     } catch (e) {
       console.error(e);
       if (this.firstTime) {

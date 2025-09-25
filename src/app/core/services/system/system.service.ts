@@ -101,7 +101,7 @@ export class SystemService {
 
   commandInsight = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
-      this.bridgeService.chat(70, command, options, async (data: any) => {
+      this.bridgeService.chat(50, command, options, async (data: any) => {
         // console.log('insight command response:', data);
         resolve(data);
       });
@@ -110,7 +110,7 @@ export class SystemService {
 
   commandIngest = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
-      this.bridgeService.ingest(80, command, options, async (data: any) => {
+      this.bridgeService.ingest(60, command, options, async (data: any) => {
         console.log('ingest command response:', data);
         resolve(data);
       });
@@ -120,21 +120,24 @@ export class SystemService {
   commandOllama = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
       this.bridgeService.ollama(90, command, options, async (data: any) => {
-        console.log('ollama command response:', data);
+        console.log('ollama command response:', command, options, data);
         resolve(data);
       });
     });
   }  
 
-  getAvailableLLMs = async () => {
+  getAvailableLLMs = async (): Promise<void> => {
     // const currentModels: any[] = this.availableModels;
-    this.availableModels = (await this.commandOllama('list')).models.map((model: any) => {
+    const value: any = await this.commandOllama('list');
+    // console.log('getAvailableLLMs:', value.models);
+    this.availableModels = value.models.map((model: any) => {
       return {
         name: model.name,
         size: Math.floor(model.size / 1024 / 1000),
         usage: model.usage
       }
-    });     
+    });
+    console.log('getAvailableLLMs:', this.availableModels);
   }
 
   getEnvValue = (key: string): Promise<string> => {
@@ -173,7 +176,7 @@ export class SystemService {
   }
 
   getClassFromStatus = (status: string): string => {
-    if (status === 'running' || status === 'thinking' || status === 'uploading' || status === 'splitting' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'indexing' || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
+    if (status === 'running' || status === 'extracting' || status === 'thinking' || status === 'uploading' || status === 'splitting' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'indexing' || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
     } else if (status === 'downloading' || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';
@@ -193,6 +196,7 @@ export class SystemService {
       case 'loading':
       case 'indexing':
       case 'splitting':
+      case 'extracting':
       case 'saving':        
       case 'adding':
       case 'thinking':
