@@ -59,7 +59,6 @@
     "@angular/platform-browser": "^20.2.4",
     "@angular/platform-browser-dynamic": "^20.2.4",
     "@angular/router": "^20.2.4",
-    "@elastic/elasticsearch": "8.19.1",
     "@langchain/community": "0.3.56",
     "@langchain/core": "0.3.77",
     "@langchain/ollama": "0.2.4",

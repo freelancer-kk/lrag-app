@@ -61,8 +61,7 @@ const ollama_1 = require("@langchain/ollama");
 const text_splitter_1 = require("langchain/text_splitter");
 const fs_1 = require("fs");
 const path = __importStar(require("path"));
-const chroma_1 = require("@langchain/community/vectorstores/chroma");
-const chromadb_1 = require("chromadb");
+const memory_1 = require("langchain/vectorstores/memory");
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
 // OR get ocrmypdf working on windows with auto install and mac os auto install
 // https://ocrmypdf.readthedocs.io/en/latest/installation.html#native-windows
@@ -195,29 +194,7 @@ class LangchainService {
             model,
             baseUrl
         });
-        this.vectorStore = new chroma_1.Chroma(this.embeddings, {
-            collectionName: "general",
-            url: "http://127.0.0.1:8000"
-        });
-        const cc = new chromadb_1.ChromaClient({
-            host: "127.0.0.1",
-            port: 8000,
-            ssl: false
-        });
-        console.log('Issuing chroma heartbeat');
-        cc.heartbeat().then((value) => {
-            console.log('CHROMA IS alive:', value);
-        }).catch((reason) => {
-            console.error(reason);
-        });
-        console.log('Issuing test search query to vector store!');
-        this.vectorStore.similaritySearch("danny", 2, {
-            source: "https://example.com"
-        }).then((results) => {
-            console.log('VECTOR est search succeeded!:', results);
-        }).catch((reason) => {
-            console.error(reason);
-        });
+        this.vectorStore = new memory_1.MemoryVectorStore(this.embeddings);
         console.log('LangchainService initialized');
     }
 }

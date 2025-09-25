@@ -15,11 +15,7 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { Document } from "@langchain/core/documents";
 import { existsSync, unlinkSync, mkdirSync, promises, statSync, Stats, rmSync, copyFileSync } from 'fs';
 import * as path from 'path';
-import {
-  ElasticVectorSearch,
-  type ElasticClientArgs,
-} from "@langchain/community/vectorstores/elasticsearch";
-import { Client, type ClientOptions } from "@elastic/elasticsearch";
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
 
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
 // OR get ocrmypdf working on windows with auto install and mac os auto install
@@ -30,7 +26,7 @@ export default class LangchainService {
   db_path: string;
   input_path: string;
   embeddings: OllamaEmbeddings;
-  vectorStore: ElasticVectorSearch;
+  vectorStore: MemoryVectorStore;
   webContents: Electron.WebContents | undefined;
 
   constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
@@ -52,40 +48,10 @@ export default class LangchainService {
         baseUrl
     });
 
-    const clientArgs: ElasticClientArgs = {
-      client: new Client({
-        node: "http://127.0.0.1:9200"
-      }),
-      indexName: process.env.ELASTIC_INDEX ?? "vectorstore",
-    };
-
-    this.vectorStore = new ElasticVectorSearch(
-      this.embeddings, {
-        
-      }
+    this.vectorStore = new MemoryVectorStore(
+      this.embeddings
     )
 
-    const cc: ChromaClient = new ChromaClient({
-      host: "127.0.0.1",
-      port: 8000,
-      ssl: false      
-    })
-
-    console.log('Issuing chroma heartbeat');
-    cc.heartbeat().then((value: number) => {
-      console.log('CHROMA IS alive:', value);
-    }).catch((reason: any) => {
-      console.error(reason);
-    })
-
-    console.log('Issuing test search query to vector store!');
-    this.vectorStore.similaritySearch("danny", 2, {
-      source: "https://example.com"
-    }).then((results) => {
-      console.log('VECTOR test search succeeded!:', results);
-    }).catch((reason: any) => {
-      console.error(reason);
-    })
     console.log('LangchainService initialized');        
   }
 
@@ -114,12 +80,12 @@ export default class LangchainService {
     })                
   } 
 
-  addDocuments = (docs: Document[]): Promise<string[]> => {
+  addDocuments = (docs: Document[]): Promise<void> => {
     return this.vectorStore.addDocuments(docs);    
   }
 
-  getSearchableVectorStore = (): Promise<Chroma> => {
-    return Promise.resolve(this.vectorStore);    
+  getSearchableVectorStore = (): Promise<MemoryVectorStore> => {
+    return Promise.resolve(this.vectorStore);
   }
 
   load = (): Promise<Document[]> => {
