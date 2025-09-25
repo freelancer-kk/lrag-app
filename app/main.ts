@@ -40,7 +40,7 @@ const setDocPathsCB = (docPath: string | undefined, dataPath: string | undefined
     lragFiles.register();
     langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'));
     langchainService.register(win?.webContents);
-    ollamaService = new OllamaService(resourcesPath, appDataPath, graphics.controllers.map(v => v.vendor));
+    ollamaService = new OllamaService(path.join(resourcesPath, 'src', 'extraResources'), appDataPath, graphics.controllers.map(v => v.vendor));
     ollamaService.register(win?.webContents);
     ollamaService.extract();
     contextChat = new ContextChat(langchainService, ollamaService);
