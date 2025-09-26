@@ -38,6 +38,7 @@ export class SystemService {
   gpuAcceleration: boolean = true;
   osType: any;
   chatHistory: IChat[] = [];
+  ollamaPID: number = -1;
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false},
@@ -121,6 +122,14 @@ export class SystemService {
     return new Promise((resolve, reject) => { 
       this.bridgeService.ollama(90, command, options, async (data: any) => {
         console.log('ollama command response:', command, options, data);
+        resolve(data);
+      });
+    });
+  }  
+
+  findProcesses = (): Promise<any> => {
+    return new Promise((resolve, reject) => { 
+      this.bridgeService.ollama(91, 'find', {}, async (data: any) => {        
         resolve(data);
       });
     });
@@ -354,5 +363,13 @@ export class SystemService {
         resolve(data);      
       });
     })    
+  }
+
+  quitApp = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      this.bridgeService.quitApp(10, async () => {
+        resolve();
+      });
+    })
   }
 }

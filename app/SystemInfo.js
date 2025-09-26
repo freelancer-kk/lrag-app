@@ -82,6 +82,14 @@ class SystemInfo {
                             response = this.getOsTypes();
                         }
                         break;
+                    case "quit":
+                        {
+                            electron_1.app.quit();
+                            response = {
+                                status: 'exit'
+                            };
+                        }
+                        break;
                     default:
                         response = this.graphics;
                 }

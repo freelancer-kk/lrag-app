@@ -18,7 +18,8 @@
             </mat-panel-description>
           </mat-expansion-panel-header>
           <div class="onerow">
-            {{ 'PAGES.HOME.LLM' | translate }}
+            {{ 'PAGES.HOME.LLM' | translate }}&nbsp;
+            <span class="small">({{ systemService.ollamaPID }})</span>
             <span class="spacer"></span>
             <div [class]="systemService.getClassFromStatus(systemService.ollamaStatus())">  
               @if (systemService.ollamaStatus().startsWith('downloading')) {

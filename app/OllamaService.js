@@ -56,6 +56,8 @@ const electron_1 = require("electron");
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const unzipper_1 = __importDefault(require("unzipper"));
+const tree_kill_1 = __importDefault(require("tree-kill"));
+const find_process_1 = __importDefault(require("find-process"));
 const child_process_1 = require("child_process");
 const ollama_1 = require("ollama");
 const SystemInfo_1 = require("./SystemInfo");
@@ -65,6 +67,7 @@ class OllamaService {
         this.isReady = false;
         this.startCommand = '';
         this.isExtracting = false;
+        this.ollamaPID = -1;
         this.register = (webContents) => {
             this.webContents = webContents;
             electron_1.ipcMain.on('ollama', (event, arg) => __awaiter(this, void 0, void 0, function* () {
@@ -105,6 +108,11 @@ class OllamaService {
                         case "stop":
                             {
                                 response = this.stop();
+                            }
+                            break;
+                        case "find":
+                            {
+                                response = yield this.findOllama();
                             }
                             break;
                         case "generate":
@@ -172,6 +180,18 @@ class OllamaService {
                 response: args
             });
         };
+        this.findOllama = () => __awaiter(this, void 0, void 0, function* () {
+            const processes = yield (0, find_process_1.default)('port', '11434');
+            if (processes.length === 0) {
+                console.error('Cannot find Ollama process:', processes);
+            }
+            else {
+                this.ollamaPID = processes[0].pid;
+            }
+            return {
+                ollamaPID: this.ollamaPID
+            };
+        });
         this.extract = () => {
             console.log('extract:', this.archivePath, '=>', this.unzipPath);
             this.emit({ type: 'ollama-extract-config', data: { from: this.archivePath, to: this.unzipPath } });
@@ -230,11 +250,20 @@ class OllamaService {
             }
         };
         this.stop = () => {
-            if (this.ollamaProcess) {
-                this.ollamaProcess.kill();
+            if (this.ollamaPID > -1) {
+                console.error('Sending terminate signal to external Ollama!');
+                (0, tree_kill_1.default)(this.ollamaPID, (error) => {
+                    console.error('error to sending kill to external Ollama:', error);
+                });
             }
-            else {
-                console.error('No valid process for Ollama!');
+            else if (this.ollamaProcess) {
+                const pid = this.ollamaProcess.pid;
+                if (pid) {
+                    console.log('Sending terminate signal to Ollama');
+                    (0, tree_kill_1.default)(pid, (error) => {
+                        console.error('error to sending kill to Ollama:', error);
+                    });
+                }
             }
             return { status: 'stopping' };
         };

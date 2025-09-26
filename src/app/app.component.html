@@ -54,7 +54,13 @@
           <span>{{ 'PAGES.HELP.TITLE' | translate }}</span>        
         }
 				<mat-icon matListItemIcon>help</mat-icon>
-      </a>      		
+      </a>
+      <a mat-list-item (click)="appExit($event)">
+        @if (isExpanded) {
+          <span>{{ 'EXIT' | translate }}</span>        
+        }
+				<mat-icon matListItemIcon>exit_to_app</mat-icon>
+      </a>
     </mat-nav-list>     
 	</mat-sidenav>
 	<div class="menu-sidenav-content">

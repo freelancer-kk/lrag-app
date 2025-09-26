@@ -2,6 +2,8 @@ import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import unzipper from 'unzipper';
+import kill from 'tree-kill';
+import find, { ProcessInfo } from "find-process";
 
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse, ChatResponse, ChatRequest } from "ollama";
@@ -15,6 +17,7 @@ export default class OllamaService {
   isReady: boolean = false;
   startCommand: string = '';
   isExtracting: boolean = false;
+  ollamaPID: number = -1;
   
   constructor(assetsFolderPath: string, appDataPath: string, gpuBrands: string[]) {
     this.unzipPath = path.join(appDataPath, 'ollama');
@@ -75,6 +78,10 @@ export default class OllamaService {
             response = this.stop();
           }
           break;        
+          case "find": {
+            response = await this.findOllama();
+          }
+          break;        
           case "generate": {
             response = await this.generate(params as GenerateRequest);
           }
@@ -130,6 +137,18 @@ export default class OllamaService {
     this.webContents?.send('event', {
       response: args
     })                
+  }
+
+  findOllama = async (): Promise<any> => {
+    const processes: ProcessInfo[] = await find('port', '11434');
+    if (processes.length === 0) {
+      console.error('Cannot find Ollama process:', processes);
+    } else {
+      this.ollamaPID = processes[0].pid;      
+    }
+    return { 
+      ollamaPID: this.ollamaPID
+    }
   }
 
   extract = () => {
@@ -190,10 +209,20 @@ export default class OllamaService {
   }
 
   stop = (): any => {
-    if (this.ollamaProcess) {
-      this.ollamaProcess.kill();      
-    } else {
-      console.error('No valid process for Ollama!');
+    if (this.ollamaPID > -1) {
+      console.error('Sending terminate signal to external Ollama!');
+      kill(this.ollamaPID, (error: any) => {
+        console.error('error to sending kill to external Ollama:', error);
+      });
+    }
+    else if (this.ollamaProcess) {
+      const pid: number | undefined = this.ollamaProcess.pid;
+      if (pid) {
+        console.log('Sending terminate signal to Ollama');
+        kill(pid, (error: any) => {
+          console.error('error to sending kill to Ollama:', error);
+        });        
+      }
     }
     return { status: 'stopping' };
   }

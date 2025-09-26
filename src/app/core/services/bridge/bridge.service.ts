@@ -222,6 +222,14 @@ export class BridgeService {
     }
   }
 
+  quitApp = (callbackId: number, cb: (response: any) => void) => {
+    if (this.isElectronRendered) {
+      this.callNode('system', callbackId, cb, 'quit', {}, undefined);
+    } else {
+      cb({})
+    }
+  }
+
   env = (callbackId: number, command: string, options: any, cb: (response: any) => void) => {
     if (this.isElectronRendered) {
       this.callNode('env', callbackId, cb, command, options, undefined);

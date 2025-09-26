@@ -17,6 +17,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MediaService } from './core/services/media/media.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { AlertComponent } from './alert.component/alert.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-root',
@@ -40,6 +42,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class AppComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
+  readonly dialog = inject(MatDialog);
   @ViewChild('sidenav', {static: true}) sidenav!: MatSidenav;
   isExpanded: boolean = true;
   dockerConnectInterval: any;
@@ -185,10 +188,20 @@ export class AppComponent implements OnInit {
       console.log('overall status:', this.systemService.overallStatus());
       if (this.systemService.overallStatus() === "running: unhealthy") {
         if (this.firstTime && (this.systemService.ollamaStatus() === "running")) {
+          this.findOllamaProcess();
           this.pullModelsIfNecessary();
         }
       }
+      if ((this.systemService.overallStatus() === "running: healthy") && (systemService.ollamaPID === -1)) {
+        this.findOllamaProcess();
+      }
     })
+  }
+
+  findOllamaProcess = async () => {
+    const response: any = await this.systemService.findProcesses();
+    console.log('findProcess:', response);
+    this.systemService.ollamaPID = response.ollamaPID;
   }
 
   switchTheme = (event: any) => {
@@ -272,5 +285,24 @@ export class AppComponent implements OnInit {
         }, 7000)
       }
     }    
-  }  
+  }
+  
+  appExit = async (ev: any) => {
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 1,
+          params: {
+            message: await this.systemService.get('APP.EXIT_ARE_YOU_SURE')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Dialog result: ${result}`);
+      if (result === true) {
+        const result = await this.systemService.quitApp();
+        console.log('app quit:', result);
+      }
+    });
+  }
 }
