@@ -211,7 +211,14 @@ class OllamaService {
         };
         this.start = () => {
             try {
+                const command = process.execPath + ' ' + path.join(this.unzipPath, this.startCommand);
+                console.log('start:spawn:', command);
+                this.emit({ type: 'ollama-start', data: command });
                 this.ollamaProcess = (0, child_process_1.spawn)(this.startCommand, {
+                    argv0: process.execPath,
+                    env: {
+                        ELECTRON_RUN_AS_NODE: "1"
+                    },
                     shell: true,
                     cwd: this.unzipPath,
                     stdio: ['pipe', 'pipe', 'pipe']

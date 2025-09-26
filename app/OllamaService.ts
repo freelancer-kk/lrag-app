@@ -171,11 +171,22 @@ export default class OllamaService {
 
   start = (): any => {
     try {
-      this.ollamaProcess = spawn(this.startCommand, {
-        shell: true,
-        cwd: this.unzipPath,
-        stdio: ['pipe', 'pipe', 'pipe']
-      });
+      const command: string = process.execPath + ' ' + path.join(this.unzipPath, this.startCommand);
+      console.log('start:spawn:', command);
+      this.emit({ type: 'ollama-start', data: command });
+      this.ollamaProcess = spawn(
+        this.startCommand,
+        {
+          argv0: process.execPath,
+          env: {
+            ELECTRON_RUN_AS_NODE: "1"
+          },          
+          shell: true,
+          cwd: this.unzipPath,          
+          stdio: ['pipe', 'pipe', 'pipe']
+        }
+      );
+      
       if (this.ollamaProcess) {
         this.ollamaProcess.stdout.on('data', (data: string) => {
             console.log(`stdout: ${data}`);
