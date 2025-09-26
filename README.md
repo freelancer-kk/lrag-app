@@ -1,4 +1,4 @@
-# lrag-client
+# lrag-app
 
 
 ### langchain doc file loader install
