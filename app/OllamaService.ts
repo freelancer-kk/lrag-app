@@ -1,4 +1,4 @@
-import { ipcMain, utilityProcess } from 'electron';
+import { ipcMain, shell } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import unzipper from 'unzipper';
@@ -173,27 +173,32 @@ export default class OllamaService {
     }    
   }
 
+  shellOllama = (): Promise<any> => {
+    const command: string = path.join(this.unzipPath, this.ollamaExecutable) + ' ' + this.ollamaArgs.join(' ');
+    console.log('shell:', command);
+    this.emit({ type: 'ollama-start', data: { command, args: this.ollamaArgs } });
+    return shell.openExternal(
+      command,
+      {
+        activate: false,        
+        workingDirectory: this.unzipPath
+      }
+    ).then(() => {      
+      setTimeout(async () => {
+        await this.findOllama();
+      }, 10000);
+      return { status: 'starting' };
+    }).catch((reason: any) => {
+      return { status: 'error', data: { error: reason } };
+    })
+  }
+
   start = (): any => {
     try {
       const command: string = path.join(this.unzipPath, this.ollamaExecutable);
-      console.log('utility:fork:', command, this.ollamaArgs);
+      console.log('execFile:', command, this.ollamaArgs);
       this.emit({ type: 'ollama-start', data: { command, args: this.ollamaArgs } });
 
-      /*
-      
-      this.ollamaProcess = utilityProcess.fork(
-//        this.ollamaExecutable,
-        'dir',
-        [],
-        {
-          cwd: this.unzipPath,
-          execArgv: this.ollamaArgs,
-          stdio: 'pipe',
-          serviceName: 'ollama',
-          allowLoadingUnsignedLibraries: true
-        }
-      );
-      */
       this.ollamaProcess = execFile(
         command,
         this.ollamaArgs,

@@ -210,26 +210,27 @@ class OllamaService {
                 });
             }
         };
+        this.shellOllama = () => {
+            const command = path.join(this.unzipPath, this.ollamaExecutable) + ' ' + this.ollamaArgs.join(' ');
+            console.log('shell:', command);
+            this.emit({ type: 'ollama-start', data: { command, args: this.ollamaArgs } });
+            return electron_1.shell.openExternal(command, {
+                activate: false,
+                workingDirectory: this.unzipPath
+            }).then(() => {
+                setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                    yield this.findOllama();
+                }), 10000);
+                return { status: 'starting' };
+            }).catch((reason) => {
+                return { status: 'error', data: { error: reason } };
+            });
+        };
         this.start = () => {
             try {
                 const command = path.join(this.unzipPath, this.ollamaExecutable);
-                console.log('utility:fork:', command, this.ollamaArgs);
+                console.log('execFile:', command, this.ollamaArgs);
                 this.emit({ type: 'ollama-start', data: { command, args: this.ollamaArgs } });
-                /*
-                
-                this.ollamaProcess = utilityProcess.fork(
-          //        this.ollamaExecutable,
-                  'dir',
-                  [],
-                  {
-                    cwd: this.unzipPath,
-                    execArgv: this.ollamaArgs,
-                    stdio: 'pipe',
-                    serviceName: 'ollama',
-                    allowLoadingUnsignedLibraries: true
-                  }
-                );
-                */
                 this.ollamaProcess = (0, child_process_1.execFile)(command, this.ollamaArgs, (error, stdout, stderr) => {
                     if (error) {
                         console.error(error);
