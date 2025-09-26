@@ -45,10 +45,10 @@ if (serve) {
 }
 console.log('APP:RUN:MODE', runType);
 
-const setDocPathsCB = (docPath: string | undefined, dataPath: string | undefined) => {
+const setDocPathsCB = async (docPath: string | undefined, dataPath: string | undefined) => {
   systemInfo = new SystemInfo();
   systemInfo.register();
-  systemInfo.getGraphics().then((graphics: Systeminformation.GraphicsData) => {
+  await systemInfo.getGraphics().then(async (graphics: Systeminformation.GraphicsData) => {
     console.log('graphics:', graphics.controllers.map(v => v.vendor));
     lragFiles = new LRagFiles(docPath, dataPath);
     lragFiles.register();
@@ -56,7 +56,7 @@ const setDocPathsCB = (docPath: string | undefined, dataPath: string | undefined
     langchainService.register(win?.webContents);
     ollamaService = new OllamaService(runType === 2 ? path.join(resourcesPath, 'src', 'extraResources') : './src/extraResources', appDataPath, graphics.controllers.map(v => v.vendor));
     ollamaService.register(win?.webContents);
-    ollamaService.extract();
+    await ollamaService.extract();
     contextChat = new ContextChat(langchainService, ollamaService);
     contextChat.register(win?.webContents);
     // langchainService.inspect();
@@ -71,7 +71,7 @@ function createWindow(): BrowserWindow {
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: (size.width/2.5),
+    width: size.width/2,
     height: size.height,
     minWidth: 400, // Optional: Set a minimum width
     minHeight: 300, // Optional: Set a minimum height
@@ -141,11 +141,10 @@ try {
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {    
     setTimeout(() => {
-      createWindow();      
+      createWindow();
       if (runType === 2) {
         assetsFolderPath = path.join(assetsPakFolderPath, 'resources', 'app.asar', 'assets')
-      }    
-      
+      }            
       dockerEnv.register();        
     }, 400)    
   });  
