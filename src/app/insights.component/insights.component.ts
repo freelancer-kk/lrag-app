@@ -94,6 +94,7 @@ export class InsightsComponent implements OnInit {
   askQuestion = async () => {
     if (this.question) {
       const question: string = this.question;
+      this.question = '';
       
       const options = {
         question,
