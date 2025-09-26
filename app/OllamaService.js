@@ -58,14 +58,15 @@ const fs = __importStar(require("fs"));
 const unzipper_1 = __importDefault(require("unzipper"));
 const tree_kill_1 = __importDefault(require("tree-kill"));
 const find_process_1 = __importDefault(require("find-process"));
-const child_process_1 = require("child_process");
 const ollama_1 = require("ollama");
 const SystemInfo_1 = require("./SystemInfo");
+const child_process_1 = require("child_process");
 class OllamaService {
     constructor(assetsFolderPath, appDataPath, gpuBrands) {
         this.archivePath = '';
         this.isReady = false;
-        this.startCommand = '';
+        this.ollamaExecutable = '';
+        this.ollamaArgs = [];
         this.isExtracting = false;
         this.ollamaPID = -1;
         this.register = (webContents) => {
@@ -211,40 +212,67 @@ class OllamaService {
         };
         this.start = () => {
             try {
-                const command = process.execPath + ' ' + path.join(this.unzipPath, this.startCommand);
-                console.log('start:spawn:', command);
-                this.emit({ type: 'ollama-start', data: command });
-                this.ollamaProcess = (0, child_process_1.spawn)(this.startCommand, {
-                    argv0: process.execPath,
-                    env: {
-                        ELECTRON_RUN_AS_NODE: "1"
-                    },
-                    shell: true,
+                const command = path.join(this.unzipPath, this.ollamaExecutable);
+                console.log('utility:fork:', command, this.ollamaArgs);
+                this.emit({ type: 'ollama-start', data: { command, args: this.ollamaArgs } });
+                /*
+                
+                this.ollamaProcess = utilityProcess.fork(
+          //        this.ollamaExecutable,
+                  'dir',
+                  [],
+                  {
                     cwd: this.unzipPath,
-                    stdio: ['pipe', 'pipe', 'pipe']
+                    execArgv: this.ollamaArgs,
+                    stdio: 'pipe',
+                    serviceName: 'ollama',
+                    allowLoadingUnsignedLibraries: true
+                  }
+                );
+                */
+                this.ollamaProcess = (0, child_process_1.execFile)(command, this.ollamaArgs, (error, stdout, stderr) => {
+                    if (error) {
+                        console.error(error);
+                        this.emit({ type: 'ollama-exec-file-error', data: { error } });
+                    }
+                    console.error(stderr);
+                    console.log(stdout);
+                    this.emit({ type: 'ollama-exec-file-stdout', data: stdout });
+                    this.emit({ type: 'ollama-exec-file-stderr', data: stderr });
                 });
                 if (this.ollamaProcess) {
-                    this.ollamaProcess.stdout.on('data', (data) => {
-                        console.log(`stdout: ${data}`);
-                        // Send event
-                        this.emit({ type: 'ollama-stdout', data: Buffer.from(data).toString() });
-                    });
-                    this.ollamaProcess.stderr.on("data", (data) => {
-                        console.error(`stderr: ${data}`);
-                        // Send event
-                        this.emit({ type: 'ollama-stderr', data: Buffer.from(data).toString() });
+                    this.ollamaProcess.on('spawn', () => {
+                        if (this.ollamaProcess) {
+                            this.ollamaPID = this.ollamaProcess.pid ? this.ollamaProcess.pid : -1;
+                            console.log(`Ollama process started ${this.ollamaPID}`);
+                            // Send event
+                            if (this.ollamaProcess.stdout) {
+                                this.ollamaProcess.stdout.on('data', (data) => {
+                                    console.log(`stdout: ${data}`);
+                                    // Send event
+                                    this.emit({ type: 'ollama-stdout', data: Buffer.from(data).toString() });
+                                });
+                            }
+                            if (this.ollamaProcess.stderr) {
+                                this.ollamaProcess.stderr.on("error", (data) => {
+                                    console.error(`stderr: ${data}`);
+                                    // Send event
+                                    this.emit({ type: 'ollama-stderr', data: Buffer.from(data).toString() });
+                                });
+                            }
+                            setTimeout(() => {
+                                this.ollama = new ollama_1.Ollama({ host: 'http://127.0.0.1:11434' });
+                                // event Ollama connection is ready
+                                this.isReady = true;
+                                this.emit({ type: 'ollama-ready', data: 'ok' });
+                            }, 5000);
+                        }
                     });
                     this.ollamaProcess.on('exit', (code) => {
-                        console.log(`Ollama process ended with ${code}`);
+                        console.log(`Ollama process exited with ${code}`);
                         // Send event
                         this.emit({ type: 'ollama-ended', data: code ? code.toString() : '0' });
                     });
-                    setTimeout(() => {
-                        this.ollama = new ollama_1.Ollama({ host: 'http://127.0.0.1:11434' });
-                        // event Ollama connection is ready
-                        this.isReady = true;
-                        this.emit({ type: 'ollama-ready', data: 'ok' });
-                    }, 5000);
                 }
                 else {
                     console.error('No valid process for Ollama!');
@@ -258,19 +286,10 @@ class OllamaService {
         };
         this.stop = () => {
             if (this.ollamaPID > -1) {
-                console.error('Sending terminate signal to external Ollama!');
+                console.error(`Sending terminate signal to Ollama ${this.ollamaPID}!`);
                 (0, tree_kill_1.default)(this.ollamaPID, (error) => {
-                    console.error('error to sending kill to external Ollama:', error);
+                    console.error('error to sending kill to Ollama:', error);
                 });
-            }
-            else if (this.ollamaProcess) {
-                const pid = this.ollamaProcess.pid;
-                if (pid) {
-                    console.log('Sending terminate signal to Ollama');
-                    (0, tree_kill_1.default)(pid, (error) => {
-                        console.error('error to sending kill to Ollama:', error);
-                    });
-                }
             }
             return { status: 'stopping' };
         };
@@ -430,23 +449,26 @@ class OllamaService {
             if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia') || f.toLowerCase().startsWith('amd'))) {
                 console.log('ollama choice: win');
                 this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
-                this.startCommand = 'ollama.exe serve';
+                this.ollamaExecutable = 'ollama.exe';
+                this.ollamaArgs = ['serve'];
             }
             else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
                 console.log('ollama choice: win:ipx');
                 this.archivePath = path.join(assetsFolderPath, 'ollama-ipx-llm-win.zip');
-                this.startCommand = 'ollama-serve.bat';
+                this.ollamaExecutable = 'ollama-serve.bat';
             }
             else {
                 console.log('ollama choice: win');
                 this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
-                this.startCommand = 'ollama.exe serve';
+                this.ollamaExecutable = 'ollama.exe serve';
+                this.ollamaArgs = ['serve'];
             }
         }
         else if (SystemInfo_1.isMac) {
             console.log('ollama choice: darwin');
             this.archivePath = path.join(assetsFolderPath, 'ollama-darwin.zip');
-            this.startCommand = 'ollama-darwin serve';
+            this.ollamaExecutable = 'ollama-darwin serve';
+            this.ollamaArgs = ['serve'];
         }
     }
 }
