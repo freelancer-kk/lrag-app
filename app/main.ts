@@ -81,8 +81,7 @@ function createWindow(): BrowserWindow {
       nodeIntegration: true,
       allowRunningInsecureContent: serve,
       contextIsolation: false,
-      webSecurity: false,
-//      webSecurity: !serve,
+      webSecurity: !serve,
 //      devTools: runType === 2
     },
   });

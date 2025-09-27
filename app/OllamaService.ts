@@ -29,8 +29,8 @@ export default class OllamaService {
         this.ollamaExecutable = 'ollama.exe';
         this.ollamaArgs = ['serve'];
       } else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
-        console.log('ollama choice: win:ipx');
-        this.archivePath = path.join(assetsFolderPath, 'ollama-ipx-llm-win.zip');
+        console.log('ollama choice: win:ipex');
+        this.archivePath = path.join(assetsFolderPath, 'ollama-ipex-llm-win.zip');
         this.ollamaExecutable = 'ollama-serve.bat';
       } else {
         console.log('ollama choice: win');
@@ -161,40 +161,34 @@ export default class OllamaService {
     });
   }
 
-  extract = (): Promise<void> => {
-    return new Promise(async (resolve, reject) => {
-      console.log('extract:', this.archivePath, '=>', this.unzipPath);
-      this.emit({ type: 'ollama-extract-config', data: { from: this.archivePath, to: this.unzipPath }});
+  extract = async () => {
+    console.log('extract:', this.archivePath, '=>', this.unzipPath);
+    this.emit({ type: 'ollama-extract-config', data: { from: this.archivePath, to: this.unzipPath }});
 
-      // Wait until the archivePath exists as on a very slow PC this could take a little time
-      while (!fs.existsSync(this.archivePath)) {
-        console.log("extract:error:cannot find", this.archivePath);
-        this.emit({ type: 'ollama-extract-error-archive-not-found-retrying', data: { from: this.archivePath, to: this.unzipPath }});
-        await this.delay(2000);
-      }
+    // Wait until the archivePath exists as on a very slow PC this could take a little time
+    while (!fs.existsSync(this.archivePath)) {
+      console.log("extract:error:cannot find", this.archivePath);
+      this.emit({ type: 'ollama-extract-error-archive-not-found-retrying', data: { from: this.archivePath, to: this.unzipPath }});
+      await this.delay(2000);
+    }
 
-      this.emit({ type: 'ollama-extract-checking', data: { from: this.archivePath, to: this.unzipPath }});
-      if (fs.existsSync(this.archivePath)) {
-        if (!fs.existsSync(this.unzipPath)) {
-          this.isExtracting = true;
-          this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath }});
-          console.log("Extracting ollama files...", this.unzipPath);
-          fs.mkdirSync(this.unzipPath, { recursive: true });    
-          fs.createReadStream(this.archivePath)
-            .pipe(unzipper.Extract({ path: this.unzipPath }))
-            .on("close", () => {
-              console.log("Files unzipped successfully");
-              this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
-              this.isExtracting = false;
-            });
-            resolve();
-        } else {
-          console.log("extract:skipping:", this.unzipPath);
-          this.emit({ type: 'ollama-extract-skipping', data: { from: this.archivePath, to: this.unzipPath }});
-          resolve();
-        }
-      }
-    });    
+    this.emit({ type: 'ollama-extract-checking', data: { from: this.archivePath, to: this.unzipPath }});
+    if (!fs.existsSync(this.unzipPath)) {
+      this.isExtracting = true;
+      this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath }});
+      console.log("Extracting ollama files...", this.unzipPath);
+      fs.mkdirSync(this.unzipPath, { recursive: true });    
+      fs.createReadStream(this.archivePath)
+        .pipe(unzipper.Extract({ path: this.unzipPath }))
+        .on("close", () => {
+          console.log("Files unzipped successfully");
+          this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
+          this.isExtracting = false;
+        });
+    } else {
+      console.log("extract:skipping:", this.unzipPath);
+      this.emit({ type: 'ollama-extract-skipping', data: { from: this.archivePath, to: this.unzipPath }});
+    }    
   }
 
   shellOllama = (): Promise<any> => {

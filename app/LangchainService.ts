@@ -13,7 +13,7 @@ import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
 import { OllamaEmbeddings } from "@langchain/ollama";
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { Document } from "@langchain/core/documents";
-import { existsSync, unlinkSync, mkdirSync, promises, statSync, Stats, rmSync, copyFileSync } from 'fs';
+import { mkdirSync } from 'fs';
 import * as path from 'path';
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 
@@ -42,8 +42,6 @@ export default class LangchainService {
     console.log('input_path:', this.input_path);
     console.log('doc_path:', this.doc_path);
 
-    const firstTime: boolean = !existsSync(this.db_path);
-  
     this.embeddings = new OllamaEmbeddings({
         model,
         baseUrl

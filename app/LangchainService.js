@@ -199,7 +199,6 @@ class LangchainService {
         console.log('db_path:', this.db_path);
         console.log('input_path:', this.input_path);
         console.log('doc_path:', this.doc_path);
-        const firstTime = !(0, fs_1.existsSync)(this.db_path);
         this.embeddings = new ollama_1.OllamaEmbeddings({
             model,
             baseUrl

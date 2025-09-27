@@ -198,40 +198,34 @@ class OllamaService {
                 setTimeout(resolve, ms);
             });
         };
-        this.extract = () => {
-            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                console.log('extract:', this.archivePath, '=>', this.unzipPath);
-                this.emit({ type: 'ollama-extract-config', data: { from: this.archivePath, to: this.unzipPath } });
-                // Wait until the archivePath exists as on a very slow PC this could take a little time
-                while (!fs.existsSync(this.archivePath)) {
-                    console.log("extract:error:cannot find", this.archivePath);
-                    this.emit({ type: 'ollama-extract-error-archive-not-found-retrying', data: { from: this.archivePath, to: this.unzipPath } });
-                    yield this.delay(2000);
-                }
-                this.emit({ type: 'ollama-extract-checking', data: { from: this.archivePath, to: this.unzipPath } });
-                if (fs.existsSync(this.archivePath)) {
-                    if (!fs.existsSync(this.unzipPath)) {
-                        this.isExtracting = true;
-                        this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath } });
-                        console.log("Extracting ollama files...", this.unzipPath);
-                        fs.mkdirSync(this.unzipPath, { recursive: true });
-                        fs.createReadStream(this.archivePath)
-                            .pipe(unzipper_1.default.Extract({ path: this.unzipPath }))
-                            .on("close", () => {
-                            console.log("Files unzipped successfully");
-                            this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
-                            this.isExtracting = false;
-                        });
-                        resolve();
-                    }
-                    else {
-                        console.log("extract:skipping:", this.unzipPath);
-                        this.emit({ type: 'ollama-extract-skipping', data: { from: this.archivePath, to: this.unzipPath } });
-                        resolve();
-                    }
-                }
-            }));
-        };
+        this.extract = () => __awaiter(this, void 0, void 0, function* () {
+            console.log('extract:', this.archivePath, '=>', this.unzipPath);
+            this.emit({ type: 'ollama-extract-config', data: { from: this.archivePath, to: this.unzipPath } });
+            // Wait until the archivePath exists as on a very slow PC this could take a little time
+            while (!fs.existsSync(this.archivePath)) {
+                console.log("extract:error:cannot find", this.archivePath);
+                this.emit({ type: 'ollama-extract-error-archive-not-found-retrying', data: { from: this.archivePath, to: this.unzipPath } });
+                yield this.delay(2000);
+            }
+            this.emit({ type: 'ollama-extract-checking', data: { from: this.archivePath, to: this.unzipPath } });
+            if (!fs.existsSync(this.unzipPath)) {
+                this.isExtracting = true;
+                this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath } });
+                console.log("Extracting ollama files...", this.unzipPath);
+                fs.mkdirSync(this.unzipPath, { recursive: true });
+                fs.createReadStream(this.archivePath)
+                    .pipe(unzipper_1.default.Extract({ path: this.unzipPath }))
+                    .on("close", () => {
+                    console.log("Files unzipped successfully");
+                    this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
+                    this.isExtracting = false;
+                });
+            }
+            else {
+                console.log("extract:skipping:", this.unzipPath);
+                this.emit({ type: 'ollama-extract-skipping', data: { from: this.archivePath, to: this.unzipPath } });
+            }
+        });
         this.shellOllama = () => {
             const command = path.join(this.unzipPath, this.ollamaExecutable) + ' ' + this.ollamaArgs.join(' ');
             console.log('shell:', command);
@@ -476,8 +470,8 @@ class OllamaService {
                 this.ollamaArgs = ['serve'];
             }
             else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
-                console.log('ollama choice: win:ipx');
-                this.archivePath = path.join(assetsFolderPath, 'ollama-ipx-llm-win.zip');
+                console.log('ollama choice: win:ipex');
+                this.archivePath = path.join(assetsFolderPath, 'ollama-ipex-llm-win.zip');
                 this.ollamaExecutable = 'ollama-serve.bat';
             }
             else {
