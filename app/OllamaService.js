@@ -238,8 +238,8 @@ class OllamaService {
                     windowsHide: true
                 });
                 if (this.ollamaProcess) {
-                    this.ollamaProcess.on('spawn', () => {
-                        this.ollamaPID = this.ollamaProcess && this.ollamaProcess.pid ? this.ollamaProcess.pid : -1;
+                    this.ollamaProcess.on('spawn', () => __awaiter(this, void 0, void 0, function* () {
+                        yield this.findOllama();
                         console.log(`Ollama process started ${this.ollamaPID}`);
                         // Send event
                         this.emit({ type: 'ollama-started', data: 'ok' });
@@ -249,7 +249,7 @@ class OllamaService {
                             this.isReady = true;
                             this.emit({ type: 'ollama-ready', data: 'ok' });
                         }, 5000);
-                    });
+                    }));
                     this.ollamaProcess.stdout.on('data', (data) => {
                         console.log(`stdout: ${data}`);
                         // Send event

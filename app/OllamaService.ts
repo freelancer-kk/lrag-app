@@ -209,8 +209,8 @@ export default class OllamaService {
         }
       )              
       if (this.ollamaProcess) {
-        this.ollamaProcess.on('spawn', () => {
-          this.ollamaPID = this.ollamaProcess && this.ollamaProcess.pid ? this.ollamaProcess.pid : -1;
+        this.ollamaProcess.on('spawn', async () => {
+          await this.findOllama();
           console.log(`Ollama process started ${this.ollamaPID}`);
           // Send event
           this.emit({ type: 'ollama-started', data: 'ok' });
