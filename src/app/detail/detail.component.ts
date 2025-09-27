@@ -110,10 +110,10 @@ export class DetailComponent implements OnInit {
       }
     });
   }
+
   writeModelToEnv = (): Promise<void> => {
     return this.systemService.setEnvValue('LLM_MODEL_NAME', this.systemService.selectedModel).then((value: any) => {
-      return this.systemService.writeEnv().then((res: any) => {        
-      })
+      return this.systemService.writeEnv().then((res: any) => {})
     }) 
   }
 

@@ -39,22 +39,31 @@
       </ng-template>    
     </ngx-file-drop>  
   </div>
+  <mat-toolbar>
+  <mat-form-field class="full-width">
+    <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
+    <mat-select [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
+      @for (entry of systemService.ragFiles; track $index) {
+        <mat-option [value]="entry">{{ entry }}</mat-option>
+      }
+    </mat-select>  
+  </mat-form-field>
+  @if (systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
+    <button matSuffix matIconButton aria-label="Clear" (click)="fileRemove($event)">
+      <mat-icon>delete</mat-icon>
+    </button>            
+  }  
+  </mat-toolbar>
+
   <div class="vertscroll">
   <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">
     @for (entry of systemService.ragFiles; track $index) {
       <mat-grid-tile class="gridtile" colspan="1" rowspan="1">
-        <mat-list-item (click)="fileRemove($event, $index)">
+        <mat-list-item>
           <mat-icon matListItemIcon>upload_file</mat-icon>
           <div matListItemTitle>
             {{ entry}}
-          </div>
-          <div matListItemLine>
-            <button matButton>
-              @if (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length <= systemService.MAX_FILES) {
-                <mat-icon class="danger">cancel</mat-icon>
-              }
-            </button>
-          </div>
+          </div>          
         </mat-list-item>
       </mat-grid-tile>      
     }         

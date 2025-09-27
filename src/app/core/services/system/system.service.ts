@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { BridgeService } from '../bridge/bridge.service';
 import { TranslateService } from '@ngx-translate/core';
+import {FormControl} from '@angular/forms';
 
 export enum EWho {
   User = 0,
@@ -28,6 +29,8 @@ export class SystemService {
   ollamaStatus = signal<any>('not running');
   ingestStatus = signal<any>('not running');
   insightStatus = signal<any>("not running");
+  selectedDocuments = new FormControl('');
+  totalMainMemory = 0;
 
   selectedModel: string = ''
   downloadedLLM: string = '';
@@ -41,11 +44,11 @@ export class SystemService {
   ollamaPID: number = -1;
 
   models: any[] = [
-    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false},
-    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true},
-    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true},    
-    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true},
+    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
+    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true, memory: 8},
+    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true, memory: 8},    
+    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 12},
+    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 16},
   ];
   embeddings: string = 'embeddinggemma:300m';
   
@@ -90,9 +93,11 @@ export class SystemService {
         const { size, size_vram } = entry;
         
         let part = '';
+        /*
         if (size-size_vram > 0) {
           part += `CPU ${Math.floor(size-size_vram / size * 100)}%`;
         }
+          */
         part += ` GPU ${Math.floor(size_vram / size * 100)}%`
         return part;
       }         
@@ -331,6 +336,7 @@ export class SystemService {
         if (total < 8) {
           this.power = this.power / 1.4;
         }
+        this.totalMainMemory = total;
         resolve({
           "name": await this.get("SYSTEM.MEM"),
           "totalGB": total

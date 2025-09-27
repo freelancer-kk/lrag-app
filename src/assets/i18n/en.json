@@ -44,6 +44,7 @@
         "YOUR_PC": "Your PC",
         "TECHNICAL_DETAILS": "Technical Details",
         "LLM": "Model Process",
+        "MODEL": "Model ",
         "ELASTIC": "Store",
         "KIBANA": "Data",
         "STREAMLIT": "Insights",
@@ -72,6 +73,7 @@
         "FOLDER_SUBTITLE": "Drag and Drop your files below (PDF,XLXS,DOC,CSV)",
         "DROP_HERE": "Drop Here",
         "DROP_ZONE": "Dropzone",
+        "FILES": "Documents",
         "SELECT_FILE": "Select File",
         "DIR_NOT_SUPPORTED": "Directory upload not possible in basic version",
         "PLEASE_WAIT": "Busy or max files reached, please wait ...",
@@ -82,7 +84,8 @@
         "MAX_DOCS": "15",
         "MAX_FILES_TEXT": "Maximum of 15 documents for this version of LRag",
         "DURATION_WARNING": "Ingestion may take some minutes depending on the performance of your PC and size of your documents. Please wait until the process completes",
-        "ERROR": "Error during ingestion, please try again"
+        "ERROR": "Error during ingestion, please try again",
+        "DELETE_ARE_YOU_SURE": "Are you sure you want to delete these documents =>"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",
