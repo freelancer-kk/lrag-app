@@ -1,4 +1,4 @@
-import { ipcMain, shell } from 'electron';
+import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import unzipper from 'unzipper';
@@ -7,11 +7,12 @@ import find, { ProcessInfo } from "find-process";
 
 import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse, ChatResponse, ChatRequest } from "ollama";
 import { isMac, isWindows } from './SystemInfo';
-import { ChildProcess, execFile, ExecFileException } from 'child_process';
+import { ChildProcess, ChildProcessByStdio, ExecFileException, spawn } from 'child_process';
+import Stream from 'stream';
 export default class OllamaService {
   archivePath: string = '';
   unzipPath: string;
-  ollamaProcess: ChildProcess | undefined;
+  ollamaProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> | undefined;
   ollama: Ollama | undefined;
   webContents: Electron.WebContents | undefined;
   isReady: boolean = false;
@@ -191,76 +192,48 @@ export default class OllamaService {
     }    
   }
 
-  shellOllama = (): Promise<any> => {
-    const command: string = path.join(this.unzipPath, this.ollamaExecutable) + ' ' + this.ollamaArgs.join(' ');
-    console.log('shell:', command);
-    this.emit({ type: 'ollama-start', data: { command, args: this.ollamaArgs } });
-    return shell.openExternal(
-      command,
-      {
-        activate: false,        
-        workingDirectory: this.unzipPath
-      }
-    ).then(() => {      
-      setTimeout(async () => {
-        await this.findOllama();
-      }, 10000);
-      return { status: 'starting' };
-    }).catch((reason: any) => {
-      return { status: 'error', data: { error: reason } };
-    })
-  }
-
   start = (): any => {
     try {
       const command: string = path.join(this.unzipPath, this.ollamaExecutable);
       console.log('execFile:', command, this.ollamaArgs);
       this.emit({ type: 'ollama-start', data: { command, args: this.ollamaArgs } });
 
-      this.ollamaProcess = execFile(
-        command,
-        this.ollamaArgs,
-        (error: ExecFileException | null, stdout: string, stderr: string) => {
-          if (error) {
-            console.error(error);
-            this.emit({ type: 'ollama-exec-file-error', data: { error } });
-          }
-          console.error(stderr);
-          console.log(stdout);
-          this.emit({ type: 'ollama-exec-file-stdout', data: stdout });
-          this.emit({ type: 'ollama-exec-file-stderr', data: stderr });
+      this.ollamaProcess = spawn(
+        this.ollamaExecutable,
+        this.ollamaArgs,        
+        {
+          shell: true,
+          cwd: this.unzipPath,
+          stdio: [ 'ignore', 'pipe', 'pipe' ],
+          windowsHide: true
         }
       )              
       if (this.ollamaProcess) {
         this.ollamaProcess.on('spawn', () => {
-          if (this.ollamaProcess) {
-            this.ollamaPID = this.ollamaProcess.pid ? this.ollamaProcess.pid : -1;
-            console.log(`Ollama process started ${this.ollamaPID}`);
-            // Send event
-            if (this.ollamaProcess.stdout) {
-              this.ollamaProcess.stdout.on('data', (data: string) => {
-                  console.log(`stdout: ${data}`);
-                  // Send event
-                  this.emit({ type: 'ollama-stdout', data: Buffer.from(data).toString() });
-              })
-            }
-            if (this.ollamaProcess.stderr) {
-              this.ollamaProcess.stderr.on("error", (data: string) => {
-                  console.error(`stderr: ${data}`);
-                  // Send event
-                  this.emit({ type: 'ollama-stderr', data: Buffer.from(data).toString() });
-              });
-            }
-          
-            setTimeout(() => {
-              this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
-              // event Ollama connection is ready
-              this.isReady = true;
-              this.emit({ type: 'ollama-ready', data: 'ok' });
-            }, 5000)
-          }
+          this.ollamaPID = this.ollamaProcess && this.ollamaProcess.pid ? this.ollamaProcess.pid : -1;
+          console.log(`Ollama process started ${this.ollamaPID}`);
+          // Send event
+          this.emit({ type: 'ollama-started', data: 'ok' });
+          setTimeout(() => {
+            this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
+            // event Ollama connection is ready
+            this.isReady = true;
+            this.emit({ type: 'ollama-ready', data: 'ok' });
+          }, 5000)          
         })
-         this.ollamaProcess.on('exit', (code: number | null) => {
+
+        this.ollamaProcess.stdout.on('data', (data: string) => {
+          console.log(`stdout: ${data}`);
+          // Send event
+          this.emit({ type: 'ollama-stdout', data: Buffer.from(data).toString() });
+        })
+        
+        this.ollamaProcess.stderr.on("data", (data: string) => {
+            console.error(`stderr: ${data}`);
+            // Send event
+            this.emit({ type: 'ollama-stderr', data: Buffer.from(data).toString() });
+        });
+        this.ollamaProcess.on('exit', (code: number | null) => {
             console.log(`Ollama process exited with ${code}`);
             // Send event
             this.emit({ type: 'ollama-ended', data: code ? code.toString() : '0' });
