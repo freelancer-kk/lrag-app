@@ -6,6 +6,7 @@
   "WARNING": "Warning",
   "PAUSE": "Pause",
   "QUESTION": "Question",
+  "STATEMENT": "Information",
   "EXIT": "Exit App",
   "SYSTEM": {
     "CPU": "Processor",
@@ -13,8 +14,9 @@
     "MEM": "Memory"
   },
   "GPU_ACCEL": "GPU Acceleration",
-  "GPU_ACCEL_TIP": "This feature usually works, if you experience issues switch it off",
+  "GPU_ACCEL_TIP": "This feature usually works, if you experience issues particularly with intel integrated GPUs, switch it off",
   "GPU_ARE_YOU_SURE": "Toggle GPU Acceleration setting, are you sure?",
+  "GPU_CHANGE_RESTART": "GPU acceleration setting complete. The application will exit, please restart",
   "RATING_TOO_LOW": "You PC LRag rating is very low. LRag will run extremely slowly on your PC and may experience difficultly completing certain tasks",
   "APP": {
     "TITLE": "LRag",

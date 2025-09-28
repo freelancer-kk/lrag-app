@@ -78,6 +78,19 @@ export class AppComponent implements OnInit {
         const { type, data } = eventObj;
         console.log('type', type, 'data', data);        
         switch(type) {
+          case 'ollama-gpu-accel-started': {
+            this.ngZone.run(() => {
+              this.systemService.gpuChangeStatus.update(() => 'running');
+              this.systemService.modelStatus.update(() => 'configuring');
+            })
+          }
+          break;
+          case 'ollama-gpu-accel-done': {
+            this.ngZone.run(() => {
+              this.forceExit(undefined);
+            })
+          }
+          break;
           case 'ollama-extract-starting': {
             this.ngZone.run(() => {
               this.systemService.ollamaStatus.update(() => `extracting`);
@@ -184,6 +197,7 @@ export class AppComponent implements OnInit {
       console.log('ollama status:', this.systemService.ollamaStatus());
       console.log('model status:', this.systemService.modelStatus());
       console.log('ingest status:', this.systemService.ingestStatus());
+      console.log('gpu accel change status:', this.systemService.gpuChangeStatus());
       this.systemService.calcOverallStatus();
       console.log('overall status:', this.systemService.overallStatus());
       if (this.systemService.overallStatus() === "running: unhealthy") {
@@ -239,7 +253,12 @@ export class AppComponent implements OnInit {
     const { isReady } = await this.systemService.commandOllama('isRunning');
     console.log('ollama is running:', isReady);
     if (!isReady) {
-      const response = await this.systemService.commandOllama('start');
+      const response = await this.systemService.commandOllama(
+        'start',
+        {
+          gpuAccel: this.systemService.gpuAcceleration
+        }
+      );
       if (response.status === 'error' && response.error === 'extraction') {
         this.systemService.ollamaStatus.update(() => 'extracting');
         console.log('waiting for extraction to complete, then start...');
@@ -303,6 +322,22 @@ export class AppComponent implements OnInit {
         const result = await this.systemService.quitApp();
         console.log('app quit:', result);
       }
+    });
+  }
+
+  forceExit = async (ev: any) => {
+    console.log('forcing exit!');
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 2,
+          params: {
+            message: await this.systemService.get('GPU_CHANGE_RESTART')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async () => {
+      await this.systemService.quitApp();      
     });
   }
 }

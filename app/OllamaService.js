@@ -64,9 +64,11 @@ const child_process_1 = require("child_process");
 class OllamaService {
     constructor(assetsFolderPath, appDataPath, gpuBrands) {
         this.archivePath = '';
+        this.archiveNoGPUPath = '';
         this.isReady = false;
         this.ollamaExecutable = '';
         this.ollamaArgs = [];
+        this.ollamaNoGPUArgs = [];
         this.isExtracting = false;
         this.ollamaPID = -1;
         this.register = (webContents) => {
@@ -102,7 +104,7 @@ class OllamaService {
                                     response = { status: 'error', error: 'extraction' };
                                 }
                                 else {
-                                    response = this.start();
+                                    response = this.start(params.gpuAccel);
                                 }
                             }
                             break;
@@ -154,6 +156,36 @@ class OllamaService {
                         case "abort":
                             {
                                 this.abort();
+                            }
+                            break;
+                        case "gpuAccel":
+                            {
+                                const { gpuAcceleration } = params;
+                                this.emit({ type: 'ollama-gpu-accel-started', data: { from: this.archivePath } });
+                                let archivePath = this.archivePath;
+                                let unzipPath = this.unzipPath;
+                                yield this.stop();
+                                if (!gpuAcceleration) {
+                                    archivePath = this.archiveNoGPUPath;
+                                    unzipPath = unzipPath + '-nogpu';
+                                    if (!fs.existsSync(unzipPath)) {
+                                        fs.mkdirSync(unzipPath, { recursive: true });
+                                        fs.createReadStream(archivePath)
+                                            .pipe(unzipper_1.default.Extract({ path: unzipPath }))
+                                            .on("close", () => {
+                                            console.log("Files unzipped successfully");
+                                            this.emit({ type: 'ollama-gpu-accel-done', data: { from: archivePath, to: unzipPath } });
+                                        });
+                                    }
+                                    else {
+                                        this.emit({ type: 'ollama-gpu-accel-done', data: { from: archivePath, to: unzipPath } });
+                                    }
+                                }
+                                else {
+                                    this.emit({ type: 'ollama-gpu-accel-done', data: { from: archivePath, to: unzipPath } });
+                                }
+                                response = { status: 'ok', data: 'gpu-accel-change' };
+                                // TODO: startup is DIFFERENT FOR GPU AND NON GPU ACCEL MUST SAVE TO ENVIRONMENT!
                             }
                             break;
                         default: {
@@ -226,14 +258,22 @@ class OllamaService {
                 this.emit({ type: 'ollama-extract-skipping', data: { from: this.archivePath, to: this.unzipPath } });
             }
         });
-        this.start = () => {
+        this.start = (gpuAccel = false) => {
             try {
-                const command = path.join(this.unzipPath, this.ollamaExecutable);
-                console.log('execFile:', command, this.ollamaArgs);
-                this.emit({ type: 'ollama-start', data: { command, args: this.ollamaArgs } });
-                this.ollamaProcess = (0, child_process_1.spawn)(this.ollamaExecutable, this.ollamaArgs, {
+                let args = this.ollamaArgs;
+                let unzipPath = this.unzipPath;
+                let ollamaExecutable = this.ollamaExecutable;
+                if (!gpuAccel) {
+                    ollamaExecutable = 'ollama.exe';
+                    args = this.ollamaNoGPUArgs;
+                    unzipPath = this.unzipPath + '-nogpu';
+                }
+                const command = path.join(unzipPath, ollamaExecutable);
+                console.log('execFile:', gpuAccel, command, args);
+                this.emit({ type: 'ollama-start', data: { command, args } });
+                this.ollamaProcess = (0, child_process_1.spawn)(ollamaExecutable, args, {
                     shell: true,
-                    cwd: this.unzipPath,
+                    cwd: unzipPath,
                     stdio: ['ignore', 'pipe', 'pipe'],
                     windowsHide: true
                 });
@@ -441,26 +481,34 @@ class OllamaService {
             if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia') || f.toLowerCase().startsWith('amd'))) {
                 console.log('ollama choice: win');
                 this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
+                this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');
                 this.ollamaExecutable = 'ollama.exe';
                 this.ollamaArgs = ['serve'];
+                this.ollamaNoGPUArgs = ['serve'];
             }
             else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
                 console.log('ollama choice: win:ipex');
                 this.archivePath = path.join(assetsFolderPath, 'ollama-ipex-llm-win.zip');
+                this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');
+                this.ollamaNoGPUArgs = ['serve'];
                 this.ollamaExecutable = 'ollama-serve.bat';
             }
             else {
                 console.log('ollama choice: win');
                 this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
-                this.ollamaExecutable = 'ollama.exe serve';
+                this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');
+                this.ollamaExecutable = 'ollama.exe';
+                this.ollamaNoGPUArgs = ['serve'];
                 this.ollamaArgs = ['serve'];
             }
         }
         else if (SystemInfo_1.isMac) {
             console.log('ollama choice: darwin');
             this.archivePath = path.join(assetsFolderPath, 'ollama-darwin.zip');
-            this.ollamaExecutable = 'ollama-darwin serve';
+            this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-darwin.zip');
+            this.ollamaExecutable = 'ollama-darwin';
             this.ollamaArgs = ['serve'];
+            this.ollamaNoGPUArgs = ['serve'];
         }
     }
 }

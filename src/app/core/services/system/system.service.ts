@@ -29,6 +29,7 @@ export class SystemService {
   ollamaStatus = signal<any>('not running');
   ingestStatus = signal<any>('not running');
   insightStatus = signal<any>("not running");
+  gpuChangeStatus = signal<any>("not running");
   selectedDocuments = new FormControl('');
   totalMainMemory = 0;
 
@@ -42,6 +43,7 @@ export class SystemService {
   osType: any;
   chatHistory: IChat[] = [];
   ollamaPID: number = -1;
+  brand: string = '';
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
@@ -76,7 +78,7 @@ export class SystemService {
 
   calcOverallStatus = () => {
     if (this.ollamaStatus() === 'running') {
-      if (this.modelStatus() === 'running' && this.ingestStatus() === 'not running') {
+      if (this.modelStatus() === 'running' && this.ingestStatus() === 'not running' && this.gpuChangeStatus() === 'not running') {
         this.overallStatus.update(() => 'running: healthy');
       } else {
         this.overallStatus.update(() => 'running: unhealthy');
@@ -190,7 +192,7 @@ export class SystemService {
   }
 
   getClassFromStatus = (status: string): string => {
-    if (status === 'running' || status === 'extracting' || status === 'thinking' || status === 'uploading' || status === 'splitting' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'indexing' || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
+    if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'thinking' || status === 'uploading' || status === 'splitting' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'indexing' || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
     } else if (status === 'downloading' || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';
@@ -214,6 +216,7 @@ export class SystemService {
       case 'saving':        
       case 'adding':
       case 'thinking':
+      case 'configuring':
       case 'running: healthy': 
       case 'running': {
         return 'directions_run';
@@ -315,6 +318,7 @@ export class SystemService {
         if (device.vram < 8) {
           this.power = this.power / 1.8;
         }
+        this.brand = device.brand;
         resolve({
           "name": await this.get("SYSTEM.GPU"),
           "brand": device.brand, 
