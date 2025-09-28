@@ -115,7 +115,7 @@
         "HOW_FAST_TITLE": "How fast is LRag?",
         "HOW_FAST": "Please use a model size depending on your PC power. LRag should answer within seconds. First time start up, downloading initial models, creating services etc... may take some minutes",
         "GPU_TITLE": "Can LRag use my GPU (Graphics Processing Unit)?",
-        "GPU": "LRag attempts to accelerate processing using your GPU whenever possible but if you are having problems starting, switch of GPU acceleration",
+        "GPU": "LRag attempts to accelerate processing using your GPU whenever possible. Intel support is relatively new, if you are having problems starting, switch of GPU acceleration",
         "EMAIL_SUPPORT_TITLE": "Support",
         "EMAIL_SUPPORT": "Limited email support - support@divm.com"
       }

@@ -1,9 +1,9 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, nativeImage, screen, Tray } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
 import DockerEnv from './DockerEnv';
-import SystemInfo from './SystemInfo';
+import SystemInfo, { isLinux, isMac, isWindows } from './SystemInfo';
 import LRagFiles from './LragFiles';
 import OllamaService from './OllamaService';
 import LangchainService from './LangchainService';
@@ -26,6 +26,7 @@ let ollamaService: OllamaService;
 let langchainService: LangchainService;
 let contextChat: ContextChat;
 let systemInfo: SystemInfo;
+let tray: Tray;
 
 let configPath: string = path.join(__dirname, '..');
 
@@ -63,6 +64,18 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
   })  
 }
 
+const calcAssetsFolderPath = () => {
+  let assetsPath: string = '../src/assets';
+  if (serve) {
+    assetsFolderPath = path.join(__dirname, assetsPath);
+  } else if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
+    assetsPath = '../dist/assets';
+    assetsFolderPath = path.join(__dirname, assetsPath);
+  } else {
+    assetsFolderPath = path.join(assetsPakFolderPath, 'resources', 'app.asar', 'assets')      
+  }
+}
+
 function createWindow(): BrowserWindow {
 
   const size = screen.getPrimaryDisplay().workAreaSize;
@@ -75,7 +88,7 @@ function createWindow(): BrowserWindow {
     height: size.height,
     minWidth: 400, // Optional: Set a minimum width
     minHeight: 300, // Optional: Set a minimum height
-    resizable: true,
+    resizable: true,    
     autoHideMenuBar: runType === 2,
     webPreferences: {
       nodeIntegration: true,
@@ -85,9 +98,7 @@ function createWindow(): BrowserWindow {
 //      devTools: runType === 2
     },
   });
-
-  let assetsPath: string = '../src/assets';
-
+  
   if (serve) {
     import('electron-debug').then(debug => {
       debug.default({isEnabled: true, showDevTools: true});
@@ -97,8 +108,7 @@ function createWindow(): BrowserWindow {
       const reloaderFn = (reloader as any).default || reloader;
       reloaderFn(module);
     });
-    win.loadURL('http://localhost:4200');
-    assetsFolderPath = path.join(__dirname, assetsPath);
+    win.loadURL('http://localhost:4200');    
     dockerEnv = new DockerEnv(configPath, assetsFolderPath, userHomePath, userDataPath, userTempPath, separator, setDocPathsCB);
   } else {
     
@@ -107,12 +117,8 @@ function createWindow(): BrowserWindow {
     
     if (fs.existsSync(path.join(__dirname, '../dist/index.html'))) {
        // Path when running electron in local folder
-      pathIndex = '../dist/index.html';
-      assetsPath = '../dist/assets';
-      assetsFolderPath = path.join(__dirname, assetsPath);      
-    } else {
-      // prod build asar path
-      assetsFolderPath = path.join(assetsPakFolderPath, 'resources', 'app.asar', 'assets')      
+      pathIndex = '../dist/index.html';  
+      
     }
     dockerEnv = new DockerEnv(configPath, assetsFolderPath, userHomePath, userDataPath, userTempPath, separator, setDocPathsCB);
 
@@ -139,11 +145,28 @@ try {
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {    
-    setTimeout(() => {
-      createWindow();
-      if (runType === 2) {
-        assetsFolderPath = path.join(assetsPakFolderPath, 'resources', 'app.asar', 'assets')
-      }            
+    calcAssetsFolderPath();
+
+    if (isLinux) {
+      const favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
+      tray = new Tray(favIconPath);
+    } else if (isMac) {
+      const favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
+      let image: Electron.NativeImage = nativeImage.createFromPath(favIconPath)
+      image = image.resize({
+        height: 16,
+        width: 16
+      })      
+      tray = new Tray(image);      
+    } else {
+      const favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.ico');
+      let image: Electron.NativeImage = nativeImage.createFromPath(favIconPath)
+      tray = new Tray(image);
+    }
+    tray.setToolTip('LRag - Local Document AI Insights!');
+      
+    setTimeout(() => {      
+      createWindow();      
       dockerEnv.register();        
     }, 400)    
   });  
