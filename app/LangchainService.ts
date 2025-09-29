@@ -164,8 +164,8 @@ export default class LangchainService {
           return { status: 'error', message: 'no chunks created' };
         }
       } else {
-        this.emit( { type: 'langchain-run-error', data: { message: 'document(s) not loaded, empty or latest was incompatible' } });
-        return { status: 'error', message: 'document(s) not loaded, empty or latest was incompatible)' };
+        this.emit( { type: 'langchain-run-warning', data: { message: 'document(s) loaded but not processed, empty or latest was incompatible' } });
+        return { status: 'warning', message: 'document(s) loaded but not processed, empty or latest was incompatible' };
       }
     }).catch((err) => {
       console.error('load error:', err);

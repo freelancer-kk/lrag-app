@@ -9,7 +9,7 @@
           <mat-spinner diameter="30"></mat-spinner>
           {{ ingestStatus }}
         </div>
-      } @else {
+      } @else if (ingestStatus !== 'not running') {
         <div [class]="systemService.getClassFromStatus(ingestStatus)">
           <mat-icon>{{ systemService.getIconFromStatus(ingestStatus) }}</mat-icon>
           {{ ingestStatus }}
@@ -39,7 +39,7 @@
       </ng-template>    
     </ngx-file-drop>  
   </div>
-  <mat-toolbar>
+  <div class="onerow">
   <mat-form-field class="full-width">
     <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
     <mat-select [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
@@ -53,7 +53,7 @@
       <mat-icon>delete</mat-icon>
     </button>            
   }  
-  </mat-toolbar>
+</div>
 
   <div class="vertscroll">
   <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">

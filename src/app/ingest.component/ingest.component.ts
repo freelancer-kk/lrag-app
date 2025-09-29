@@ -80,23 +80,25 @@ export class IngestComponent implements OnInit {
     this.systemService.ingestStatus.update(() => 'starting');
     this.systemService.commandIngest('start').then(async (result: any) => {
       console.log('ingest result:', result);
-      if (result && result.status === 'completed') {
+      if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(() => 'not running');
         this.systemService.ragFiles = await this.mediaService.ls();
       } else {
-        this.systemService.ingestStatus.update(() => 'error');
-        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (result ? (': ' + JSON.stringify(result)) : ''), 'OK' );
+        this.systemService.ingestStatus.update(() => 'warning');
+        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result ? (': ' + JSON.stringify(result)) : ''), 'OK' );
+        this.systemService.ragFiles = await this.mediaService.ls();
         snackBarRef.onAction().subscribe(() => {
           this.systemService.ingestStatus.update(() => 'not running');
-        });
+        });      
       }
     }).catch(async (e) => {
-      console.error('ingest error:', e);
+      console.error('ingest error:', e);      
       this.systemService.ingestStatus.update(() => 'error');
       const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK' );
+      this.systemService.ragFiles = await this.mediaService.ls();
       snackBarRef.onAction().subscribe(() => {
         this.systemService.ingestStatus.update(() => 'not running');
-      });
+      });      
     })    
   }
 

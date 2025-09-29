@@ -187,6 +187,12 @@ export class AppComponent implements OnInit {
             })            
           }
           break;
+          case 'langchain-run-warning'  : {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'warning');
+            })            
+          }
+          break;
         } 
       } catch (e) {
         console.error(e);
