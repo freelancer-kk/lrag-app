@@ -33,8 +33,10 @@ export default class OllamaService {
   ollamaNoGPUArgs: string[] = [];
   isExtracting: boolean = false;
   ollamaPID: number = -1;
+  gpuBrands: string[] = [];
   
   constructor(userTempPath: string, appDataPath: string, gpuBrands: string[]) {
+    this.gpuBrands = gpuBrands;
     this.userTempPath = userTempPath;
     this.unzipPath = path.join(appDataPath, 'ollama');
     if (isWindows) {
@@ -45,7 +47,7 @@ export default class OllamaService {
         this.ollamaExecutable = 'ollama.exe';
         this.ollamaArgs = ['serve'];
         this.ollamaNoGPUArgs = ['serve'];
-      } else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd'))) {
+      } else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd')) || gpuBrands.find(f => f.toLowerCase().startsWith('advanced'))) {
         console.log('ollama choice: amd: win');
         this.archivePath = rocm_download_link;
         this.archiveNoGPUPath = default_download_link;
@@ -56,6 +58,7 @@ export default class OllamaService {
         console.log('ollama choice: ipex: win');
         this.archivePath = ipex_download_link;
         this.archiveNoGPUPath = default_download_link;
+        this.ollamaArgs = [];
         this.ollamaNoGPUArgs = ['serve'];
         this.ollamaExecutable = 'ollama-serve.bat';
       } else {
@@ -241,7 +244,7 @@ export default class OllamaService {
       res.on('data', (chunk: any) => {
         cur += chunk.length;
         const percentage: number = Math.floor(cur / totalLength * 100);
-        this.emit({ type: 'ollama-download', data: { percentage, url } });
+        this.emit({ type: 'ollama-download', data: { percentage, url, gpuBrands: this.gpuBrands } });
       })
       res.on('end', () => {
         console.log("Download complete");

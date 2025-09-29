@@ -78,6 +78,7 @@ class OllamaService {
         this.ollamaNoGPUArgs = [];
         this.isExtracting = false;
         this.ollamaPID = -1;
+        this.gpuBrands = [];
         this.register = (webContents) => {
             this.webContents = webContents;
             electron_1.ipcMain.on('ollama', (event, arg) => __awaiter(this, void 0, void 0, function* () {
@@ -253,7 +254,7 @@ class OllamaService {
                 res.on('data', (chunk) => {
                     cur += chunk.length;
                     const percentage = Math.floor(cur / totalLength * 100);
-                    this.emit({ type: 'ollama-download', data: { percentage, url } });
+                    this.emit({ type: 'ollama-download', data: { percentage, url, gpuBrands: this.gpuBrands } });
                 });
                 res.on('end', () => {
                     console.log("Download complete");
@@ -508,6 +509,7 @@ class OllamaService {
                 this.ollama.abort();
             }
         };
+        this.gpuBrands = gpuBrands;
         this.userTempPath = userTempPath;
         this.unzipPath = path.join(appDataPath, 'ollama');
         if (SystemInfo_1.isWindows) {
@@ -519,7 +521,7 @@ class OllamaService {
                 this.ollamaArgs = ['serve'];
                 this.ollamaNoGPUArgs = ['serve'];
             }
-            else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd'))) {
+            else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd')) || gpuBrands.find(f => f.toLowerCase().startsWith('advanced'))) {
                 console.log('ollama choice: amd: win');
                 this.archivePath = rocm_download_link;
                 this.archiveNoGPUPath = default_download_link;
@@ -531,6 +533,7 @@ class OllamaService {
                 console.log('ollama choice: ipex: win');
                 this.archivePath = ipex_download_link;
                 this.archiveNoGPUPath = default_download_link;
+                this.ollamaArgs = [];
                 this.ollamaNoGPUArgs = ['serve'];
                 this.ollamaExecutable = 'ollama-serve.bat';
             }
