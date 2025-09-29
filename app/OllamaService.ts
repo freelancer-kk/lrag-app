@@ -17,7 +17,6 @@ const darwin_download_link: string = "https://mxcsfg3rqluuvsmu.myfritz.net:45195
 const ipex_download_link: string = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=f6d916b86552b5d6";
 const rocm_download_link: string = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=06ddc8616ce812b0";
 const default_download_link: string = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=d06e9950aad202bd";
-// const default_download_link: string = "https://reform-bc.com/ollama-win.zip";
 
 export default class OllamaService {
   userTempPath: string;
@@ -234,6 +233,7 @@ export default class OllamaService {
     console.log('downloading:prepare:' , url)
 
     const writer: fs.WriteStream = fs.createWriteStream(tempFile)
+
     const client = url.startsWith('https') ? https : http;
     const request: http.ClientRequest = client.get(url, (res: http.IncomingMessage) => {
       const hl: string | undefined = res.headers['content-length'];
@@ -242,9 +242,13 @@ export default class OllamaService {
       let cur: number = 0;
       
       res.on('data', (chunk: any) => {
-        cur += chunk.length;
-        const percentage: number = Math.floor(cur / totalLength * 100);
-        this.emit({ type: 'ollama-download', data: { percentage, url, gpuBrands: this.gpuBrands } });
+        try {     
+          cur += chunk.length;
+          const percentage: number = Math.floor(cur / totalLength * 100);
+          this.emit({ type: 'ollama-download', data: { percentage, url, gpuBrands: this.gpuBrands } });
+        } catch (e) {
+          console.error('download:error:', e);          
+        }
       })
       res.on('end', () => {
         console.log("Download complete");
@@ -253,7 +257,7 @@ export default class OllamaService {
       });
       res.on('error', (err: any) => { console.error(err) })
       res.pipe(writer)      
-    })
+    }) 
 
     return writer;
   }

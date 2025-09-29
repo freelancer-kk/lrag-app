@@ -252,9 +252,14 @@ class OllamaService {
                 console.log('downloading:start:length', totalLength);
                 let cur = 0;
                 res.on('data', (chunk) => {
-                    cur += chunk.length;
-                    const percentage = Math.floor(cur / totalLength * 100);
-                    this.emit({ type: 'ollama-download', data: { percentage, url, gpuBrands: this.gpuBrands } });
+                    try {
+                        cur += chunk.length;
+                        const percentage = Math.floor(cur / totalLength * 100);
+                        this.emit({ type: 'ollama-download', data: { percentage, url, gpuBrands: this.gpuBrands } });
+                    }
+                    catch (e) {
+                        console.error('download:error:', e);
+                    }
                 });
                 res.on('end', () => {
                     console.log("Download complete");
