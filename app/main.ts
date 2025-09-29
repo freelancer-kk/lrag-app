@@ -28,6 +28,7 @@ let contextChat: ContextChat;
 let systemInfo: SystemInfo;
 let tray: Tray;
 let favIconPath: string;
+let favImage: Electron.NativeImage;
 
 let configPath: string = path.join(__dirname, '..');
 
@@ -56,7 +57,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
     lragFiles.register();
     langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'));
     langchainService.register(win?.webContents);
-    ollamaService = new OllamaService(runType === 2 ? path.join(resourcesPath, 'src', 'extraResources') : './src/extraResources', appDataPath, graphics.controllers.map(v => v.vendor));
+    ollamaService = new OllamaService(userTempPath, appDataPath, graphics.controllers.map(v => v.vendor));
     ollamaService.register(win?.webContents);
     await ollamaService.extract();
     contextChat = new ContextChat(langchainService, ollamaService);
@@ -90,7 +91,7 @@ function createWindow(): BrowserWindow {
     minWidth: 400, // Optional: Set a minimum width
     minHeight: 300, // Optional: Set a minimum height
     resizable: true,
-    icon: favIconPath,
+    icon: favImage,
     autoHideMenuBar: runType === 2,
     webPreferences: {
       nodeIntegration: true,
@@ -146,27 +147,28 @@ try {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-  app.on('ready', () => {    
-    calcAssetsFolderPath();
-    
-    if (isLinux) {
-      favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
-      tray = new Tray(favIconPath);
-    } else if (isMac) {
-      favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
-      let image: Electron.NativeImage = nativeImage.createFromPath(favIconPath)
-      image = image.resize({
-        height: 16,
-        width: 16
-      })      
-      tray = new Tray(image);      
-    } else {
-      favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.ico');
-      tray = new Tray(favIconPath);
-    }
-    tray.setToolTip('LRag - Local Document AI Insights!');    
+  app.on('ready', () => {            
+    setTimeout(() => {
+      calcAssetsFolderPath();
+
+      if (isLinux) {
+        favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
+        tray = new Tray(favIconPath);
+      } else if (isMac) {
+        favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
+        favImage = nativeImage.createFromPath(favIconPath)
+        favImage = favImage.resize({
+          height: 16,
+          width: 16
+        })      
+        tray = new Tray(favImage);      
+      } else {
+        favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.ico');
+        favImage = nativeImage.createFromPath(favIconPath)
+        tray = new Tray(favImage);
+      }
       
-    setTimeout(() => {      
+      tray.setToolTip('LRag - Local Document AI Insights!');    
       createWindow();      
       dockerEnv.register();        
     }, 400)    

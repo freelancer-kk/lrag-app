@@ -106,6 +106,18 @@ export class BridgeService {
     }
   }
 
+  openExternal = (callbackId: number, url: string, cb: (response: any) => void) => {
+    if (this.isElectronRendered) {
+      this.callNode('system', callbackId, cb, 'open', {
+        url
+      }, undefined);
+    } else {
+      cb({
+        status: 'ok'
+      })
+    }
+  }
+
   getGpu = (callbackId: number, cb: (response: any) => void) => {
     if (this.isElectronRendered) {
       this.callNode('system', callbackId, cb, 'gpu', {}, undefined);

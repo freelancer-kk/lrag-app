@@ -82,6 +82,14 @@ class SystemInfo {
                             response = this.getOsTypes();
                         }
                         break;
+                    case "open":
+                        {
+                            yield electron_1.shell.openExternal(params.url);
+                            response = {
+                                status: 'ok'
+                            };
+                        }
+                        break;
                     case "quit":
                         {
                             electron_1.app.quit();

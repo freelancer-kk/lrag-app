@@ -5,11 +5,22 @@ import unzipper from 'unzipper';
 import kill from 'tree-kill';
 import find, { ProcessInfo } from "find-process";
 
+import http from 'http';
+import https from 'https';
+
 import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse, ChatResponse, ChatRequest } from "ollama";
 import { isMac, isWindows } from './SystemInfo';
 import { ChildProcess, ChildProcessByStdio, ExecFileException, spawn } from 'child_process';
 import Stream from 'stream';
+
+const darwin_download_link: string = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=6aa7713a198417b8";
+const ipex_download_link: string = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=f6d916b86552b5d6";
+const rocm_download_link: string = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=06ddc8616ce812b0";
+const default_download_link: string = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=d06e9950aad202bd";
+// const default_download_link: string = "https://reform-bc.com/ollama-win.zip";
+
 export default class OllamaService {
+  userTempPath: string;
   archivePath: string = '';
   archiveNoGPUPath: string = '';
   unzipPath: string;
@@ -23,41 +34,42 @@ export default class OllamaService {
   isExtracting: boolean = false;
   ollamaPID: number = -1;
   
-  constructor(assetsFolderPath: string, appDataPath: string, gpuBrands: string[]) {
+  constructor(userTempPath: string, appDataPath: string, gpuBrands: string[]) {
+    this.userTempPath = userTempPath;
     this.unzipPath = path.join(appDataPath, 'ollama');
     if (isWindows) {
       if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia'))) {
         console.log('ollama choice: nvidia: win');
-        this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');        
-        this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');
+        this.archivePath = default_download_link;        
+        this.archiveNoGPUPath = default_download_link;
         this.ollamaExecutable = 'ollama.exe';
         this.ollamaArgs = ['serve'];
         this.ollamaNoGPUArgs = ['serve'];
       } else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd'))) {
         console.log('ollama choice: amd: win');
-        this.archivePath = path.join(assetsFolderPath, 'ollama-rocm-win.zip');
-        this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');
+        this.archivePath = rocm_download_link;
+        this.archiveNoGPUPath = default_download_link;
         this.ollamaExecutable = 'ollama.exe';
         this.ollamaArgs = ['serve'];
         this.ollamaNoGPUArgs = ['serve'];
       } else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
         console.log('ollama choice: ipex: win');
-        this.archivePath = path.join(assetsFolderPath, 'ollama-ipex-llm-win.zip');
-        this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');
+        this.archivePath = ipex_download_link;
+        this.archiveNoGPUPath = default_download_link;
         this.ollamaNoGPUArgs = ['serve'];
         this.ollamaExecutable = 'ollama-serve.bat';
       } else {
         console.log('ollama choice: nogpu: win');
-        this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
-        this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');   
+        this.archivePath = default_download_link;
+        this.archiveNoGPUPath = default_download_link;   
         this.ollamaExecutable = 'ollama.exe';
         this.ollamaNoGPUArgs = ['serve'];
         this.ollamaArgs = ['serve'];        
       }
     } else if (isMac) {
       console.log('ollama choice: darwin');
-      this.archivePath = path.join(assetsFolderPath, 'ollama-darwin.zip');
-      this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-darwin.zip');  
+      this.archivePath = darwin_download_link;
+      this.archiveNoGPUPath = darwin_download_link;
       this.ollamaExecutable = 'ollama-darwin';
       this.ollamaArgs = ['serve'];
       this.ollamaNoGPUArgs = ['serve'];
@@ -146,15 +158,20 @@ export default class OllamaService {
             if (!gpuAcceleration) {
               archivePath = this.archiveNoGPUPath
               unzipPath = unzipPath + '-nogpu';
-              if (!fs.existsSync(unzipPath)) {                
-                          
-                fs.mkdirSync(unzipPath, { recursive: true });    
-                fs.createReadStream(archivePath)
+              if (!fs.existsSync(unzipPath)) {                                                          
+                const tempZipFile: string = path.join(this.userTempPath, 'ollama-nogpu.zip');
+                this.emit({ type: 'ollama-gpu-accel-download', data: { from: archivePath, to: tempZipFile } });
+                
+                this.download(archivePath, tempZipFile, () => {
+                  fs.mkdirSync(unzipPath, { recursive: true });              
+                  fs.createReadStream(tempZipFile)
                   .pipe(unzipper.Extract({ path: unzipPath }))
                   .on("close", () => {
                     console.log("Files unzipped successfully");
                     this.emit({ type: 'ollama-gpu-accel-done', data: { from: archivePath, to: unzipPath } });
                   });
+                })
+                
               } else {
                 this.emit({ type: 'ollama-gpu-accel-done', data: { from: archivePath, to: unzipPath } });  
               }
@@ -210,30 +227,57 @@ export default class OllamaService {
     });
   }
 
+  download = (url: string, tempFile: string, cb: () => void): fs.WriteStream => {
+    console.log('downloading:prepare:' , url)
+
+    const writer: fs.WriteStream = fs.createWriteStream(tempFile)
+    const client = url.startsWith('https') ? https : http;
+    const request: http.ClientRequest = client.get(url, (res: http.IncomingMessage) => {
+      const hl: string | undefined = res.headers['content-length'];
+      const totalLength: number = parseInt(hl ? hl : '-1', 10);
+      console.log('downloading:start:length', totalLength);
+      let cur: number = 0;
+      
+      res.on('data', (chunk: any) => {
+        cur += chunk.length;
+        const percentage: number = Math.floor(cur / totalLength * 100);
+        this.emit({ type: 'ollama-download', data: { percentage, url } });
+      })
+      res.on('end', () => {
+        console.log("Download complete");
+        this.emit({ type: 'ollama-extract-extract', data: { url }});
+        cb();
+      });
+      res.on('error', (err: any) => { console.error(err) })
+      res.pipe(writer)      
+    })
+
+    return writer;
+  }
+
   extract = async () => {
     console.log('extract:', this.archivePath, '=>', this.unzipPath);
     this.emit({ type: 'ollama-extract-config', data: { from: this.archivePath, to: this.unzipPath }});
-
-    // Wait until the archivePath exists as on a very slow PC this could take a little time
-    while (!fs.existsSync(this.archivePath)) {
-      console.log("extract:error:cannot find", this.archivePath);
-      this.emit({ type: 'ollama-extract-error-archive-not-found-retrying', data: { from: this.archivePath, to: this.unzipPath }});
-      await this.delay(2000);
-    }
-
-    this.emit({ type: 'ollama-extract-checking', data: { from: this.archivePath, to: this.unzipPath }});
+    
     if (!fs.existsSync(this.unzipPath)) {
       this.isExtracting = true;
       this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath }});
       console.log("Extracting ollama files...", this.unzipPath);
-      fs.mkdirSync(this.unzipPath, { recursive: true });    
-      fs.createReadStream(this.archivePath)
+      
+      const tempZipFile: string = path.join(this.userTempPath, 'ollama.zip');
+      this.emit({ type: 'ollama-extract-download', data: { from: this.archivePath, to: tempZipFile }});
+      
+      this.download(this.archivePath, tempZipFile, () => {
+        fs.mkdirSync(this.unzipPath, { recursive: true });    
+        fs.createReadStream(tempZipFile)
         .pipe(unzipper.Extract({ path: this.unzipPath }))
         .on("close", () => {
           console.log("Files unzipped successfully");
           this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
           this.isExtracting = false;
         });
+      })
+      
     } else {
       console.log("extract:skipping:", this.unzipPath);
       this.emit({ type: 'ollama-extract-skipping', data: { from: this.archivePath, to: this.unzipPath }});

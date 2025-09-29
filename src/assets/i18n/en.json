@@ -88,7 +88,9 @@
         "DURATION_WARNING": "Ingestion may take some minutes depending on the performance of your PC and size of your documents. Please wait until the process completes",
         "ERROR": "Error during ingestion, please try again",
         "WARNING": "Warning during ingestion",
-        "DELETE_ARE_YOU_SURE": "Are you sure you want to remove these documents =>"
+        "DELETE_ARE_YOU_SURE": "Are you sure you want to remove these documents =>",
+        "SCANNED_DOCS": "scanned docs?",
+        "SCANNED_DOCS_TEXT": "In order to ingest scanned documents they must be converted with an OCR tool. Many are available. Adobe have a free tool, click here"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",
@@ -110,7 +112,7 @@
         "ACCURACY_TITLE": "How good is LRag?",
         "ACCURACY": "LRag uses your prompt and documents as context for the corresponding model and is limited in accuracy, especially if you are mixing question domains e.g asking about accounts and then immediately asking health questions. The best approach is wait a minute before asking questions about a different domain to allow the context to reset.",
         "INGEST_TITLE": "What documents can I ingest?",
-        "INGEST": "You can ingest PDF, Word, Excel, Powerpoint and CSV files. Please avoid scanned documents as these are not supported in this version.",
+        "INGEST": "You can ingest PDF, Word, Excel, Powerpoint and CSV files. Scanned documents as these are not directly supported. These documents can be easily converted with OCR to make them compatible",
         "DATA_SECURITY_TITLE": "Is my data secure?",
         "DATA_SECURITY": "Yes, your data and documents never leave your PC. LRag is a 100% local solution.",
         "HOW_FAST_TITLE": "How fast is LRag?",

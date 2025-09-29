@@ -2,7 +2,10 @@
     <mat-toolbar-row>
       <h1 class="title" [matTooltip]="'PAGES.INGEST.MAX_FILES_TEXT' | translate">
         {{ 'PAGES.INGEST.MAIN_TITLE' | translate }}
-      </h1>      
+      </h1>
+      <a class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
+      ({{ 'PAGES.INGEST.SCANNED_DOCS' | translate }})
+      </a>
       <span class="spacer"></span>      
       @if (ingestStatus === 'running' || ingestStatus === 'splitting' || ingestStatus === 'loaded' || ingestStatus === 'indexing' || ingestStatus === 'saving' || ingestStatus === 'adding') {
         <div [class]="systemService.getClassFromStatus(ingestStatus)">

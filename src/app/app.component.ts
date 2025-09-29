@@ -93,6 +93,18 @@ export class AppComponent implements OnInit {
           break;
           case 'ollama-extract-starting': {
             this.ngZone.run(() => {
+              this.systemService.ollamaStatus.update(() => `preparing`);
+            })
+          }
+          break;
+          case 'ollama-download': {
+            this.ngZone.run(() => {
+              this.systemService.ollamaStatus.update(() => `downloading ${data.percentage}%`);
+            })
+          }
+          break;
+          case 'ollama-extract-extract': {
+            this.ngZone.run(() => {
               this.systemService.ollamaStatus.update(() => `extracting`);
             })
           }

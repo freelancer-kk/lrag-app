@@ -32,6 +32,7 @@ export class SystemService {
   gpuChangeStatus = signal<any>("not running");
   selectedDocuments = new FormControl('');
   totalMainMemory = 0;
+  ocr_pdf_link: string = "https://acrobat.adobe.com/link/acrobat/ocr-pdf?x_api_client_id=adobe_com&x_api_client_location=ocr_pdf";
 
   selectedModel: string = ''
   downloadedLLM: string = '';
@@ -194,7 +195,7 @@ export class SystemService {
   getClassFromStatus = (status: string): string => {
     if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'thinking' || status === 'uploading' || status === 'splitting' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'indexing' || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
-    } else if (status === 'downloading' || status === 'starting' || status === 'running: unhealthy') {
+    } else if (status.startsWith('downloading') || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';
     } else if ((status === 'die') || (status === 'error') || (status === 'destroy')) {
       return 'chip-error';
@@ -371,6 +372,14 @@ export class SystemService {
           }
         })
         resolve(data);      
+      });
+    })    
+  }
+
+  openExternal = (url: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      this.bridgeService.openExternal(6, url, async () => {
+        resolve();      
       });
     })    
   }
