@@ -2,7 +2,7 @@
 <h1 class="title">
   {{ 'PAGES.DETAIL.MAIN_TITLE' | translate }}
 </h1>
-@if (systemService.brand === 'Intel') {
+@if (systemService.brand === 'Intel' || systemService.brand === 'Amd') {
   <span class="spacer"></span>
   <mat-slide-toggle [disabled]="this.systemService.overallStatus() !== 'running: healthy' || this.systemService.insightStatus() !== 'not running'" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="systemService.gpuAcceleration" (change)="switchGPUAccel($event)">
     {{ 'GPU_ACCEL' | translate }}

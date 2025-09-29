@@ -26,21 +26,28 @@ export default class OllamaService {
   constructor(assetsFolderPath: string, appDataPath: string, gpuBrands: string[]) {
     this.unzipPath = path.join(appDataPath, 'ollama');
     if (isWindows) {
-      if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia') || f.toLowerCase().startsWith('amd'))) {
-        console.log('ollama choice: win');
+      if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia'))) {
+        console.log('ollama choice: nvidia: win');
         this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');        
         this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');
         this.ollamaExecutable = 'ollama.exe';
         this.ollamaArgs = ['serve'];
         this.ollamaNoGPUArgs = ['serve'];
+      } else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd'))) {
+        console.log('ollama choice: amd: win');
+        this.archivePath = path.join(assetsFolderPath, 'ollama-rocm-win.zip');
+        this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');
+        this.ollamaExecutable = 'ollama.exe';
+        this.ollamaArgs = ['serve'];
+        this.ollamaNoGPUArgs = ['serve'];
       } else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
-        console.log('ollama choice: win:ipex');
+        console.log('ollama choice: ipex: win');
         this.archivePath = path.join(assetsFolderPath, 'ollama-ipex-llm-win.zip');
         this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');
         this.ollamaNoGPUArgs = ['serve'];
         this.ollamaExecutable = 'ollama-serve.bat';
       } else {
-        console.log('ollama choice: win');
+        console.log('ollama choice: nogpu: win');
         this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
         this.archiveNoGPUPath = path.join(assetsFolderPath, 'ollama-win.zip');   
         this.ollamaExecutable = 'ollama.exe';

@@ -27,6 +27,7 @@ let langchainService: LangchainService;
 let contextChat: ContextChat;
 let systemInfo: SystemInfo;
 let tray: Tray;
+let favIconPath: string;
 
 let configPath: string = path.join(__dirname, '..');
 
@@ -88,7 +89,8 @@ function createWindow(): BrowserWindow {
     height: size.height,
     minWidth: 400, // Optional: Set a minimum width
     minHeight: 300, // Optional: Set a minimum height
-    resizable: true,    
+    resizable: true,
+    icon: favIconPath,
     autoHideMenuBar: runType === 2,
     webPreferences: {
       nodeIntegration: true,
@@ -146,12 +148,12 @@ try {
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {    
     calcAssetsFolderPath();
-
+    
     if (isLinux) {
-      const favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
+      favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
       tray = new Tray(favIconPath);
     } else if (isMac) {
-      const favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
+      favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.png');
       let image: Electron.NativeImage = nativeImage.createFromPath(favIconPath)
       image = image.resize({
         height: 16,
@@ -159,11 +161,10 @@ try {
       })      
       tray = new Tray(image);      
     } else {
-      const favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.ico');
-      let image: Electron.NativeImage = nativeImage.createFromPath(favIconPath)
-      tray = new Tray(image);
+      favIconPath = path.join(assetsFolderPath, 'icons', 'favicon.ico');
+      tray = new Tray(favIconPath);
     }
-    tray.setToolTip('LRag - Local Document AI Insights!');
+    tray.setToolTip('LRag - Local Document AI Insights!');    
       
     setTimeout(() => {      
       createWindow();      
