@@ -296,9 +296,9 @@ export default class OllamaService {
             
       let args: string[] = this.ollamaArgs;
       let unzipPath = this.unzipPath;
-      let ollamaExecutable = this.ollamaExecutable
+      let ollamaExecutable = this.ollamaExecutable;
       if (!gpuAccel) {
-        ollamaExecutable = 'ollama.exe'        
+        ollamaExecutable = 'ollama.exe';
         args = this.ollamaNoGPUArgs;
         unzipPath = this.unzipPath + '-nogpu';
       }

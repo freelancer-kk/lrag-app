@@ -67,7 +67,6 @@ const darwin_download_link = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/fil
 const ipex_download_link = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=f6d916b86552b5d6";
 const rocm_download_link = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=06ddc8616ce812b0";
 const default_download_link = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=d06e9950aad202bd";
-// const default_download_link: string = "https://reform-bc.com/ollama-win.zip";
 class OllamaService {
     constructor(userTempPath, appDataPath, gpuBrands) {
         this.archivePath = '';

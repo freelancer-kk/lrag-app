@@ -99,7 +99,7 @@ export class AppComponent implements OnInit {
           break;
           case 'ollama-download': {
             this.ngZone.run(() => {
-              this.systemService.ollamaStatus.update(() => `downloading ${data.percentage}%`);
+              this.systemService.ollamaStatus.update(() => `downloading ${data.percentage}%`);              
             })
           }
           break;
