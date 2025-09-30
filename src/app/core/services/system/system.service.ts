@@ -288,13 +288,15 @@ export class SystemService {
       this.bridgeService.getGpu(2, async (data: any) => {
         const { controllers } = data;
         const gpuDevices: any[] = [];
-        controllers.forEach((gpu: any) => {
-          const { model, vram } = gpu;
-          gpuDevices.push({
-            model,
-            vram: Math.ceil(vram/1024)
-          })                  
-        })
+        if (controllers) {
+          controllers.forEach((gpu: any) => {
+            const { model, vram } = gpu;
+            gpuDevices.push({
+              model,
+              vram: Math.ceil(vram/1024)
+            })                  
+          })
+        }
         
         let device: any = {}
         if (gpuDevices.length > 0) {        
@@ -367,14 +369,16 @@ export class SystemService {
         const data: any = {
           disks: {}
         };
-        disks.forEach((disk: any) => {
-          const { _used, _available, _mounted, _capacity } = disk;
-          data.disks[_mounted] =  {
-            capacity: _capacity,
-            sizeGB: Math.ceil((Number(_used) + Number(_available))/1024/1024/1024)
-          }
-        })
-        resolve(data);      
+        if (disks) {
+          disks.forEach((disk: any) => {
+            const { _used, _available, _mounted, _capacity } = disk;
+            data.disks[_mounted] =  {
+              capacity: _capacity,
+              sizeGB: Math.ceil((Number(_used) + Number(_available))/1024/1024/1024)
+            }
+          })
+          resolve(data);      
+        }
       });
     })    
   }
