@@ -23,13 +23,13 @@
   "portable": {
     "splashImage": "dist/assets/icons/electron.bmp"
   },
+  "afterSign": "scripts/notarize.js",   
   "mac": {
     "icon": "dist/assets/icons",
     "hardenedRuntime": true,
     "entitlements": "entitlements.mac.plist",
     "entitlementsInherit": "entitlements.mac.plist",
     "gatekeeperAssess": false,
-    "sign": "scripts/notarize.js",
     "target": [
       "dmg"
     ]
