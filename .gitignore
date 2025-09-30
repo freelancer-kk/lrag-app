@@ -11,6 +11,7 @@ src/**/*.js
 *.js.map
 app/*.js
 .env
+scripts/.env
 
 # dependencies
 node_modules

@@ -25,6 +25,11 @@
   },
   "mac": {
     "icon": "dist/assets/icons",
+    "hardenedRuntime": true,
+    "entitlements": "entitlements.mac.plist",
+    "entitlementsInherit": "entitlements.mac.plist",
+    "gatekeeperAssess": false,
+    "sign": "scripts/notarize.js",
     "target": [
       "dmg"
     ]
