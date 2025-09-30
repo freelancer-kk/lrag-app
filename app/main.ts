@@ -59,7 +59,9 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
     langchainService.register(win?.webContents);
     ollamaService = new OllamaService(userTempPath, appDataPath, graphics.controllers.map(v => v.vendor));
     ollamaService.register(win?.webContents);
-    await ollamaService.extract();
+    if (isWindows === true || isLinux === true) {
+      await ollamaService.extract();
+    }
     contextChat = new ContextChat(langchainService, ollamaService);
     contextChat.register(win?.webContents);
     // langchainService.inspect();

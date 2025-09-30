@@ -247,10 +247,10 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {    
     this.systemService.osType = await this.systemService.getOSType();
-    console.log('osType:', this.systemService.osType);
-    if (this.systemService.osType && this.systemService.osType.isMac) { 
+    if (this.systemService.osType && (this.systemService.osType.isMac === true)) { 
       this.systemService.manageOllamaExternally = true; 
     };
+    console.log('osType:', this.systemService.osType, this.systemService.manageOllamaExternally);
     this.systemService.cpu = await this.systemService.getCpu();
     this.systemService.gpu = await this.systemService.getGpu();
     this.systemService.mem = await this.systemService.getTotalMemory();
@@ -273,7 +273,7 @@ export class AppComponent implements OnInit {
   startServicesIfNecessary = async () => {    
     // Check if ollama is running
     const { isReady } = await this.systemService.commandOllama('isRunning');
-    console.log('ollama check running:', isReady, this.systemService.manageOllamaExternally);
+    console.log('ollama check RUNNING:', isReady, this.systemService.manageOllamaExternally);
     if (isReady === true) {
       if (this.systemService.manageOllamaExternally === true) {
         this.setOllamaCheckTimer();
@@ -289,7 +289,7 @@ export class AppComponent implements OnInit {
         snackBarRef.afterDismissed().subscribe(() => {
           this.systemService.showGetOllama = true;
         });
-        this.setOllamaCheckTimer();        
+        this.setOllamaCheckTimer();
       } else {
         const response = await this.systemService.commandOllama(
           'start',
