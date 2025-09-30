@@ -377,8 +377,8 @@ export class SystemService {
               sizeGB: Math.ceil((Number(_used) + Number(_available))/1024/1024/1024)
             }
           })
-          resolve(data);      
         }
+        resolve(data);        
       });
     })    
   }
