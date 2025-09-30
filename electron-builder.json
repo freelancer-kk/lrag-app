@@ -14,9 +14,6 @@
       "filter": ["**/*"]
     }    
   ],
-  "extraResources": [
-    "src/extraResources"
-  ],
   "win": {
     "icon": "dist/assets/icons",
     "target": [

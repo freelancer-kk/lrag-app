@@ -11,7 +11,7 @@ import ContextChat from './ContextChat';
 import { Systeminformation } from 'systeminformation';
 
 const userHomePath: string = app.getPath('home');
-const assetsPakFolderPath: string = app.getPath('assets');
+// const assetsPakFolderPath: string = app.getPath('assets');
 const userDataPath: string = app.getPath('userData');
 const resourcesPath: string = process.resourcesPath;
 const appDataPath: string = app.getPath('appData');
@@ -74,7 +74,8 @@ const calcAssetsFolderPath = () => {
     assetsPath = '../dist/assets';
     assetsFolderPath = path.join(__dirname, assetsPath);
   } else {
-    assetsFolderPath = path.join(assetsPakFolderPath, 'resources', 'app.asar', 'assets')      
+    // assetsFolderPath = path.join(assetsPakFolderPath, 'resources', 'app.asar', 'assets')      
+    assetsFolderPath = path.join(resourcesPath, 'app.asar', 'assets')      
   }
 }
 
