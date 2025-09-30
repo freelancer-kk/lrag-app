@@ -41,6 +41,7 @@ bootstrapApplication(AppComponent, {
         systemService.gpuAcceleration= gpuAccelStr ? JSON.parse(gpuAccelStr) : 'true';        
         const manageOllamaExternally: string | null = localStorage.getItem('manage-ollama-externally');
         systemService.manageOllamaExternally = manageOllamaExternally ? JSON.parse(manageOllamaExternally) : 'false';
+        console.log('managedExternally:', systemService.manageOllamaExternally);
       };
       await initializerFn(inject(SystemService));
     }),

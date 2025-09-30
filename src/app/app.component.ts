@@ -76,7 +76,7 @@ export class AppComponent implements OnInit {
     this.bridgeService.eventCallback((ev: any, eventObj: any) => {
       try {          
         const { type, data } = eventObj;
-        console.log('type', type, 'data', data);        
+        // console.log('type', type, 'data', data);        
         switch(type) {
           case 'ollama-gpu-accel-started': {
             this.ngZone.run(() => {
@@ -247,7 +247,10 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {    
     this.systemService.osType = await this.systemService.getOSType();
-    if (this.systemService.osType.isMac) { this.systemService.manageOllamaExternally = true; };
+    console.log('osType:', this.systemService.osType);
+    if (this.systemService.osType && this.systemService.osType.isMac) { 
+      this.systemService.manageOllamaExternally = true; 
+    };
     this.systemService.cpu = await this.systemService.getCpu();
     this.systemService.gpu = await this.systemService.getGpu();
     this.systemService.mem = await this.systemService.getTotalMemory();
@@ -270,9 +273,24 @@ export class AppComponent implements OnInit {
   startServicesIfNecessary = async () => {    
     // Check if ollama is running
     const { isReady } = await this.systemService.commandOllama('isRunning');
-    console.log('ollama check running:', isReady);
-    if (!isReady) {
-      if (!this.systemService.manageOllamaExternally) {
+    console.log('ollama check running:', isReady, this.systemService.manageOllamaExternally);
+    if (isReady === true) {
+      if (this.systemService.manageOllamaExternally === true) {
+        this.setOllamaCheckTimer();
+      }
+      this.systemService.ollamaStatus.update(() => 'running');      
+    } else {
+      if (this.systemService.manageOllamaExternally === true) {
+        console.log('SHOWING OLLAMA MANAUAL WARNING:', this.systemService.manageOllamaExternally);
+        const snackBarRef = this._snackBar.open(
+          await this.systemService.get('APP.OLLAMA_NOT_RUNNING'), 
+          await this.systemService.get('OK')
+        );
+        snackBarRef.afterDismissed().subscribe(() => {
+          this.systemService.showGetOllama = true;
+        });
+        this.setOllamaCheckTimer();        
+      } else {
         const response = await this.systemService.commandOllama(
           'start',
           {
@@ -284,22 +302,8 @@ export class AppComponent implements OnInit {
           console.log('waiting for extraction to complete, then start...');
         } else {
           this.systemService.ollamaStatus.update(() => 'running');
-        }      
-      } else {
-        const snackBarRef = this._snackBar.open(
-          await this.systemService.get('APP.OLLAMA_NOT_RUNNING'), 
-          await this.systemService.get('OK')
-        );
-        snackBarRef.afterDismissed().subscribe(() => {
-          this.systemService.showGetOllama = true;
-        });
-        this.setOllamaCheckTimer();        
+        }
       }
-    } else {
-      if (this.systemService.manageOllamaExternally) {
-        this.setOllamaCheckTimer();
-      }
-      this.systemService.ollamaStatus.update(() => 'running');      
     }
   }   
 

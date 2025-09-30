@@ -5,7 +5,7 @@
       {{ 'PAGES.HOME.SUB_TITLE' | translate }}
     </mat-card-subtitle>
     <span class="spacer"></span>
-    <mat-slide-toggle [disabled]="this.systemService.osType.isMac" [checked]="systemService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
+    <mat-slide-toggle [disabled]="!this.systemService.osType || (this.systemService.osType && this.systemService.osType.isMac)" [checked]="systemService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
     {{ 'PAGES.HOME.MANAGE_EXTERNALLY' | translate }}
     </mat-slide-toggle>  
   </mat-card-header>
