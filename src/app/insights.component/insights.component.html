@@ -40,7 +40,7 @@
         }
       </mat-form-field>                      
       <div #chatDiv id="chatDiv" class="full-width-height">
-        <table mat-table>
+        <table mat-table class="full-width">
           @for (entry of systemService.chatHistory; track $index) {
             <tr mat-row>
               @if (entry.who === 0) {
@@ -53,11 +53,11 @@
               }              
             </tr>            
           }
-          @if (streaming) {
+          @if (streaming) {            
             <tr mat-row>
                 <p>{{ streamedResponse }}</p>
                 <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
-            </tr>
+            </tr>            
           }                   
         </table>
       </div>
