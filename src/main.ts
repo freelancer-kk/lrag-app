@@ -7,7 +7,7 @@ import { AppComponent } from './app/app.component';
 import { APP_CONFIG } from './environments/environment';
 import { CoreModule } from './app/core/core.module';
 import { SharedModule } from './app/shared/shared.module';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app/app.routes';
@@ -25,7 +25,7 @@ bootstrapApplication(AppComponent, {
     provideTranslateService({
       loader: provideTranslateHttpLoader({prefix:"assets/i18n/"}),
       fallbackLang: 'en',
-      lang: 'en'
+      lang: TranslateService.getBrowserLang()
     }),
     importProvidersFrom(
       CoreModule,
