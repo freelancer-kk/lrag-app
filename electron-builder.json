@@ -12,7 +12,7 @@
     {
       "from": "../dist",
       "filter": ["**/*"]
-    }
+    }    
   ],
   "extraResources": [
     "src/extraResources"
@@ -33,7 +33,7 @@
     ]
   },
   "linux": {
-    "icon": "dist/assets/icons",
+    "icon": "dist/assets/icons/favicon.png",
     "target": [
       "AppImage"
     ]

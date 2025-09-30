@@ -7,12 +7,14 @@
   @if (this.systemService.insightStatus() === 'thinking') {    
     <mat-spinner diameter="30"></mat-spinner>    
   }
-  <div [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate" [class]="systemService.getClassFromStatus(systemService.insightStatus())">
-    @if (this.systemService.insightStatus() !== 'thinking') {
-      <mat-icon>{{ systemService.getIconFromStatus(systemService.insightStatus()) }}</mat-icon>
-    }    
-    {{ systemService.insightStatus() }}
-  </div>
+  @if (this.systemService.insightStatus() !== 'not running') {
+    <div [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate" [class]="systemService.getClassFromStatus(systemService.insightStatus())">
+      @if (this.systemService.insightStatus() !== 'thinking') {
+        <mat-icon>{{ systemService.getIconFromStatus(systemService.insightStatus()) }}</mat-icon>
+      }    
+      {{ systemService.insightStatus() }}    
+    </div>
+  }
   @if (systemService.chatHistory.length>0) {                  
     <button [disabled]="this.systemService.insightStatus() === 'thinking'" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="clearHistory()">
       <mat-icon>playlist_remove</mat-icon>
@@ -28,26 +30,15 @@
     </mat-toolbar>
   } @else {
     @if (systemService.overallStatus() === 'running: healthy') {      
-      <tr mat-row class="full-width">
-        <td mat-col class="double-width">
-        <mat-form-field class="full-width">
-          <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
-          <input [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="question">
-          @if (question && question.length>0) {
-            <button matSuffix matIconButton aria-label="Clear" (click)="question=''">
-              <mat-icon>close</mat-icon>
-            </button>            
-          }
-        </mat-form-field>
-        </td>
-        <td mat-col>
-        @if (question && question.length>0 && this.systemService.insightStatus() !== 'thinking') {                  
-          <button matIconButton (click)="askQuestion()">
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
+        <input [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="question">
+        @if (question && question.length>0 && this.systemService.insightStatus() !== 'thinking') {
+          <button matSuffix matIconButton aria-label="Clear" (click)="askQuestion()">
             <mat-icon>arrow_circle_right</mat-icon>
-          </button>          
+          </button>            
         }
-        </td>
-      </tr>
+      </mat-form-field>                      
       <div #chatDiv id="chatDiv" class="full-width-height">
         <table mat-table>
           @for (entry of systemService.chatHistory; track $index) {

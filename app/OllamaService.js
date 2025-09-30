@@ -51,100 +51,159 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const path = __importStar(require("path"));
-// import unzipper from 'unzipper';
-const child_process_1 = require("child_process");
+const fs = __importStar(require("fs"));
+const unzipper_1 = __importDefault(require("unzipper"));
+const tree_kill_1 = __importDefault(require("tree-kill"));
+const find_process_1 = __importDefault(require("find-process"));
+const http_1 = __importDefault(require("http"));
+const https_1 = __importDefault(require("https"));
 const ollama_1 = require("ollama");
 const SystemInfo_1 = require("./SystemInfo");
+const child_process_1 = require("child_process");
+const darwin_download_link = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=6aa7713a198417b8";
+const ipex_download_link = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=f6d916b86552b5d6";
+const rocm_download_link = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=06ddc8616ce812b0";
+const default_download_link = "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=d06e9950aad202bd";
 class OllamaService {
-    constructor(assetsFolderPath, appDataPath, gpuBrands) {
+    constructor(userTempPath, appDataPath, gpuBrands) {
         this.archivePath = '';
+        this.archiveNoGPUPath = '';
         this.isReady = false;
-        this.startCommand = '';
+        this.ollamaExecutable = '';
+        this.ollamaArgs = [];
+        this.ollamaNoGPUArgs = [];
         this.isExtracting = false;
+        this.ollamaPID = -1;
+        this.gpuBrands = [];
         this.register = (webContents) => {
             this.webContents = webContents;
             electron_1.ipcMain.on('ollama', (event, arg) => __awaiter(this, void 0, void 0, function* () {
                 const { callbackId, command, params } = arg;
                 console.log('ollama:', callbackId, command, params);
                 let response = {};
-                switch (command) {
-                    case "isRunning":
-                        {
-                            try {
-                                this.ollama = new ollama_1.Ollama({ host: 'http://127.0.0.1:11434' });
-                                response = yield this.ollama.ps();
-                                this.isReady = true;
+                try {
+                    switch (command) {
+                        case "isRunning":
+                            {
+                                try {
+                                    this.ollama = new ollama_1.Ollama({ host: 'http://127.0.0.1:11434' });
+                                    response = yield this.ollama.ps();
+                                    this.isReady = true;
+                                }
+                                catch (e) {
+                                    this.isReady = false;
+                                    this.ollama = undefined;
+                                }
+                                response = { isReady: this.isReady };
                             }
-                            catch (e) {
-                                this.isReady = false;
-                                this.ollama = undefined;
+                            break;
+                        case "isReady":
+                            {
+                                response = { isReady: this.isReady };
                             }
-                            response = { isReady: this.isReady };
-                        }
-                        break;
-                    case "isReady":
-                        {
-                            response = { isReady: this.isReady };
-                        }
-                        break;
-                    case "start":
-                        {
-                            if (this.isExtracting) {
-                                response = { status: 'error', error: 'extraction' };
+                            break;
+                        case "start":
+                            {
+                                if (this.isExtracting) {
+                                    response = { status: 'error', error: 'extraction' };
+                                }
+                                else {
+                                    response = this.start(params.gpuAccel);
+                                }
                             }
-                            else {
-                                response = this.start();
+                            break;
+                        case "stop":
+                            {
+                                response = this.stop();
                             }
+                            break;
+                        case "find":
+                            {
+                                response = yield this.findOllama();
+                            }
+                            break;
+                        case "generate":
+                            {
+                                response = yield this.generate(params);
+                            }
+                            break;
+                        case "chat":
+                            {
+                                response = yield this.chat(params);
+                            }
+                            break;
+                        case "pull":
+                            {
+                                response = yield this.pull(params);
+                            }
+                            break;
+                        case "rm":
+                            {
+                                response = yield this.rm(params);
+                            }
+                            break;
+                        case "list":
+                            {
+                                response = yield this.list();
+                            }
+                            break;
+                        case "show":
+                            {
+                                response = yield this.show(params);
+                            }
+                            break;
+                        case "ps":
+                            {
+                                response = yield this.ps();
+                            }
+                            break;
+                        case "abort":
+                            {
+                                this.abort();
+                            }
+                            break;
+                        case "gpuAccel":
+                            {
+                                const { gpuAcceleration } = params;
+                                this.emit({ type: 'ollama-gpu-accel-started', data: { from: this.archivePath } });
+                                let archivePath = this.archivePath;
+                                let unzipPath = this.unzipPath;
+                                yield this.stop();
+                                if (!gpuAcceleration) {
+                                    archivePath = this.archiveNoGPUPath;
+                                    unzipPath = unzipPath + '-nogpu';
+                                    if (!fs.existsSync(unzipPath)) {
+                                        const tempZipFile = path.join(this.userTempPath, 'ollama-nogpu.zip');
+                                        this.emit({ type: 'ollama-gpu-accel-download', data: { from: archivePath, to: tempZipFile } });
+                                        this.download(archivePath, tempZipFile, () => {
+                                            fs.mkdirSync(unzipPath, { recursive: true });
+                                            fs.createReadStream(tempZipFile)
+                                                .pipe(unzipper_1.default.Extract({ path: unzipPath }))
+                                                .on("close", () => {
+                                                console.log("Files unzipped successfully");
+                                                this.emit({ type: 'ollama-gpu-accel-done', data: { from: archivePath, to: unzipPath } });
+                                            });
+                                        });
+                                    }
+                                    else {
+                                        this.emit({ type: 'ollama-gpu-accel-done', data: { from: archivePath, to: unzipPath } });
+                                    }
+                                }
+                                else {
+                                    this.emit({ type: 'ollama-gpu-accel-done', data: { from: archivePath, to: unzipPath } });
+                                }
+                                response = { status: 'ok', data: 'gpu-accel-change' };
+                                // TODO: startup is DIFFERENT FOR GPU AND NON GPU ACCEL MUST SAVE TO ENVIRONMENT!
+                            }
+                            break;
+                        default: {
+                            response = { error: 'unknown command' };
                         }
-                        break;
-                    case "stop":
-                        {
-                            response = this.stop();
-                        }
-                        break;
-                    case "generate":
-                        {
-                            response = yield this.generate(params);
-                        }
-                        break;
-                    case "chat":
-                        {
-                            response = yield this.chat(params);
-                        }
-                        break;
-                    case "pull":
-                        {
-                            response = yield this.pull(params);
-                        }
-                        break;
-                    case "rm":
-                        {
-                            response = yield this.rm(params);
-                        }
-                        break;
-                    case "list":
-                        {
-                            response = yield this.list();
-                        }
-                        break;
-                    case "show":
-                        {
-                            response = yield this.show(params);
-                        }
-                        break;
-                    case "ps":
-                        {
-                            response = yield this.ps();
-                        }
-                        break;
-                    case "abort":
-                        {
-                            this.abort();
-                        }
-                        break;
-                    default: {
-                        response = { error: 'unknown command' };
                     }
+                }
+                catch (e) {
+                    console.error(e);
+                    response.error = e;
                 }
                 response.command = command;
                 response.params = params;
@@ -162,30 +221,109 @@ class OllamaService {
                 response: args
             });
         };
-        this.extract = () => {
-            /*
+        this.findOllama = () => __awaiter(this, void 0, void 0, function* () {
+            const processes = yield (0, find_process_1.default)('port', '11434');
+            if (processes.length === 0) {
+                console.error('Cannot find Ollama process:', processes);
+            }
+            else {
+                this.ollamaPID = processes[0].pid;
+            }
+            return {
+                ollamaPID: this.ollamaPID
+            };
+        });
+        this.delay = (ms) => {
+            return new Promise((resolve) => {
+                setTimeout(resolve, ms);
+            });
+        };
+        this.download = (url, tempFile, cb) => {
+            console.log('downloading:prepare:', url);
+            const writer = fs.createWriteStream(tempFile);
+            const client = url.startsWith('https') ? https_1.default : http_1.default;
+            const request = client.get(url, (res) => {
+                const hl = res.headers['content-length'];
+                const totalLength = parseInt(hl ? hl : '-1', 10);
+                console.log('downloading:start:length', totalLength);
+                let cur = 0;
+                res.on('data', (chunk) => {
+                    try {
+                        cur += chunk.length;
+                        const percentage = Math.floor(cur / totalLength * 100);
+                        this.emit({ type: 'ollama-download', data: { percentage, url, gpuBrands: this.gpuBrands } });
+                    }
+                    catch (e) {
+                        console.error('download:error:', e);
+                    }
+                });
+                res.on('end', () => {
+                    console.log("Download complete");
+                    this.emit({ type: 'ollama-extract-extract', data: { url } });
+                    cb();
+                });
+                res.on('error', (err) => { console.error(err); });
+                res.pipe(writer);
+            });
+            return writer;
+        };
+        this.extract = () => __awaiter(this, void 0, void 0, function* () {
+            console.log('extract:', this.archivePath, '=>', this.unzipPath);
+            this.emit({ type: 'ollama-extract-config', data: { from: this.archivePath, to: this.unzipPath } });
             if (!fs.existsSync(this.unzipPath)) {
-              this.isExtracting = true;
-              console.log("Extracting ollama files...", this.unzipPath);
-              fs.mkdirSync(this.unzipPath, { recursive: true });
-              fs.createReadStream(this.archivePath)
-                .pipe(unzipper.Extract({ path: this.unzipPath }))
-                .on("close", () => {
-                  console.log("Files unzipped successfully");
-                  this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
-                  this.isExtracting = false;
+                this.isExtracting = true;
+                this.emit({ type: 'ollama-extract-starting', data: { from: this.archivePath, to: this.unzipPath } });
+                console.log("Extracting ollama files...", this.unzipPath);
+                const tempZipFile = path.join(this.userTempPath, 'ollama.zip');
+                this.emit({ type: 'ollama-extract-download', data: { from: this.archivePath, to: tempZipFile } });
+                this.download(this.archivePath, tempZipFile, () => {
+                    fs.mkdirSync(this.unzipPath, { recursive: true });
+                    fs.createReadStream(tempZipFile)
+                        .pipe(unzipper_1.default.Extract({ path: this.unzipPath }))
+                        .on("close", () => {
+                        console.log("Files unzipped successfully");
+                        this.emit({ type: 'ollama-extract-done', data: this.unzipPath });
+                        this.isExtracting = false;
+                    });
                 });
             }
-                */
-        };
-        this.start = () => {
+            else {
+                console.log("extract:skipping:", this.unzipPath);
+                this.emit({ type: 'ollama-extract-skipping', data: { from: this.archivePath, to: this.unzipPath } });
+            }
+        });
+        this.start = (gpuAccel = false) => {
             try {
-                this.ollamaProcess = (0, child_process_1.spawn)(this.startCommand, {
+                let args = this.ollamaArgs;
+                let unzipPath = this.unzipPath;
+                let ollamaExecutable = this.ollamaExecutable;
+                if (!gpuAccel) {
+                    ollamaExecutable = 'ollama.exe';
+                    args = this.ollamaNoGPUArgs;
+                    unzipPath = this.unzipPath + '-nogpu';
+                }
+                const command = path.join(unzipPath, ollamaExecutable);
+                console.log('execFile:', gpuAccel, command, args);
+                this.emit({ type: 'ollama-start', data: { command, args } });
+                this.ollamaProcess = (0, child_process_1.spawn)(ollamaExecutable, args, {
                     shell: true,
-                    cwd: this.unzipPath,
-                    stdio: ['pipe', 'pipe', 'pipe']
+                    cwd: unzipPath,
+                    stdio: ['ignore', 'pipe', 'pipe'],
+                    windowsHide: true
                 });
                 if (this.ollamaProcess) {
+                    this.ollamaProcess.on('spawn', () => __awaiter(this, void 0, void 0, function* () {
+                        yield this.findOllama();
+                        console.log(`Ollama process started ${this.ollamaPID}`);
+                        // Send event
+                        this.emit({ type: 'ollama-started', data: 'ok' });
+                        setTimeout(() => {
+                            this.ollama = new ollama_1.Ollama({ host: 'http://127.0.0.1:11434' });
+                            // event Ollama connection is ready
+                            this.isReady = true;
+                            this.emit({ type: 'ollama-ready', data: 'ok' });
+                        }, 5000);
+                    }));
                     this.ollamaProcess.stdout.on('data', (data) => {
                         console.log(`stdout: ${data}`);
                         // Send event
@@ -197,16 +335,10 @@ class OllamaService {
                         this.emit({ type: 'ollama-stderr', data: Buffer.from(data).toString() });
                     });
                     this.ollamaProcess.on('exit', (code) => {
-                        console.log(`Ollama process ended with ${code}`);
+                        console.log(`Ollama process exited with ${code}`);
                         // Send event
                         this.emit({ type: 'ollama-ended', data: code ? code.toString() : '0' });
                     });
-                    setTimeout(() => {
-                        this.ollama = new ollama_1.Ollama({ host: 'http://127.0.0.1:11434' });
-                        // event Ollama connection is ready
-                        this.isReady = true;
-                        this.emit({ type: 'ollama-ready', data: 'ok' });
-                    }, 5000);
                 }
                 else {
                     console.error('No valid process for Ollama!');
@@ -219,11 +351,11 @@ class OllamaService {
             }
         };
         this.stop = () => {
-            if (this.ollamaProcess) {
-                this.ollamaProcess.kill();
-            }
-            else {
-                console.error('No valid process for Ollama!');
+            if (this.ollamaPID > -1) {
+                console.error(`Sending terminate signal to Ollama ${this.ollamaPID}!`);
+                (0, tree_kill_1.default)(this.ollamaPID, (error) => {
+                    console.error('error to sending kill to Ollama:', error);
+                });
             }
             return { status: 'stopping' };
         };
@@ -378,28 +510,50 @@ class OllamaService {
                 this.ollama.abort();
             }
         };
+        this.gpuBrands = gpuBrands;
+        this.userTempPath = userTempPath;
         this.unzipPath = path.join(appDataPath, 'ollama');
         if (SystemInfo_1.isWindows) {
-            if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia') || f.toLowerCase().startsWith('amd'))) {
-                console.log('ollama choice: win');
-                this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
-                this.startCommand = 'ollama.exe serve';
+            if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia'))) {
+                console.log('ollama choice: nvidia: win');
+                this.archivePath = default_download_link;
+                this.archiveNoGPUPath = default_download_link;
+                this.ollamaExecutable = 'ollama.exe';
+                this.ollamaArgs = ['serve'];
+                this.ollamaNoGPUArgs = ['serve'];
+            }
+            else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd')) || gpuBrands.find(f => f.toLowerCase().startsWith('advanced'))) {
+                console.log('ollama choice: amd: win');
+                this.archivePath = rocm_download_link;
+                this.archiveNoGPUPath = default_download_link;
+                this.ollamaExecutable = 'ollama.exe';
+                this.ollamaArgs = ['serve'];
+                this.ollamaNoGPUArgs = ['serve'];
             }
             else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
-                console.log('ollama choice: win:ipx');
-                this.archivePath = path.join(assetsFolderPath, 'ollama-ipx-llm-win.zip');
-                this.startCommand = 'ollama-serve.bat';
+                console.log('ollama choice: ipex: win');
+                this.archivePath = ipex_download_link;
+                this.archiveNoGPUPath = default_download_link;
+                this.ollamaArgs = [];
+                this.ollamaNoGPUArgs = ['serve'];
+                this.ollamaExecutable = 'ollama-serve.bat';
             }
             else {
-                console.log('ollama choice: win');
-                this.archivePath = path.join(assetsFolderPath, 'ollama-win.zip');
-                this.startCommand = 'ollama.exe serve';
+                console.log('ollama choice: nogpu: win');
+                this.archivePath = default_download_link;
+                this.archiveNoGPUPath = default_download_link;
+                this.ollamaExecutable = 'ollama.exe';
+                this.ollamaNoGPUArgs = ['serve'];
+                this.ollamaArgs = ['serve'];
             }
         }
         else if (SystemInfo_1.isMac) {
             console.log('ollama choice: darwin');
-            this.archivePath = path.join(assetsFolderPath, 'ollama-darwin.zip');
-            this.startCommand = 'ollama-darwin serve';
+            this.archivePath = darwin_download_link;
+            this.archiveNoGPUPath = darwin_download_link;
+            this.ollamaExecutable = 'ollama-darwin';
+            this.ollamaArgs = ['serve'];
+            this.ollamaNoGPUArgs = ['serve'];
         }
     }
 }

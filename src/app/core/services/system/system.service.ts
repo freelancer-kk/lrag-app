@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { BridgeService } from '../bridge/bridge.service';
 import { TranslateService } from '@ngx-translate/core';
+import {FormControl} from '@angular/forms';
 
 export enum EWho {
   User = 0,
@@ -28,6 +29,10 @@ export class SystemService {
   ollamaStatus = signal<any>('not running');
   ingestStatus = signal<any>('not running');
   insightStatus = signal<any>("not running");
+  gpuChangeStatus = signal<any>("not running");
+  selectedDocuments = new FormControl('');
+  totalMainMemory = 0;
+  ocr_pdf_link: string = "https://acrobat.adobe.com/link/acrobat/ocr-pdf?x_api_client_id=adobe_com&x_api_client_location=ocr_pdf";
 
   selectedModel: string = ''
   downloadedLLM: string = '';
@@ -38,13 +43,15 @@ export class SystemService {
   gpuAcceleration: boolean = true;
   osType: any;
   chatHistory: IChat[] = [];
+  ollamaPID: number = -1;
+  brand: string = '';
 
   models: any[] = [
-    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false},
-    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true},
-    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true},    
-    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true},
+    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
+    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true, memory: 8},
+    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true, memory: 8},    
+    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 12},
+    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 16},
   ];
   embeddings: string = 'embeddinggemma:300m';
   
@@ -72,7 +79,7 @@ export class SystemService {
 
   calcOverallStatus = () => {
     if (this.ollamaStatus() === 'running') {
-      if (this.modelStatus() === 'running' && this.ingestStatus() === 'not running') {
+      if (this.modelStatus() === 'running' && this.ingestStatus() === 'not running' && this.gpuChangeStatus() === 'not running') {
         this.overallStatus.update(() => 'running: healthy');
       } else {
         this.overallStatus.update(() => 'running: unhealthy');
@@ -89,9 +96,11 @@ export class SystemService {
         const { size, size_vram } = entry;
         
         let part = '';
+        /*
         if (size-size_vram > 0) {
           part += `CPU ${Math.floor(size-size_vram / size * 100)}%`;
         }
+          */
         part += ` GPU ${Math.floor(size_vram / size * 100)}%`
         return part;
       }         
@@ -101,7 +110,7 @@ export class SystemService {
 
   commandInsight = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
-      this.bridgeService.chat(70, command, options, async (data: any) => {
+      this.bridgeService.chat(50, command, options, async (data: any) => {
         // console.log('insight command response:', data);
         resolve(data);
       });
@@ -110,7 +119,7 @@ export class SystemService {
 
   commandIngest = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
-      this.bridgeService.ingest(80, command, options, async (data: any) => {
+      this.bridgeService.ingest(60, command, options, async (data: any) => {
         console.log('ingest command response:', data);
         resolve(data);
       });
@@ -120,21 +129,32 @@ export class SystemService {
   commandOllama = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
       this.bridgeService.ollama(90, command, options, async (data: any) => {
-        console.log('ollama command response:', data);
+        console.log('ollama command response:', command, options, data);
         resolve(data);
       });
     });
   }  
 
-  getAvailableLLMs = async () => {
+  findProcesses = (): Promise<any> => {
+    return new Promise((resolve, reject) => { 
+      this.bridgeService.ollama(91, 'find', {}, async (data: any) => {        
+        resolve(data);
+      });
+    });
+  }  
+
+  getAvailableLLMs = async (): Promise<void> => {
     // const currentModels: any[] = this.availableModels;
-    this.availableModels = (await this.commandOllama('list')).models.map((model: any) => {
+    const value: any = await this.commandOllama('list');
+    // console.log('getAvailableLLMs:', value.models);
+    this.availableModels = value.models.map((model: any) => {
       return {
         name: model.name,
         size: Math.floor(model.size / 1024 / 1000),
         usage: model.usage
       }
-    });     
+    });
+    console.log('getAvailableLLMs:', this.availableModels);
   }
 
   getEnvValue = (key: string): Promise<string> => {
@@ -173,9 +193,9 @@ export class SystemService {
   }
 
   getClassFromStatus = (status: string): string => {
-    if (status === 'running' || status === 'thinking' || status === 'uploading' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'splitting' || status === 'chunking' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
+    if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'thinking' || status === 'uploading' || status === 'splitting' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status === 'indexing' || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
-    } else if (status === 'downloading' || status === 'starting' || status === 'running: unhealthy') {
+    } else if (status.startsWith('downloading') || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';
     } else if ((status === 'die') || (status === 'error') || (status === 'destroy')) {
       return 'chip-error';
@@ -191,10 +211,13 @@ export class SystemService {
       case 'uploaded':
       case 'loaded':
       case 'loading':
+      case 'indexing':
       case 'splitting':
-      case 'chunking':        
+      case 'extracting':
+      case 'saving':        
       case 'adding':
       case 'thinking':
+      case 'configuring':
       case 'running: healthy': 
       case 'running': {
         return 'directions_run';
@@ -296,6 +319,7 @@ export class SystemService {
         if (device.vram < 8) {
           this.power = this.power / 1.8;
         }
+        this.brand = device.brand;
         resolve({
           "name": await this.get("SYSTEM.GPU"),
           "brand": device.brand, 
@@ -317,6 +341,7 @@ export class SystemService {
         if (total < 8) {
           this.power = this.power / 1.4;
         }
+        this.totalMainMemory = total;
         resolve({
           "name": await this.get("SYSTEM.MEM"),
           "totalGB": total
@@ -349,5 +374,21 @@ export class SystemService {
         resolve(data);      
       });
     })    
+  }
+
+  openExternal = (url: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      this.bridgeService.openExternal(6, url, async () => {
+        resolve();      
+      });
+    })    
+  }
+
+  quitApp = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      this.bridgeService.quitApp(10, async () => {
+        resolve();
+      });
+    })
   }
 }

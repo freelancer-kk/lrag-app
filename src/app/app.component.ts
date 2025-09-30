@@ -17,6 +17,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MediaService } from './core/services/media/media.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { AlertComponent } from './alert.component/alert.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-root',
@@ -40,6 +42,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class AppComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
+  readonly dialog = inject(MatDialog);
   @ViewChild('sidenav', {static: true}) sidenav!: MatSidenav;
   isExpanded: boolean = true;
   dockerConnectInterval: any;
@@ -75,6 +78,37 @@ export class AppComponent implements OnInit {
         const { type, data } = eventObj;
         console.log('type', type, 'data', data);        
         switch(type) {
+          case 'ollama-gpu-accel-started': {
+            this.ngZone.run(() => {
+              this.systemService.gpuChangeStatus.update(() => 'running');
+              this.systemService.modelStatus.update(() => 'configuring');
+            })
+          }
+          break;
+          case 'ollama-gpu-accel-done': {
+            this.ngZone.run(() => {
+              this.forceExit(undefined);
+            })
+          }
+          break;
+          case 'ollama-extract-starting': {
+            this.ngZone.run(() => {
+              this.systemService.ollamaStatus.update(() => `preparing`);
+            })
+          }
+          break;
+          case 'ollama-download': {
+            this.ngZone.run(() => {
+              this.systemService.ollamaStatus.update(() => `downloading ${data.percentage}%`);              
+            })
+          }
+          break;
+          case 'ollama-extract-extract': {
+            this.ngZone.run(() => {
+              this.systemService.ollamaStatus.update(() => `extracting`);
+            })
+          }
+          break;
           case 'ollama-extract-done': {
             this.ngZone.run(() => {
               this.startServicesIfNecessary();
@@ -135,9 +169,15 @@ export class AppComponent implements OnInit {
             })            
           }
           break;
-          case 'langchain-run-split': {
+          case 'langchain-run-indexing': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'chunking');
+              this.systemService.ingestStatus.update(() => 'indexing');
+            })            
+          }
+          break;
+          case 'langchain-run-saving': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'saving');
             })            
           }
           break;
@@ -159,6 +199,12 @@ export class AppComponent implements OnInit {
             })            
           }
           break;
+          case 'langchain-run-warning'  : {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'warning');
+            })            
+          }
+          break;
         } 
       } catch (e) {
         console.error(e);
@@ -169,14 +215,25 @@ export class AppComponent implements OnInit {
       console.log('ollama status:', this.systemService.ollamaStatus());
       console.log('model status:', this.systemService.modelStatus());
       console.log('ingest status:', this.systemService.ingestStatus());
+      console.log('gpu accel change status:', this.systemService.gpuChangeStatus());
       this.systemService.calcOverallStatus();
       console.log('overall status:', this.systemService.overallStatus());
       if (this.systemService.overallStatus() === "running: unhealthy") {
-        if (this.firstTime) {
+        if (this.firstTime && (this.systemService.ollamaStatus() === "running")) {
+          this.findOllamaProcess();
           this.pullModelsIfNecessary();
         }
       }
+      if ((this.systemService.overallStatus() === "running: healthy") && (systemService.ollamaPID === -1)) {
+        this.findOllamaProcess();
+      }
     })
+  }
+
+  findOllamaProcess = async () => {
+    const response: any = await this.systemService.findProcesses();
+    console.log('findProcess:', response);
+    this.systemService.ollamaPID = response.ollamaPID;
   }
 
   switchTheme = (event: any) => {
@@ -214,10 +271,17 @@ export class AppComponent implements OnInit {
     const { isReady } = await this.systemService.commandOllama('isRunning');
     console.log('ollama is running:', isReady);
     if (!isReady) {
-      this.systemService.ollamaStatus.update(() => 'starting');
-      const response = await this.systemService.commandOllama('start');
-      if (response.status === 'error' && response.status === 'extraction') {
+      const response = await this.systemService.commandOllama(
+        'start',
+        {
+          gpuAccel: this.systemService.gpuAcceleration
+        }
+      );
+      if (response.status === 'error' && response.error === 'extraction') {
+        this.systemService.ollamaStatus.update(() => 'extracting');
         console.log('waiting for extraction to complete, then start...');
+      } else {
+        this.systemService.ollamaStatus.update(() => 'running');
       }
     } else {
       this.systemService.ollamaStatus.update(() => 'running');      
@@ -233,6 +297,7 @@ export class AppComponent implements OnInit {
           this.systemService.downloadedLLM = value;          
         })
       }
+      console.log('pullModelsIfNecessary:getAvailableLLMs()');
       await this.systemService.getAvailableLLMs();
       if (this.systemService.availableModels.length === 0) {
         this.systemService.modelStatus.update(() => 'downloading');
@@ -241,12 +306,13 @@ export class AppComponent implements OnInit {
         console.log('pull:', this.systemService.models[0].value);
         await this.systemService.commandOllama('pull', { model: this.systemService.models[0].value, stream: true});
         console.log('models loaded! setting model status to running')
+        this.firstTime = false;
         this.systemService.modelStatus.update(() => 'running');
       } else {
-        console.log('models available! setting model status to running')
+        this.firstTime = false;
         this.systemService.modelStatus.update(() => 'running');
-      }
-      this.firstTime = false;   
+        console.log('models already pulled!');
+      }      
     } catch (e) {
       console.error(e);
       if (this.firstTime) {
@@ -256,5 +322,40 @@ export class AppComponent implements OnInit {
         }, 7000)
       }
     }    
-  }  
+  }
+  
+  appExit = async (ev: any) => {
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 1,
+          params: {
+            message: await this.systemService.get('APP.EXIT_ARE_YOU_SURE')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Dialog result: ${result}`);
+      if (result === true) {
+        const result = await this.systemService.quitApp();
+        console.log('app quit:', result);
+      }
+    });
+  }
+
+  forceExit = async (ev: any) => {
+    console.log('forcing exit!');
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 2,
+          params: {
+            message: await this.systemService.get('GPU_CHANGE_RESTART')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async () => {
+      await this.systemService.quitApp();      
+    });
+  }
 }

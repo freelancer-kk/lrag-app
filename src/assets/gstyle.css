@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: row; 
   padding: 5px;
+  align-items: center;
 }
 
 ::ng-deep .chip {
@@ -43,3 +44,8 @@
 .spacer {
   flex: 1 1 auto;
 }
+
+.small {
+  font-size: 0.6em;
+}
+

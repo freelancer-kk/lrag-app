@@ -2,14 +2,17 @@
     <mat-toolbar-row>
       <h1 class="title" [matTooltip]="'PAGES.INGEST.MAX_FILES_TEXT' | translate">
         {{ 'PAGES.INGEST.MAIN_TITLE' | translate }}
-      </h1>      
+      </h1>&nbsp;
+      <a matButton="outlined" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
+      {{ 'PAGES.INGEST.SCANNED_DOCS' | translate }}
+      </a>
       <span class="spacer"></span>      
-      @if (ingestStatus === 'running' || ingestStatus === 'loaded' || ingestStatus === 'splitting' || ingestStatus === 'chunking' || ingestStatus === 'adding') {
+      @if (ingestStatus === 'running' || ingestStatus === 'splitting' || ingestStatus === 'loaded' || ingestStatus === 'indexing' || ingestStatus === 'saving' || ingestStatus === 'adding') {
         <div [class]="systemService.getClassFromStatus(ingestStatus)">
           <mat-spinner diameter="30"></mat-spinner>
           {{ ingestStatus }}
         </div>
-      } @else {
+      } @else if (ingestStatus !== 'not running') {
         <div [class]="systemService.getClassFromStatus(ingestStatus)">
           <mat-icon>{{ systemService.getIconFromStatus(ingestStatus) }}</mat-icon>
           {{ ingestStatus }}
@@ -39,22 +42,31 @@
       </ng-template>    
     </ngx-file-drop>  
   </div>
+  <div class="onerow">
+  <mat-form-field class="full-width">
+    <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
+    <mat-select [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
+      @for (entry of systemService.ragFiles; track $index) {
+        <mat-option [value]="entry">{{ entry }}</mat-option>
+      }
+    </mat-select>  
+  </mat-form-field>
+  @if (systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
+    <button matSuffix matIconButton aria-label="Clear" (click)="fileRemove($event)">
+      <mat-icon>delete</mat-icon>
+    </button>            
+  }  
+</div>
+
   <div class="vertscroll">
   <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">
     @for (entry of systemService.ragFiles; track $index) {
       <mat-grid-tile class="gridtile" colspan="1" rowspan="1">
-        <mat-list-item (click)="fileRemove($event, $index)">
+        <mat-list-item>
           <mat-icon matListItemIcon>upload_file</mat-icon>
           <div matListItemTitle>
             {{ entry}}
-          </div>
-          <div matListItemLine>
-            <button matButton>
-              @if (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length <= systemService.MAX_FILES) {
-                <mat-icon class="danger">cancel</mat-icon>
-              }
-            </button>
-          </div>
+          </div>          
         </mat-list-item>
       </mat-grid-tile>      
     }         

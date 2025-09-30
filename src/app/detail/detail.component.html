@@ -2,12 +2,12 @@
 <h1 class="title">
   {{ 'PAGES.DETAIL.MAIN_TITLE' | translate }}
 </h1>
-<span class="spacer"></span>
-<!--
-<mat-slide-toggle [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="systemService.gpuAcceleration" (change)="switchGPUAccel($event)">
-  {{ 'GPU_ACCEL' | translate }}
-</mat-slide-toggle>
--->
+@if (systemService.brand === 'Intel' || systemService.brand === 'Amd') {
+  <span class="spacer"></span>
+  <mat-slide-toggle [disabled]="this.systemService.overallStatus() !== 'running: healthy' || this.systemService.insightStatus() !== 'not running'" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="systemService.gpuAcceleration" (change)="switchGPUAccel($event)">
+    {{ 'GPU_ACCEL' | translate }}
+  </mat-slide-toggle>
+}
 </mat-toolbar>
   <mat-toolbar>
     <mat-toolbar-row>
@@ -15,24 +15,22 @@
         <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
         <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="systemService.selectedModel" (selectionChange)="modelChange($event)">
           @for (entry of systemService.models; track $index) {
-            <mat-option [value]="entry.value">{{ entry.viewValue }}</mat-option>
+            <mat-option [disabled]="entry.memory > systemService.totalMainMemory" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
       <span class="spacer"></span>
-      @if (this.systemService.overallStatus()) {
-        @if (systemService.modelStatus() !== 'running') {
-          <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
-            <mat-spinner diameter="30"></mat-spinner>
-            {{ systemService.modelStatus() }}
-          </div>
-        } @else {
-          <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
-            <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus()) }}</mat-icon>
-            {{ systemService.modelStatus() }}
-          </div>
-        }
-      }
+      @if (systemService.modelStatus() !== 'running') {
+        <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
+          <mat-spinner diameter="30"></mat-spinner>
+          {{ systemService.modelStatus() }}
+        </div>
+      } @else {
+        <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
+          <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus()) }}</mat-icon>
+          {{ systemService.modelStatus() }}
+        </div>
+      }      
     </mat-toolbar-row>    
   </mat-toolbar>
   @if (showModelList) {

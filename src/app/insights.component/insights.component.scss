@@ -5,10 +5,6 @@
   height: 80%;
 }
 
-.small {
-  font-size: 0.6em;
-}
-
 .full-width-height {
   width: 100%;
   max-height: 60%;
@@ -37,7 +33,7 @@
 }
 
 .double-width {
-  width: 200%;
+  width: 100%;
 }
 
 ::ng-deep .mat-list[dense] .mat-list-item .mat-line {

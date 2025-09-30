@@ -54,7 +54,7 @@ class ContextChat {
         };
         this.getAnswer = (options) => __awaiter(this, void 0, void 0, function* () {
             var _a, e_1, _b, _c;
-            if (!this.vectorStore || !this.ollamaService.isReady || !this.ollamaService.ollama) {
+            if (!this.ollamaService.isReady || !this.ollamaService.ollama) {
                 return 'Services not ready';
             }
             try {
@@ -62,59 +62,66 @@ class ContextChat {
                     baseUrl: "http://localhost:11434",
                     model: options.model
                 });
-                const contextualizedQuestionPrompt = prompts_1.PromptTemplate.fromTemplate(`
-        {contextPrompt}
-        chatHistory: {chatHistory}
-        question: {userQuestion}  
-      `);
-                const contextQuestionChain = contextualizedQuestionPrompt
-                    .pipe(this.ollamaLlm)
-                    .pipe(new output_parsers_1.StringOutputParser())
-                    .pipe(this.vectorStore.asRetriever({
+                const vectorStoreRetriever = (yield this.langchainService.getSearchableVectorStore()).asRetriever({
                     k: 3,
                     searchType: "similarity",
-                }));
-                const documents = yield contextQuestionChain.invoke({
-                    contextPrompt: options.contextPrompt,
-                    chatHistory: options.chatHistory,
-                    userQuestion: options.question
                 });
-                const combinedDocs = combineDocuments(documents);
-                const questionTemplate = prompts_1.PromptTemplate.fromTemplate(`
-          {prompt}
-          <context>
-          {context}
-          </context>
+                if (vectorStoreRetriever) {
+                    const contextualizedQuestionPrompt = prompts_1.PromptTemplate.fromTemplate(`
+          {contextPrompt}
+          chatHistory: {chatHistory}
+          question: {userQuestion}  
+        `);
+                    const contextQuestionChain = contextualizedQuestionPrompt
+                        .pipe(this.ollamaLlm)
+                        .pipe(new output_parsers_1.StringOutputParser())
+                        .pipe(vectorStoreRetriever);
+                    const documents = yield contextQuestionChain.invoke({
+                        contextPrompt: options.contextPrompt,
+                        chatHistory: options.chatHistory,
+                        userQuestion: options.question
+                    });
+                    const combinedDocs = combineDocuments(documents);
+                    const questionTemplate = prompts_1.PromptTemplate.fromTemplate(`
+            {prompt}
+            <context>
+            {context}
+            </context>
 
-          question: {userQuestion}
-      `);
-                const answerChain = questionTemplate
-                    .pipe(this.ollamaLlm)
-                    .pipe(new output_parsers_1.StringOutputParser());
-                const llmResponse = yield answerChain.stream({
-                    prompt: options.prompt,
-                    context: combinedDocs,
-                    userQuestion: options.question
-                });
-                let finalAnswer = '';
-                try {
-                    for (var _d = true, llmResponse_1 = __asyncValues(llmResponse), llmResponse_1_1; llmResponse_1_1 = yield llmResponse_1.next(), _a = llmResponse_1_1.done, !_a; _d = true) {
-                        _c = llmResponse_1_1.value;
-                        _d = false;
-                        const chunk = _c;
-                        finalAnswer += chunk;
-                        // console.log('chat-chunk', chunk);
-                        this.emit({ type: 'chat-chunk', chunk });
-                    }
-                }
-                catch (e_1_1) { e_1 = { error: e_1_1 }; }
-                finally {
+            question: {userQuestion}
+        `);
+                    const answerChain = questionTemplate
+                        .pipe(this.ollamaLlm)
+                        .pipe(new output_parsers_1.StringOutputParser());
+                    const llmResponse = yield answerChain.stream({
+                        prompt: options.prompt,
+                        context: combinedDocs,
+                        userQuestion: options.question
+                    });
+                    let finalAnswer = '';
                     try {
-                        if (!_d && !_a && (_b = llmResponse_1.return)) yield _b.call(llmResponse_1);
+                        for (var _d = true, llmResponse_1 = __asyncValues(llmResponse), llmResponse_1_1; llmResponse_1_1 = yield llmResponse_1.next(), _a = llmResponse_1_1.done, !_a; _d = true) {
+                            _c = llmResponse_1_1.value;
+                            _d = false;
+                            const chunk = _c;
+                            finalAnswer += chunk;
+                            // console.log('chat-chunk', chunk);
+                            this.emit({ type: 'chat-chunk', chunk });
+                        }
                     }
-                    finally { if (e_1) throw e_1.error; }
+                    catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                    finally {
+                        try {
+                            if (!_d && !_a && (_b = llmResponse_1.return)) yield _b.call(llmResponse_1);
+                        }
+                        finally { if (e_1) throw e_1.error; }
+                    }
+                    return finalAnswer;
                 }
-                return finalAnswer;
+                else {
+                    console.error('empty vector store retriever!');
+                    return '';
+                }
             }
             catch (e) {
                 console.error(e);
@@ -128,8 +135,7 @@ class ContextChat {
             }
             */
         });
-        this.vectorStore = langchainService.getVectorStore();
-        this.libsqlClient = langchainService.getSqlClient();
+        this.langchainService = langchainService;
         this.ollamaService = ollamaService;
     }
 }

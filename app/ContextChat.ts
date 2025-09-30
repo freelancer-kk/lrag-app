@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron'
 import { VectorStore } from "@langchain/core/vectorstores"
 import LangchainService from "./LangchainService"
-import { Client } from "@libsql/client/."
 import OllamaService from "./OllamaService"
 import { ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
 import { StringOutputParser } from "@langchain/core/output_parsers"
@@ -14,17 +13,15 @@ const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
 }
 export default class ContextChat {
+  langchainService: LangchainService;
   ollamaService: OllamaService;
-  vectorStore: VectorStore;
-  libsqlClient: Client
   prompt: string = '';
   context: string = ''
   ollamaLlm: Ollama | undefined;
   webContents: Electron.WebContents | undefined
 
   constructor(langchainService: LangchainService, ollamaService: OllamaService) {
-    this.vectorStore = langchainService.getVectorStore();
-    this.libsqlClient = langchainService.getSqlClient();
+    this.langchainService = langchainService;    
     this.ollamaService = ollamaService;    
   }
 
@@ -54,7 +51,7 @@ export default class ContextChat {
   }
 
   getAnswer = async (options: any): Promise<string> => {
-    if (!this.vectorStore || !this.ollamaService.isReady || !this.ollamaService.ollama) {
+    if (!this.ollamaService.isReady || !this.ollamaService.ollama) {
       return 'Services not ready';
     }
 
@@ -62,54 +59,62 @@ export default class ContextChat {
       this.ollamaLlm = new Ollama({
         baseUrl: "http://localhost:11434",
         model: options.model
-      });    
-      
-      const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
-        {contextPrompt}
-        chatHistory: {chatHistory}
-        question: {userQuestion}  
-      `);
-      const contextQuestionChain = contextualizedQuestionPrompt
-        .pipe(this.ollamaLlm)
-        .pipe(new StringOutputParser())
-        .pipe(this.vectorStore.asRetriever({
-          k: 3,
-          searchType: "similarity",          
-        }));
-
-      const documents = await contextQuestionChain.invoke({
-        contextPrompt: options.contextPrompt,
-        chatHistory: options.chatHistory,
-        userQuestion: options.question
-      });
-      const combinedDocs: string = combineDocuments(documents as Document[]);
-
-      const questionTemplate = PromptTemplate.fromTemplate(`
-          {prompt}
-          <context>
-          {context}
-          </context>
-
-          question: {userQuestion}
-      `)
-
-      const answerChain = questionTemplate
-        .pipe(this.ollamaLlm)
-        .pipe(new StringOutputParser());
-      
-      const llmResponse: IterableReadableStream<string> = await answerChain.stream({
-        prompt: options.prompt,
-        context: combinedDocs,
-        userQuestion: options.question
       });
 
-      let finalAnswer: string = '';
-      for await (const chunk of llmResponse) {
-        finalAnswer += chunk;
-        // console.log('chat-chunk', chunk);
-        this.emit({ type: 'chat-chunk', chunk });
+      const vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore()).asRetriever({
+        k: 3,
+        searchType: "similarity",          
+      });
+
+      if (vectorStoreRetriever) {
+      
+        const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
+          {contextPrompt}
+          chatHistory: {chatHistory}
+          question: {userQuestion}  
+        `);
+        const contextQuestionChain = contextualizedQuestionPrompt
+          .pipe(this.ollamaLlm)
+          .pipe(new StringOutputParser())
+          .pipe(vectorStoreRetriever);
+
+        const documents = await contextQuestionChain.invoke({
+          contextPrompt: options.contextPrompt,
+          chatHistory: options.chatHistory,
+          userQuestion: options.question
+        });
+        const combinedDocs: string = combineDocuments(documents as Document[]);
+
+        const questionTemplate = PromptTemplate.fromTemplate(`
+            {prompt}
+            <context>
+            {context}
+            </context>
+
+            question: {userQuestion}
+        `)
+
+        const answerChain = questionTemplate
+          .pipe(this.ollamaLlm)
+          .pipe(new StringOutputParser());
+        
+        const llmResponse: IterableReadableStream<string> = await answerChain.stream({
+          prompt: options.prompt,
+          context: combinedDocs,
+          userQuestion: options.question
+        });
+
+        let finalAnswer: string = '';
+        for await (const chunk of llmResponse) {
+          finalAnswer += chunk;
+          // console.log('chat-chunk', chunk);
+          this.emit({ type: 'chat-chunk', chunk });
+        }
+        return finalAnswer;
+      } else {
+        console.error('empty vector store retriever!');
+        return '';
       }
-      return finalAnswer;
     } catch (e: any) {
       console.error(e);
       return e;

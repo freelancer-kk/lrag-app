@@ -15,6 +15,12 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatSelectModule} from '@angular/material/select';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatDialog } from '@angular/material/dialog';
+import { AlertComponent } from '../alert.component/alert.component';
+
 @Component({
   selector: 'app-ingest.component',
   imports: [
@@ -30,13 +36,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatProgressBarModule,
     MatGridListModule,
     MatListModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
 })
 export class IngestComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
+  readonly dialog = inject(MatDialog);
   fileProgress: number = 0;
   isUploading: boolean = false;
   breakpoint: number = 4;
@@ -69,23 +80,25 @@ export class IngestComponent implements OnInit {
     this.systemService.ingestStatus.update(() => 'starting');
     this.systemService.commandIngest('start').then(async (result: any) => {
       console.log('ingest result:', result);
-      if (result && result.status === 'completed') {
+      if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(() => 'not running');
         this.systemService.ragFiles = await this.mediaService.ls();
       } else {
-        this.systemService.ingestStatus.update(() => 'error');
-        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (result ? (': ' + JSON.stringify(result)) : ''), 'OK' );
+        this.systemService.ingestStatus.update(() => 'warning');
+        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result ? (': ' + JSON.stringify(result)) : ''), 'OK' );
+        this.systemService.ragFiles = await this.mediaService.ls();
         snackBarRef.onAction().subscribe(() => {
           this.systemService.ingestStatus.update(() => 'not running');
-        });
+        });      
       }
     }).catch(async (e) => {
-      console.error('ingest error:', e);
+      console.error('ingest error:', e);      
       this.systemService.ingestStatus.update(() => 'error');
       const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK' );
+      this.systemService.ragFiles = await this.mediaService.ls();
       snackBarRef.onAction().subscribe(() => {
         this.systemService.ingestStatus.update(() => 'not running');
-      });
+      });      
     })    
   }
 
@@ -174,12 +187,34 @@ export class IngestComponent implements OnInit {
     this.breakpoint = Math.floor(event.target.innerWidth / 300);
   }
 
-  fileRemove = async (event: any, index: number) => {
-    if (this.overallStatus === 'running: healthy' && this.ingestStatus === 'not running' && this.systemService.ragFiles.length <= this.systemService.MAX_FILES) {
-      console.log('remove file:', this.systemService.ragFiles[index]);
-      await this.mediaService.remove(this.systemService.ragFiles[index]);
-      await this.startIngestion();
-      this.systemService.ragFiles.splice(index, 1);
+  fileRemove = async (event: any) => {
+    if (this.systemService.selectedDocuments.value) {
+      const docs: string[] = (this.systemService.selectedDocuments.value as unknown) as string[];
+      const deleteStr: string = docs.join(' ');
+      console.log('fileRemove:', deleteStr)    
+      const dialogRef = this.dialog.open(
+        AlertComponent, {
+          data: {
+            type: 1,
+            params: {
+              message: await this.systemService.get('PAGES.INGEST.DELETE_ARE_YOU_SURE') + ' ' + deleteStr
+            }
+          }
+        });
+      dialogRef.afterClosed().subscribe(async (result) => {
+        console.log(`Dialog result: ${result}`);
+        if (result === true) {          
+          for await (const doc of docs) {
+            const fIdx: number = this.systemService.ragFiles.findIndex(r => r === doc);
+            if (fIdx > -1) {
+              await this.mediaService.remove(this.systemService.ragFiles[fIdx]);
+              this.systemService.ragFiles.splice(fIdx, 1);            
+            }
+          }
+          await this.startIngestion();
+        }
+        this.systemService.selectedDocuments.setValue('');
+      });    
     }
   }
 }

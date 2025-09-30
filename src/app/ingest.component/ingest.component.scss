@@ -3,13 +3,14 @@
 .dropzone {
   border: 5px green solid;
   border-style: dashed;
-  width: 100%;
+  width: 98%;
   height: 20%;
   border-radius: 5px;
   padding: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
+  align-content: center;
   z-index: 1000;
 }
 
@@ -35,6 +36,6 @@
   color: red;
 }
 
-.small {
-  font-size: 0.7rem;
+.full-width {
+  width: 100%;
 }

@@ -18,6 +18,7 @@ import { AlertComponent } from '../alert.component/alert.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FormsModule } from '@angular/forms';
 import { BridgeService } from '../core/services';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-insights.component',
@@ -41,6 +42,7 @@ import { BridgeService } from '../core/services';
   styleUrl: './insights.component.scss'
 })
 export class InsightsComponent implements OnInit { 
+  private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
   url: string = 'http://localhost:8501';
   urlSafe: SafeResourceUrl;
@@ -92,6 +94,7 @@ export class InsightsComponent implements OnInit {
   askQuestion = async () => {
     if (this.question) {
       const question: string = this.question;
+      this.question = '';
       
       const options = {
         question,
@@ -121,21 +124,25 @@ export class InsightsComponent implements OnInit {
       this.streamedResponse = '';
       this.streaming = false;
       this.systemService.insightStatus.update(() => 'running');
-      // console.log('Answer:', answer);      
-      this.systemService.chatHistory.push({
-        who: EWho.Assistant,
-        content: this.reformat(answer)
-      });
-      this.scrollToBottom();
+      console.log('Answer:', answer);
+      if (typeof answer === 'string') {
+        this.systemService.chatHistory.push({
+          who: EWho.Assistant,
+          content: this.reformat(answer)
+        });
+        this.scrollToBottom();
 
-      // Get the model usage  
-      const usageTimer = setInterval(async () => {
-        const usage = await this.systemService.getRunningModelsUsage();
-        if (usage) {
-          clearInterval(usageTimer);
-          this.modelUsage = usage + ' ';
-        }
-      }, 2000);    
+        // Get the model usage  
+        const usageTimer = setInterval(async () => {
+          const usage = await this.systemService.getRunningModelsUsage();
+          if (usage) {
+            clearInterval(usageTimer);
+            this.modelUsage = usage + ' ';
+          }
+        }, 2000);    
+      } else {
+        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.LLM_ERROR'), 'OK');        
+      }
     }
   }
 

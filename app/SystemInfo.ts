@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { app, ipcMain, shell } from 'electron';
 import { cpu, graphics, mem, Systeminformation } from 'systeminformation';
 import * as nodeDiskInfo from 'node-disk-info';
 import { platform } from 'os';
@@ -36,6 +36,20 @@ export default class SystemInfo {
         break;
         case "os": {
           response = this.getOsTypes();
+        }
+        break;
+        case "open": {
+          await shell.openExternal(params.url);
+          response = {
+            status: 'ok'
+          }
+        }
+        break;
+        case "quit": {
+          app.quit();
+          response = {
+            status: 'exit'
+          }
         }
         break;
         default:

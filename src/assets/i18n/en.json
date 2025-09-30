@@ -6,14 +6,17 @@
   "WARNING": "Warning",
   "PAUSE": "Pause",
   "QUESTION": "Question",
+  "STATEMENT": "Information",
+  "EXIT": "Exit App",
   "SYSTEM": {
     "CPU": "Processor",
     "GPU": "Graphics",
     "MEM": "Memory"
   },
   "GPU_ACCEL": "GPU Acceleration",
-  "GPU_ACCEL_TIP": "This feature usually works, if you experience issues switch it off",
+  "GPU_ACCEL_TIP": "This feature usually works, if you experience issues particularly with intel integrated GPUs, switch it off",
   "GPU_ARE_YOU_SURE": "Toggle GPU Acceleration setting, are you sure?",
+  "GPU_CHANGE_RESTART": "GPU acceleration setting complete. The application will exit, please restart",
   "RATING_TOO_LOW": "You PC LRag rating is very low. LRag will run extremely slowly on your PC and may experience difficultly completing certain tasks",
   "APP": {
     "TITLE": "LRag",
@@ -24,7 +27,8 @@
     "DOCKER": "Docker",
     "CONNECT_DOCKER": "Docker connecting ...",
     "DOCS_EMPTY": "Please ingest at least one document ...",
-    "DOWNLOAD_IMAGE_WARNING": "Downloading images may take a very long time depending on your internet speed. Please wait for this to complete."
+    "DOWNLOAD_IMAGE_WARNING": "Downloading images may take a very long time depending on your internet speed. Please wait for this to complete.",
+    "EXIT_ARE_YOU_SURE": "Shutdown the application?"
   },
   "PAGES": {      
       "HOME": {
@@ -41,7 +45,8 @@
         "DETAIL_DESC": "Status of dependent service(s)",
         "YOUR_PC": "Your PC",
         "TECHNICAL_DETAILS": "Technical Details",
-        "LLM": "LLM",
+        "LLM": "Model Process",
+        "MODEL": "Model ",
         "ELASTIC": "Store",
         "KIBANA": "Data",
         "STREAMLIT": "Insights",
@@ -52,7 +57,7 @@
       },
       "DETAIL": {
         "TITLE": "Config",
-        "MAIN_TITLE": "LLM Configuration",
+        "MAIN_TITLE": "Model Configuration",
         "MODEL_SELECT": "Choose a Model",
         "RUN_MODEL": "Run",
         "OLLAMA_STATUS": "Model",
@@ -61,7 +66,7 @@
         "MODEL_SIZE": "Raw Model Size",
         "MODEL_USAGE": "Usage",
         "DOWNLOAD_MSG": "Downloading a model uses your internet and may take some time and requires the corresponding local disk space.",
-        "DELETE_ARE_YOU_SURE": "Are you sure you want to delete this model?"
+        "DELETE_ARE_YOU_SURE": "Are you sure you want to remove this model?"
       },
       "INGEST": {
         "TITLE": "Ingest",
@@ -70,6 +75,7 @@
         "FOLDER_SUBTITLE": "Drag and Drop your files below (PDF,XLXS,DOC,CSV)",
         "DROP_HERE": "Drop Here",
         "DROP_ZONE": "Dropzone",
+        "FILES": "Documents",
         "SELECT_FILE": "Select File",
         "DIR_NOT_SUPPORTED": "Directory upload not possible in basic version",
         "PLEASE_WAIT": "Busy or max files reached, please wait ...",
@@ -80,34 +86,39 @@
         "MAX_DOCS": "15",
         "MAX_FILES_TEXT": "Maximum of 15 documents for this version of LRag",
         "DURATION_WARNING": "Ingestion may take some minutes depending on the performance of your PC and size of your documents. Please wait until the process completes",
-        "ERROR": "Error during ingestion, please try again"
+        "ERROR": "Error during ingestion, please try again",
+        "WARNING": "Warning during ingestion",
+        "DELETE_ARE_YOU_SURE": "Are you sure you want to remove these documents =>",
+        "SCANNED_DOCS": "scanned docs?",
+        "SCANNED_DOCS_TEXT": "In order to ingest scanned documents they must be converted with an OCR tool. Many are available. Adobe has a free tool, click the link above"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",
         "MAIN_TITLE": "Document Insight",
         "INSIGHT_STATUS": "INSIGHT status",
         "RESET_CONTEXT_TIP": "Improve results by waiting a minute before asking questions about a different domain. This will allow the context to reset",
-        "RESET_ARE_YOU_SURE": "Resetting the context will flush the LLM service, reload and rerun the model, this may take a minute",
+        "RESET_ARE_YOU_SURE": "Resetting the context will flush the model service, reload and rerun the model, this may take a minute",
         "CONTEXTUAL_PROMPT": "Given a chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.",
         "PROMPT": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use a maximum of three sentences and keep the answer concise.",
         "QUESTION": "Your Question",
         "INITIAL_PROMPT": "How can I help you?",
-        "CLEAR_HISTORY_TIP": "Clear the chat history"
+        "CLEAR_HISTORY_TIP": "Clear the chat history",
+        "LLM_ERROR": "Conversational chain failed ..."
       },
       "HELP": {
         "TITLE": "Help",
         "WHAT_IS_LRAG_TITLE": "What is LRag?",
         "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",
         "ACCURACY_TITLE": "How good is LRag?",
-        "ACCURACY": "LRag uses your prompt and documents as context for the corresponding LLM and is limited in accuracy, especially if you are mixing question domains e.g asking about accounts and then immediately asking health questions. The best approach is wait a minute before asking questions about a different domain to allow the context to reset.",
+        "ACCURACY": "LRag uses your prompt and documents as context for the corresponding model and is limited in accuracy, especially if you are mixing question domains e.g asking about accounts and then immediately asking health questions. The best approach is wait a minute before asking questions about a different domain to allow the context to reset.",
         "INGEST_TITLE": "What documents can I ingest?",
-        "INGEST": "You can ingest PDF, Word, Excel, Powerpoint and CSV files. Please avoid scanned documents as these are not supported in this version.",
+        "INGEST": "You can ingest PDF, Word, Excel, Powerpoint and CSV files. Scanned documents as these are not directly supported. These documents can be easily converted with OCR to make them compatible",
         "DATA_SECURITY_TITLE": "Is my data secure?",
         "DATA_SECURITY": "Yes, your data and documents never leave your PC. LRag is a 100% local solution.",
         "HOW_FAST_TITLE": "How fast is LRag?",
         "HOW_FAST": "Please use a model size depending on your PC power. LRag should answer within seconds. First time start up, downloading initial models, creating services etc... may take some minutes",
         "GPU_TITLE": "Can LRag use my GPU (Graphics Processing Unit)?",
-        "GPU": "LRag attempts to accelerate processing using your GPU whenever possible but if you are having problems starting, switch of GPU acceleration",
+        "GPU": "LRag attempts to accelerate processing using your GPU whenever possible. Intel support is relatively new, if you are having problems starting, switch of GPU acceleration",
         "EMAIL_SUPPORT_TITLE": "Support",
         "EMAIL_SUPPORT": "Limited email support - support@divm.com"
       }

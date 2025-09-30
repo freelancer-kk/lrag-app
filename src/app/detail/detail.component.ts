@@ -67,7 +67,6 @@ export class DetailComponent implements OnInit {
     }    
   }
 
-  /*
   switchGPUAccel = async (event: any) => {    
     const dialogRef = this.dialog.open(
       AlertComponent, {
@@ -84,14 +83,16 @@ export class DetailComponent implements OnInit {
         this.systemService.gpuAcceleration = event.checked;
         localStorage.setItem('gpu-accel', JSON.stringify(this.systemService.gpuAcceleration));
         // Remove and restart ollama
-        
+        this.systemService.gpuChangeStatus.update(() => 'running');
+        await this.systemService.commandOllama('gpuAccel', {
+          gpuAcceleration: this.systemService.gpuAcceleration
+        })
       } else {
         event.source.checked = !event.checked;
       }
     })
   }
-  */
-
+  
   removeModel = async (event: any, index: number) => {
     const dialogRef = this.dialog.open(
       AlertComponent, {
@@ -110,10 +111,10 @@ export class DetailComponent implements OnInit {
       }
     });
   }
+
   writeModelToEnv = (): Promise<void> => {
     return this.systemService.setEnvValue('LLM_MODEL_NAME', this.systemService.selectedModel).then((value: any) => {
-      return this.systemService.writeEnv().then((res: any) => {        
-      })
+      return this.systemService.writeEnv().then((res: any) => {})
     }) 
   }
 
