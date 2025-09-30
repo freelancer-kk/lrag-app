@@ -12,6 +12,9 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { MatDialog } from '@angular/material/dialog';
+import { AlertComponent } from '../alert.component/alert.component';
 
 @Component({
     selector: 'app-home',
@@ -29,10 +32,12 @@ import {MatTooltipModule} from '@angular/material/tooltip';
       MatProgressSpinnerModule,
       MatExpansionModule,
       MatChipsModule,
-      MatTooltipModule
+      MatTooltipModule,
+      MatSlideToggleModule
     ]
 })
 export class HomeComponent implements OnInit {
+  readonly dialog = inject(MatDialog);
   @ViewChild('cpu', {static: true}) cpu!: JsonViewComponent;
   @ViewChild('gpu', {static: true}) gpu!: JsonViewComponent;
   @ViewChild('mem', {static: true}) mem!: JsonViewComponent;
@@ -51,6 +56,30 @@ export class HomeComponent implements OnInit {
   }
 
   async ngOnInit() {}
+
+  manageExternally = async (event: any) => {
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 1,
+          params: {
+            message: await this.systemService.get('PAGES.HOME.EXTERNAL_ARE_YOU_SURE')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Dialog result: ${result}`);
+      if (result === true) {            
+        this.systemService.manageOllamaExternally = event.checked;
+        localStorage.setItem('manage-ollama-externally', JSON.stringify(this.systemService.manageOllamaExternally));
+        // Force exit
+        this.systemService.ollamaStatus.update(() => 'configuring');
+        await this.systemService.quitApp();
+      } else {
+        event.source.checked = !event.checked;
+      }
+    })
+  }
 
   formatLabel = (value: number): string => {
     if (value >= 1000) {

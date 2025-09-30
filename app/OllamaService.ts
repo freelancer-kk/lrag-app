@@ -33,6 +33,7 @@ export default class OllamaService {
   isExtracting: boolean = false;
   ollamaPID: number = -1;
   gpuBrands: string[] = [];
+  managedExternally = true;
   
   constructor(userTempPath: string, appDataPath: string, gpuBrands: string[]) {
     this.gpuBrands = gpuBrands;
@@ -103,6 +104,7 @@ export default class OllamaService {
           }
           break;
           case "start": {
+            this.managedExternally = false;
             if (this.isExtracting) {
               response = { status: 'error', error: 'extraction' };
             } else {
@@ -358,13 +360,15 @@ export default class OllamaService {
   }
 
   stop = (): any => {
-    if (this.ollamaPID > -1) {
-      console.error(`Sending terminate signal to Ollama ${this.ollamaPID}!`);
-      kill(this.ollamaPID, (error: any) => {
-        console.error('error to sending kill to Ollama:', error);
-      });
+    if (!this.managedExternally) {
+      if (this.ollamaPID > -1) {
+        console.error(`Sending terminate signal to Ollama ${this.ollamaPID}!`);
+        kill(this.ollamaPID, (error: any) => {
+          console.error('error to sending kill to Ollama:', error);
+        });
+      }
+      return { status: 'stopping' };
     }
-    return { status: 'stopping' };
   }
 
   generate = async (request: any): Promise<string> => {
@@ -476,7 +480,7 @@ export default class OllamaService {
   }
 
   abort = (): void => {
-    if (this.ollama) {
+    if (this.ollama && !this.managedExternally) {
       this.ollama.abort();
     }    
   }  

@@ -247,6 +247,7 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {    
     this.systemService.osType = await this.systemService.getOSType();
+    if (this.systemService.osType.isMac) { this.systemService.manageOllamaExternally = true; };
     this.systemService.cpu = await this.systemService.getCpu();
     this.systemService.gpu = await this.systemService.getGpu();
     this.systemService.mem = await this.systemService.getTotalMemory();
@@ -269,24 +270,49 @@ export class AppComponent implements OnInit {
   startServicesIfNecessary = async () => {    
     // Check if ollama is running
     const { isReady } = await this.systemService.commandOllama('isRunning');
-    console.log('ollama is running:', isReady);
+    console.log('ollama check running:', isReady);
     if (!isReady) {
-      const response = await this.systemService.commandOllama(
-        'start',
-        {
-          gpuAccel: this.systemService.gpuAcceleration
-        }
-      );
-      if (response.status === 'error' && response.error === 'extraction') {
-        this.systemService.ollamaStatus.update(() => 'extracting');
-        console.log('waiting for extraction to complete, then start...');
+      if (!this.systemService.manageOllamaExternally) {
+        const response = await this.systemService.commandOllama(
+          'start',
+          {
+            gpuAccel: this.systemService.gpuAcceleration
+          }
+        );
+        if (response.status === 'error' && response.error === 'extraction') {
+          this.systemService.ollamaStatus.update(() => 'extracting');
+          console.log('waiting for extraction to complete, then start...');
+        } else {
+          this.systemService.ollamaStatus.update(() => 'running');
+        }      
       } else {
-        this.systemService.ollamaStatus.update(() => 'running');
+        const snackBarRef = this._snackBar.open(
+          await this.systemService.get('APP.OLLAMA_NOT_RUNNING'), 
+          await this.systemService.get('OK')
+        );
+        snackBarRef.afterDismissed().subscribe(() => {
+          this.systemService.showGetOllama = true;
+        });
+        this.setOllamaCheckTimer();        
       }
     } else {
+      if (this.systemService.manageOllamaExternally) {
+        this.setOllamaCheckTimer();
+      }
       this.systemService.ollamaStatus.update(() => 'running');      
     }
   }   
+
+  setOllamaCheckTimer = () => {
+    setInterval(async () => {
+      const { isReady } = await this.systemService.commandOllama('isRunning');
+      if (!isReady) {
+        this.systemService.ollamaStatus.update(() => 'not running');            
+      } else {
+        this.systemService.ollamaStatus.update(() => 'running');
+      }
+    }, 10000);
+  }
 
   pullModelsIfNecessary = async () => {
     try {

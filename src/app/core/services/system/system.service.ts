@@ -33,6 +33,7 @@ export class SystemService {
   selectedDocuments = new FormControl('');
   totalMainMemory = 0;
   ocr_pdf_link: string = "https://acrobat.adobe.com/link/acrobat/ocr-pdf?x_api_client_id=adobe_com&x_api_client_location=ocr_pdf";
+  ollama_get_link: string = "https://ollama.com/download";
 
   selectedModel: string = ''
   downloadedLLM: string = '';
@@ -45,6 +46,8 @@ export class SystemService {
   chatHistory: IChat[] = [];
   ollamaPID: number = -1;
   brand: string = '';
+  manageOllamaExternally: boolean = false;
+  showGetOllama: boolean = false;
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},

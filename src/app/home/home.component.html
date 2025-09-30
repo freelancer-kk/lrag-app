@@ -4,10 +4,14 @@
     <mat-card-subtitle>      
       {{ 'PAGES.HOME.SUB_TITLE' | translate }}
     </mat-card-subtitle>
+    <span class="spacer"></span>
+    <mat-slide-toggle [disabled]="this.systemService.osType.isMac" [checked]="systemService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
+    {{ 'PAGES.HOME.MANAGE_EXTERNALLY' | translate }}
+    </mat-slide-toggle>  
   </mat-card-header>
   <mat-slider [class]="systemService.power > 70 ? 'green' : systemService.power > 35 ? 'yellow' : 'red'" disabled min="0" max="100" step="5" showTickMarks discrete [displayWith]="formatLabel">
     <input matSliderThumb [value]="systemService.power">
-  </mat-slider>
+  </mat-slider>  
   <mat-card-content>
       <mat-accordion>
         <mat-expansion-panel expanded="true">
@@ -19,7 +23,9 @@
           </mat-expansion-panel-header>
           <div class="onerow">
             {{ 'PAGES.HOME.LLM' | translate }}&nbsp;
-            <span class="small">({{ systemService.ollamaPID }})</span>
+            @if (!this.systemService.manageOllamaExternally) {
+              <span class="small">({{ systemService.ollamaPID }})</span>
+            }
             <span class="spacer"></span>
             <div [class]="systemService.getClassFromStatus(systemService.ollamaStatus())">  
               @if (systemService.ollamaStatus().startsWith('downloading')) {
