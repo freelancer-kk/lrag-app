@@ -245,8 +245,11 @@ export class AppComponent implements OnInit {
           this.pullModelsIfNecessary();
         }
       }
-      if ((this.systemService.overallStatus() === "running: healthy") && (systemService.ollamaPID === -1)) {
-        this.findOllamaProcess();
+      if (this.systemService.overallStatus() === "running: healthy") {
+        systemService.showGetOllama = false;
+        if (systemService.ollamaPID === -1) {
+          this.findOllamaProcess();
+       }
       }
     })
   }
