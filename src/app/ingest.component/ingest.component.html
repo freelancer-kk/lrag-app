@@ -17,7 +17,7 @@
           <mat-icon>{{ systemService.getIconFromStatus(ingestStatus) }}</mat-icon>
           {{ ingestStatus }}
         </div>
-      } @else if (!mediaService.docStatus) {
+      } @else if (!mediaService.docStatus && systemService.ragFiles.length>0 && systemService.overallStatus() === 'healthy: running') {
         <button matButton="filled" (click)="startIngestion()">
           {{ 'PAGES.INGEST.INDEX' | translate }}
         </button>
