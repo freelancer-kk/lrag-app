@@ -31,7 +31,8 @@
     "EXIT_ARE_YOU_SURE": "Die Anwendung herunterfahren?",
     "OLLAMA_NOT_RUNNING": "Der Modellprozess, Ollama, wird extern verwaltet. ",
     "GET_OLLAMA": "Holen Sie sich Ollama",
-    "GET_OLLAMA_TIP": "Sie können Ollama aus dem offiziellen Repository herunterladen und installieren. "
+    "GET_OLLAMA_TIP": "Sie können Ollama aus dem offiziellen Repository herunterladen und installieren. ",
+    "OLLAMA_DOWNLOADING": "LRag muss den Modellprozessor Ollama herunterladen. Dies dauert einige Zeit je nach PC und Internetgeschwindigkeit"
   },
   "PAGES": {
     "HOME": {
@@ -76,7 +77,7 @@
     },
     "INGEST": {
       "TITLE": "Aufnehmen",
-      "MAIN_TITLE": "Aufnahme von Dokument",
+      "MAIN_TITLE": "Aufnahme von Dokumenten",
       "INGEST_STATUS": "Status",
       "FOLDER_SUBTITLE": "Ziehen Sie Ihre Dateien unten (PDF, XLXS, DOC, CSV).",
       "DROP_HERE": "Lass dich hier aus",
@@ -96,20 +97,25 @@
       "WARNING": "Warnung während der Einnahme",
       "DELETE_ARE_YOU_SURE": "Sind Sie sicher, dass Sie diese Dokumente entfernen möchten =>",
       "SCANNED_DOCS": "gescannte Dokumente?",
-      "SCANNED_DOCS_TEXT": "Um gescannte Dokumente aufzunehmen, müssen sie mit einem OCR -Tool umgewandelt werden. "
+      "SCANNED_DOCS_TEXT": "Um gescannte Dokumente aufzunehmen, müssen sie mit einem OCR -Tool umgewandelt werden. ",
+      "COMPLETE": "Einnahme abgeschlossen",
+      "OCR_NEEDED": "OCR konvertierung erforderlich",
+      "UNKNOWN": "Nicht indiziert",
+      "INDEX": "Dokumenten aufnehmen"
     },
     "INSIGHT": {
       "TITLE": "AI Einblicke",
       "MAIN_TITLE": "Erkenntnis dokumentieren",
       "INSIGHT_STATUS": "Einsichtsstatus",
-      "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie eine Minute warten, bevor Sie Fragen zu einer anderen Domäne stellen. ",
+      "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie Dokumente im Zusammenhang mit einer einzelnen Domäne einnehmen. Entfernen Sie diese Dokumente und Einnahme von Dokumenten über die neue Domäne, bevor Sie Fragen zu einer anderen Domäne stellen. Dadurch kann der Kontext zurückgesetzt werden",
       "RESET_ARE_YOU_SURE": "Durch das Zurücksetzen des Kontexts wird der Modelldienst gespült, das Modell neu laden und erneut ausgeladen. Dies kann eine Minute dauern",
       "CONTEXTUAL_PROMPT": "Angesichts eines Chat -Historie und der neuesten Benutzerfrage, die den Kontext im Chat -Verlauf verweisen könnte, formulieren Sie eine eigenständige Frage, die ohne den Chat -History verstanden werden kann. ",
       "PROMPT": "Sie sind Assistent für Fragen zu Fragen. ",
       "QUESTION": "Ihre Frage",
       "INITIAL_PROMPT": "Wie kann ich dir helfen?",
       "CLEAR_HISTORY_TIP": "Löschen Sie den Chat -Verlauf",
-      "LLM_ERROR": "Konversationskette fehlgeschlagen ..."
+      "LLM_ERROR": "Konversationskette fehlgeschlagen ...",
+      "RUNNING_TIP": "Abhängig von Ihrem PC variiert die Verarbeitungszeit für Ihre Frage"
     },
     "HELP": {
       "TITLE": "Helfen",

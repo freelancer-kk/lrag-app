@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SystemService } from '../system/system.service';
+import { isDefined } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,7 @@ import { SystemService } from '../system/system.service';
 export class MediaService {
   fileSizeUnit: number = 1024;
   public isApiSetup = false;
+  docStatus: any[] | undefined = undefined;
 
   constructor(
     private systemService: SystemService
@@ -74,7 +76,25 @@ export class MediaService {
   }
 
   ls = () : Promise<any[]> => {
-    return this.systemService.lragfiles('ls', {});
+    return this.systemService.lragfiles('ls', {}).then(async (names: string[]) => {
+      const failed: string = await this.systemService.get('PAGES.INGEST.OCR_NEEDED');
+      const unknown: string = await this.systemService.get('PAGES.INGEST.UNKNOWN');
+      return names.map((v: string) => {
+        if (this.docStatus) {
+          return { 
+            name: v,
+            status: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).status : 1,
+            text: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).text : failed
+          }
+        } else {
+          return { 
+            name: v,
+            status: 2,
+            text: unknown
+          }
+        }
+      });      
+    })
   }
 
   remove = (name: string): Promise<any> => {

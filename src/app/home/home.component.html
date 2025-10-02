@@ -5,7 +5,7 @@
       {{ 'PAGES.HOME.SUB_TITLE' | translate }}
     </mat-card-subtitle>
     <span class="spacer"></span>
-    <mat-slide-toggle [disabled]="!this.systemService.osType || (this.systemService.osType && this.systemService.osType.isMac) || this.systemService.overallStatus() !== 'running: healthy'" [checked]="systemService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
+    <mat-slide-toggle [disabled]="!this.systemService.osType || (this.systemService.osType && this.systemService.osType.isMac)" [checked]="systemService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
     {{ 'PAGES.HOME.MANAGE_EXTERNALLY' | translate }}
     </mat-slide-toggle>  
   </mat-card-header>
@@ -23,9 +23,7 @@
           </mat-expansion-panel-header>
           <div class="onerow">
             {{ 'PAGES.HOME.LLM' | translate }}&nbsp;
-            @if (!this.systemService.manageOllamaExternally) {
-              <span class="small">({{ systemService.ollamaPID }})</span>
-            }
+            <span class="small">({{ systemService.ollamaPID }})</span>
             <span class="spacer"></span>
             <div [class]="systemService.getClassFromStatus(systemService.ollamaStatus())">  
               @if (systemService.ollamaStatus().startsWith('downloading')) {
@@ -51,7 +49,7 @@
         </mat-expansion-panel>        
       </mat-accordion>
     <mat-accordion>
-      <mat-expansion-panel expanded="true">
+      <mat-expansion-panel expanded="false">
         <mat-expansion-panel-header>
           <mat-panel-title>{{ 'PAGES.HOME.YOUR_PC' | translate }}</mat-panel-title>
           <mat-panel-description>

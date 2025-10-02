@@ -141,7 +141,7 @@ export class InsightsComponent implements OnInit {
           }
         }, 2000);    
       } else {
-        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.LLM_ERROR'), 'OK');        
+        this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.LLM_ERROR'), 'OK');        
       }
     }
   }

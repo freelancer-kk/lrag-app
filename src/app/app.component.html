@@ -36,24 +36,24 @@
         }
 				<mat-icon matListItemIcon>home</mat-icon>
 			</a>
-      <a mat-list-item [routerLink]="'detail'">
-        @if (isExpanded) {
-          <span>{{ 'PAGES.DETAIL.TITLE' | translate }}</span>        
-        }
-				<mat-icon matListItemIcon>settings</mat-icon>
-      </a>      		
-			<a mat-list-item [routerLink]="'ingest'">
+      <a mat-list-item [routerLink]="'ingest'">
         @if (isExpanded) {
           <span>{{ 'PAGES.INGEST.TITLE' | translate }}</span>        
         }
 				<mat-icon matListItemIcon>model_training</mat-icon>
-      </a>      		
+      </a>
 			<a mat-list-item [routerLink]="'insights'">
         @if (isExpanded) {
           <span>{{ 'PAGES.INSIGHT.TITLE' | translate }}</span>        
         }
 				<mat-icon matListItemIcon>insights</mat-icon>
-      </a>      		
+      </a>
+      <a mat-list-item [routerLink]="'detail'">
+        @if (isExpanded) {
+          <span>{{ 'PAGES.DETAIL.TITLE' | translate }}</span>        
+        }
+				<mat-icon matListItemIcon>settings</mat-icon>
+      </a>			
 			<a mat-list-item [routerLink]="'help'">
         @if (isExpanded) {
           <span>{{ 'PAGES.HELP.TITLE' | translate }}</span>        

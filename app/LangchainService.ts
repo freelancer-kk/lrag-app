@@ -113,9 +113,14 @@ export default class LangchainService {
         ".docx": (path) => new DocxLoader(path),
       },
       true,
-      UnknownHandling.Warn
+      UnknownHandling.Warn          
     )
-    return loader.load();
+    return loader.load().then(async (docs: Document[]) => {
+      for await (const doc of docs) {
+        this.emit( { type: 'langchain-run-doc', data: { id: doc.id, source: path.basename(doc.metadata.source), metadata: doc.metadata } });
+      }
+      return docs;
+    })
   }
 
   split = async (docs: Document[]): Promise<Document[]> => {
@@ -145,7 +150,7 @@ export default class LangchainService {
     this.emit( { type: 'langchain-run-start', data: {} } );
     return this.load().then(async (docs: Document[]) => {
       this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
-      if (docs.length > 0) {
+      // if (docs.length > 0) {
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });        
         const chunks = await this.split(docs);
         let uniqueNo: number = 0;
@@ -160,13 +165,15 @@ export default class LangchainService {
           this.emit( { type: 'langchain-run-complete', data: { chunks: chunks.length } });
           return { status: 'completed', documents: chunks.length };
         } else {
-          this.emit( { type: 'langchain-run-error', data: { message: 'no chunks created' } });
+          this.emit( { type: 'langchain-run-warning', data: { message: 'nothing indexed' } });
           return { status: 'error', message: 'no chunks created' };
         }
+      /*
       } else {
         this.emit( { type: 'langchain-run-warning', data: { message: 'document(s) loaded but not processed, empty or latest was incompatible' } });
         return { status: 'warning', message: 'document(s) loaded but not processed, empty or latest was incompatible' };
       }
+      */
     }).catch((err) => {
       console.error('load error:', err);
       return { status: 'error', message: err };

@@ -92,7 +92,13 @@ export class AppComponent implements OnInit {
           }
           break;
           case 'ollama-extract-starting': {
-            this.ngZone.run(() => {
+            this.ngZone.run(async () => {
+              this._snackBar.open(
+                await this.systemService.get('APP.OLLAMA_DOWNLOADING'),
+                await this.systemService.get('OK'), {
+                  duration: 20000,
+                }
+              );              
               this.systemService.ollamaStatus.update(() => `preparing`);
             })
           }
@@ -148,6 +154,21 @@ export class AppComponent implements OnInit {
             this.ngZone.run(() => {
               this.systemService.modelStatus.update(() => 'running');
               this.systemService.getAvailableLLMs();
+            })            
+          }
+          break;
+          case 'langchain-run-doc': {
+            this.ngZone.run(() => {
+              if (this.mediaService.docStatus) {
+                if (this.mediaService.docStatus.findIndex(f => f.name === data.source) === -1) {
+                  this.mediaService.docStatus.push({
+                    name: data.source,
+                    status: 0,
+                    text: ''
+                  });
+                  console.log('doc statuses:', this.mediaService.docStatus);
+                }
+              }
             })            
           }
           break;

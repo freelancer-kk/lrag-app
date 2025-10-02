@@ -57,7 +57,7 @@ export class IngestComponent implements OnInit {
 
   constructor(
     public systemService: SystemService,
-    private mediaService: MediaService
+    public mediaService: MediaService
   ) {
     effect(() => {
       this.ingestStatus = this.systemService.ingestStatus();
@@ -78,11 +78,13 @@ export class IngestComponent implements OnInit {
 
   startIngestion = async () => {
     this.systemService.ingestStatus.update(() => 'starting');
+    this.mediaService.docStatus = [];
     this.systemService.commandIngest('start').then(async (result: any) => {
       console.log('ingest result:', result);
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(() => 'not running');
         this.systemService.ragFiles = await this.mediaService.ls();
+        this._snackBar.open(await this.systemService.get('PAGES.INGEST.COMPLETE'), 'OK');        
       } else {
         this.systemService.ingestStatus.update(() => 'warning');
         const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result ? (': ' + JSON.stringify(result)) : ''), 'OK' );
@@ -205,9 +207,9 @@ export class IngestComponent implements OnInit {
         console.log(`Dialog result: ${result}`);
         if (result === true) {          
           for await (const doc of docs) {
-            const fIdx: number = this.systemService.ragFiles.findIndex(r => r === doc);
+            const fIdx: number = this.systemService.ragFiles.findIndex(r => r.name === doc);
             if (fIdx > -1) {
-              await this.mediaService.remove(this.systemService.ragFiles[fIdx]);
+              await this.mediaService.remove(this.systemService.ragFiles[fIdx].name);
               this.systemService.ragFiles.splice(fIdx, 1);            
             }
           }

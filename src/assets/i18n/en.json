@@ -31,7 +31,8 @@
     "EXIT_ARE_YOU_SURE": "Shutdown the application?",
     "OLLAMA_NOT_RUNNING": "The model process, Ollama is managed externally. Please make sure it is installed and running.",
     "GET_OLLAMA": "Get Ollama",
-    "GET_OLLAMA_TIP": "You can download and install Ollama from the official repository. On a Mac this is mandatory in order to use LRag"
+    "GET_OLLAMA_TIP": "You can download and install Ollama from the official repository. On a Mac this is mandatory in order to use LRag",
+    "OLLAMA_DOWNLOADING": "LRag needs to download the Model Processor Ollama. This will take some time depending on your PC and Internet speed"
   },
   "PAGES": {      
       "HOME": {
@@ -76,7 +77,7 @@
       },
       "INGEST": {
         "TITLE": "Ingest",
-        "MAIN_TITLE": "Document Ingestion",
+        "MAIN_TITLE": "Document(s) Ingestion",
         "INGEST_STATUS": "Status",
         "FOLDER_SUBTITLE": "Drag and Drop your files below (PDF,XLXS,DOC,CSV)",
         "DROP_HERE": "Drop Here",
@@ -96,20 +97,25 @@
         "WARNING": "Warning during ingestion",
         "DELETE_ARE_YOU_SURE": "Are you sure you want to remove these documents =>",
         "SCANNED_DOCS": "scanned docs?",
-        "SCANNED_DOCS_TEXT": "In order to ingest scanned documents they must be converted with an OCR tool. Many are available. Adobe has a free tool, click the link above"
+        "SCANNED_DOCS_TEXT": "In order to ingest scanned documents they must be converted with an OCR tool. Many are available. Adobe has a free tool, click the link above",
+        "COMPLETE": "Ingestion completed",
+        "OCR_NEEDED": "OCR conversion required",
+        "UNKNOWN": "Not indexed",
+        "INDEX": "Ingest documents"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",
-        "MAIN_TITLE": "Document Insight",
+        "MAIN_TITLE": "Document(s) Insight",
         "INSIGHT_STATUS": "INSIGHT status",
-        "RESET_CONTEXT_TIP": "Improve results by waiting a minute before asking questions about a different domain. This will allow the context to reset",
+        "RESET_CONTEXT_TIP": "Improve results by ingesting documents related to a single domain. Before asking questions about a different domain, remove those documents and ingest documents about the new domain. This will allow the context to reset",
         "RESET_ARE_YOU_SURE": "Resetting the context will flush the model service, reload and rerun the model, this may take a minute",
         "CONTEXTUAL_PROMPT": "Given a chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.",
         "PROMPT": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use a maximum of three sentences and keep the answer concise.",
         "QUESTION": "Your Question",
         "INITIAL_PROMPT": "How can I help you?",
         "CLEAR_HISTORY_TIP": "Clear the chat history",
-        "LLM_ERROR": "Conversational chain failed ..."
+        "LLM_ERROR": "Conversational chain failed ...",
+        "RUNNING_TIP": "Depending on your PC the processing time for your question will vary"
       },
       "HELP": {
         "TITLE": "Help",

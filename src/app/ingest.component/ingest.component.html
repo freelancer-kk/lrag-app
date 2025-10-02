@@ -1,6 +1,6 @@
   <mat-toolbar>
     <mat-toolbar-row>
-      <h1 class="title" [matTooltip]="'PAGES.INGEST.MAX_FILES_TEXT' | translate">
+      <h1 class="title" [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate">
         {{ 'PAGES.INGEST.MAIN_TITLE' | translate }}
       </h1>&nbsp;
       <a matButton="outlined" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
@@ -17,6 +17,10 @@
           <mat-icon>{{ systemService.getIconFromStatus(ingestStatus) }}</mat-icon>
           {{ ingestStatus }}
         </div>
+      } @else if (!mediaService.docStatus) {
+        <button matButton="filled" (click)="startIngestion()">
+          {{ 'PAGES.INGEST.INDEX' | translate }}
+        </button>
       }
     </mat-toolbar-row>  
   </mat-toolbar>
@@ -47,7 +51,7 @@
     <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
     <mat-select [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
       @for (entry of systemService.ragFiles; track $index) {
-        <mat-option [value]="entry">{{ entry }}</mat-option>
+        <mat-option [value]="entry.name">{{ entry.name }}</mat-option>
       }
     </mat-select>  
   </mat-form-field>
@@ -63,10 +67,19 @@
     @for (entry of systemService.ragFiles; track $index) {
       <mat-grid-tile class="gridtile" colspan="1" rowspan="1">
         <mat-list-item>
-          <mat-icon matListItemIcon>upload_file</mat-icon>
+          @if (entry.status === 0) {
+            <mat-icon matListItemIcon class="success">checkmark</mat-icon>
+          } @else if (entry.status === 1) {
+            <mat-icon matListItemIcon class="danger">close</mat-icon>
+          } @else {
+            <mat-icon matListItemIcon class="warning">quiz</mat-icon>
+          }
           <div matListItemTitle>
-            {{ entry}}
-          </div>          
+            {{ entry.name }}
+          </div>
+          <div matListItemLine class="danger">
+            {{ entry.text }}
+          </div>
         </mat-list-item>
       </mat-grid-tile>      
     }         
