@@ -1,6 +1,7 @@
 {
   "asar": true,
   "directories": {
+    "buildResources": "dist/",
     "output": "release/"
   },
   "files": [
@@ -24,7 +25,8 @@
   "win": {
     "icon": "dist/assets/icons",    
     "target": [
-      "appx"      
+      "appx",
+      "portable"
     ]    
   },
   "portable": {

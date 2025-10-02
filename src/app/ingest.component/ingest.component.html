@@ -39,7 +39,9 @@
     >
       <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
         <mat-icon>file_upload</mat-icon>
-        <mat-label>{{ (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length < systemService.MAX_FILES ? 'PAGES.INGEST.DROP_HERE': 'PAGES.INGEST.PLEASE_WAIT') | translate }}</mat-label><br/>
+        @if (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length < systemService.MAX_FILES) {
+          <mat-label>{{ 'PAGES.INGEST.DROP_HERE'| translate }}</mat-label><br/>
+        }
         @if (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length < systemService.MAX_FILES) {
           <button matButton (click)="openFileSelector()">{{ 'PAGES.INGEST.SELECT_FILE' | translate }}</button>
         }
