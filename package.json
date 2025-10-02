@@ -117,6 +117,7 @@
     "electron-builder": "^26.0.12",
     "electron-debug": "^4.1.0",
     "electron-reloader": "^1.2.3",
+    "electron-windows-msix": "2.0.4",
     "eslint": "^9.35.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsdoc": "^54.5.0",

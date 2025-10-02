@@ -14,11 +14,18 @@
       "filter": ["**/*"]
     }    
   ],
+  "appx": {
+    "identityName": "Khaleque.LRag",
+    "publisher": "CN=25CA5135-C2A6-4B06-AD5B-46AC014014CC",
+    "publisherDisplayName": "Khaleque",
+    "applicationId": "LRag", 
+    "displayName": "LRag"
+  },
   "win": {
-    "icon": "dist/assets/icons",
+    "icon": "dist/assets/icons",    
     "target": [
-      "portable"
-    ]
+      "appx"      
+    ]    
   },
   "portable": {
     "splashImage": "dist/assets/icons/electron.bmp"
