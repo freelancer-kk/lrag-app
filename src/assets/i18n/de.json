@@ -85,7 +85,7 @@
       "FILES": "Unterlagen",
       "SELECT_FILE": "Datei auswählen",
       "DIR_NOT_SUPPORTED": "Verzeichnis -Upload in der Grundversion nicht möglich",
-      "PLEASE_WAIT": "Beschäftigte oder maximale Dateien erreicht, bitte warten ...",
+      "PLEASE_WAIT": "Nicht bereit, bitte warten ...",
       "PROCESSING": "Verarbeitung",
       "DOC_NAME": "Name",
       "DOC_MODIFIED": "Verändert",

@@ -62,8 +62,11 @@ export default class ContextChat {
       });
 
       const vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore()).asRetriever({
-        k: 3,
-        searchType: "similarity",          
+        searchType: "mmr",
+        searchKwargs: {
+          fetchK: 10,
+        },
+        k: 4
       });
 
       if (vectorStoreRetriever) {

@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: row;  
   padding: 5px;
-  border-radius: 15px;
+  border-radius: 5px;
   margin: 5px;
   background-color: var(--mat-sys-outline);  
 }
@@ -18,7 +18,7 @@
   display: flex;
   flex-direction: row;  
   padding: 5px;
-  border-radius: 15px;
+  border-radius: 5px;
   margin: 5px;
   background-color: green;  
 }
@@ -27,7 +27,7 @@
   display: flex;
   flex-direction: row;  
   padding: 5px;
-  border-radius: 15px;
+  border-radius: 5px;
   margin: 5px;
   background-color: darkkhaki;  
 }
@@ -36,7 +36,7 @@
   display: flex;
   flex-direction: row;  
   padding: 5px;
-  border-radius: 15px;
+  border-radius: 5px;
   margin: 5px;
   background-color: red;  
 }

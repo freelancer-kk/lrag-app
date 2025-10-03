@@ -33,19 +33,21 @@
               }
               {{ systemService.ollamaStatus() }}
             </div>            
-          </div>          
-          <div class="onerow">
-            {{ 'PAGES.HOME.MODEL' | translate }}&nbsp;            
-            <span class="spacer"></span>
-            <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">  
-              @if (systemService.modelStatus().startsWith('downloading')) {
-                <mat-spinner diameter="30"></mat-spinner>
-              } @else {            
-                <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus()) }}</mat-icon>
-              }
-              {{ systemService.modelStatus() }}
-            </div>            
-          </div>          
+          </div>
+          @if (systemService.ollamaStatus() === 'running') {
+            <div class="onerow">
+              {{ 'PAGES.HOME.MODEL' | translate }}&nbsp;            
+              <span class="spacer"></span>
+              <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">  
+                @if (systemService.modelStatus().startsWith('downloading')) {
+                  <mat-spinner diameter="30"></mat-spinner>
+                } @else {            
+                  <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus()) }}</mat-icon>
+                }
+                {{ systemService.modelStatus() }}
+              </div>            
+            </div>          
+          }
         </mat-expansion-panel>        
       </mat-accordion>
     <mat-accordion>

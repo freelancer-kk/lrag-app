@@ -3,7 +3,7 @@
       <h1 class="title" [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate">
         {{ 'PAGES.INGEST.MAIN_TITLE' | translate }}
       </h1>&nbsp;
-      <a matButton="outlined" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
+      <a matButton="elevated" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
       {{ 'PAGES.INGEST.SCANNED_DOCS' | translate }}
       </a>
       <span class="spacer"></span>      
@@ -17,7 +17,7 @@
           <mat-icon>{{ systemService.getIconFromStatus(ingestStatus) }}</mat-icon>
           {{ ingestStatus }}
         </div>
-      } @else if (!mediaService.docStatus && systemService.ragFiles.length>0 && systemService.overallStatus() === 'healthy: running') {
+      } @else if (!mediaService.docStatus && systemService.ragFiles.length>0 && systemService.overallStatus() === 'running: healthy') {
         <button matButton="filled" (click)="startIngestion()">
           {{ 'PAGES.INGEST.INDEX' | translate }}
         </button>
@@ -41,6 +41,8 @@
         <mat-icon>file_upload</mat-icon>
         @if (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length < systemService.MAX_FILES) {
           <mat-label>{{ 'PAGES.INGEST.DROP_HERE'| translate }}</mat-label><br/>
+        } @else {
+          <mat-label>{{ 'PAGES.INGEST.PLEASE_WAIT'| translate }}</mat-label><br/>
         }
         @if (overallStatus === 'running: healthy' && ingestStatus === 'not running' && systemService.ragFiles.length < systemService.MAX_FILES) {
           <button matButton (click)="openFileSelector()">{{ 'PAGES.INGEST.SELECT_FILE' | translate }}</button>

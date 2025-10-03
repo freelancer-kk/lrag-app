@@ -127,8 +127,8 @@ export default class LangchainService {
     console.log('loaded:doc:', docs.length);
     const splitter: RecursiveCharacterTextSplitter = new RecursiveCharacterTextSplitter(
       { 
-        chunkSize: 1000,
-        chunkOverlap: 200
+        chunkSize: 512,
+        chunkOverlap: 50
       }
     )
 
