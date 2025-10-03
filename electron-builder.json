@@ -25,7 +25,6 @@
   "win": {
     "icon": "dist/assets/icons",    
     "target": [
-      "appx",
       "portable"
     ]    
   },
