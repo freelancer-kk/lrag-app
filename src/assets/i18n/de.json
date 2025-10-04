@@ -122,7 +122,7 @@
       "WHAT_IS_LRAG_TITLE": "Was ist LRag?",
       "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) ist eine 100% ige lokale Lösung, die auf Ihrem PC läuft und es Ihnen ermöglicht, KI -Einblicke in Ihre privaten Dokumente zu genießen. ",
       "ACCURACY_TITLE": "Wie gut ist LRag?",
-      "ACCURACY": "LRag verwendet Ihre Eingabeaufforderung und Dokumente als Kontext für das entsprechende Modell und ist in der Genauigkeit begrenzt, insbesondere wenn Sie Fragen -Domänen mischen, z. B. Fragen zu Konten und dann sofort Fragen stellen. ",
+      "ACCURACY": "LRag verwendet den Inhalt der Eingabeaufforderung und Dokumente als Kontext für das entsprechende Modell. Es ist in der Genauigkeit begrenzt, insbesondere wenn Sie Fragen und Dokumente in verschiedenen Bereichen mischen, z. B. Fragen zu Konten und dann sofort Fragen zu Gesundheitsfragen beim Mischen der Dokumente. Der beste Ansatz besteht darin, zuerst Dokumente aufzunehmen, Ihre Fragen zu stellen und diese Dokumente zu entfernen und Ihre Gesundheitsdokumente hinzuzufügen und dann Fragen zur Gesundheit zu stellen. Dadurch kann der Modellkontext zwischen Domänen zurückgesetzt werden",
       "INGEST_TITLE": "Welche Dokumente kann ich einnehmen?",
       "INGEST": "Sie können PDF-, Wort-, Excel-, PowerPoint- und CSV -Dateien einnehmen. ",
       "DATA_SECURITY_TITLE": "Sind meine Daten sicher?",

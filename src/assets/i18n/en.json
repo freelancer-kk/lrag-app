@@ -122,7 +122,7 @@
         "WHAT_IS_LRAG_TITLE": "What is LRag?",
         "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",
         "ACCURACY_TITLE": "How good is LRag?",
-        "ACCURACY": "LRag uses your prompt and documents as context for the corresponding model and is limited in accuracy, especially if you are mixing question domains e.g asking about accounts and then immediately asking health questions. The best approach is wait a minute before asking questions about a different domain to allow the context to reset.",
+        "ACCURACY": "LRag uses your prompt and documents' contents as context for the corresponding model. It is limited in accuracy, especially if you are mixing questions and documents across different domains e.g asking about accounts and then immediately asking health questions whilst mixing the documents. The best approach is to ingest documents first, ask your questions and then to remove those docs and add your health docs and then ask questions about health. This will allow the model context to reset between domains",
         "INGEST_TITLE": "What documents can I ingest?",
         "INGEST": "You can ingest PDF, Word, Excel, Powerpoint and CSV files. Scanned documents as these are not directly supported. These documents can be easily converted with OCR to make them compatible",
         "DATA_SECURITY_TITLE": "Is my data secure?",
