@@ -97,7 +97,7 @@
       "WARNING": "Warnung während der Einnahme",
       "DELETE_ARE_YOU_SURE": "Sind Sie sicher, dass Sie diese Dokumente(n) entfernen möchten =>",
       "SCANNED_DOCS": "gescannte Dokumente?",
-      "SCANNED_DOCS_TEXT": "Um gescannte Dokumente aufzunehmen, müssen sie mit einem OCR -Tool umgewandelt werden. ",
+      "SCANNED_DOCS_TEXT": "Um gescannte Dokumente aufzunehmen, müssen sie mit einem OCR -Tool umgewandelt werden. Viele sind verfügbar. Adobe hat ein kostenloses Tool, klicken Sie auf die Schaltfläche",
       "COMPLETE": "Einnahme abgeschlossen",
       "OCR_NEEDED": "OCR konvertierung erforderlich",
       "UNKNOWN": "Nicht indiziert",
