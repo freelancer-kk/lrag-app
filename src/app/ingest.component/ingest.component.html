@@ -53,13 +53,13 @@
   <div class="onerow">
   <mat-form-field class="full-width">
     <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
-    <mat-select [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
+    <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
       @for (entry of systemService.ragFiles; track $index) {
         <mat-option [value]="entry.name">{{ entry.name }}</mat-option>
       }
-    </mat-select>  
+    </mat-select>    
   </mat-form-field>
-  @if (systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
+  @if (!this.isOpened && systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
     <button matSuffix matIconButton aria-label="Clear" (click)="fileRemove($event)">
       <mat-icon>delete</mat-icon>
     </button>            

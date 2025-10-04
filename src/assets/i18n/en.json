@@ -95,7 +95,7 @@
         "DURATION_WARNING": "Ingestion may take some minutes depending on the performance of your PC and size of your documents. Please wait until the process completes",
         "ERROR": "Error during ingestion, please try again",
         "WARNING": "Warning during ingestion",
-        "DELETE_ARE_YOU_SURE": "Are you sure you want to remove these documents =>",
+        "DELETE_ARE_YOU_SURE": "Are you sure you want to remove these document(s) =>",
         "SCANNED_DOCS": "scanned docs?",
         "SCANNED_DOCS_TEXT": "In order to ingest scanned documents they must be converted with an OCR tool. Many are available. Adobe has a free tool, click the link above",
         "COMPLETE": "Ingestion completed",

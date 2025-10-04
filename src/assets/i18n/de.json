@@ -95,7 +95,7 @@
       "DURATION_WARNING": "Die Einnahme kann je nach Leistung Ihres PCs und der Größe Ihrer Dokumente einige Minuten dauern. ",
       "ERROR": "Fehler während der Einnahme, bitte versuchen Sie es erneut",
       "WARNING": "Warnung während der Einnahme",
-      "DELETE_ARE_YOU_SURE": "Sind Sie sicher, dass Sie diese Dokumente entfernen möchten =>",
+      "DELETE_ARE_YOU_SURE": "Sind Sie sicher, dass Sie diese Dokumente(n) entfernen möchten =>",
       "SCANNED_DOCS": "gescannte Dokumente?",
       "SCANNED_DOCS_TEXT": "Um gescannte Dokumente aufzunehmen, müssen sie mit einem OCR -Tool umgewandelt werden. ",
       "COMPLETE": "Einnahme abgeschlossen",

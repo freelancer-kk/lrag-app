@@ -54,6 +54,8 @@ export class IngestComponent implements OnInit {
   startIngestTimer: any;
   ingestStatus: string = 'not running';
   overallStatus: string = 'not running';
+  selectedAll: boolean = false;
+  isOpened: boolean = false;
 
   constructor(
     public systemService: SystemService,
@@ -190,6 +192,7 @@ export class IngestComponent implements OnInit {
   }
 
   fileRemove = async (event: any) => {
+    console.log('fileRemove:', event);
     if (this.systemService.selectedDocuments.value) {
       const docs: string[] = (this.systemService.selectedDocuments.value as unknown) as string[];
       const deleteStr: string = docs.join(' ');
@@ -218,5 +221,15 @@ export class IngestComponent implements OnInit {
         this.systemService.selectedDocuments.setValue('');
       });    
     }
+  }
+
+  toggleOpen = (event: any) => {
+    this.isOpened = !this.isOpened;
+    console.log('opened:', this.isOpened);
+  }
+
+  toggleAll = (event: any) => {
+    console.log(event.target.value);
+    this.selectedAll = !this.selectedAll;
   }
 }
