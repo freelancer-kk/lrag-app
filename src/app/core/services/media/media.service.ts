@@ -75,6 +75,10 @@ export class MediaService {
     })
   }
 
+  noOfValidFiles = (): number => {
+    return this.systemService.ragFiles.filter(v => v.status === 0).length;
+  }
+
   ls = () : Promise<any[]> => {
     return this.systemService.lragfiles('ls', {}).then(async (names: string[]) => {
       const failed: string = await this.systemService.get('PAGES.INGEST.OCR_NEEDED');

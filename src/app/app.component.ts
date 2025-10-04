@@ -246,12 +246,22 @@ export class AppComponent implements OnInit {
         }
       }
       if (this.systemService.overallStatus() === "running: healthy") {
-        systemService.showGetOllama = false;
+        systemService.showGetOllama = false;        
         if (systemService.ollamaPID === -1) {
           this.findOllamaProcess();
-       }
+        }
+        this.navigateAway();
       }
     })
+  }
+
+  navigateAway = async () => {
+    await this.mediaService.ls();
+    if (this.mediaService.noOfValidFiles() > 0) {
+      this.router.navigate(['insights']);
+    } else {
+      this.router.navigate(['ingest']);
+    }
   }
 
   findOllamaProcess = async () => {

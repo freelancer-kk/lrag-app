@@ -20,6 +20,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-ingest.component',
@@ -59,7 +60,8 @@ export class IngestComponent implements OnInit {
 
   constructor(
     public systemService: SystemService,
-    public mediaService: MediaService
+    public mediaService: MediaService,
+    private router: Router,
   ) {
     effect(() => {
       this.ingestStatus = this.systemService.ingestStatus();
@@ -86,7 +88,14 @@ export class IngestComponent implements OnInit {
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(() => 'not running');
         this.systemService.ragFiles = await this.mediaService.ls();
-        this._snackBar.open(await this.systemService.get('PAGES.INGEST.COMPLETE'), 'OK');        
+        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.COMPLETE'), 'OK', {
+          duration: 10000
+        });
+        snackBarRef.onAction().subscribe(() => {
+          if (this.mediaService.noOfValidFiles() > 0) {
+            this.router.navigate(['insights']);
+          }
+        });      
       } else {
         this.systemService.ingestStatus.update(() => 'warning');
         const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result ? (': ' + JSON.stringify(result)) : ''), 'OK' );

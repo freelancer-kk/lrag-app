@@ -166,7 +166,7 @@ export default class LangchainService {
           return { status: 'completed', documents: chunks.length };
         } else {
           this.emit( { type: 'langchain-run-warning', data: { message: 'nothing indexed' } });
-          return { status: 'error', message: 'no chunks created' };
+          return { status: 'warning', message: 'nothing to process' };
         }
       /*
       } else {
