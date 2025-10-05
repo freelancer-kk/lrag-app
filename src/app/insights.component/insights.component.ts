@@ -110,6 +110,10 @@ export class InsightsComponent implements OnInit {
         stop: ["\n"],
         stream: true,
         think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
+        chunkParams: JSON.stringify({
+          chunkSize: this.systemService.chunkSize,
+          chunkOverlap: this.systemService.overlap
+        })
       };
 
       this.systemService.chatHistory.push({

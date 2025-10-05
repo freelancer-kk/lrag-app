@@ -101,7 +101,11 @@
       "COMPLETE": "Einnahme abgeschlossen",
       "OCR_NEEDED": "OCR konvertierung erforderlich",
       "UNKNOWN": "Nicht indiziert",
-      "INDEX": "Dokumenten aufnehmen"
+      "INDEX": "Dokumenten aufnehmen",
+      "CHUNK_SIZE": "Chunkgröße",
+      "CHUNK_SIZE_TIP": "Die definierte Länge für einzelne Textsegmente. Größere Stücke: Kann mehr Kontext erfassen, aber die Kosten für ein Einbettung und Abrufen erhöhen und spezifische Informationen verwässern. Kleinere Brocken: sind rechnerisch billiger und präziser, könnten aber einen breiteren Kontext verpassen, was möglicherweise zu weniger umfassenden Antworten führt",
+      "OVERLAP": "Überlappen",
+      "OVERLAP_TIP": "Die Anzahl der Token oder Zeichen, die zwischen dem Ende eines Stücks und dem Beginn des nächsten geteilt werden. Eine höhere Überlappung hilft dabei, Kontinuität und Beziehungen zwischen verwandten Informationen zu erhalten, erhöht jedoch die Redundanz und den Rechenaufwand. Eine niedrigere Überlappung ist effizienter, erhöht jedoch das Risiko fehlender Verbindungen zwischen Stücken."
     },
     "INSIGHT": {
       "TITLE": "AI Einblicke",

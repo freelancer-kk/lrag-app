@@ -11,7 +11,7 @@ import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
 import { PPTXLoader } from "@langchain/community/document_loaders/fs/pptx";
 import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
 import { OllamaEmbeddings } from "@langchain/ollama";
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
+import { RecursiveCharacterTextSplitter, RecursiveCharacterTextSplitterParams } from 'langchain/text_splitter'
 import { Document } from "@langchain/core/documents";
 import { mkdirSync } from 'fs';
 import * as path from 'path';
@@ -62,7 +62,7 @@ export default class LangchainService {
       let response: any = {}
       switch (command) {
         case "start": {
-          response = await this.run();          
+          response = await this.run(params);          
         }
         break;        
       }
@@ -83,9 +83,9 @@ export default class LangchainService {
     return this.vectorStore.addDocuments(docs);    
   }
 
-  getSearchableVectorStore = (): Promise<MemoryVectorStore> => {
+  getSearchableVectorStore = (params: any): Promise<MemoryVectorStore> => {
     if (!this.hasAddedDocs) {
-      return this.run().then((value: any) => {
+      return this.run(params).then((value: any) => {
         return Promise.resolve(this.vectorStore);    
       })
     } else {
@@ -123,14 +123,9 @@ export default class LangchainService {
     })
   }
 
-  split = async (docs: Document[]): Promise<Document[]> => {
+  split = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined ): Promise<Document[]> => {
     console.log('loaded:doc:', docs.length);
-    const splitter: RecursiveCharacterTextSplitter = new RecursiveCharacterTextSplitter(
-      { 
-        chunkSize: 512,
-        chunkOverlap: 50
-      }
-    )
+    const splitter: RecursiveCharacterTextSplitter = new RecursiveCharacterTextSplitter(params)
 
     // let chunks: Document[] = [];
     const chunks: Document[] = await splitter.splitDocuments(docs);
@@ -146,13 +141,13 @@ export default class LangchainService {
     return chunks;
   }
 
-  run = async (): Promise<any> => {
+  run = async (params: any): Promise<any> => {
     this.emit( { type: 'langchain-run-start', data: {} } );
     return this.load().then(async (docs: Document[]) => {
       this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
       // if (docs.length > 0) {
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });        
-        const chunks = await this.split(docs);
+        const chunks = await this.split(docs, params);
         let uniqueNo: number = 0;
         for await (const chunk of chunks) {
           chunk.id = String(uniqueNo++);

@@ -48,6 +48,8 @@ export class SystemService {
   brand: string = '';
   manageOllamaExternally: boolean = false;
   showGetOllama: boolean = false;
+  chunkSize: number = 512;
+  overlap: number = 48;
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},

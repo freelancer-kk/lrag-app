@@ -61,7 +61,7 @@ export default class ContextChat {
         model: options.model
       });
 
-      const vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore()).asRetriever({
+      const vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams))).asRetriever({
         searchType: "mmr",
         searchKwargs: {
           fetchK: 10,

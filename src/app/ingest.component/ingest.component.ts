@@ -21,6 +21,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { Router, RouterLink } from '@angular/router';
+import { MatSliderModule } from '@angular/material/slider';
 
 @Component({
   selector: 'app-ingest.component',
@@ -41,7 +42,8 @@ import { Router, RouterLink } from '@angular/router';
     MatFormFieldModule,
     MatSelectModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSliderModule,
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
@@ -83,7 +85,13 @@ export class IngestComponent implements OnInit {
   startIngestion = async () => {
     this.systemService.ingestStatus.update(() => 'starting');
     this.mediaService.docStatus = [];
-    this.systemService.commandIngest('start').then(async (result: any) => {
+    this.systemService.commandIngest(
+      'start',
+      {
+        chunkSize: this.systemService.chunkSize,
+        chunkOverlap: this.systemService.overlap
+      }
+    ).then(async (result: any) => {
       console.log('ingest result:', result);
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(() => 'not running');
