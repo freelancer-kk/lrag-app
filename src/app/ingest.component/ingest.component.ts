@@ -179,11 +179,11 @@ export class IngestComponent implements OnInit {
         } else {
           const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
           console.log(droppedFile.relativePath, fileEntry);
-          this._snackBar.open(await this.systemService.get('PAGES.INGEST.DIR_NOT_SUPPORTED'));
+          this._snackBar.open(await this.systemService.get('PAGES.INGEST.DIR_NOT_SUPPORTED'), 'OK');
         }
       }
     } else {
-      this._snackBar.open(await this.systemService.get('PAGES.INGEST.TOO_MANY_FILES') + this.systemService.MAX_FILES);
+      this._snackBar.open(await this.systemService.get('PAGES.INGEST.TOO_MANY_FILES') + this.systemService.MAX_FILES, 'OK');
     }
     
   }

@@ -83,7 +83,7 @@
         "DROP_HERE": "Drop Here",
         "DROP_ZONE": "Dropzone",
         "FILES": "Documents",
-        "SELECT_FILE": "Select File",
+        "SELECT_FILE": "Select File(s)",
         "DIR_NOT_SUPPORTED": "Directory upload not possible in basic version",
         "PLEASE_WAIT": "Not ready, please wait ...",
         "PROCESSING": "Processing",
