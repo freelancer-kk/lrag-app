@@ -96,6 +96,7 @@ export class InsightsComponent implements OnInit {
       const question: string = this.question;
       this.question = '';
       
+      this.systemService.saveChunkSettings();
       const options = {
         question,
         model: this.systemService.selectedModel,

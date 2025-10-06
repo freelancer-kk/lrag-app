@@ -85,6 +85,7 @@ export class IngestComponent implements OnInit {
   startIngestion = async () => {
     this.systemService.ingestStatus.update(() => 'starting');
     this.mediaService.docStatus = [];
+    this.systemService.saveChunkSettings();
     this.systemService.commandIngest(
       'start',
       {

@@ -52,12 +52,12 @@
   </div>
   <div class="onerow">
   <mat-label [matTooltip]="'PAGES.INGEST.CHUNK_SIZE_TIP' | translate">{{ 'PAGES.INGEST.CHUNK_SIZE' | translate }}</mat-label>
-  <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="64" max="2048" step="64" showTickMarks discrete>
+  <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="64" max="4096" step="64" showTickMarks discrete>
     <input matSliderThumb [(ngModel)]="systemService.chunkSize" [value]="systemService.chunkSize">
   </mat-slider>
   <span class="spacer"></span>
   <mat-label [matTooltip]="'PAGES.INGEST.OVERLAP_TIP' | translate">{{ 'PAGES.INGEST.OVERLAP' | translate }}</mat-label>
-  <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="0" max="512" step="16" showTickMarks discrete>
+  <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="0" max="1024" step="16" showTickMarks discrete>
     <input matSliderThumb [(ngModel)]="systemService.overlap" [value]="systemService.overlap">
   </mat-slider>
   </div>

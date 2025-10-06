@@ -73,6 +73,13 @@ export class SystemService {
     })
   }
 
+  saveChunkSettings = () => {
+    localStorage.setItem('chunk-settings', JSON.stringify({
+      chunkSize: this.chunkSize,
+      overlap: this.overlap
+    }))
+  }
+
   getThinkingForModel = (model: string): boolean => {
     const idx = this.models.findIndex(m => m.value === model);
     if (idx > -1) {

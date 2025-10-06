@@ -42,6 +42,10 @@ bootstrapApplication(AppComponent, {
         const manageOllamaExternally: string | null = localStorage.getItem('manage-ollama-externally');
         systemService.manageOllamaExternally = manageOllamaExternally ? JSON.parse(manageOllamaExternally) : 'false';
         console.log('managedExternally:', systemService.manageOllamaExternally);
+
+        const chunkSettingsStr: string | null = localStorage.getItem('chunk-settings');
+        systemService.chunkSize= chunkSettingsStr ? JSON.parse(chunkSettingsStr).chunkSize : 512;
+        systemService.overlap= chunkSettingsStr ? JSON.parse(chunkSettingsStr).overlap : 48;
       };
       await initializerFn(inject(SystemService));
     }),
