@@ -105,7 +105,9 @@
         "CHUNK_SIZE": "Chunk Size",
         "CHUNK_SIZE_TIP": "The defined length for individual text segments. Larger chunks: can capture more context but increase the cost of embedding and retrieval, and may dilute specific information. Smaller chunks: are computationally cheaper and more precise but might miss broader context, potentially leading to less comprehensive answers",
         "OVERLAP": "Overlap",
-        "OVERLAP_TIP": "The number of tokens or characters shared between the end of one chunk and the beginning of the next. A higher overlap helps retain continuity and relationships between related pieces of information but increases redundancy and computational overhead. A lower overlap is more efficient but increases the risk of missing connections between chunks."
+        "OVERLAP_TIP": "The number of tokens or characters shared between the end of one chunk and the beginning of the next. A higher overlap helps retain continuity and relationships between related pieces of information but increases redundancy and computational overhead. A lower overlap is more efficient but increases the risk of missing connections between chunks.",
+        "RESET_CHUNKS": "Defaults",
+        "OPTIONS": "Options"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",

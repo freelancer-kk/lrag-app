@@ -22,6 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { Router, RouterLink } from '@angular/router';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-ingest.component',
@@ -44,6 +45,7 @@ import { MatSliderModule } from '@angular/material/slider';
     FormsModule,
     ReactiveFormsModule,
     MatSliderModule,
+    MatExpansionModule,
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
@@ -80,6 +82,11 @@ export class IngestComponent implements OnInit {
     // console.log('FILES', this.ragFiles);
     this.systemService.MAX_FILES = Number.parseInt(await this.systemService.get('PAGES.INGEST.MAX_DOCS'));
     // console.log('MAX:', this.systemService.MAX_FILES)
+  }
+
+  resetDefaults = (ev: any) => {
+    this.systemService.chunkSize = 512;
+    this.systemService.overlap = 48;
   }
 
   startIngestion = async () => {

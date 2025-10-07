@@ -7,7 +7,6 @@ import {
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
 import { PPTXLoader } from "@langchain/community/document_loaders/fs/pptx";
 import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
 import { OllamaEmbeddings } from "@langchain/ollama";
@@ -100,6 +99,8 @@ export default class LangchainService {
         ".json": (path) => new JSONLoader(path, "/texts"),
         ".jsonl": (path) => new JSONLinesLoader(path, "/html"),
         ".txt": (path) => new TextLoader(path),
+        ".md": (path) => new TextLoader(path),
+        ".xml": (path) => new TextLoader(path),
         ".csv": (path) => new CSVLoader(path, "text"),
         ".xlsm": (path) => new CSVLoader(path),
         ".xls": (path) => new CSVLoader(path),
@@ -124,21 +125,29 @@ export default class LangchainService {
   }
 
   split = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined ): Promise<Document[]> => {
-    console.log('loaded:doc:', docs.length);
-    const splitter: RecursiveCharacterTextSplitter = new RecursiveCharacterTextSplitter(params)
-
-    // let chunks: Document[] = [];
-    const chunks: Document[] = await splitter.splitDocuments(docs);
-    /*
-    for await (const doc of docs) {
-      const docOutput = await splitter.splitDocuments([
-        doc,
-      ]);
-      chunks = chunks.concat(docOutput);
+    if (params && params.chunkSize && params?.chunkSize > 0) {
+      console.log('loaded:doc:', docs.length);
+      const splitter: RecursiveCharacterTextSplitter = new RecursiveCharacterTextSplitter(params)
+      const chunks: Document[] = await splitter.splitDocuments(docs);
+      
+      console.log('chunks:', chunks.length);
+      return chunks;
+    } else {
+      return docs;
     }
-      */
-    console.log('chunks:', chunks.length);
-    return chunks;
+  }
+
+  mdSplit = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined ): Promise<Document[]> => {
+    if (params && params.chunkSize && params?.chunkSize > 0) {
+      console.log('md:loaded:doc:', docs.length);
+      const mdSplitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", params);
+      const chunks: Document[] = await mdSplitter.splitDocuments(docs);
+      
+      console.log('md:chunks:', chunks.length);
+      return chunks;
+    } else {
+      return docs;
+    }
   }
 
   run = async (params: any): Promise<any> => {
@@ -146,8 +155,16 @@ export default class LangchainService {
     return this.load().then(async (docs: Document[]) => {
       this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
       // if (docs.length > 0) {
-        this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });        
-        const chunks = await this.split(docs, params);
+        this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });
+        let chunks: Document[] = [];
+        
+        const sd: string = docs[0].metadata.source;
+        console.log('first doc ends with:', sd);
+        if (sd.endsWith('md')) {
+          chunks = await this.mdSplit(docs, params);
+        } else {
+          chunks = await this.split(docs, params);
+        }
         let uniqueNo: number = 0;
         for await (const chunk of chunks) {
           chunk.id = String(uniqueNo++);

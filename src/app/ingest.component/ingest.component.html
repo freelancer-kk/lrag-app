@@ -32,7 +32,7 @@
   }
   <div class="dropzone">
   <ngx-file-drop 
-    accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt"
+    accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt,.json,*.xml,*.md"
     dropZoneClassName="dropzone"
     (onFileDrop)="dropped($event)"
     [disabled]="overallStatus !== 'running: healthy' || ingestStatus !== 'not running' || systemService.ragFiles.length >= systemService.MAX_FILES"
@@ -50,17 +50,29 @@
       </ng-template>    
     </ngx-file-drop>
   </div>
-  <div class="onerow">
-  <mat-label [matTooltip]="'PAGES.INGEST.CHUNK_SIZE_TIP' | translate">{{ 'PAGES.INGEST.CHUNK_SIZE' | translate }}</mat-label>
-  <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="64" max="4096" step="64" showTickMarks discrete>
-    <input matSliderThumb [(ngModel)]="systemService.chunkSize" [value]="systemService.chunkSize">
-  </mat-slider>
-  <span class="spacer"></span>
-  <mat-label [matTooltip]="'PAGES.INGEST.OVERLAP_TIP' | translate">{{ 'PAGES.INGEST.OVERLAP' | translate }}</mat-label>
-  <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="0" max="1024" step="16" showTickMarks discrete>
-    <input matSliderThumb [(ngModel)]="systemService.overlap" [value]="systemService.overlap">
-  </mat-slider>
-  </div>
+  <mat-accordion>
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'PAGES.INGEST.OPTIONS' | translate }}</mat-panel-title>
+      <mat-panel-description>        
+      </mat-panel-description>
+    </mat-expansion-panel-header> 
+      <div class="onerow">
+        <mat-label [matTooltip]="'PAGES.INGEST.CHUNK_SIZE_TIP' | translate">{{ 'PAGES.INGEST.CHUNK_SIZE' | translate }}</mat-label>
+        <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="0" max="4096" step="64" showTickMarks discrete>
+          <input matSliderThumb [(ngModel)]="systemService.chunkSize" [value]="systemService.chunkSize">
+        </mat-slider>
+        <mat-label [matTooltip]="'PAGES.INGEST.OVERLAP_TIP' | translate">{{ 'PAGES.INGEST.OVERLAP' | translate }}</mat-label>
+        <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="0" max="1024" step="16" showTickMarks discrete>
+          <input matSliderThumb [(ngModel)]="systemService.overlap" [value]="systemService.overlap">
+        </mat-slider>
+        <span class="spacer"></span>  
+        <button [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" matButton="filled" (click)="resetDefaults($event)">
+          {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
+        </button>
+      </div>
+    </mat-expansion-panel>        
+  </mat-accordion>  
   <div class="onerow">
   <mat-form-field class="full-width">
     <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
