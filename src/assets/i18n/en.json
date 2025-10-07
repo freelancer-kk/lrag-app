@@ -125,7 +125,9 @@
         "RUNNING_TIP": "Depending on your PC the processing time for your question will vary",
         "OPTIONS": "Options",
         "K_SIZE": "No. of results",
-        "K_SIZE_TIP": "Typically, to answer a question you would want to take the top 4 results from your documents. However in certain cases you may need to change this value e.g during analysis of a large number of transactions"
+        "K_SIZE_TIP": "Typically, to answer a question you would want to take the top 4 results from your documents. However in certain cases you may need to change this value e.g during analysis of a large number of transactions",
+        "FILTER": "Filter",
+        "FILTER_TIP": "Models cannot process large volumes of data as part of their context: Use a filter to limit the results for analysis for accuracy"
       },
       "HELP": {
         "TITLE": "Help",

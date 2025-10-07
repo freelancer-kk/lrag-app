@@ -125,7 +125,7 @@ export class InsightsComponent implements OnInit {
         })
       };
       if (this.systemService.filter) {
-        options.filter = "(doc) => doc.pageContents.indexOf('" + this.systemService.filter + "') > -1";
+        options.filter = this.systemService.filter;
       }
 
       this.systemService.chatHistory.push({

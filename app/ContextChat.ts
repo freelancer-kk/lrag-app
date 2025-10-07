@@ -69,13 +69,13 @@ export default class ContextChat {
           searchKwargs: {
             fetchK: options.k,
           },
-          filter: options.filter ? options.filter : undefined,
+          filter: options.filter ? (doc: Document) => doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1 : undefined,
           k: (options.k / 2)
         });
       } else {
         console.log('getSimilarityAnswer:', options.filter, options.k);
         vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams))).asRetriever({
-          filter: options.filter ? options.filter : undefined,
+          filter: options.filter ? (doc: Document) => doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1 : undefined,
           k: options.k,
         });
       }
@@ -97,7 +97,9 @@ export default class ContextChat {
           chatHistory: options.chatHistory,
           userQuestion: options.question
         });
-        const combinedDocs: string = combineDocuments(documents as Document[]);
+        const docs: Document[] = documents as Document[];
+        const combinedDocs: string = combineDocuments(docs);
+        console.log('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
 
         const questionTemplate = PromptTemplate.fromTemplate(`
             {prompt}
