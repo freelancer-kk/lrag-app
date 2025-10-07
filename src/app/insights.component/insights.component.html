@@ -34,6 +34,12 @@
         <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
       </mat-slider>
     </div>
+    <div class="onerow">
+      <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
+      <mat-slider [disabled]="systemService.overallStatus() !== 'running: healthy' || this.systemService.insightStatus() === 'thinking'" min="2048" max="10240" step="32" showTickMarks discrete>
+        <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
+      </mat-slider>
+    </div>
     <mat-form-field class="full-width">
       <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>
       <input matInput [disabled]="systemService.overallStatus() !== 'running: healthy' || this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="systemService.filter">

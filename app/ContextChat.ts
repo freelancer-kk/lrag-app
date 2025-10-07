@@ -56,9 +56,11 @@ export default class ContextChat {
     }
 
     try {
+      console.log('Ollama connection:ctx:', options.numCtx);
       this.ollamaLlm = new Ollama({
         baseUrl: "http://localhost:11434",
-        model: options.model
+        model: options.model,
+        numCtx: options.numCtx ? options.numCtx : undefined
       });
 
       let vectorStoreRetriever;

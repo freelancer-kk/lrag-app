@@ -122,7 +122,8 @@ export class InsightsComponent implements OnInit {
           chunkSize: this.systemService.chunkSize,
           chunkOverlap: this.systemService.overlap,
           separator: ';'
-        })
+        }),
+        numCtx: this.systemService.numCtx
       };
       if (this.systemService.filter) {
         options.filter = this.systemService.filter;
