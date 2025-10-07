@@ -16,6 +16,7 @@ import { mkdirSync } from 'fs';
 import * as path from 'path';
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 
+
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
 // OR get ocrmypdf working on windows with auto install and mac os auto install
 // https://ocrmypdf.readthedocs.io/en/latest/installation.html#native-windows
@@ -79,6 +80,7 @@ export default class LangchainService {
   } 
 
   addDocuments = (docs: Document[]): Promise<void> => {
+    console.log('addDocuments:', docs.length);
     return this.vectorStore.addDocuments(docs);    
   }
 
@@ -92,7 +94,7 @@ export default class LangchainService {
     }
   }
 
-  load = (): Promise<Document[]> => {
+  load = (params: any): Promise<Document[]> => {
     const loader: DirectoryLoader = new DirectoryLoader(
       this.doc_path,
       {
@@ -101,7 +103,9 @@ export default class LangchainService {
         ".txt": (path) => new TextLoader(path),
         ".md": (path) => new TextLoader(path),
         ".xml": (path) => new TextLoader(path),
-        ".csv": (path) => new CSVLoader(path, "text"),
+        ".csv": (path) => new CSVLoader(path, {
+          separator: params.separator
+        }),
         ".xlsm": (path) => new CSVLoader(path),
         ".xls": (path) => new CSVLoader(path),
         ".pdf": (path) => new PDFLoader(path, {
@@ -117,11 +121,17 @@ export default class LangchainService {
       UnknownHandling.Warn          
     )
     return loader.load().then(async (docs: Document[]) => {
-      for await (const doc of docs) {
+      const uniqueDocs: Document[] = docs.reduce(
+        (acc: Document[], cur: Document) => (acc.findIndex(f => f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur]),
+        [],
+      );
+      console.log('loaded:', uniqueDocs.length);
+      for await (const doc of uniqueDocs) {
+        // console.log(doc.metadata.source, '=>', doc.pageContent);
         this.emit( { type: 'langchain-run-doc', data: { id: doc.id, source: path.basename(doc.metadata.source), metadata: doc.metadata } });
       }
-      return docs;
-    })
+      return uniqueDocs;
+    })    
   }
 
   split = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined ): Promise<Document[]> => {
@@ -152,14 +162,18 @@ export default class LangchainService {
 
   run = async (params: any): Promise<any> => {
     this.emit( { type: 'langchain-run-start', data: {} } );
-    return this.load().then(async (docs: Document[]) => {
+    return this.load(params).then(async (docs: Document[]) => {
       this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
+      console.log('docs:length:', docs.length)
       // if (docs.length > 0) {
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });
         let chunks: Document[] = [];
         
-        const sd: string = docs[0].metadata.source;
-        console.log('first doc ends with:', sd);
+        let sd: string = '';
+        if (docs[0]) {
+          sd = docs[0].metadata.source;
+          console.log('first doc ends with:', sd);
+        }
         if (sd.endsWith('md')) {
           chunks = await this.mdSplit(docs, params);
         } else {

@@ -97,7 +97,8 @@ export class IngestComponent implements OnInit {
       'start',
       {
         chunkSize: this.systemService.chunkSize,
-        chunkOverlap: this.systemService.overlap
+        chunkOverlap: this.systemService.overlap,
+        separator: ';',
       }
     ).then(async (result: any) => {
       console.log('ingest result:', result);

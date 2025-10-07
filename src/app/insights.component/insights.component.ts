@@ -113,7 +113,8 @@ export class InsightsComponent implements OnInit {
         think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
         chunkParams: JSON.stringify({
           chunkSize: this.systemService.chunkSize,
-          chunkOverlap: this.systemService.overlap
+          chunkOverlap: this.systemService.overlap,
+          separator: ';'
         })
       };
 

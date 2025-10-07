@@ -26,6 +26,7 @@
     "@langchain/core": "0.3.77",
     "@langchain/ollama": "0.2.4",
     "csv-parse": "6.1.0",
+    "d3-dsv": "2.0.0",
     "events": "3.3.0",
     "find-process": "2.0.0",
     "json-loader": "0.5.7",
