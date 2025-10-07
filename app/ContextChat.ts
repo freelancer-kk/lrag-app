@@ -61,13 +61,24 @@ export default class ContextChat {
         model: options.model
       });
 
-      const vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams))).asRetriever({
-        searchType: "mmr",
-        searchKwargs: {
-          fetchK: 10,
-        },
-        k: 4
-      });
+      let vectorStoreRetriever;
+      if (options.mmr) {
+        console.log('getMMRAnswer:', options.filter, options.k);
+        vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams))).asRetriever({
+          searchType: "mmr",
+          searchKwargs: {
+            fetchK: options.k,
+          },
+          filter: options.filter ? options.filter : undefined,
+          k: (options.k / 2)
+        });
+      } else {
+        console.log('getSimilarityAnswer:', options.filter, options.k);
+        vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams))).asRetriever({
+          filter: options.filter ? options.filter : undefined,
+          k: options.k,
+        });
+      }
 
       if (vectorStoreRetriever) {
       

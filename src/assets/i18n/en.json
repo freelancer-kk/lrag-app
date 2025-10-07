@@ -32,7 +32,8 @@
     "OLLAMA_NOT_RUNNING": "The model process, Ollama is managed externally. Please make sure it is installed and running.",
     "GET_OLLAMA": "Get Ollama",
     "GET_OLLAMA_TIP": "You can download and install Ollama from the official repository. On a Mac this is mandatory in order to use LRag",
-    "OLLAMA_DOWNLOADING": "LRag needs to download the Model Processor Ollama. This will take some time depending on your PC and Internet speed"
+    "OLLAMA_DOWNLOADING": "LRag needs to download the Model Processor Ollama. This will take some time depending on your PC and Internet speed",
+    "WAITING_FOR_OLLAMA_START": "Please run Ollama"
   },
   "PAGES": {      
       "HOME": {
@@ -121,7 +122,10 @@
         "INITIAL_PROMPT": "How can I help you?",
         "CLEAR_HISTORY_TIP": "Clear the chat history",
         "LLM_ERROR": "Conversational chain failed ...",
-        "RUNNING_TIP": "Depending on your PC the processing time for your question will vary"
+        "RUNNING_TIP": "Depending on your PC the processing time for your question will vary",
+        "OPTIONS": "Options",
+        "K_SIZE": "No. of results",
+        "K_SIZE_TIP": "Typically, to answer a question you would want to take the top 4 results from your documents. However in certain cases you may need to change this value e.g during analysis of a large number of transactions"
       },
       "HELP": {
         "TITLE": "Help",

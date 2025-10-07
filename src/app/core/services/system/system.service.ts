@@ -50,6 +50,8 @@ export class SystemService {
   showGetOllama: boolean = false;
   chunkSize: number = 512;
   overlap: number = 48;
+  filter: string | undefined = undefined;
+  k: number = 4;
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
@@ -78,6 +80,13 @@ export class SystemService {
     localStorage.setItem('chunk-settings', JSON.stringify({
       chunkSize: this.chunkSize,
       overlap: this.overlap
+    }))
+  }
+
+  saveInsightSettings = () => {
+    localStorage.setItem('insight-settings', JSON.stringify({
+      k: this.k,
+      filter: this.filter
     }))
   }
 

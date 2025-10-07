@@ -16,6 +16,9 @@
       <span class="spacer"></span>
       {{ systemService.overallStatus() }}
     </div>
+    @if (systemService.manageOllamaExternally === true && systemService.ollamaStatus() === 'not running') {
+      <span class="small">({{ 'APP.WAITING_FOR_OLLAMA_START' | translate }})</span>
+    }
   } @else {            
     <div [class]="systemService.getClassFromStatus(systemService.overallStatus())">
       <mat-icon>{{ systemService.getIconFromStatus(systemService.overallStatus()) }}</mat-icon>

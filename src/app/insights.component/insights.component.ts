@@ -19,6 +19,8 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FormsModule } from '@angular/forms';
 import { BridgeService } from '../core/services';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-insights.component',
@@ -36,7 +38,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatTooltipModule,
     MatDialogModule,
     NgxSkeletonLoaderModule,
-    FormsModule
+    FormsModule,
+    MatSliderModule,
+    MatExpansionModule,
   ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'
@@ -97,7 +101,8 @@ export class InsightsComponent implements OnInit {
       this.question = '';
       
       this.systemService.saveChunkSettings();
-      const options = {
+      this.systemService.saveInsightSettings();
+      const options: any = {
         question,
         model: this.systemService.selectedModel,
         prompt: await this.systemService.get('PAGES.INSIGHT.PROMPT'),
@@ -111,12 +116,17 @@ export class InsightsComponent implements OnInit {
         stop: ["\n"],
         stream: true,
         think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
+        k: this.systemService.k,
+        mmr: this.systemService.k < 30 ? true : undefined,
         chunkParams: JSON.stringify({
           chunkSize: this.systemService.chunkSize,
           chunkOverlap: this.systemService.overlap,
           separator: ';'
         })
       };
+      if (this.systemService.filter) {
+        options.filter = "(doc) => doc.pageContents.indexOf('" + this.systemService.filter + "') > -1";
+      }
 
       this.systemService.chatHistory.push({
         who: EWho.User,
