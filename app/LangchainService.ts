@@ -122,7 +122,7 @@ export default class LangchainService {
     )
     return loader.load().then(async (docs: Document[]) => {
       const uniqueDocs: Document[] = docs.reduce(
-        (acc: Document[], cur: Document) => (acc.findIndex(f => f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur]),
+        (acc: Document[], cur: Document) => (acc.findIndex(f => f.metadata.source === f.metadata.source && f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur]),
         [],
       );
       console.log('loaded:', uniqueDocs.length);
@@ -131,11 +131,11 @@ export default class LangchainService {
         this.emit( { type: 'langchain-run-doc', data: { id: doc.id, source: path.basename(doc.metadata.source), metadata: doc.metadata } });
       }
       return uniqueDocs;
-    })    
+    })        
   }
 
   split = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined ): Promise<Document[]> => {
-    if (params && params.chunkSize && params?.chunkSize > 0) {
+    if (params && params.chunkSize && params.chunkOverlap && (params?.chunkSize > 0 || params?.chunkOverlap > 0)) {
       console.log('loaded:doc:', docs.length);
       const splitter: RecursiveCharacterTextSplitter = new RecursiveCharacterTextSplitter(params)
       const chunks: Document[] = await splitter.splitDocuments(docs);
@@ -148,7 +148,7 @@ export default class LangchainService {
   }
 
   mdSplit = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined ): Promise<Document[]> => {
-    if (params && params.chunkSize && params?.chunkSize > 0) {
+    if (params && params.chunkSize && params.chunkOverlap && (params?.chunkSize > 0 || params?.chunkOverlap > 0)) {
       console.log('md:loaded:doc:', docs.length);
       const mdSplitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", params);
       const chunks: Document[] = await mdSplitter.splitDocuments(docs);
