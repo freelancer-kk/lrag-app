@@ -295,8 +295,10 @@ export class AppComponent implements OnInit {
     this.systemService.cpu = await this.systemService.getCpu();
     this.systemService.gpu = await this.systemService.getGpu();
     this.systemService.mem = await this.systemService.getTotalMemory();
-    this.systemService.disks = await this.systemService.getDisks(); 
-    await this.startServicesIfNecessary();   
+    this.systemService.disks = await this.systemService.getDisks();
+    setTimeout(() => {
+      this.startServicesIfNecessary();  
+    }, 400)   
   }
 
   rotate = (event: any) => {
@@ -313,6 +315,7 @@ export class AppComponent implements OnInit {
 
   startServicesIfNecessary = async () => {    
     // Check if ollama is running
+    console.log('startServicesIfNecessary:');
     const { isReady } = await this.systemService.commandOllama('isRunning');
     console.log('ollama check RUNNING:', isReady, this.systemService.manageOllamaExternally);
     if (isReady === true) {
