@@ -47,6 +47,7 @@ export class AppComponent implements OnInit {
   isExpanded: boolean = true;
   dockerConnectInterval: any;
   firstTime: boolean = true;
+  serviceTimer: any;
 
   constructor(
     private electronService: ElectronService,
@@ -295,7 +296,7 @@ export class AppComponent implements OnInit {
     this.systemService.gpu = await this.systemService.getGpu();
     this.systemService.mem = await this.systemService.getTotalMemory();
     this.systemService.disks = await this.systemService.getDisks(); 
-    this.startServicesIfNecessary();   
+    await this.startServicesIfNecessary();   
   }
 
   rotate = (event: any) => {
@@ -348,7 +349,10 @@ export class AppComponent implements OnInit {
   }   
 
   setOllamaCheckTimer = () => {
-    setInterval(async () => {
+    if (this.serviceTimer) {
+      clearInterval(this.serviceTimer);
+    }
+    this.serviceTimer = setInterval(async () => {
       const { isReady } = await this.systemService.commandOllama('isRunning');
       if (!isReady) {
         this.systemService.ollamaStatus.update(() => 'not running');            
