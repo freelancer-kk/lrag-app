@@ -22,7 +22,7 @@
   }  
 </mat-toolbar>
 <mat-accordion>
-  <mat-expansion-panel expanded="false">
+  <mat-expansion-panel [expanded]="systemService.filter">
     <mat-expansion-panel-header>
     <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
     <mat-panel-description>        

@@ -7,20 +7,23 @@
       {{ 'PAGES.INGEST.SCANNED_DOCS' | translate }}
       </a>
       <span class="spacer"></span>      
-      @if (ingestStatus === 'running' || ingestStatus === 'splitting' || ingestStatus === 'loaded' || ingestStatus === 'indexing' || ingestStatus === 'saving' || ingestStatus === 'adding') {
+      @if (ingestStatus === 'running' || ingestStatus === 'splitting' || ingestStatus === 'loaded' || ingestStatus.startsWith('indexing') || ingestStatus === 'saving' || ingestStatus === 'adding') {
         <div [class]="systemService.getClassFromStatus(ingestStatus)">
           <mat-spinner diameter="30"></mat-spinner>
           {{ ingestStatus }}
         </div>
-      } @else if (ingestStatus !== 'not running') {
+      } @else {
+        <!--
         <div [class]="systemService.getClassFromStatus(ingestStatus)">
           <mat-icon>{{ systemService.getIconFromStatus(ingestStatus) }}</mat-icon>
           {{ ingestStatus }}
         </div>
-      } @else if (!mediaService.docStatus && systemService.ragFiles.length>0 && systemService.overallStatus() === 'running: healthy') {
-        <button matButton="filled" (click)="startIngestion()">
-          {{ 'PAGES.INGEST.INDEX' | translate }}
-        </button>
+        -->
+        @if (systemService.overallStatus() === 'running: healthy') {
+          <button matButton="filled" (click)="startIngestion()">
+            {{ 'PAGES.INGEST.INDEX' | translate }}
+          </button>
+        }
       }
     </mat-toolbar-row>  
   </mat-toolbar>

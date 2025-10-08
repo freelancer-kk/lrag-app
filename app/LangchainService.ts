@@ -46,7 +46,7 @@ export default class LangchainService {
         model,
         baseUrl
     });
-
+    
     this.vectorStore = new MemoryVectorStore(
       this.embeddings
     )
@@ -77,11 +77,27 @@ export default class LangchainService {
     this.webContents?.send('event', {
       response: args
     })                
-  } 
+  }
 
-  addDocuments = (docs: Document[]): Promise<void> => {
+  addDocuments = async (docs: Document[]): Promise<void> => {    
     console.log('addDocuments:', docs.length);
-    return this.vectorStore.addDocuments(docs);    
+    let i: number = 1;
+    this.emit( { type: 'langchain-run-add-chunk', data: { chunk: 0, total: docs.length  } });
+    let docBatch: Document[] = [];
+    for await (const doc of docs) {
+      docBatch.push(doc);
+      if (i % 10 === 0) {
+        await this.vectorStore.addDocuments(docBatch);
+        this.emit( { type: 'langchain-run-add-chunk', data: { chunk: i, total: docs.length  } });
+        docBatch = [];
+      }
+      i++;
+    }
+    if (docBatch.length > 0) {
+      await this.vectorStore.addDocuments(docBatch);
+      this.emit( { type: 'langchain-run-add-chunk', data: { chunk: i, total: docs.length  } });
+    }
+    // return this.vectorStore.addDocuments(docs);    
   }
 
   getSearchableVectorStore = (params: any): Promise<MemoryVectorStore> => {

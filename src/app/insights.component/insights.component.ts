@@ -73,6 +73,7 @@ export class InsightsComponent implements OnInit {
 
     this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
     effect(() => {      
+      this.systemService.insightStatus();
       if (this.systemService.overallStatus() !== 'running: healthy') {
         this.check();
       }
@@ -142,23 +143,27 @@ export class InsightsComponent implements OnInit {
       this.streaming = false;
       this.systemService.insightStatus.update(() => 'running');
       console.log('Answer:', answer);
-      if (typeof answer === 'string') {
-        this.systemService.chatHistory.push({
-          who: EWho.Assistant,
-          content: this.reformat(answer)
-        });
-        this.scrollToBottom();
+      try {
+        if (typeof answer === 'string') {
+          this.systemService.chatHistory.push({
+            who: EWho.Assistant,
+            content: this.reformat(answer)
+          });
+          this.scrollToBottom();
 
-        // Get the model usage  
-        const usageTimer = setInterval(async () => {
-          const usage = await this.systemService.getRunningModelsUsage();
-          if (usage) {
-            clearInterval(usageTimer);
-            this.modelUsage = usage + ' ';
-          }
-        }, 2000);    
-      } else {
-        this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.LLM_ERROR'), 'OK');        
+          // Get the model usage  
+          const usageTimer = setInterval(async () => {
+            const usage = await this.systemService.getRunningModelsUsage();
+            if (usage) {
+              clearInterval(usageTimer);
+              this.modelUsage = usage + ' ';
+            }
+          }, 2000);    
+        } else {
+          this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.LLM_ERROR'), 'OK');        
+        }
+      } finally {
+        this.systemService.insightStatus.update(() => 'not running');
       }
     }
   }

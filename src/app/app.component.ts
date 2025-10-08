@@ -196,6 +196,12 @@ export class AppComponent implements OnInit {
             })            
           }
           break;
+          case 'langchain-run-add-chunk': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(() => 'indexing ' + data.chunk + ' of ' + data.total);
+            })            
+          }
+          break;
           case 'langchain-run-saving': {
             this.ngZone.run(() => {
               this.systemService.ingestStatus.update(() => 'saving');
@@ -233,12 +239,12 @@ export class AppComponent implements OnInit {
     })
 
     effect(() => {
-      console.log('ollama status:', this.systemService.ollamaStatus());
-      console.log('model status:', this.systemService.modelStatus());
-      console.log('ingest status:', this.systemService.ingestStatus());
-      console.log('gpu accel change status:', this.systemService.gpuChangeStatus());
+      this.systemService.ollamaStatus();
+      this.systemService.modelStatus();
+      this.systemService.ingestStatus();
+      this.systemService.gpuChangeStatus();
       this.systemService.calcOverallStatus();
-      console.log('overall status:', this.systemService.overallStatus());
+      // console.log('overall status:', this.systemService.overallStatus());
       if (this.systemService.overallStatus() === "running: unhealthy") {
         if (this.firstTime && (this.systemService.ollamaStatus() === "running")) {
           this.findOllamaProcess();
