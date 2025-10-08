@@ -56,11 +56,11 @@ export class SystemService {
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
-    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true, memory: 8},
-    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true, memory: 8},    
-    {value: 'martain7r/finance-llama-8b:q4_k_m', viewValue: 'finance-llama-8b (<6GB)', thinking: true, memory: 6},
-    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 12},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 16},    
+    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true, memory: 5},
+    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true, memory: 5},    
+    {value: 'martain7r/finance-llama-8b:q4_k_m', viewValue: 'finance-llama-8b (<6GB)', thinking: true, memory: 5},
+    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 8},
+    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9},    
   ];
   embeddings: string = 'embeddinggemma:300m';
   

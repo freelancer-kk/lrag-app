@@ -15,7 +15,7 @@
         <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
         <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="systemService.selectedModel" (selectionChange)="modelChange($event)">
           @for (entry of systemService.models; track $index) {
-            <mat-option [disabled]="entry.memory > systemService.totalMainMemory" [value]="entry.value">{{ entry.viewValue }}</mat-option>
+            <mat-option [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
