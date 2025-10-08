@@ -26,9 +26,10 @@ export default class LangchainService {
   db_path: string;
   input_path: string;
   embeddings: OllamaEmbeddings;
-  vectorStore: MemoryVectorStore;
+  vectorStore: MemoryVectorStore | undefined;
   webContents: Electron.WebContents | undefined;
   hasAddedDocs = false;
+  numOfDocs: number = 0;
 
   constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
@@ -47,9 +48,11 @@ export default class LangchainService {
         baseUrl
     });
     
+    /*
     this.vectorStore = new MemoryVectorStore(
       this.embeddings
     )
+      */
 
     console.log('LangchainService initialized');        
   }
@@ -79,6 +82,13 @@ export default class LangchainService {
     })                
   }
 
+  resetVectorStore = async () => {
+    this.vectorStore = undefined;
+    this.vectorStore = new MemoryVectorStore(
+      this.embeddings
+    )
+  }
+
   addDocuments = async (docs: Document[]): Promise<void> => {    
     console.log('addDocuments:', docs.length);
     let i: number = 1;
@@ -87,20 +97,20 @@ export default class LangchainService {
     for await (const doc of docs) {
       docBatch.push(doc);
       if (i % 10 === 0) {
-        await this.vectorStore.addDocuments(docBatch);
+        await this.vectorStore?.addDocuments(docBatch);
         this.emit( { type: 'langchain-run-add-chunk', data: { chunk: i, total: docs.length  } });
         docBatch = [];
       }
       i++;
     }
     if (docBatch.length > 0) {
-      await this.vectorStore.addDocuments(docBatch);
+      await this.vectorStore?.addDocuments(docBatch);
       this.emit( { type: 'langchain-run-add-chunk', data: { chunk: i, total: docs.length  } });
     }
     // return this.vectorStore.addDocuments(docs);    
   }
 
-  getSearchableVectorStore = (params: any): Promise<MemoryVectorStore> => {
+  getSearchableVectorStore = (params: any): Promise<MemoryVectorStore | undefined> => {
     if (!this.hasAddedDocs) {
       return this.run(params).then((value: any) => {
         return Promise.resolve(this.vectorStore);    
@@ -196,12 +206,14 @@ export default class LangchainService {
           chunks = await this.split(docs, params);
         }
         let uniqueNo: number = 0;
+        this.numOfDocs = chunks.length;
         for await (const chunk of chunks) {
           chunk.id = String(uniqueNo++);
         }         
         this.emit( { type: 'langchain-run-split', data: { chunks: chunks.length } });
         if (chunks.length > 0) {        
           this.emit( { type: 'langchain-run-indexing', data: { chunks: chunks.length } });
+          await this.resetVectorStore();
           await this.addDocuments(chunks);
           this.hasAddedDocs = true;
           this.emit( { type: 'langchain-run-complete', data: { chunks: chunks.length } });

@@ -66,7 +66,7 @@ export default class ContextChat {
       let vectorStoreRetriever;
       if (options.mmr) {
         console.log('getMMRAnswer:', options.filter, options.k);
-        vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams))).asRetriever({
+        vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams)))?.asRetriever({
           searchType: "mmr",
           searchKwargs: {
             fetchK: options.k,
@@ -76,7 +76,7 @@ export default class ContextChat {
         });
       } else {
         console.log('getSimilarityAnswer:', options.filter, options.k);
-        vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams))).asRetriever({
+        vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams)))?.asRetriever({
           filter: options.filter ? (doc: Document) => doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1 : undefined,
           k: options.k,
         });
