@@ -7,12 +7,12 @@
   @if (this.systemService.insightStatus() === 'thinking') {    
     <mat-spinner diameter="30"></mat-spinner>    
   }
-  @if (this.systemService.insightStatus() !== 'not running') {
+  @if (systemService.insightStatus() !== 'not running') {
     <div [matTooltip]="'PAGES.INSIGHT.RUNNING_TIP' | translate" [class]="systemService.getClassFromStatus(systemService.insightStatus())">
       @if (this.systemService.insightStatus() !== 'thinking') {
         <mat-icon>{{ systemService.getIconFromStatus(systemService.insightStatus()) }}</mat-icon>
       }    
-      {{ systemService.insightStatus() }}    
+      {{ systemService.insightStatus() }}      
     </div>
   }
   @if (systemService.chatHistory.length>0) {                  
