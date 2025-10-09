@@ -132,8 +132,9 @@ export default class ContextChat {
             const callParts: string[] = rawTool.split('=');
             const params: any = JSON.parse(callParts[1]);
             console.log('parts:', callParts[0], params);
-            const result: any =  await this.mcpClient?.callTool(callParts[0], params)
-            const value: any = result.structureContent.result;
+            const results: any =  await this.mcpClient?.callTool(callParts[0], params)
+            console.log('results:', results);
+            const value: any = results.structuredContent.result;
             rawQuestion = rawQuestion.replace(replaceTool, value);
           }
         } catch (te) {
