@@ -10,6 +10,7 @@ import { Ollama } from "@langchain/ollama";
 import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
 import MCPService from './MCPService'
 import MCPClient from './MCPClient'
+import { raw } from 'express'
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -70,11 +71,13 @@ export default class ContextChat {
 
         this.mcpClient = new MCPClient();
         this.mcpClient.init();
+        /*
         console.log('tools:', JSON.stringify(await this.mcpClient.listTools()));
         const result: any =  await this.mcpClient.callTool('sum', {
-          a: [ 5, 4, 7, 8, 9 ]
+          "a": [ 5, 4, 7, 8, 9 ]
         })
-        console.log('sum:result:', result);        
+        console.log('sum:result:', result);
+        */
       }
     } else {
       if (this.mcpService) {
@@ -117,7 +120,27 @@ export default class ContextChat {
       }
 
       if (vectorStoreRetriever) {
+
+        let rawQuestion: string = options.question.replace(/#.*?#/g, '');
+        const toolParts: string[] = options.question.match(/#.*?#/g);
+        console.log('found toolParts:', toolParts);
+
+        try {
+          for await (const tool of toolParts) {
+            const replaceTool: string = tool;
+            const rawTool: string = tool.replace(/^#/,'').replace(/#$/,'');
+            const callParts: string[] = rawTool.split('=');
+            const params: any = JSON.parse(callParts[1]);
+            console.log('parts:', callParts[0], a);
+            const result: any =  await this.mcpClient?.callTool(callParts[0], params)
+            const value: any = result.structureContent.result;
+            rawQuestion = rawQuestion.replace(replaceTool, value);
+          }
+        } catch (te) {
+          console.error(te);
+        }
       
+        console.log('raw question:', rawQuestion);        
         const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
           {contextPrompt}
           chatHistory: {chatHistory}
@@ -131,7 +154,7 @@ export default class ContextChat {
         const documents = await contextQuestionChain.invoke({
           contextPrompt: options.contextPrompt,
           chatHistory: options.chatHistory,
-          userQuestion: options.question
+          userQuestion: rawQuestion
         });
         const docs: Document[] = documents as Document[];
         const combinedDocs: string = combineDocuments(docs);
@@ -153,7 +176,7 @@ export default class ContextChat {
         const llmResponse: IterableReadableStream<string> = await answerChain.stream({
           prompt: options.prompt,
           context: combinedDocs,
-          userQuestion: options.question
+          userQuestion: rawQuestion
         });
 
         let finalAnswer: string = '';
