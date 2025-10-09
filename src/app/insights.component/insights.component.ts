@@ -21,6 +21,7 @@ import { BridgeService } from '../core/services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-insights.component',
@@ -41,6 +42,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     FormsModule,
     MatSliderModule,
     MatExpansionModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'
@@ -103,6 +105,11 @@ export class InsightsComponent implements OnInit {
       
       this.systemService.saveChunkSettings();
       this.systemService.saveInsightSettings();
+
+      await this.systemService.commandInsight('mcpServices', {
+        mcpServices: this.systemService.mcpServices
+      });
+
       const options: any = {
         question,
         model: this.systemService.selectedModel,

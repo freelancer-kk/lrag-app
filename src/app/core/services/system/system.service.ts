@@ -53,6 +53,7 @@ export class SystemService {
   filter: string | undefined = undefined;
   k: number = 4;
   numCtx: number = 2048;
+  mcpServices: boolean = false;
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
@@ -88,7 +89,8 @@ export class SystemService {
     localStorage.setItem('insight-settings', JSON.stringify({
       k: this.k,
       filter: this.filter,
-      numCtx: this.numCtx
+      numCtx: this.numCtx,
+      mcpServices: this.mcpServices
     }))
   }
 

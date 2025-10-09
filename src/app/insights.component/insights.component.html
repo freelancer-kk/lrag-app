@@ -58,6 +58,11 @@
         {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
       </button>
     </div>
+    <div class="onerow">
+      <mat-slide-toggle [matTooltip]="'PAGES.INSIGHT.MCP_SERVICES_TIP' | translate" [(ngModel)]="systemService.mcpServices">
+      {{ 'PAGES.INSIGHT.MCP_SERVICES' | translate }}
+      </mat-slide-toggle>  
+    </div>
   </mat-expansion-panel>        
 </mat-accordion>  
 

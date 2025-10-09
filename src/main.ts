@@ -51,6 +51,7 @@ bootstrapApplication(AppComponent, {
         systemService.k = insightSettingsStr ? JSON.parse(insightSettingsStr).k : 4;
         systemService.filter = insightSettingsStr ? JSON.parse(insightSettingsStr).filter : undefined;
         systemService.numCtx = insightSettingsStr ? JSON.parse(insightSettingsStr).numCtx : undefined;
+        systemService.mcpServices = insightSettingsStr ? JSON.parse(insightSettingsStr).mcpServices : undefined;
       };
       await initializerFn(inject(SystemService));
     }),

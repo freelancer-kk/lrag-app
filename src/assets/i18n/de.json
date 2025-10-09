@@ -129,7 +129,9 @@
       "FILTER": "Filter",
       "FILTER_TIP": "Modelle können große Datenmengen nicht als Teil ihres Kontextes verarbeiten: Verwenden Sie einen Filter, um die Ergebnisse für die Analyse für die Genauigkeit zu begrenzen",
       "CONTEXT_SIZE": "Modellkontextgröße",
-      "CONTEXT_SIZE_TIP": "Gelegentlich möchten Sie möglicherweise die Kontextgröße erhöhen, um mehr Dateneingaben zu erfüllen. Zum Beispiel Transaktionsdaten"
+      "CONTEXT_SIZE_TIP": "Gelegentlich möchten Sie möglicherweise die Kontextgröße erhöhen, um mehr Dateneingaben zu erfüllen. Zum Beispiel Transaktionsdaten",
+      "MCP_SERVICES": "MCP-Dienste",
+      "MCP_SERVICES_TIP": "Verbinden Sie Ihr Modell mit externen Diensten mithilfe des Model Context Protocol für Agentenverhalten. Zum Beispiel die Suche im Internet als Teil Ihrer Frage"
     },
     "HELP": {
       "TITLE": "Helfen",

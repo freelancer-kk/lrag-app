@@ -8,6 +8,8 @@ import { Document } from "@langchain/core/documents";
 import { ChatRequest, GenerateRequest } from 'ollama'
 import { Ollama } from "@langchain/ollama";
 import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
+import MCPService from './MCPService'
+import MCPClient from './MCPClient'
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -18,7 +20,9 @@ export default class ContextChat {
   prompt: string = '';
   context: string = ''
   ollamaLlm: Ollama | undefined;
-  webContents: Electron.WebContents | undefined
+  webContents: Electron.WebContents | undefined;
+  mcpService: MCPService | undefined;
+  mcpClient: MCPClient | undefined;
 
   constructor(langchainService: LangchainService, ollamaService: OllamaService) {
     this.langchainService = langchainService;    
@@ -38,6 +42,10 @@ export default class ContextChat {
       console.log('chat:', callbackId, command, params)
       let response: any = {}
       switch (command) {
+        case "mcpServices": {
+          response = await this.mcpServices(params); 
+        }
+        break;
         case "question": {
           response = await this.getAnswer(params); 
         }
@@ -48,6 +56,32 @@ export default class ContextChat {
         response: JSON.stringify(response)
       })
     }) 
+  }
+
+  mcpServices = async (options: any) => {
+    const { mcpServices } = options;
+
+    if (mcpServices === true) {
+      if (!this.mcpService) {
+        this.mcpService = new MCPService();
+        this.mcpService.init();
+        this.mcpService.register();
+        this.mcpService.start();
+
+        this.mcpClient = new MCPClient();
+        this.mcpClient.init();
+        console.log('tools:', JSON.stringify(await this.mcpClient.listTools()));
+        const result: any =  await this.mcpClient.callTool('sum', {
+          a: [ 5, 4, 7, 8, 9 ]
+        })
+        console.log('sum:result:', result);        
+      }
+    } else {
+      if (this.mcpService) {
+        this.mcpService.stop();
+        this.mcpService = undefined;
+      }
+    }
   }
 
   getAnswer = async (options: any): Promise<string> => {

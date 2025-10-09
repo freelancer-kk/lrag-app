@@ -129,7 +129,9 @@
         "FILTER": "Filter",
         "FILTER_TIP": "Models cannot process large volumes of data as part of their context: Use a filter to limit the results for analysis for accuracy",
         "CONTEXT_SIZE": "Model Context Size",
-        "CONTEXT_SIZE_TIP": "Occasionally you may wish to increase the context size in order to accommodate more data input. For example transactional data"
+        "CONTEXT_SIZE_TIP": "Occasionally you may wish to increase the context size in order to accommodate more data input. For example transactional data",
+        "MCP_SERVICES": "MCP Services",
+        "MCP_SERVICES_TIP": "Connect your model to external services using Model Context Protocol for agentic behaviour. For example searching the internet as part of your question"
       },
       "HELP": {
         "TITLE": "Help",
