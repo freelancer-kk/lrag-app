@@ -121,7 +121,7 @@ export default class ContextChat {
 
       if (vectorStoreRetriever) {
 
-        let rawQuestion: string = options.question.replace(/#.*?#/g, '');
+        let rawQuestion: string = options.question;        
         const toolParts: string[] = options.question.match(/#.*?#/g);
         console.log('found toolParts:', toolParts);
 
@@ -132,13 +132,14 @@ export default class ContextChat {
             const callParts: string[] = rawTool.split('=');
             const params: any = JSON.parse(callParts[1]);
             console.log('parts:', callParts[0], params);
-            const results: any =  await this.mcpClient?.callTool(callParts[0], params)
-            console.log('results:', results);
+            const results: any =  await this.mcpClient?.callTool(callParts[0], params)            
             const value: any = results.structuredContent.result;
+            console.log('value:', value);
             rawQuestion = rawQuestion.replace(replaceTool, value);
           }
         } catch (te) {
           console.error(te);
+          rawQuestion = options.question.replace(/#.*?#/g, '');
         }
       
         console.log('raw question:', rawQuestion);        
