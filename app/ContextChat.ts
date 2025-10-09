@@ -131,7 +131,7 @@ export default class ContextChat {
             const rawTool: string = tool.replace(/^#/,'').replace(/#$/,'');
             const callParts: string[] = rawTool.split('=');
             const params: any = JSON.parse(callParts[1]);
-            console.log('parts:', callParts[0], a);
+            console.log('parts:', callParts[0], params);
             const result: any =  await this.mcpClient?.callTool(callParts[0], params)
             const value: any = result.structureContent.result;
             rawQuestion = rawQuestion.replace(replaceTool, value);
