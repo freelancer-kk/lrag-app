@@ -7,7 +7,7 @@
       {{ 'PAGES.INGEST.SCANNED_DOCS' | translate }}
       </a>
       <span class="spacer"></span>      
-      @if (ingestStatus === 'running' || ingestStatus === 'splitting' || ingestStatus === 'loaded' || ingestStatus.startsWith('indexing') || ingestStatus === 'saving' || ingestStatus === 'adding') {
+      @if (ingestStatus === 'running' || ingestStatus.startsWith('splitting') || ingestStatus === 'loaded' || ingestStatus.startsWith('indexing') || ingestStatus === 'saving' || ingestStatus === 'adding') {
         <div [class]="systemService.getClassFromStatus(ingestStatus)">
           <mat-spinner diameter="30"></mat-spinner>
           {{ ingestStatus }}
@@ -73,6 +73,11 @@
         <button [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" matButton="filled" (click)="resetDefaults($event)">
           {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
         </button>
+      </div>
+      <div class="onerow">
+        <mat-slide-toggle [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_SEMANTIC_TIP' | translate" [(ngModel)]="systemService.useSemantic">
+        {{ 'PAGES.INGEST.USE_SEMANTIC' | translate }}
+        </mat-slide-toggle>  
       </div>
       <div class="onerow">
         <mat-form-field>

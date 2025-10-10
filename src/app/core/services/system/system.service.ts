@@ -54,6 +54,7 @@ export class SystemService {
   k: number = 4;
   numCtx: number = 2048;
   separator: string = ';';
+  useSemantic: boolean = false;
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
@@ -81,7 +82,8 @@ export class SystemService {
   saveChunkSettings = () => {
     localStorage.setItem('chunk-settings', JSON.stringify({
       chunkSize: this.chunkSize,
-      overlap: this.overlap
+      overlap: this.overlap,
+      useSemantic: this.useSemantic
     }))
   }
 
@@ -218,7 +220,7 @@ export class SystemService {
   }
 
   getClassFromStatus = (status: string): string => {
-    if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'thinking' || status === 'uploading' || status === 'splitting' || status === 'uploaded' || status === 'loading' || status === 'loaded' || status.startsWith('indexing') || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
+    if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'thinking' || status === 'uploading' || status.startsWith('splitting') || status === 'uploaded' || status === 'loading' || status === 'loaded' || status.startsWith('indexing') || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
     } else if (status.startsWith('downloading') || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';

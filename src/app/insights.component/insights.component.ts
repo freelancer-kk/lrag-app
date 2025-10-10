@@ -104,7 +104,8 @@ export class InsightsComponent implements OnInit {
       let ingestParams: any = {
         chunkSize: this.systemService.chunkSize,
         chunkOverlap: this.systemService.overlap,
-        separator: this.systemService.separator
+        separator: this.systemService.separator,
+        useSemantic: this.systemService.useSemantic
       }
       const isCSVUseCase: boolean = await this.mediaService.areAllCSV();
       if (isCSVUseCase) {
@@ -115,7 +116,8 @@ export class InsightsComponent implements OnInit {
         ingestParams = {
           chunkSize: 0,
           chunkOverlap: 0,
-          separator: this.systemService.separator
+          separator: this.systemService.separator,
+          useSemantic: this.systemService.useSemantic
         }
       }
       const question: string = this.question;

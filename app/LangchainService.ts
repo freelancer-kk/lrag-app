@@ -15,6 +15,7 @@ import { Document } from "@langchain/core/documents";
 import { mkdirSync } from 'fs';
 import * as path from 'path';
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import SemanticChunking, { LanguageTypes } from './SemanticChunking';
 
 
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
@@ -30,6 +31,7 @@ export default class LangchainService {
   webContents: Electron.WebContents | undefined;
   hasAddedDocs = false;
   numOfDocs: number = 0;
+  semanticChunking: SemanticChunking;
 
   constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
@@ -54,11 +56,13 @@ export default class LangchainService {
     )
       */
 
+    this.semanticChunking = new SemanticChunking(baseUrl, model);    
     console.log('LangchainService initialized');        
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
+    this.semanticChunking.register(webContents);
     ipcMain.on('ingest', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
       console.log('LangchainService:', callbackId, command, params)
@@ -160,10 +164,16 @@ export default class LangchainService {
     })        
   }
 
-  split = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined ): Promise<Document[]> => {
+  split = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined, language: LanguageTypes | undefined = undefined ): Promise<Document[]> => {
     if (params && params.chunkSize && params.chunkOverlap && (params?.chunkSize > 0 || params?.chunkOverlap > 0)) {
-      console.log('loaded:doc:', docs.length);
-      const splitter: RecursiveCharacterTextSplitter = new RecursiveCharacterTextSplitter(params)
+      console.log('splitting:docs:', params, language, docs.length);
+      
+      let splitter: RecursiveCharacterTextSplitter;
+      if (language) {
+        splitter = RecursiveCharacterTextSplitter.fromLanguage(language, params);
+      } else {
+        splitter = new RecursiveCharacterTextSplitter(params);
+      }
       const chunks: Document[] = await splitter.splitDocuments(docs);
       
       console.log('chunks:', chunks.length);
@@ -173,17 +183,18 @@ export default class LangchainService {
     }
   }
 
-  mdSplit = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined ): Promise<Document[]> => {
-    if (params && params.chunkSize && params.chunkOverlap && (params?.chunkSize > 0 || params?.chunkOverlap > 0)) {
-      console.log('md:loaded:doc:', docs.length);
-      const mdSplitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", params);
-      const chunks: Document[] = await mdSplitter.splitDocuments(docs);
-      
-      console.log('md:chunks:', chunks.length);
-      return chunks;
-    } else {
-      return docs;
+  semanticSplit = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined, language: LanguageTypes | undefined = undefined ): Promise<Document[]> => {
+    console.log('semantic:splitting:docs:', params, language, docs.length);
+    
+    let chunks: Document[] = [];
+    let i = 1;
+    for await (const doc of docs) {
+      chunks = chunks.concat(await this.semanticChunking.chunk(doc, i, docs.length));
+      i++;
     }
+    
+    console.log('semantic:chunks:', chunks.length);
+    return chunks;  
   }
 
   run = async (params: any): Promise<any> => {
@@ -201,9 +212,13 @@ export default class LangchainService {
           console.log('first doc ends with:', sd);
         }
         if (sd.endsWith('md')) {
-          chunks = await this.mdSplit(docs, params);
+          chunks = await this.split(docs, params, 'markdown');
         } else {
-          chunks = await this.split(docs, params);
+          if (params.useSemantic) {
+            chunks = await this.semanticSplit(docs, params);
+          } else {
+            chunks = await this.split(docs, params);
+          }
         }
         let uniqueNo: number = 0;
         this.numOfDocs = chunks.length;

@@ -23,6 +23,7 @@ import { AlertComponent } from '../alert.component/alert.component';
 import { Router, RouterLink } from '@angular/router';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-ingest.component',
@@ -46,6 +47,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     ReactiveFormsModule,
     MatSliderModule,
     MatExpansionModule,
+    MatSlideToggle
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
@@ -98,14 +100,16 @@ export class IngestComponent implements OnInit {
     let ingestParams: any = {
       chunkSize: this.systemService.chunkSize,
       chunkOverlap: this.systemService.overlap,
-      separator: this.systemService.separator
+      separator: this.systemService.separator,
+      useSemantic: this.systemService.useSemantic
     }
     if (await this.mediaService.areAllCSV()) {
       console.log('overriding Chunk parameters!');
       ingestParams = {
         chunkSize: 0,
         chunkOverlap: 0,
-        separator: this.systemService.separator
+        separator: this.systemService.separator,
+        useSemantic: this.systemService.useSemantic
       }
     }
 

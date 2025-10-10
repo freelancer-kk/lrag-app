@@ -110,7 +110,9 @@
       "RESET_CHUNKS": "Standardeinstellungen",
       "OPTIONS": "Optionen",
       "SEPARATOR": "Separator",
-      "SEPARATOR_TIP": "Geben Sie beim Einlesen von CSV-Dateien das Trennzeichen an"
+      "SEPARATOR_TIP": "Geben Sie beim Einlesen von CSV-Dateien das Trennzeichen an",
+      "USE_SEMANTIC": "Semantischer Chunker",
+      "USE_SEMANTIC_TIP": "Aktivieren Sie optional intelligentes Chunking, um die Ergebnisse zu verbessern. CPU-intensiver, langsamer"
     },
     "INSIGHT": {
       "TITLE": "AI Einblicke",

@@ -110,7 +110,9 @@
         "RESET_CHUNKS": "Defaults",
         "OPTIONS": "Options",
         "SEPARATOR": "Separator",
-        "SEPARATOR_TIP": "When ingesting csv files, specify the separator"
+        "SEPARATOR_TIP": "When ingesting csv files, specify the separator",
+        "USE_SEMANTIC": "Semantic Chunker",
+        "USE_SEMANTIC_TIP": "Optionally activate intelligent chunking to improve results. More cpu intensive, slower"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",
