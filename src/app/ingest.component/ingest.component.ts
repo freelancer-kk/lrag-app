@@ -93,13 +93,25 @@ export class IngestComponent implements OnInit {
     this.systemService.ingestStatus.update(() => 'starting');
     this.mediaService.docStatus = [];
     this.systemService.saveChunkSettings();
+
+    // Override chunk settings for CSV if they are defaulted
+    let ingestParams: any = {
+      chunkSize: this.systemService.chunkSize,
+      chunkOverlap: this.systemService.overlap,
+      separator: this.systemService.separator
+    }
+    if (await this.mediaService.areAllCSV()) {
+      console.log('overriding Chunk parameters!');
+      ingestParams = {
+        chunkSize: 0,
+        chunkOverlap: 0,
+        separator: this.systemService.separator
+      }
+    }
+
     this.systemService.commandIngest(
       'start',
-      {
-        chunkSize: this.systemService.chunkSize,
-        chunkOverlap: this.systemService.overlap,
-        separator: ';',
-      }
+      ingestParams
     ).then(async (result: any) => {
       console.log('ingest result:', result);
       if ((result && result.status === 'completed')) {

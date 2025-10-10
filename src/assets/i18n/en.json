@@ -108,7 +108,9 @@
         "OVERLAP": "Overlap",
         "OVERLAP_TIP": "The number of tokens or characters shared between the end of one chunk and the beginning of the next. A higher overlap helps retain continuity and relationships between related pieces of information but increases redundancy and computational overhead. A lower overlap is more efficient but increases the risk of missing connections between chunks.",
         "RESET_CHUNKS": "Defaults",
-        "OPTIONS": "Options"
+        "OPTIONS": "Options",
+        "SEPARATOR": "Separator",
+        "SEPARATOR_TIP": "When ingesting csv files, specify the separator"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",
@@ -129,7 +131,8 @@
         "FILTER": "Filter",
         "FILTER_TIP": "Models cannot process large volumes of data as part of their context: Use a filter to limit the results for analysis for accuracy",
         "CONTEXT_SIZE": "Model Context Size",
-        "CONTEXT_SIZE_TIP": "Occasionally you may wish to increase the context size in order to accommodate more data input. For example transactional data"
+        "CONTEXT_SIZE_TIP": "Occasionally you may wish to increase the context size in order to accommodate more data input. For example transactional data",
+        "FILTER_REQUIRED": "Your use case is CSV with potentially a high transaction volume, you must specify a filter under options"
       },
       "HELP": {
         "TITLE": "Help",

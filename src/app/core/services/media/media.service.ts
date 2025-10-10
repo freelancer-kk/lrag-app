@@ -79,6 +79,11 @@ export class MediaService {
     return this.systemService.ragFiles.filter(v => v.status === 0).length;
   }
 
+  areAllCSV = async (): Promise<boolean> => {
+    const files: any = await this.ls();
+    return files.length > 0 && files.filter((v: any) => v.name.toLowerCase().endsWith('.csv')).length === files.length;
+  }
+
   ls = () : Promise<any[]> => {
     return this.systemService.lragfiles('ls', {}).then(async (names: string[]) => {
       const failed: string = await this.systemService.get('PAGES.INGEST.OCR_NEEDED');

@@ -98,11 +98,29 @@ export class InsightsComponent implements OnInit {
   //TODO: When we submit a query perform a ps to get the model usage
   askQuestion = async () => {
     if (this.question) {
-      const question: string = this.question;
-      this.question = '';
-      
       this.systemService.saveChunkSettings();
       this.systemService.saveInsightSettings();
+
+      let ingestParams: any = {
+        chunkSize: this.systemService.chunkSize,
+        chunkOverlap: this.systemService.overlap,
+        separator: this.systemService.separator
+      }
+      const isCSVUseCase: boolean = await this.mediaService.areAllCSV();
+      if (isCSVUseCase) {
+        if (!this.systemService.filter) {
+          this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.FILTER_REQUIRED'), 'OK');
+          return
+        }
+        ingestParams = {
+          chunkSize: 0,
+          chunkOverlap: 0,
+          separator: this.systemService.separator
+        }
+      }
+      const question: string = this.question;
+      this.question = '';            
+
       const options: any = {
         question,
         model: this.systemService.selectedModel,
@@ -117,13 +135,9 @@ export class InsightsComponent implements OnInit {
         stop: ["\n"],
         stream: true,
         think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
-        k: this.systemService.k,
-        mmr: this.systemService.k < 30 ? true : undefined,
-        chunkParams: JSON.stringify({
-          chunkSize: this.systemService.chunkSize,
-          chunkOverlap: this.systemService.overlap,
-          separator: ';'
-        }),
+        k: isCSVUseCase ? 2048  : this.systemService.k,
+        mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
+        chunkParams: JSON.stringify(ingestParams),
         numCtx: this.systemService.numCtx
       };
       if (this.systemService.filter) {

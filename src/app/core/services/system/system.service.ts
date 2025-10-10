@@ -53,6 +53,7 @@ export class SystemService {
   filter: string | undefined = undefined;
   k: number = 4;
   numCtx: number = 2048;
+  separator: string = ';';
 
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},

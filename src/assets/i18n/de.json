@@ -108,7 +108,9 @@
       "OVERLAP": "Überlappen",
       "OVERLAP_TIP": "Die Anzahl der Token oder Zeichen, die zwischen dem Ende eines Stücks und dem Beginn des nächsten geteilt werden. Eine höhere Überlappung hilft dabei, Kontinuität und Beziehungen zwischen verwandten Informationen zu erhalten, erhöht jedoch die Redundanz und den Rechenaufwand. Eine niedrigere Überlappung ist effizienter, erhöht jedoch das Risiko fehlender Verbindungen zwischen Stücken.",
       "RESET_CHUNKS": "Standardeinstellungen",
-      "OPTIONS": "Optionen"      
+      "OPTIONS": "Optionen",
+      "SEPARATOR": "Separator",
+      "SEPARATOR_TIP": "Geben Sie beim Einlesen von CSV-Dateien das Trennzeichen an"
     },
     "INSIGHT": {
       "TITLE": "AI Einblicke",
@@ -129,7 +131,8 @@
       "FILTER": "Filter",
       "FILTER_TIP": "Modelle können große Datenmengen nicht als Teil ihres Kontextes verarbeiten: Verwenden Sie einen Filter, um die Ergebnisse für die Analyse für die Genauigkeit zu begrenzen",
       "CONTEXT_SIZE": "Modellkontextgröße",
-      "CONTEXT_SIZE_TIP": "Gelegentlich möchten Sie möglicherweise die Kontextgröße erhöhen, um mehr Dateneingaben zu erfüllen. Zum Beispiel Transaktionsdaten"
+      "CONTEXT_SIZE_TIP": "Gelegentlich möchten Sie möglicherweise die Kontextgröße erhöhen, um mehr Dateneingaben zu erfüllen. Zum Beispiel Transaktionsdaten",
+      "FILTER_REQUIRED": "Ihr Anwendungsfall ist CSV mit potenziell hohem Transaktionsvolumen. Sie müssen unter Optionen einen Filter angeben"
     },
     "HELP": {
       "TITLE": "Helfen",
