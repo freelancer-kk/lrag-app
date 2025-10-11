@@ -71,7 +71,7 @@
     @if (systemService.overallStatus() === 'running: healthy') {      
       <mat-form-field class="full-width">
         <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
-        <input [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="question">
+        <textarea [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="question">{{ question }}</textarea>
         @if (question && question.length>0 && this.systemService.insightStatus() !== 'thinking') {
           <button matSuffix matIconButton aria-label="Clear" (click)="askQuestion()">
             <mat-icon>arrow_circle_right</mat-icon>
