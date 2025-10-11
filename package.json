@@ -46,7 +46,7 @@
     "e2e:show-trace": "playwright show-trace e2e/tracing/trace.zip",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
     "lint": "ng lint",
-    "patch:img": "mkdir node_modules\\@img\\sharp-darwin-arm64 && mkdir app\\node_modules\\@img\\sharp-darwin-arm64"
+    "patch:img": "mkdir -p node_modules\\@img\\sharp-darwin-arm64 && mkdir -p app\\node_modules\\@img\\sharp-darwin-arm64"
   },
   "dependencies": {
     "@angular/cdk": "^20.2.4",
