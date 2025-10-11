@@ -48,6 +48,10 @@ export default class ContextChat {
         response: JSON.stringify(response)
       })
     }) 
+  }  
+
+  applyFilter = (doc: Document, options: any): boolean => {
+    return doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1;
   }
 
   getAnswer = async (options: any): Promise<string> => {
@@ -71,13 +75,13 @@ export default class ContextChat {
           searchKwargs: {
             fetchK: options.k,
           },
-          filter: options.filter ? (doc: Document) => doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1 : undefined,
+          filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
           k: (options.k / 2)
         });
       } else {
         console.log('getSimilarityAnswer:', options.filter, options.k);
         vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams)))?.asRetriever({
-          filter: options.filter ? (doc: Document) => doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1 : undefined,
+          filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
           k: options.k,
         });
       }

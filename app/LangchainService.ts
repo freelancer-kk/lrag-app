@@ -187,17 +187,21 @@ export default class LangchainService {
   }
 
   semanticSplit = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined, language: LanguageTypes | undefined = undefined ): Promise<Document[]> => {
-    console.log('semantic:splitting:docs:', params, language, docs.length);
-    
-    let chunks: Document[] = [];
-    let i = 1;
-    for await (const doc of docs) {
-      chunks = chunks.concat(await this.semanticChunking.chunk(doc, i, docs.length));
-      i++;
+    if (params && params.chunkSize && params.chunkOverlap && (params?.chunkSize > 0 || params?.chunkOverlap > 0)) {
+      console.log('semantic:splitting:docs:', params, language, docs.length);
+      
+      let chunks: Document[] = [];
+      let i = 1;
+      for await (const doc of docs) {
+        chunks = chunks.concat(await this.semanticChunking.chunk(doc, i, docs.length));
+        i++;
+      }
+      
+      console.log('semantic:chunks:', chunks.length);
+      return chunks;  
+    } else {
+      return docs;
     }
-    
-    console.log('semantic:chunks:', chunks.length);
-    return chunks;  
   }
 
   run = async (params: any): Promise<any> => {
