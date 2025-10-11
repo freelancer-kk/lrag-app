@@ -115,6 +115,7 @@ export default class LangchainService {
   }
 
   getSearchableVectorStore = (params: any): Promise<MemoryVectorStore | undefined> => {
+    /*
     if (!this.hasAddedDocs) {
       return this.run(params).then((value: any) => {
         return Promise.resolve(this.vectorStore);    
@@ -122,6 +123,8 @@ export default class LangchainService {
     } else {
       return Promise.resolve(this.vectorStore);
     }
+    */
+   return Promise.resolve(this.vectorStore);
   }
 
   load = (params: any): Promise<Document[]> => {

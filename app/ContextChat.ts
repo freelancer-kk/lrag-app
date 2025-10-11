@@ -82,7 +82,7 @@ export default class ContextChat {
         });
       }
 
-      if (vectorStoreRetriever) {
+      if (vectorStoreRetriever && this.langchainService.hasAddedDocs) {
       
         const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
           {contextPrompt}
@@ -130,8 +130,27 @@ export default class ContextChat {
         }
         return finalAnswer;
       } else {
-        console.error('empty vector store retriever!');
-        return '';
+        const questionTemplate = PromptTemplate.fromTemplate(`
+            question: {userQuestion}
+        `)
+
+        const questionChain = questionTemplate
+          .pipe(this.ollamaLlm)
+          .pipe(new StringOutputParser())
+        
+          const llmResponse: IterableReadableStream<string> = await questionChain.stream({
+//          prompt: options.historyPrompt,
+//          chatHistory: options.chatHistory,
+          userQuestion: options.question
+        });
+
+        let finalAnswer: string = '';
+        for await (const chunk of llmResponse) {
+          finalAnswer += chunk;
+          // console.log('chat-chunk', chunk);
+          this.emit({ type: 'chat-chunk', chunk });
+        }
+        return finalAnswer;
       }
     } catch (e: any) {
       console.error(e);

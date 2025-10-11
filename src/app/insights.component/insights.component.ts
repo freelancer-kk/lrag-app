@@ -127,6 +127,7 @@ export class InsightsComponent implements OnInit {
         question,
         model: this.systemService.selectedModel,
         prompt: await this.systemService.get('PAGES.INSIGHT.PROMPT'),
+        historyPrompt: await this.systemService.get('PAGES.INSIGHT.HISTORY_PROMPT'),
         contextPrompt: await this.systemService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT'),
         chatHistory: this.systemService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n'),
         max_tokens: 256,
