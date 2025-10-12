@@ -14,8 +14,11 @@ import { RecursiveCharacterTextSplitter, RecursiveCharacterTextSplitterParams } 
 import { Document } from "@langchain/core/documents";
 import { mkdirSync } from 'fs';
 import * as path from 'path';
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
+// import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import SemanticChunking, { LanguageTypes } from './SemanticChunking';
+import { SynchronousInMemoryDocstore } from 'langchain/stores/doc/in_memory';
+import { HierarchicalNSW } from 'hnswlib-node';
 
 
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
@@ -27,7 +30,7 @@ export default class LangchainService {
   db_path: string;
   input_path: string;
   embeddings: OllamaEmbeddings;
-  vectorStore: MemoryVectorStore | undefined;
+  vectorStore: HNSWLib | undefined;
   webContents: Electron.WebContents | undefined;
   hasAddedDocs = false;
   numOfDocs: number = 0;
@@ -50,12 +53,6 @@ export default class LangchainService {
         baseUrl
     });
     
-    /*
-    this.vectorStore = new MemoryVectorStore(
-      this.embeddings
-    )
-      */
-
     this.semanticChunking = new SemanticChunking(baseUrl, model);    
     console.log('LangchainService initialized');        
   }
@@ -88,9 +85,7 @@ export default class LangchainService {
 
   resetVectorStore = async () => {
     this.vectorStore = undefined;
-    this.vectorStore = new MemoryVectorStore(
-      this.embeddings
-    )
+    this.vectorStore = await HNSWLib.fromDocuments([], this.embeddings);
   }
 
   addDocuments = async (docs: Document[]): Promise<void> => {    
@@ -114,7 +109,7 @@ export default class LangchainService {
     // return this.vectorStore.addDocuments(docs);    
   }
 
-  getSearchableVectorStore = (params: any): Promise<MemoryVectorStore | undefined> => {
+  getSearchableVectorStore = (params: any): Promise<HNSWLib | undefined> => {
     /*
     if (!this.hasAddedDocs) {
       return this.run(params).then((value: any) => {

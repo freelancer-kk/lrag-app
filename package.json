@@ -69,6 +69,7 @@
     "events": "3.3.0",
     "find-process": "2.0.0",
     "generic-pool": "3.9.0",
+    "hnswlib-node": "3.0.0",
     "json-loader": "0.5.7",
     "jsonrepair": "3.13.0",
     "key-value-file": "1.0.10",
