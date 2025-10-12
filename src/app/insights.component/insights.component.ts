@@ -141,7 +141,7 @@ export class InsightsComponent implements OnInit {
         k: isCSVUseCase ? 2048  : this.systemService.k,
         mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
         chunkParams: JSON.stringify(ingestParams),
-        numCtx: this.systemService.numCtx
+        numCtx: isCSVUseCase ? 10240 : this.systemService.numCtx
       };
       if (this.systemService.filter) {
         options.filter = this.systemService.filter;
