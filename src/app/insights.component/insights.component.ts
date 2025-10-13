@@ -101,25 +101,7 @@ export class InsightsComponent implements OnInit {
       this.systemService.saveChunkSettings();
       this.systemService.saveInsightSettings();
 
-      let ingestParams: any = {
-        chunkSize: this.systemService.chunkSize,
-        chunkOverlap: this.systemService.overlap,
-        separator: this.systemService.separator,
-        useSemantic: this.systemService.useSemantic
-      }
       const isCSVUseCase: boolean = await this.mediaService.areAllCSV();
-      if (isCSVUseCase) {
-        if (!this.systemService.filter) {
-          this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.FILTER_REQUIRED'), 'OK');
-          return
-        }
-        ingestParams = {
-          chunkSize: 0,
-          chunkOverlap: 0,
-          separator: this.systemService.separator,
-          useSemantic: this.systemService.useSemantic
-        }
-      }
       const question: string = this.question;
       this.question = '';            
 
@@ -140,7 +122,6 @@ export class InsightsComponent implements OnInit {
         think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
         k: isCSVUseCase ? 2048  : this.systemService.k,
         mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
-        chunkParams: JSON.stringify(ingestParams),
         numCtx: isCSVUseCase ? 10240 : this.systemService.numCtx
       };
       if (this.systemService.filter) {

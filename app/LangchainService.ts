@@ -17,8 +17,6 @@ import * as path from 'path';
 // import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import SemanticChunking, { LanguageTypes } from './SemanticChunking';
-import { SynchronousInMemoryDocstore } from 'langchain/stores/doc/in_memory';
-import { HierarchicalNSW } from 'hnswlib-node';
 
 
 //TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
@@ -109,17 +107,8 @@ export default class LangchainService {
     // return this.vectorStore.addDocuments(docs);    
   }
 
-  getSearchableVectorStore = (params: any): Promise<HNSWLib | undefined> => {
-    /*
-    if (!this.hasAddedDocs) {
-      return this.run(params).then((value: any) => {
-        return Promise.resolve(this.vectorStore);    
-      })
-    } else {
-      return Promise.resolve(this.vectorStore);
-    }
-    */
-   return Promise.resolve(this.vectorStore);
+  getSearchableVectorStore = (): HNSWLib | undefined => {
+    return this.vectorStore;
   }
 
   load = (params: any): Promise<Document[]> => {

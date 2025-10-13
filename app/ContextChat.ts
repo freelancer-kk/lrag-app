@@ -68,23 +68,25 @@ export default class ContextChat {
       });
 
       let vectorStoreRetriever;
+      let retrieverParams: any;
       if (options.mmr) {
         console.log('getMMRAnswer:', options.filter, options.k);
-        vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams)))?.asRetriever({
-          searchType: "mmr",
-          searchKwargs: {
-            fetchK: options.k,
-          },
+        retrieverParams = {
+//          searchType: "mmr",          
+          kOrFields: options.k,
           filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
           k: (options.k / 2)
-        });
+        };
       } else {
         console.log('getSimilarityAnswer:', options.filter, options.k);
-        vectorStoreRetriever = (await this.langchainService.getSearchableVectorStore(JSON.parse(options.chunkParams)))?.asRetriever({
+        retrieverParams = {
           filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
           k: options.k,
-        });
+        };
       }
+
+      vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever(retrieverParams);
+        
 
       if (vectorStoreRetriever && this.langchainService.hasAddedDocs) {
       

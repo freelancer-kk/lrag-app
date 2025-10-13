@@ -1,0 +1,26 @@
+diff --git a/node_modules/@langchain/community/dist/vectorstores/hnswlib.cjs b/node_modules/@langchain/community/dist/vectorstores/hnswlib.cjs
+index 33f77cd..6159946 100644
+--- a/node_modules/@langchain/community/dist/vectorstores/hnswlib.cjs
++++ b/node_modules/@langchain/community/dist/vectorstores/hnswlib.cjs
+@@ -101,7 +101,13 @@ class HNSWLib extends vectorstores_1.SaveableVectorStore {
+             this.index = await HNSWLib.getHierarchicalNSW(this.args);
+         }
+         if (!this.index.getCurrentCount()) {
++            console.log('index: init', vectors.length);
+             this.index.initIndex(vectors.length);
++        } else {
++            if (this.index.getCurrentCount() === 0) {
++                console.log('index: count: init', vectors.length);
++                this.index.initIndex(vectors.length);
++            }            
+         }
+     }
+     get index() {
+@@ -138,6 +144,7 @@ class HNSWLib extends vectorstores_1.SaveableVectorStore {
+         }
+         const capacity = this.index.getMaxElements();
+         const needed = this.index.getCurrentCount() + vectors.length;
++        console.log('addVectors:', needed, capacity);
+         if (needed > capacity) {
+             this.index.resizeIndex(needed);
+         }
