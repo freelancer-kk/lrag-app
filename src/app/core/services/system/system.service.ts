@@ -51,7 +51,7 @@ export class SystemService {
   chunkSize: number = 512;
   overlap: number = 48;
   filter: string | undefined = undefined;
-  k: number = 4;
+  k: number = 8;
   numCtx: number = 2048;
   separator: string = ';';
   useSemantic: boolean = false;

@@ -105,8 +105,10 @@ export default class ContextChat {
       if (options.mmr) {
         console.log('getMMRAnswer:', options.filter, options.k);
         retrieverParams = {
-//          searchType: "mmr",          
-          kOrFields: options.k,
+//          searchType: "mmr",
+          searchKwargs: {
+            fetchK: options.k,
+          },
           filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
           k: (options.k / 2)
         };

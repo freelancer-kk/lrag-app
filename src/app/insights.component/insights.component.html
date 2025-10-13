@@ -30,7 +30,7 @@
   </mat-expansion-panel-header> 
     <div class="onerow">
       <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" min="4" max="2048" step="1" showTickMarks discrete>
+      <mat-slider [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" min="8" max="2048" step="1" showTickMarks discrete>
         <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
       </mat-slider>
       <span class="spacer"></span>
