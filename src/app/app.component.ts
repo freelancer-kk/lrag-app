@@ -382,20 +382,23 @@ export class AppComponent implements OnInit {
       }
       console.log('pullModelsIfNecessary:getAvailableLLMs()');
       await this.systemService.getAvailableLLMs();
-      if (this.systemService.availableModels.length === 0) {
+      if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.embeddings) === -1) {
         this.systemService.modelStatus.update(() => 'downloading');
         console.log('pull:', this.systemService.embeddings);
         await this.systemService.commandOllama('pull', { model: this.systemService.embeddings, stream: true});
+      }
+      if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.reranker) === -1) {
+        this.systemService.modelStatus.update(() => 'downloading');
+        console.log('pull:', this.systemService.reranker);
+        await this.systemService.commandOllama('pull', { model: this.systemService.reranker, stream: true});
+      }
+      if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.models[0].value) === -1) {
+        this.systemService.modelStatus.update(() => 'downloading');
         console.log('pull:', this.systemService.models[0].value);
         await this.systemService.commandOllama('pull', { model: this.systemService.models[0].value, stream: true});
-        console.log('models loaded! setting model status to running')
-        this.firstTime = false;
-        this.systemService.modelStatus.update(() => 'running');
-      } else {
-        this.firstTime = false;
-        this.systemService.modelStatus.update(() => 'running');
-        console.log('models already pulled!');
-      }      
+      }
+      this.firstTime = false;
+      this.systemService.modelStatus.update(() => 'running');      
     } catch (e) {
       console.error(e);
       if (this.firstTime) {

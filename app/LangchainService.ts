@@ -106,7 +106,7 @@ export default class LangchainService {
     }
     // return this.vectorStore.addDocuments(docs);    
   }
-
+  
   getSearchableVectorStore = (): HNSWLib | undefined => {
     return this.vectorStore;
   }

@@ -18,11 +18,18 @@ export default class ContextChat {
   prompt: string = '';
   context: string = ''
   ollamaLlm: Ollama | undefined;
+  ollamaRerankerLlm: Ollama;
   webContents: Electron.WebContents | undefined
 
   constructor(langchainService: LangchainService, ollamaService: OllamaService) {
     this.langchainService = langchainService;    
-    this.ollamaService = ollamaService;    
+    this.ollamaService = ollamaService;
+
+    this.ollamaRerankerLlm = new Ollama({
+        baseUrl: "http://localhost:11434",
+        model: "dengcao/Qwen3-Reranker-0.6B:Q8_0",
+        temperature: 0.0        
+    });
   }
 
   emit = (args: any) => {
@@ -54,6 +61,32 @@ export default class ContextChat {
     return doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1;
   }
 
+  rerank_document = async (query: string, document: string): Promise<number> => {
+    try {
+      const rerankerPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`      
+          You are an expert relevance grader. Your task is to evaluate if the following document is relevant to the user's query.
+          Please answer with a simple 'Yes' or 'No'.
+    
+          Query: {query}
+          Document: {document}
+      `);
+      
+      const rerankerChain = rerankerPrompt
+            .pipe(this.ollamaRerankerLlm)
+            .pipe(new StringOutputParser())
+
+      const response: string = await rerankerChain.invoke({
+        query,
+        document
+      })            
+      console.log('reranker:', response);
+      return 0.0;
+    } catch (e) {
+      console.error(e);
+      return 0.0;
+    }    
+  }
+  
   getAnswer = async (options: any): Promise<string> => {
     if (!this.ollamaService.isReady || !this.ollamaService.ollama) {
       return 'Services not ready';
@@ -106,6 +139,14 @@ export default class ContextChat {
           userQuestion: options.question
         });
         const docs: Document[] = documents as Document[];
+
+        /*
+        for await (const doc of docs) {
+          console.log('Reranking doc:', doc.metadata);
+          const reranked_scores = await this.rerank_document(options.question, doc.pageContent);          
+        }
+        */
+
         const combinedDocs: string = combineDocuments(docs);
         console.log('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
 
@@ -144,7 +185,7 @@ export default class ContextChat {
           .pipe(this.ollamaLlm)
           .pipe(new StringOutputParser())
         
-          const llmResponse: IterableReadableStream<string> = await questionChain.stream({
+        const llmResponse: IterableReadableStream<string> = await questionChain.stream({
 //          prompt: options.historyPrompt,
 //          chatHistory: options.chatHistory,
           userQuestion: options.question
@@ -161,13 +202,6 @@ export default class ContextChat {
     } catch (e: any) {
       console.error(e);
       return e;
-    }
-    /*
-    if (options.think) { 
-      return this.ollamaService.chat(options as ChatRequest);  
-    } else {
-      return this.ollamaService.generate(options as GenerateRequest);  
-    } 
-    */   
+    }  
   }
 }
