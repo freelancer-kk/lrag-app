@@ -112,7 +112,9 @@
       "SEPARATOR": "Separator",
       "SEPARATOR_TIP": "Geben Sie beim Einlesen von CSV-Dateien das Trennzeichen an",
       "USE_SEMANTIC": "Semantischer Chunker",
-      "USE_SEMANTIC_TIP": "Aktivieren Sie optional intelligentes Chunking, um die Ergebnisse zu verbessern. CPU-intensiver, langsamer"
+      "USE_SEMANTIC_TIP": "Aktivieren Sie optional intelligentes Chunking, um die Ergebnisse zu verbessern. CPU-intensiver, langsamer",
+      "USE_LOCAL": "Lokale Einnahme",
+      "USE_LOCAL_TIP": "Nutzen Sie keine externen Dienste für die Aufnahme Ihrer Dokumente. Sie können Ihr Internet deaktivieren und mit Ihren Dokumenten auf Ihrem PC arbeiten. Bei bestimmten Funktionen wird es Einschränkungen geben"
     },
     "INSIGHT": {
       "TITLE": "AI Einblicke",

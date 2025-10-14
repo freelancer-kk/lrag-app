@@ -14,25 +14,27 @@ import { RecursiveCharacterTextSplitter, RecursiveCharacterTextSplitterParams } 
 import { Document } from "@langchain/core/documents";
 import { mkdirSync } from 'fs';
 import * as path from 'path';
-// import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import SemanticChunking, { LanguageTypes } from './SemanticChunking';
 
 
-//TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
-// OR get ocrmypdf working on windows with auto install and mac os auto install
-// https://ocrmypdf.readthedocs.io/en/latest/installation.html#native-windows
+export enum EVectorStoreType {
+  Memory = 0,
+  HNSWLib,
+}
 
 export default class LangchainService {
   doc_path: string;
   db_path: string;
   input_path: string;
   embeddings: OllamaEmbeddings;
-  vectorStore: HNSWLib | undefined;
+  vectorStore: HNSWLib | MemoryVectorStore | undefined;
   webContents: Electron.WebContents | undefined;
   hasAddedDocs = false;
   numOfDocs: number = 0;
   semanticChunking: SemanticChunking;
+  vectorStoreType: EVectorStoreType | undefined;
 
   constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
@@ -81,9 +83,14 @@ export default class LangchainService {
     })                
   }
 
-  resetVectorStore = async () => {
+  resetVectorStore = async (vectorStoreType: EVectorStoreType) => {
     this.vectorStore = undefined;
-    this.vectorStore = await HNSWLib.fromDocuments([], this.embeddings);
+    this.vectorStoreType = vectorStoreType;
+    if (vectorStoreType === EVectorStoreType.Memory) {
+      this.vectorStore = await MemoryVectorStore.fromDocuments([], this.embeddings);
+    } else {
+      this.vectorStore = await HNSWLib.fromDocuments([], this.embeddings);
+    }
   }
 
   addDocuments = async (docs: Document[]): Promise<void> => {    
@@ -107,7 +114,7 @@ export default class LangchainService {
     // return this.vectorStore.addDocuments(docs);    
   }
   
-  getSearchableVectorStore = (): HNSWLib | undefined => {
+  getSearchableVectorStore = (): HNSWLib | MemoryVectorStore | undefined => {
     return this.vectorStore;
   }
 
@@ -219,7 +226,7 @@ export default class LangchainService {
         this.emit( { type: 'langchain-run-split', data: { chunks: chunks.length } });
         if (chunks.length > 0) {        
           this.emit( { type: 'langchain-run-indexing', data: { chunks: chunks.length } });
-          await this.resetVectorStore();
+          await this.resetVectorStore(params.localVector ? EVectorStoreType.Memory : EVectorStoreType.HNSWLib);
           await this.addDocuments(chunks);
           this.hasAddedDocs = true;
           this.emit( { type: 'langchain-run-complete', data: { chunks: chunks.length } });

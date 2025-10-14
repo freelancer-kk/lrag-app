@@ -47,6 +47,7 @@ bootstrapApplication(AppComponent, {
         systemService.chunkSize = chunkSettingsStr ? JSON.parse(chunkSettingsStr).chunkSize : 512;
         systemService.overlap = chunkSettingsStr ? JSON.parse(chunkSettingsStr).overlap : 48;
         systemService.useSemantic = chunkSettingsStr ? JSON.parse(chunkSettingsStr).useSemantic : false;
+        systemService.localVector = chunkSettingsStr ? JSON.parse(chunkSettingsStr).localVector : true;
 
         const insightSettingsStr: string | null = localStorage.getItem('insight-settings');
         systemService.k = insightSettingsStr ? JSON.parse(insightSettingsStr).k : 4;

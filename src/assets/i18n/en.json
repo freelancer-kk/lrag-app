@@ -112,7 +112,9 @@
         "SEPARATOR": "Separator",
         "SEPARATOR_TIP": "When ingesting csv files, specify the separator",
         "USE_SEMANTIC": "Semantic Chunker",
-        "USE_SEMANTIC_TIP": "Optionally activate intelligent chunking to improve results. More cpu intensive, slower"
+        "USE_SEMANTIC_TIP": "Optionally activate intelligent chunking to improve results. More cpu intensive, slower",
+        "USE_LOCAL_VECTOR": "Local Ingestion",
+        "USE_LOCAL_VECTOR_TIP": "Do not use any external services for ingesting your documents. You can disable your internet and work with your documents on your PC. There will be limitations on certain features"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",

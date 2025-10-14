@@ -387,11 +387,6 @@ export class AppComponent implements OnInit {
         console.log('pull:', this.systemService.embeddings);
         await this.systemService.commandOllama('pull', { model: this.systemService.embeddings, stream: true});
       }
-      if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.reranker) === -1) {
-        this.systemService.modelStatus.update(() => 'downloading');
-        console.log('pull:', this.systemService.reranker);
-        await this.systemService.commandOllama('pull', { model: this.systemService.reranker, stream: true});
-      }
       if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.models[0].value) === -1) {
         this.systemService.modelStatus.update(() => 'downloading');
         console.log('pull:', this.systemService.models[0].value);

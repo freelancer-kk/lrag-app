@@ -13,12 +13,6 @@
           {{ ingestStatus }}
         </div>
       } @else {
-        <!--
-        <div [class]="systemService.getClassFromStatus(ingestStatus)">
-          <mat-icon>{{ systemService.getIconFromStatus(ingestStatus) }}</mat-icon>
-          {{ ingestStatus }}
-        </div>
-        -->
         @if (systemService.overallStatus() === 'running: healthy') {
           <button matButton="filled" (click)="startIngestion()">
             {{ 'PAGES.INGEST.INDEX' | translate }}
@@ -73,6 +67,11 @@
         <button [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" matButton="filled" (click)="resetDefaults($event)">
           {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
         </button>
+      </div>
+      <div class="onerow">
+        <mat-slide-toggle [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
+        {{ 'PAGES.INGEST.USE_LOCAL_VECTOR' | translate }}
+        </mat-slide-toggle>  
       </div>
       <div class="onerow">
         <mat-slide-toggle [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_SEMANTIC_TIP' | translate" [(ngModel)]="systemService.useSemantic">

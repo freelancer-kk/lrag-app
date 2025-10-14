@@ -101,7 +101,8 @@ export class IngestComponent implements OnInit {
       chunkSize: this.systemService.chunkSize,
       chunkOverlap: this.systemService.overlap,
       separator: this.systemService.separator,
-      useSemantic: this.systemService.useSemantic
+      useSemantic: this.systemService.useSemantic,
+      localVector: this.systemService.localVector
     }
     if (await this.mediaService.areAllCSV()) {
       console.log('overriding Chunk parameters!');
@@ -109,7 +110,8 @@ export class IngestComponent implements OnInit {
         chunkSize: 0,
         chunkOverlap: 0,
         separator: this.systemService.separator,
-        useSemantic: this.systemService.useSemantic
+        useSemantic: this.systemService.useSemantic,
+        localVector: this.systemService.localVector
       }
     }
 

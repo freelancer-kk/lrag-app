@@ -55,6 +55,7 @@ export class SystemService {
   numCtx: number = 2048;
   separator: string = ';';
   useSemantic: boolean = false;
+  localVector: boolean = true;
   
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
@@ -66,7 +67,6 @@ export class SystemService {
     {value: 'vanilj/palmyra-fin-70b-32k:IQ2_XXS', viewValue: 'palmyra-fin-70b (<25GB)', thinking: true, memory: 32},
   ];
   embeddings: string = 'embeddinggemma:300m';
-  reranker: string = 'dengcao/Qwen3-Reranker-0.6B:Q8_0';
   
   constructor(
     private bridgeService: BridgeService
@@ -85,7 +85,8 @@ export class SystemService {
     localStorage.setItem('chunk-settings', JSON.stringify({
       chunkSize: this.chunkSize,
       overlap: this.overlap,
-      useSemantic: this.useSemantic
+      useSemantic: this.useSemantic,
+      localVector: this.localVector
     }))
   }
 
@@ -222,7 +223,7 @@ export class SystemService {
   }
 
   getClassFromStatus = (status: string): string => {
-    if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'thinking' || status === 'uploading' || status.startsWith('splitting') || status === 'uploaded' || status === 'loading' || status === 'loaded' || status.startsWith('indexing') || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
+    if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'reranking' || status === 'thinking' || status === 'uploading' || status.startsWith('splitting') || status === 'uploaded' || status === 'loading' || status === 'loaded' || status.startsWith('indexing') || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
     } else if (status.startsWith('downloading') || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';
@@ -246,6 +247,7 @@ export class SystemService {
       case 'saving':        
       case 'adding':
       case 'thinking':
+      case 'reranking':
       case 'configuring':
       case 'running: healthy': 
       case 'running': {

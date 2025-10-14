@@ -1,13 +1,12 @@
 import { ipcMain } from 'electron'
-import { VectorStore } from "@langchain/core/vectorstores"
-import LangchainService from "./LangchainService"
+import LangchainService, { EVectorStoreType } from "./LangchainService"
 import OllamaService from "./OllamaService"
 import { ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
 import { StringOutputParser } from "@langchain/core/output_parsers"
 import { Document } from "@langchain/core/documents";
-import { ChatRequest, GenerateRequest } from 'ollama'
 import { Ollama } from "@langchain/ollama";
 import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
+import DockerEnv from './DockerEnv'
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -15,21 +14,16 @@ const combineDocuments = (docs: Document[]): string => {
 export default class ContextChat {
   langchainService: LangchainService;
   ollamaService: OllamaService;
+  rankingService: string | undefined;
   prompt: string = '';
   context: string = ''
   ollamaLlm: Ollama | undefined;
-  ollamaRerankerLlm: Ollama;
   webContents: Electron.WebContents | undefined
 
-  constructor(langchainService: LangchainService, ollamaService: OllamaService) {
+  constructor(langchainService: LangchainService, ollamaService: OllamaService, dockerEnv: DockerEnv) {
     this.langchainService = langchainService;    
     this.ollamaService = ollamaService;
-
-    this.ollamaRerankerLlm = new Ollama({
-        baseUrl: "http://localhost:11434",
-        model: "dengcao/Qwen3-Reranker-0.6B:Q8_0",
-        temperature: 0.0        
-    });
+    this.rankingService = dockerEnv.getKeyValue('RERANK_SERVICE');
   }
 
   emit = (args: any) => {
@@ -61,29 +55,41 @@ export default class ContextChat {
     return doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1;
   }
 
-  rerank_document = async (query: string, document: string): Promise<number> => {
+  rerank_document = async (query: string, docs: Document[]): Promise<Document[] | undefined> => {
     try {
-      const rerankerPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`      
-          You are an expert relevance grader. Your task is to evaluate if the following document is relevant to the user's query.
-          Please answer with a simple 'Yes' or 'No'.
-    
-          Query: {query}
-          Document: {document}
-      `);
-      
-      const rerankerChain = rerankerPrompt
-            .pipe(this.ollamaRerankerLlm)
-            .pipe(new StringOutputParser())
 
-      const response: string = await rerankerChain.invoke({
+      const body: any = {
         query,
-        document
-      })            
-      console.log('reranker:', response);
-      return 0.0;
+        documents: docs.map((d: Document) => {
+          return d.pageContent;
+        }),
+        metadata: docs.map((d: Document, index: number) => {
+          return { "source" : index + '-' + d.metadata.source }
+        }),
+      }
+
+      // console.log('body', body);
+
+      const data: any = await (await fetch(
+        this.rankingService + '/rerank',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body)
+        }
+      )).json();
+
+      // console.log(data);
+      const ret_docs: Document[] = []
+      for await (const md of data.metadata) {
+        const fIdx: number = docs.findIndex((d, i) => (i + '-' + d.metadata.source) === md.source);
+        ret_docs.push(docs[fIdx]);
+      }
+      return ret_docs;
     } catch (e) {
-      console.error(e);
-      return 0.0;
+      console.error(e);    
     }    
   }
   
@@ -105,13 +111,16 @@ export default class ContextChat {
       if (options.mmr) {
         console.log('getMMRAnswer:', options.filter, options.k);
         retrieverParams = {
-//          searchType: "mmr",
           searchKwargs: {
             fetchK: options.k,
           },
           filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
           k: (options.k / 2)
         };
+        if (this.langchainService.vectorStoreType == EVectorStoreType.Memory) {
+          console.log('USING MEMORY VECTOR!');
+          retrieverParams.searchType = "mmr";
+        }
       } else {
         console.log('getSimilarityAnswer:', options.filter, options.k);
         retrieverParams = {
@@ -140,15 +149,16 @@ export default class ContextChat {
           chatHistory: options.chatHistory,
           userQuestion: options.question
         });
-        const docs: Document[] = documents as Document[];
+        let docs: Document[] = documents as Document[];
 
-        /*
-        for await (const doc of docs) {
-          console.log('Reranking doc:', doc.metadata);
-          const reranked_scores = await this.rerank_document(options.question, doc.pageContent);          
-        }
-        */
-
+        if (this.langchainService.vectorStoreType !== EVectorStoreType.Memory) {          
+          this.emit({ type: 'reranking', data: { total: docs.length } });
+          const reranked_docs: Document[] | undefined = await this.rerank_document(options.question, docs);
+          if (reranked_docs && reranked_docs.length > 0) {
+            docs = reranked_docs;
+          }
+        }          
+        
         const combinedDocs: string = combineDocuments(docs);
         console.log('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
 
