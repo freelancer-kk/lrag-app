@@ -2,10 +2,12 @@
     <mat-toolbar-row>
       <h1 class="title" [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate">
         {{ 'PAGES.INGEST.MAIN_TITLE' | translate }}
-      </h1>&nbsp;
-      <a matButton="elevated" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
-      {{ 'PAGES.INGEST.SCANNED_DOCS' | translate }}
-      </a>
+      </h1>
+      @if (systemService.localVector) {
+        &nbsp;<a matButton="elevated" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
+        {{ 'PAGES.INGEST.SCANNED_DOCS' | translate }}
+        </a>
+      }
       <span class="spacer"></span>      
       @if (ingestStatus === 'running' || ingestStatus.startsWith('splitting') || ingestStatus === 'loaded' || ingestStatus.startsWith('indexing') || ingestStatus === 'saving' || ingestStatus === 'adding') {
         <div [class]="systemService.getClassFromStatus(ingestStatus)">
@@ -116,12 +118,15 @@
           } @else if (entry.status === 1) {
             <mat-icon matListItemIcon class="danger">close</mat-icon>
           } @else {
+            <!--
             <mat-icon matListItemIcon class="warning">quiz</mat-icon>
+            -->
+            <mat-spinner matListItemIcon diameter="20"></mat-spinner>
           }
           <div matListItemTitle>
             {{ entry.name }}
           </div>
-          <div matListItemLine class="danger">
+          <div matListItemLine [class]="entry.status === 0 ? 'success' : entry.status === 1 ? 'danger' : 'warning'">
             {{ entry.text }}
           </div>
         </mat-list-item>

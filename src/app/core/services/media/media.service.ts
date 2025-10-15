@@ -86,19 +86,19 @@ export class MediaService {
 
   ls = () : Promise<any[]> => {
     return this.systemService.lragfiles('ls', {}).then(async (names: string[]) => {
-      const failed: string = await this.systemService.get('PAGES.INGEST.OCR_NEEDED');
+      const ocrRequired: string = await this.systemService.get('PAGES.INGEST.OCR_NEEDED');
       const unknown: string = await this.systemService.get('PAGES.INGEST.UNKNOWN');
       return names.map((v: string) => {
         if (this.docStatus) {
           return { 
             name: v,
-            status: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).status : 1,
-            text: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).text : failed
+            status: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).status : 2,
+            text: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).text : ocrRequired
           }
         } else {
           return { 
             name: v,
-            status: 2,
+            status: 1,
             text: unknown
           }
         }

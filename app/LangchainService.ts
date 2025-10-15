@@ -17,6 +17,10 @@ import * as path from 'path';
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import SemanticChunking, { LanguageTypes } from './SemanticChunking';
+import * as fs from 'fs';
+import OCRProcessor from './OCRProcessor';
+import DockerEnv from './DockerEnv';
+import { v4 as uuidv4 } from 'uuid';
 
 
 export enum EVectorStoreType {
@@ -35,8 +39,10 @@ export default class LangchainService {
   numOfDocs: number = 0;
   semanticChunking: SemanticChunking;
   vectorStoreType: EVectorStoreType | undefined;
+  ocrProcessor: OCRProcessor;
+  uuid: string;
 
-  constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
+  constructor(doc_path: string, db_dir: string, dockerEnv: DockerEnv, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
     mkdirSync(path.join(db_dir, 'sql'), { recursive: true });
     // this.db_path = path.join(db_dir, 'sql', 'sqlite.db');    
@@ -53,13 +59,17 @@ export default class LangchainService {
         baseUrl
     });
     
-    this.semanticChunking = new SemanticChunking(baseUrl, model);    
+    this.semanticChunking = new SemanticChunking(baseUrl, model);
+
+    this.ocrProcessor = new OCRProcessor(dockerEnv);
+    this.uuid = uuidv4();
     console.log('LangchainService initialized');        
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
     this.semanticChunking.register(webContents);
+    this.ocrProcessor.register(webContents);
     ipcMain.on('ingest', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
       console.log('LangchainService:', callbackId, command, params)
@@ -146,7 +156,7 @@ export default class LangchainService {
     )
     return loader.load().then(async (docs: Document[]) => {
       const uniqueDocs: Document[] = docs.reduce(
-        (acc: Document[], cur: Document) => (acc.findIndex(f => f.metadata.source === f.metadata.source && f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur]),
+        (acc: Document[], cur: Document) => (acc.findIndex(f => f.metadata.source === cur.metadata.source && f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur]),
         [],
       );
       console.log('loaded:', uniqueDocs.length);
@@ -195,9 +205,34 @@ export default class LangchainService {
     }
   }
 
+  OCRDocs = async (loaded_docs: Document[], doc_path: string): Promise<void> => {
+    await this.ocrProcessor.connect();
+    const file_names: string[] = fs.readdirSync(doc_path);
+    const loaded_doc_names: string[] = loaded_docs.reduce(
+      (acc: Document[], cur: Document) => (acc.findIndex(f => f.metadata.source === cur.metadata && cur.metadata.source) > -1 ? acc : [...acc, cur.metadata.source]),
+      [],
+    );
+    for await (const fn of file_names) {
+      if (loaded_doc_names.findIndex(ldn => path.basename(ldn) === fn) === -1) {
+        // file has not been loaded mark it for OCR processing
+        console.log('put:', path.join(doc_path, fn));
+
+        this.ocrProcessor.put(
+          path.join(doc_path, fn),
+          this.uuid + '-' + path.basename(fn)
+        ) 
+      }
+    }
+    // await this.ocrProcessor.disconnect();
+  }
+
   run = async (params: any): Promise<any> => {
     this.emit( { type: 'langchain-run-start', data: {} } );
     return this.load(params).then(async (docs: Document[]) => {
+      if (params.localVector === false) {
+        // Check for OCR
+        await this.OCRDocs(docs, this.doc_path);
+      }
       this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
       console.log('docs:length:', docs.length)
       // if (docs.length > 0) {

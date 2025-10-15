@@ -55,7 +55,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
     console.log('graphics:', graphics.controllers.map(v => v.vendor));
     lragFiles = new LRagFiles(docPath, dataPath);
     lragFiles.register();
-    langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'));
+    langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'), dockerEnv);
     langchainService.register(win?.webContents);
     ollamaService = new OllamaService(userTempPath, appDataPath, graphics.controllers.map(v => v.vendor));
     ollamaService.register(win?.webContents);

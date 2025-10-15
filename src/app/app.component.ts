@@ -74,6 +74,75 @@ export class AppComponent implements OnInit {
       console.log('Running in browser');
     }
     this.bridgeService.registerListener();
+    this.bridgeService.ocrCallback((ev: any, eventObj: any) => {
+      try {          
+        const { type, data } = eventObj;
+        console.log('type', type, 'data', data);        
+        switch(type) {
+          case 'ocr-processor-error': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 1;
+                  this.mediaService.docStatus[fIdx].text = await this.systemService.get('PAGES.INGEST.OCR_ERROR');
+                } else {
+                  this.mediaService.docStatus.push({
+                    name: data.localfile,
+                    status: 1,
+                    text: await this.systemService.get('PAGES.INGEST.OCR_ERROR')
+                  });               
+                }
+                this.systemService.ragFiles = await this.mediaService.ls();
+              }                            
+            })            
+          }
+          break;
+          case 'ocr-processor-put': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 2;
+                  this.mediaService.docStatus[fIdx].text = await this.systemService.get('PAGES.INGEST.OCR_PREPARE');
+                } else {
+                  console.log('ocr-processor-put:', data.localfile);
+                  this.mediaService.docStatus.push({
+                    name: data.localfile,
+                    status: 2,
+                    text: await this.systemService.get('PAGES.INGEST.OCR_PREPARE')
+                  });               
+                }
+                this.systemService.ragFiles = await this.mediaService.ls();
+              }                            
+            })
+          }
+          break;
+          case 'ocr-processor-putted': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 2;
+                  this.mediaService.docStatus[fIdx].text = await this.systemService.get('PAGES.INGEST.OCR_START');
+                } else {
+                  this.mediaService.docStatus.push({
+                    name: data.localfile,
+                    status: 2,
+                    text: await this.systemService.get('PAGES.INGEST.OCR_START')
+                  });               
+                }
+                this.systemService.ragFiles = await this.mediaService.ls();
+              }                            
+            })
+          }
+          break;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })
+    
     this.bridgeService.eventCallback((ev: any, eventObj: any) => {
       try {          
         const { type, data } = eventObj;
@@ -238,7 +307,7 @@ export class AppComponent implements OnInit {
               this.systemService.ingestStatus.update(() => 'warning');
             })            
           }
-          break;
+          break;          
         } 
       } catch (e) {
         console.error(e);

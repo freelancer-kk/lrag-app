@@ -132,12 +132,12 @@ export class IngestComponent implements OnInit {
           }
         });      
       } else {
-        this.systemService.ingestStatus.update(() => 'warning');
-        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result ? (': ' + JSON.stringify(result)) : ''), 'OK' );
-        this.systemService.ragFiles = await this.mediaService.ls();
-        snackBarRef.onAction().subscribe(() => {
-          this.systemService.ingestStatus.update(() => 'not running');
-        });      
+          this.systemService.ingestStatus.update(() => 'warning');
+          const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.systemService.get('PAGES.INGEST.EXITED')), 'OK' );
+          this.systemService.ragFiles = await this.mediaService.ls();
+          snackBarRef.onAction().subscribe(() => {
+            this.systemService.ingestStatus.update(() => 'not running');
+          });              
       }
     }).catch(async (e) => {
       console.error('ingest error:', e);      

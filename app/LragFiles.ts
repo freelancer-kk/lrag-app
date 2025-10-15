@@ -18,6 +18,10 @@ export default class LRagFiles {
     console.log('LRagFiles:', this.docPath, this.dataPath);
   }
 
+  ls = (path: string): string[] => {
+    return fs.readdirSync(path);
+  }
+
   register = () => {
       ipcMain.on('lragfiles', async (event: any, arg: any) => {
         const { callbackId, command, params }= arg;
@@ -74,7 +78,7 @@ export default class LRagFiles {
           break;
           case "ls": {
             console.log('LRagFiles:', callbackId, command);
-            response = fs.readdirSync(fullPath);
+            response = this.ls(fullPath);
           }
           break;
           case "rm": {
