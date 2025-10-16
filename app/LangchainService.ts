@@ -234,7 +234,7 @@ export default class LangchainService {
         ".xlsm": (path) => new CSVLoader(path),
         ".xls": (path) => new CSVLoader(path),
         ".pdf": (path) => new PDFLoader(path, {
-          splitPages: true,
+          splitPages: false,
           parsedItemSeparator: ""  
         }),
         ".ppt": (path) => new PPTXLoader(path),

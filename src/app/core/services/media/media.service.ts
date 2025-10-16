@@ -102,19 +102,19 @@ export class MediaService {
               source: name 
             }
           );
-          if (this.docStatus && response === true) {
+          if (this.docStatus) {
             const fIdx: number = this.docStatus.findIndex(f => f.name === name);
             if (fIdx > -1) {
-              this.docStatus[fIdx].status = 0;
-              this.docStatus[fIdx].text = 'indexed';
+              this.docStatus[fIdx].status = response === true ? 0 : 1;
+              this.docStatus[fIdx].text = response === true ? 'indexed' : 'Not indexed';
             } else {
               this.docStatus.push({
                 name,
-                status: 0,
-                text: 'indexed'
+                status: response === true ? 0 : 1,
+                text: response === true ? 'indexed' : 'Not indexed'
               });               
-            }            
-          }                          
+            }
+          }
         }        
         this.files = names;
         return this.files;

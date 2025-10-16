@@ -291,7 +291,7 @@ export class IngestComponent implements OnInit {
   docsHealthy = (): boolean => {  
     if (this.mediaService.docStatus) {
       return this.mediaService.docStatus.reduce(
-        ((acc: boolean, cur: any) => acc && cur.status === 0),
+        ((acc: boolean, cur: any) => acc && (cur.status === 0 || cur.status === 1)),
         true
       );
     } else {
