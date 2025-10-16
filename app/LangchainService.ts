@@ -87,7 +87,7 @@ export default class LangchainService {
         }
         break;        
         case "reset": {
-          response = await this.resetVectorStore(params.localVector ? EVectorStoreType.Memory : EVectorStoreType.HNSWLib);
+          response = await this.resetVectorStore(params.localVector ? EVectorStoreType.Memory : EVectorStoreType.HNSWLib, params.collection);
         }
         break;
         case "indexed": {
@@ -127,15 +127,16 @@ export default class LangchainService {
   loadVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean | undefined> => {
     if (vectorStoreType !== EVectorStoreType.Memory) {
       try {
-        this.vectorStore = await HNSWLib.load(path.join(this.db_path, collection), this.embeddings);
+        this.vectorStore = await HNSWLib.load(path.join(this.db_path, collection), this.embeddings);        
+        this.vectorStoreType = vectorStoreType;        
         return true;
       } catch (e) {
         console.error(e);
-        await this.resetVectorStore(vectorStoreType);
+        await this.resetVectorStore(vectorStoreType, collection);
         return false;
       }
     } else {
-      await this.resetVectorStore(vectorStoreType);
+      await this.resetVectorStore(vectorStoreType, collection);
     }
   }
 
@@ -161,13 +162,14 @@ export default class LangchainService {
     }
   }
   
-  resetVectorStore = async (vectorStoreType: EVectorStoreType): Promise<boolean> => {
+  resetVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean> => {
     this.vectorStore = undefined;
     this.vectorStoreType = vectorStoreType;
     if (vectorStoreType === EVectorStoreType.Memory) {
       this.vectorStore = await MemoryVectorStore.fromDocuments([], this.embeddings);
     } else {
       this.vectorStore = await HNSWLib.fromDocuments([], this.embeddings);
+      await this.deleteVectorStore(vectorStoreType, collection);
     }
     return true;
   }
@@ -310,6 +312,7 @@ export default class LangchainService {
 
   run = async (params: any): Promise<any> => {
     this.emit( { type: 'langchain-run-start', data: {} } );
+    await this.resetVectorStore(params.localVector, params.collection);
     return this.load(params).then(async (docs: Document[]) => {
       if (params.localVector === false) {
         // Check for OCR

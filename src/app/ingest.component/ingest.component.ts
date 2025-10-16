@@ -287,4 +287,15 @@ export class IngestComponent implements OnInit {
     console.log(event.target.value);
     this.selectedAll = !this.selectedAll;
   }
+
+  docsHealthy = (): boolean => {  
+    if (this.mediaService.docStatus) {
+      return this.mediaService.docStatus.reduce(
+        ((acc: boolean, cur: any) => acc && cur.status === 0),
+        true
+      );
+    } else {
+      return true;
+    }
+  }
 }

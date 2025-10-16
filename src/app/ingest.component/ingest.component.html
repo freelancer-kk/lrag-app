@@ -15,7 +15,7 @@
           {{ ingestStatus }}
         </div>
       } @else {
-        @if (systemService.overallStatus() === 'running: healthy') {
+        @if (systemService.overallStatus() === 'running: healthy' && docsHealthy()) {
           <button matButton="filled" (click)="startIngestion()">
             {{ 'PAGES.INGEST.INDEX' | translate }}
           </button>
@@ -71,7 +71,7 @@
         </button>
       </div>
       <div class="onerow">
-        <mat-slide-toggle [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
+        <mat-slide-toggle [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.localVector" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
         {{ 'PAGES.INGEST.USE_LOCAL_VECTOR' | translate }}
         </mat-slide-toggle>  
       </div>

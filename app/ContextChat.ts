@@ -117,7 +117,7 @@ export default class ContextChat {
           filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
           k: (options.k / 2)
         };
-        if (this.langchainService.vectorStoreType == EVectorStoreType.Memory) {
+        if (this.langchainService.vectorStoreType === EVectorStoreType.Memory) {
           console.log('USING MEMORY VECTOR!');
           retrieverParams.searchType = "mmr";
         }
@@ -131,7 +131,6 @@ export default class ContextChat {
 
       vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever(retrieverParams);
         
-
       if (vectorStoreRetriever && this.langchainService.hasAddedDocs) {
       
         const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
