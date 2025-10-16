@@ -130,7 +130,7 @@ export class IngestComponent implements OnInit {
           duration: 10000
         });
         snackBarRef.onAction().subscribe(() => {
-          if (this.mediaService.noOfValidFiles() > 0) {
+          if (this.mediaService.noOfValidFiles()) {
             this.router.navigate(['insights']);
           }
         });      

@@ -1,7 +1,6 @@
 import { ipcMain } from 'electron';
 import DockerEnv from './DockerEnv';
 import * as fs from 'fs';
-import * as path from 'path';
 import sftp from 'ssh2-sftp-client';
 
 export enum EOCRStatus {
@@ -42,7 +41,7 @@ export default class OCRProcessor {
         username: this.username,
         password: this.password,
       }).then(async () => {
-        console.log('connected:ls:', await this.client.list('input'));
+        console.log('connected:ls:', await this.client.list('/input'));
         this.connected = true;
         if (this.firstTime) {
           this.firstTime = false;
@@ -64,11 +63,11 @@ export default class OCRProcessor {
             if (this.filesToProcess.length === 0) {
               this.disconnect();
             } else {
-              const anyWorkOrError: boolean = this.filesToProcess.findIndex(f => f.status !== EOCRStatus.REQUESTED) > -1;
+              const anyWorkOrError: boolean = this.filesToProcess.filter(f => f.status !== EOCRStatus.REQUESTED).length > 0;
               if (!anyWorkOrError) {
                 const fe: any = this.filesToProcess[0];
                 fe.status = EOCRStatus.UPLOADING;
-                this.emit( { type: 'ocr-processor-put', data: { localfile: path.basename(fe.localfile), remotefile: fe.remotefile, status: fe.status } });
+                this.emit( { type: 'ocr-processor-put', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status } });
                 this.client.put(
                   fs.createReadStream(fe.localfile),
                   fe.remotefile,                  
@@ -81,14 +80,15 @@ export default class OCRProcessor {
                   console.log('putRes:', value);
                   fe.status = EOCRStatus.UPLOADED;
                   fe.timestamp = Date.now();
-                  this.emit( { type: 'ocr-processor-putted', data: { localfile: path.basename(fe.localfile), remotefile: fe.remotefile, status: fe.status, putResponse: value } });
+                  this.emit( { type: 'ocr-processor-putted', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, putResponse: value } });
                 }).catch((reason: any) => {
                   console.log('OCR:error:', reason);
                   this.processError(fe);
                 })
               } else {
                 // Check for timeout on the processing
-                this.filesToProcess.forEach(async (fe: any, index: number) => {
+                for await (const fe of this.filesToProcess) {
+                  // console.log('OCR:check:', fe);
                   if (fe.status === EOCRStatus.UPLOADED) {
                     if (Date.now() > (fe.timestamp + MAX_PROC_TIME)) {
                       // OCR Processing taken too long must be errored
@@ -96,38 +96,49 @@ export default class OCRProcessor {
                       console.log('OCR:toolong:removed:', fe.remotefile);
                       this.deleteRemoteFile(fe.remotefile);
                       this.processError(fe);                      
-                    } else if (await this.client.exists(fe.outputfile).catch((reason: any) => {
-                      console.error('OCR:exists successfile failed:', reason);
-                    })) {
-                      // Completed get the ocr'd doc  
-                      console.log('COMPLETED:success:', fe.outputfile)
-                      this.client.fastGet(fe.outputfile, fe.localfile).then((value: string) => {
-                        console.log('OCR File retrieved:', value);
-                        fe.status = EOCRStatus.PROCESSED;                        
-                        this.emit( { type: 'ocr-processor-complete', data: { localfile: path.basename(fe.localfile), remotefile: fe.remotefile, status: fe.status, getResponse: value } });
-                        this.deleteRemoteFile(fe.outputfile);
-                      }).catch((reason: any) => {
-                        console.error('OCR Error during get:', reason);
-                        this.deleteRemoteFile(fe.remotefile);    
-                        this.processError(fe);
-                      })
+                    } else {
+                      this.client.exists(fe.outputfile).then(async (value: false | any) => {
+                          if (value !== false) {
+                            console.log('COMPLETED:success:', fe.outputfile)
+                            this.client.fastGet(fe.outputfile, fe.localfile).then((value: string) => {
+                              fe.status = EOCRStatus.PROCESSED;
+                              console.log('OCR File retrieved:', value);
+                              this.emit( { type: 'ocr-processor-complete', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, getResponse: value } });
+                              this.deleteRemoteFile(fe.outputfile);
+                            }).catch((reason: any) => {
+                              console.error('OCR Error during get:', reason);
+                              this.deleteRemoteFile(fe.remotefile);    
+                              this.processError(fe);
+                            })
+                          } else {
+                            console.log('OCR success file response:', fe.outputfile, value);
+                            // console.log('ls:', await this.client.list('/output'));
+                          }
+                        }).catch((reason: any) => {
+                          console.error('OCR:exists successfile failed:', reason);
+                        })
 
-                    } else if (await this.client.exists(fe.errorfile).catch((reason: any) => {
-                      console.error('OCR:exists errorfile failed:', reason);
-                    })) {
-                      // Error get the error doc
-                      this.deleteRemoteFile(fe.errorfile);
-                      console.log('OCR:COMPLETED with error:', fe.errorfile)
-                      this.processError(fe);
+                      this.client.exists(fe.errorfile).then(async (value: false | any) => {
+                          if (value !== false) {
+                            // Error get the error doc
+                            console.log('OCR:COMPLETED with error:', fe.errorfile)
+                            this.deleteRemoteFile(fe.errorfile);                      
+                            this.processError(fe);
+                          } else {
+                            console.log('OCR error file response:', fe.errorfile, value);
+                            // console.log('ls:', await this.client.list('/error'));
+                          }
+                        }).catch((reason: any) => {
+                          console.error('OCR:exists errorfile failed:', reason);
+                        })
                     }
-                  }
-                })
-                for await (const fe of this.filesToProcess) {
-                  if (fe.status === EOCRStatus.ERROR || fe.status === EOCRStatus.PROCESSED) {
+                  } else if (fe.status === EOCRStatus.ERROR || fe.status === EOCRStatus.PROCESSED) {
                     const fIdx: number = this.filesToProcess.findIndex(f => f.remotefile === fe.remotefile);
                     this.filesToProcess.splice(fIdx, 1);
+                  } else {
+                    console.log('Waiting for status change:', fe)
                   }
-                }
+                }                
               }
             }
         }, 5000);
@@ -146,7 +157,7 @@ export default class OCRProcessor {
   }
 
   processError = (fe: any) => {
-    this.emit( { type: 'ocr-processor-error', data: { localfile: path.basename(fe.localfile), remotefile: fe.remotefile, status: fe.status, timestamp: fe.timestamp } });      
+    this.emit( { type: 'ocr-processor-error', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, timestamp: fe.timestamp } });      
     fe.status = EOCRStatus.ERROR;
   }
 
@@ -165,9 +176,9 @@ export default class OCRProcessor {
     if (this.filesToProcess.findIndex(f => f.localfile === localfile) === -1) {
       this.filesToProcess.push({
         localfile,
-        remotefile: 'input/' +  remotefile,
-        outputfile: 'output/' +  remotefile,
-        errorfile: 'error/' +  remotefile,
+        remotefile: '/input/' +  remotefile,
+        outputfile: '/output/' +  remotefile,
+        errorfile: '/error/' +  remotefile,
         status: EOCRStatus.REQUESTED,
         timestamp: Date.now(),
       });

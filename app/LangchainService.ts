@@ -203,6 +203,17 @@ export default class LangchainService {
       }
     }
   }
+
+  setStatusForLoadedDocs = async (docs: Document[]): Promise<void> => {    
+    console.log('set status:', docs.length);    
+    const added_doc_names: string[] = [];
+    for await (const ld of docs) {
+      if (added_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
+        added_doc_names.push(ld.metadata.source);
+        this.emit( { type: 'langchain-run-doc-added', data: { source: ld.metadata.source } });
+      }
+    }
+  }
   
   getSearchableVectorStore = (): HNSWLib | MemoryVectorStore | undefined => {
     return this.vectorStore;
@@ -285,8 +296,8 @@ export default class LangchainService {
     }
   }
 
-  OCRDocs = async (loaded_docs: Document[], doc_path: string): Promise<void> => {
-    await this.ocrProcessor.connect();
+  OCRDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
+    let hasOCRTasks: boolean = false;
     const file_names: string[] = fs.readdirSync(doc_path);
     // console.log('loaded_docs:', loaded_docs[0]);
     // console.log('file_names:', file_names);
@@ -299,29 +310,39 @@ export default class LangchainService {
 
     for await (const fn of file_names) {
       if (loaded_doc_names.findIndex(ldn => path.basename(ldn) === fn) === -1) {
-        // file has not been loaded mark it for OCR processing
-        console.log('OCR:REQUEST:put:', path.join(doc_path, fn));
-
-        this.ocrProcessor.put(
-          path.join(doc_path, fn),
-          this.uuid + '-' + path.basename(fn)
-        ) 
+        if (fn.endsWith('pdf') || fn.endsWith('PDF')) {
+          // file has not been loaded mark it for OCR processing
+          console.log('OCR:REQUEST:put:', path.join(doc_path, fn));
+          
+          await this.ocrProcessor.connect();
+          
+          this.ocrProcessor.put(
+            path.join(doc_path, fn),
+            this.uuid + '-' + path.basename(fn)
+          )
+          hasOCRTasks = true;
+        } else {
+          console.log('OCR ignoring non pdf:', fn);
+          this.emit( { type: 'langchain-run-ocr-ignore', data: { name: fn } });
+        }
       }
     }
     // await this.ocrProcessor.disconnect();
+    return hasOCRTasks;
   }
 
   run = async (params: any): Promise<any> => {
     this.emit( { type: 'langchain-run-start', data: {} } );
-    await this.resetVectorStore(params.localVector, params.collection);
     return this.load(params).then(async (docs: Document[]) => {
-      if (params.localVector === false) {
-        // Check for OCR
-        await this.OCRDocs(docs, this.doc_path);
-      }
       this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
       console.log('docs:length:', docs.length)
-      // if (docs.length > 0) {
+      let hasOCRTasks: boolean = false
+      if (params.localVector === false) {
+        // Check for OCR
+        hasOCRTasks = await this.OCRDocs(docs, this.doc_path);
+      }
+      if (!hasOCRTasks) {
+        await this.resetVectorStore(params.localVector, params.collection);          
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });
         let chunks: Document[] = [];
         
@@ -361,6 +382,11 @@ export default class LangchainService {
         return { status: 'warning', message: 'document(s) loaded but not processed, empty or latest was incompatible' };
       }
       */
+      } else {
+        await this.setStatusForLoadedDocs(docs);
+        this.emit( { type: 'langchain-run-warning', data: { message: 'nothing indexed' } });
+        return { status: 'warning', message: 'pending ocr tasks' };
+      }
     }).catch((err) => {
       console.error('load error:', err);
       return { status: 'error', message: err };

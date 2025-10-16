@@ -92,6 +92,7 @@ export class MediaService {
       this.docStatus = [];
     }
     if (this.files.length === 0 || force) {
+      this.docStatus = [];
       return this.systemService.lragfiles('ls', {}).then(async (names: string[]) => {
         for await (const name of names) {          
           const response: boolean = await this.systemService.commandIngest(
