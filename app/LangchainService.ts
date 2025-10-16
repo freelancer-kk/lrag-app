@@ -129,6 +129,7 @@ export default class LangchainService {
       try {
         this.vectorStore = await HNSWLib.load(path.join(this.db_path, collection), this.embeddings);        
         this.vectorStoreType = vectorStoreType;        
+        this.hasAddedDocs = true;
         return true;
       } catch (e) {
         console.error(e);

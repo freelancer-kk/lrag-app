@@ -55,7 +55,7 @@ export default class ContextChat {
     return doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1;
   }
 
-  rerank_document = async (query: string, docs: Document[]): Promise<Document[] | undefined> => {
+  rerank_documents = async (query: string, docs: Document[]): Promise<Document[] | undefined> => {
     try {
 
       const body: any = {
@@ -81,10 +81,11 @@ export default class ContextChat {
         }
       )).json();
 
-      // console.log(data);
       const ret_docs: Document[] = []
       for await (const md of data.metadata) {
         const fIdx: number = docs.findIndex((d, i) => (i + '-' + d.metadata.source) === md.source);
+        // console.log('RERANKING:', docs[fIdx].pageContent.substring(0, 20));      
+        
         ret_docs.push(docs[fIdx]);
       }
       return ret_docs;
@@ -132,7 +133,8 @@ export default class ContextChat {
       vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever(retrieverParams);
         
       if (vectorStoreRetriever && this.langchainService.hasAddedDocs) {
-      
+        console.log('INSIGHT: WITH DOC CONTEXT!')
+
         const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
           {contextPrompt}
           chatHistory: {chatHistory}
@@ -152,7 +154,7 @@ export default class ContextChat {
 
         if (this.langchainService.vectorStoreType !== EVectorStoreType.Memory) {          
           this.emit({ type: 'reranking', data: { total: docs.length } });
-          const reranked_docs: Document[] | undefined = await this.rerank_document(options.question, docs);
+          const reranked_docs: Document[] | undefined = await this.rerank_documents(options.question, docs);
           if (reranked_docs && reranked_docs.length > 0) {
             docs = reranked_docs;
           }
@@ -188,6 +190,8 @@ export default class ContextChat {
         }
         return finalAnswer;
       } else {
+        console.log('INSIGHT: NO DOC CONTEXT!')
+
         const questionTemplate = PromptTemplate.fromTemplate(`
             question: {userQuestion}
         `)
