@@ -12,7 +12,7 @@ export enum EOCRStatus {
   ERROR
 }
 
-const MAX_PROC_TIME = 1000 * 180;
+const MAX_PROC_TIME = 1000 * 360;
 
 export default class OCRProcessor {
   webContents: Electron.WebContents | undefined;
@@ -71,14 +71,12 @@ export default class OCRProcessor {
                 this.emit( { type: 'ocr-processor-put', data: { localfile: path.basename(fe.localfile), remotefile: fe.remotefile, status: fe.status } });
                 this.client.put(
                   fs.createReadStream(fe.localfile),
-                  fe.remotefile
-/*                  ,                  
+                  fe.remotefile,                  
                   {
                     writeStreamOptions: {
                       encoding: null
                     }
                   }
-*/                      
                 ).then((value: string) => {
                   console.log('putRes:', value);
                   fe.status = EOCRStatus.UPLOADED;
@@ -96,18 +94,36 @@ export default class OCRProcessor {
                       // OCR Processing taken too long must be errored
                       // Remove the uploaded file
                       console.log('OCR:toolong:removed:', fe.remotefile);
+                      this.deleteRemoteFile(fe.remotefile);
                       this.processError(fe);                      
-                    } else if (await this.client.exists(fe.outputfile)) {
+                    } else if (await this.client.exists(fe.outputfile).catch((reason: any) => {
+                      console.error('OCR:exists successfile failed:', reason);
+                    })) {
                       // Completed get the ocr'd doc  
-                      console.log('COMPLETED:success:', fe.outputfile)               
-                    } else if (await this.client.exists(fe.errorfile)) {
+                      console.log('COMPLETED:success:', fe.outputfile)
+                      this.client.fastGet(fe.outputfile, fe.localfile).then((value: string) => {
+                        console.log('OCR File retrieved:', value);
+                        fe.status = EOCRStatus.PROCESSED;                        
+                        this.emit( { type: 'ocr-processor-complete', data: { localfile: path.basename(fe.localfile), remotefile: fe.remotefile, status: fe.status, getResponse: value } });
+                        this.deleteRemoteFile(fe.outputfile);
+                      }).catch((reason: any) => {
+                        console.error('OCR Error during get:', reason);
+                        this.deleteRemoteFile(fe.remotefile);    
+                        this.processError(fe);
+                      })
+
+                    } else if (await this.client.exists(fe.errorfile).catch((reason: any) => {
+                      console.error('OCR:exists errorfile failed:', reason);
+                    })) {
                       // Error get the error doc
-                      console.log('COMPLETED:error:', fe.errorfile)               
+                      this.deleteRemoteFile(fe.errorfile);
+                      console.log('OCR:COMPLETED with error:', fe.errorfile)
+                      this.processError(fe);
                     }
                   }
                 })
                 for await (const fe of this.filesToProcess) {
-                  if (fe.status === EOCRStatus.ERROR) {
+                  if (fe.status === EOCRStatus.ERROR || fe.status === EOCRStatus.PROCESSED) {
                     const fIdx: number = this.filesToProcess.findIndex(f => f.remotefile === fe.remotefile);
                     this.filesToProcess.splice(fIdx, 1);
                   }
@@ -123,11 +139,13 @@ export default class OCRProcessor {
     }
   }
 
+  deleteRemoteFile = (remotefile: string): Promise<string | void> => {
+    return this.client.delete(remotefile).catch((reason: any) => {
+      console.error('OCR:delete failed:', reason);      
+    })
+  }
+
   processError = (fe: any) => {
-    this.client.delete(fe.remotefile).then((value: string) => {
-      // this.emit( { type: 'ocr-processor-error', data: { localfile: path.basename(fe.localfile), remotefile: fe.remotefile, status: fe.status, timestamp: fe.timestamp } });      
-      // fe.status = EOCRStatus.ERROR;
-    });
     this.emit( { type: 'ocr-processor-error', data: { localfile: path.basename(fe.localfile), remotefile: fe.remotefile, status: fe.status, timestamp: fe.timestamp } });      
     fe.status = EOCRStatus.ERROR;
   }

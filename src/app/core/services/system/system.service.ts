@@ -56,6 +56,7 @@ export class SystemService {
   separator: string = ';';
   useSemantic: boolean = false;
   localVector: boolean = true;
+  collection: string = "general";
   
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},

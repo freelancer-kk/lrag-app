@@ -105,6 +105,7 @@
         "OCR_ERROR": "OCR conversion failed",
         "OCR_PREPARE": "OCR conversion preparing",
         "OCR_START": "OCR conversion starting",
+        "OCR_DONE": "OCR converstion done",
         "UNKNOWN": "Not indexed",
         "INDEX": "Ingest document(s)",
         "CHUNK_SIZE": "Chunk Size",

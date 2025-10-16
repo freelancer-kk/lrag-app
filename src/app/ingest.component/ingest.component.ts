@@ -25,6 +25,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 
+import path from 'path';
+
 @Component({
   selector: 'app-ingest.component',
   imports: [
@@ -78,9 +80,7 @@ export class IngestComponent implements OnInit {
   async ngOnInit() {
     this.breakpoint = Math.floor(window.innerWidth / 300);
     console.log('breakpoint:', this.breakpoint);
-    if (this.systemService.ragFiles.length === 0) {
-      this.systemService.ragFiles = await this.mediaService.ls();
-    }    
+    this.systemService.ragFiles = await this.mediaService.ls();    
     // console.log('FILES', this.ragFiles);
     this.systemService.MAX_FILES = Number.parseInt(await this.systemService.get('PAGES.INGEST.MAX_DOCS'));
     // console.log('MAX:', this.systemService.MAX_FILES)
@@ -100,26 +100,29 @@ export class IngestComponent implements OnInit {
     let ingestParams: any = {
       chunkSize: this.systemService.chunkSize,
       chunkOverlap: this.systemService.overlap,
-      separator: this.systemService.separator,
-      useSemantic: this.systemService.useSemantic,
-      localVector: this.systemService.localVector
     }
     if (await this.mediaService.areAllCSV()) {
       console.log('overriding Chunk parameters!');
       ingestParams = {
         chunkSize: 0,
-        chunkOverlap: 0,
-        separator: this.systemService.separator,
-        useSemantic: this.systemService.useSemantic,
-        localVector: this.systemService.localVector
+        chunkOverlap: 0
       }
     }
 
     this.systemService.commandIngest(
       'start',
-      ingestParams
+      {
+        ...ingestParams, 
+        ...{
+          separator: this.systemService.separator,
+          useSemantic: this.systemService.useSemantic,
+          localVector: this.systemService.localVector,
+          collection: this.systemService.collection
+        }
+      }
     ).then(async (result: any) => {
       console.log('ingest result:', result);
+      await this.mediaService.saveIndex();
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(() => 'not running');
         this.systemService.ragFiles = await this.mediaService.ls();
@@ -132,12 +135,12 @@ export class IngestComponent implements OnInit {
           }
         });      
       } else {
-          this.systemService.ingestStatus.update(() => 'warning');
-          const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.systemService.get('PAGES.INGEST.EXITED')), 'OK' );
-          this.systemService.ragFiles = await this.mediaService.ls();
-          snackBarRef.onAction().subscribe(() => {
-            this.systemService.ingestStatus.update(() => 'not running');
-          });              
+        this.systemService.ingestStatus.update(() => 'warning');
+        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.systemService.get('PAGES.INGEST.EXITED')), 'OK' );
+        this.systemService.ragFiles = await this.mediaService.ls();
+        snackBarRef.onAction().subscribe(() => {
+          this.systemService.ingestStatus.update(() => 'not running');
+        });              
       }
     }).catch(async (e) => {
       console.error('ingest error:', e);      
@@ -173,7 +176,8 @@ export class IngestComponent implements OnInit {
         if (this.startIngestTimer) {
           clearTimeout(this.startIngestTimer);
         }
-        this.startIngestTimer = setTimeout(() => {          
+        this.startIngestTimer = setTimeout(async () => {   
+          this.systemService.ragFiles = await this.mediaService.ls(true);
           this.startIngestion();  
         }, 2500)        
       }
@@ -260,12 +264,19 @@ export class IngestComponent implements OnInit {
               this.systemService.ragFiles.splice(fIdx, 1);            
             }
           }
-          await this.startIngestion();
+          this.systemService.ragFiles = await this.mediaService.ls(true);
+          // await this.startIngestion();
         }
         this.systemService.selectedDocuments.setValue('');
       });    
     }
   }
+
+  basename = (fullpath: string): string => {    
+    return path.basename(fullpath.replace(/\\/g,'/'));
+  }
+
+  download = async (event: any, index: number) => {}
 
   toggleOpen = (event: any) => {
     this.isOpened = !this.isOpened;

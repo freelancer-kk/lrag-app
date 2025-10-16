@@ -78,13 +78,13 @@ export default class LRagFiles {
           break;
           case "ls": {
             console.log('LRagFiles:', callbackId, command);
-            response = this.ls(fullPath);
+            response = this.ls(fullPath).map(f => path.join(fullPath, f));
           }
           break;
           case "rm": {
             console.log('LRagFiles:', callbackId, command);
             try {
-              fs.unlinkSync(fullPath);
+              fs.unlinkSync(params.name);
               response = {
                 success: true
               }
