@@ -66,8 +66,10 @@ export class InsightsComponent implements OnInit {
     this.bridgeService.chatCallback((ev: any, response: any) => {
       // console.log('chat-event', response);
       this.ngZone.run(() => {
-        this.streamedResponse += response.chunk;
-        this.scrollToBottom();
+        if (response.chunk) {
+          this.streamedResponse += response.chunk;
+          this.scrollToBottom();
+        }
       });
     });
 
@@ -143,6 +145,7 @@ export class InsightsComponent implements OnInit {
       console.log('Answer:', answer);
       try {
         if (typeof answer === 'string') {
+          console.log('PUSHING ANSWER:', answer);
           this.systemService.chatHistory.push({
             who: EWho.Assistant,
             content: this.reformat(answer)
