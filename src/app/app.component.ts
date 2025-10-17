@@ -48,6 +48,7 @@ export class AppComponent implements OnInit {
   dockerConnectInterval: any;
   firstTime: boolean = true;
   serviceTimer: any;
+  firstRun: boolean = true;
 
   constructor(
     private electronService: ElectronService,
@@ -372,11 +373,14 @@ export class AppComponent implements OnInit {
   }
 
   navigateAway = async () => {
-    await this.mediaService.ls();
-    if (this.mediaService.noOfValidFiles() > 0) {
-      this.router.navigate(['insights']);
-    } else {
-      this.router.navigate(['ingest']);
+    if (!this.firstRun) {
+      this.firstRun = false;
+      this.systemService.ragFiles = await this.mediaService.ls();
+      if (this.mediaService.noOfValidFiles() > 0) {
+        this.router.navigate(['insights']);
+      } else {
+        this.router.navigate(['ingest']);
+      }
     }
   }
 

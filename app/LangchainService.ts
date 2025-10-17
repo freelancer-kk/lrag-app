@@ -234,7 +234,7 @@ export default class LangchainService {
         ".xlsm": (path) => new CSVLoader(path),
         ".xls": (path) => new CSVLoader(path),
         ".pdf": (path) => new PDFLoader(path, {
-          splitPages: false,
+          splitPages: true,
           parsedItemSeparator: ""  
         }),
         ".ppt": (path) => new PPTXLoader(path),
@@ -384,7 +384,7 @@ export default class LangchainService {
       */
       } else {
         await this.setStatusForLoadedDocs(docs);
-        this.emit( { type: 'langchain-run-warning', data: { message: 'nothing indexed' } });
+         this.emit( { type: 'langchain-run-warning', data: { message: 'nothing indexed' } });
         return { status: 'warning', message: 'pending ocr tasks' };
       }
     }).catch((err) => {
