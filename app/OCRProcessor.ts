@@ -11,7 +11,7 @@ export enum EOCRStatus {
   ERROR
 }
 
-const MAX_PROC_TIME = 1000 * 360;
+const MAX_PROC_TIME = 1000 * 720;
 
 export default class OCRProcessor {
   webContents: Electron.WebContents | undefined;
@@ -41,7 +41,7 @@ export default class OCRProcessor {
         username: this.username,
         password: this.password,
       }).then(async () => {
-        console.log('connected:ls:', await this.client.list('/input'));
+        console.log('connected:ls:', await this.client.list('/lrag/input'));
         this.connected = true;
         if (this.firstTime) {
           this.firstTime = false;
@@ -111,7 +111,7 @@ export default class OCRProcessor {
                               this.processError(fe);
                             })
                           } else {
-                            console.log('OCR success file response:', fe.outputfile, value);
+                            // console.log('OCR success file response:', fe.outputfile, value);
                             // console.log('ls:', await this.client.list('/output'));
                           }
                         }).catch((reason: any) => {
@@ -125,7 +125,7 @@ export default class OCRProcessor {
                             this.deleteRemoteFile(fe.errorfile);                      
                             this.processError(fe);
                           } else {
-                            console.log('OCR error file response:', fe.errorfile, value);
+                            // console.log('OCR error file response:', fe.errorfile, value);
                             // console.log('ls:', await this.client.list('/error'));
                           }
                         }).catch((reason: any) => {
@@ -176,9 +176,9 @@ export default class OCRProcessor {
     if (this.filesToProcess.findIndex(f => f.localfile === localfile) === -1) {
       this.filesToProcess.push({
         localfile,
-        remotefile: '/input/' +  remotefile,
-        outputfile: '/output/' +  remotefile,
-        errorfile: '/error/' +  remotefile,
+        remotefile: '/lrag/input/' +  remotefile,
+        outputfile: '/lrag/output/' +  remotefile,
+        errorfile: '/lrag/error/' +  remotefile,
         status: EOCRStatus.REQUESTED,
         timestamp: Date.now(),
       });

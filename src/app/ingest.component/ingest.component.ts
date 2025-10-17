@@ -65,6 +65,7 @@ export class IngestComponent implements OnInit {
   overallStatus: string = 'not running';
   selectedAll: boolean = false;
   isOpened: boolean = false;
+  afterLastFinish: boolean = true;
 
   constructor(
     public systemService: SystemService,
@@ -122,6 +123,10 @@ export class IngestComponent implements OnInit {
       }
     ).then(async (result: any) => {
       console.log('ingest result:', result);
+      this.afterLastFinish = false;
+      setTimeout(() => {
+        this.afterLastFinish = true;
+      }, 10000);
       await this.mediaService.saveIndex();
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(() => 'not running');
@@ -289,13 +294,13 @@ export class IngestComponent implements OnInit {
   }
 
   docsHealthy = (): boolean => {  
-    if (this.mediaService.docStatus) {
+    if (this.mediaService.docStatus && this.afterLastFinish) {
       return this.mediaService.docStatus.reduce(
-        ((acc: boolean, cur: any) => acc && (cur.status === 0 || cur.status === 1)),
+        ((acc: boolean, cur: any) => acc && cur.status < 2),
         true
-      );
+      );      
     } else {
-      return true;
+      return false;
     }
   }
 }

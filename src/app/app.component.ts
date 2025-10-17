@@ -373,7 +373,7 @@ export class AppComponent implements OnInit {
   }
 
   navigateAway = async () => {
-    if (!this.firstRun) {
+    if (this.firstRun) {
       this.firstRun = false;
       this.systemService.ragFiles = await this.mediaService.ls();
       if (this.mediaService.noOfValidFiles() > 0) {
