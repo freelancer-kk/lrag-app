@@ -376,11 +376,13 @@ export class AppComponent implements OnInit {
     if (this.firstRun) {
       this.firstRun = false;
       this.systemService.ragFiles = await this.mediaService.ls();
+      /*
       if (this.mediaService.noOfValidFiles() > 0) {
         this.router.navigate(['insights']);
       } else {
         this.router.navigate(['ingest']);
       }
+      */
     }
   }
 

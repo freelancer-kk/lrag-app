@@ -29,6 +29,7 @@ export enum EVectorStoreType {
 
 export default class LangchainService {
   doc_path: string;
+  root_doc_path: string;
   db_path: string;
   embeddings: OllamaEmbeddings;
   vectorStore: HNSWLib | MemoryVectorStore | undefined;
@@ -42,6 +43,7 @@ export default class LangchainService {
 
   constructor(doc_path: string, db_dir: string, dockerEnv: DockerEnv, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
+    this.root_doc_path = doc_path;
     mkdirSync(path.join(db_dir, 'hnsw'), { recursive: true });
     this.db_path = path.join(db_dir, 'hnsw');    
   
@@ -71,6 +73,7 @@ export default class LangchainService {
       let response: any = {}
       switch (command) {
         case "start": {
+          this.doc_path = path.join(this.root_doc_path, params.collection);
           response = await this.run(params);          
         }
         break;

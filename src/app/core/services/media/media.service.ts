@@ -53,7 +53,8 @@ export class MediaService {
 
   startUpload = (file: File): Promise<any> => {
     return this.systemService.lragfiles('start', {
-      name: file.name      
+      collection: this.systemService.collection,
+      name: file.name   
     }).then((value: any) => {
       console.log(value);
     })
@@ -61,6 +62,7 @@ export class MediaService {
 
   completedUpload = (file: File): Promise<any> => {
     return this.systemService.lragfiles('end', {
+      collection: this.systemService.collection,
       name: file.name
     }).then((value: any) => {
       console.log(value);
@@ -69,6 +71,7 @@ export class MediaService {
 
   uploadChunk = (file: File, chunk: Buffer): Promise<any> => {
     return this.systemService.lragfiles('chunk', {
+      collection: this.systemService.collection,
       name: file.name,
       chunk: Buffer.from(chunk)
     }).then((value: any) => {
@@ -93,7 +96,9 @@ export class MediaService {
     }
     if (this.files.length === 0 || force) {
       this.docStatus = [];
-      return this.systemService.lragfiles('ls', {}).then(async (names: string[]) => {
+      return this.systemService.lragfiles('ls', {
+        collection: this.systemService.collection
+      }).then(async (names: string[]) => {
         for await (const name of names) {          
           const response: boolean = await this.systemService.commandIngest(
             'indexed', 

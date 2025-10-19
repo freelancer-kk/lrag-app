@@ -25,7 +25,7 @@ export default class LRagFiles {
   register = () => {
       ipcMain.on('lragfiles', async (event: any, arg: any) => {
         const { callbackId, command, params }= arg;
-        const fullPath: string = path.join(this.docPath, params.name ? params.name : '');
+        const fullPath: string = path.join(this.docPath, params.collection ? params.collection : '', params.name ? params.name : '');
         let response: any = {}
         switch (command) {
           case "start": {

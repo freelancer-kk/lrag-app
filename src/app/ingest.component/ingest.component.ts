@@ -112,7 +112,7 @@ export class IngestComponent implements OnInit {
 
     this.systemService.commandIngest(
       'start',
-      {
+      {        
         ...ingestParams, 
         ...{
           separator: this.systemService.separator,
@@ -248,7 +248,7 @@ export class IngestComponent implements OnInit {
     console.log('fileRemove:', event);
     if (this.systemService.selectedDocuments.value) {
       const docs: string[] = (this.systemService.selectedDocuments.value as unknown) as string[];
-      const deleteStr: string = docs.join(' ');
+      const deleteStr: string = docs.map(doc => this.basename(doc)).join(' ');
       console.log('fileRemove:', deleteStr)    
       const dialogRef = this.dialog.open(
         AlertComponent, {

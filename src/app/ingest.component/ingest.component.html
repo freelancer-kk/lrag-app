@@ -93,20 +93,20 @@
     </mat-expansion-panel>        
   </mat-accordion>  
   <div class="onerow">
-  <mat-form-field class="full-width">
-    <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
-    <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
-      @for (entry of systemService.ragFiles; track $index) {
-        <mat-option [value]="entry.name">{{ basename(entry.name) }}</mat-option>
-      }
-    </mat-select>    
-  </mat-form-field>
-  @if (!this.isOpened && systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
-    <button matSuffix matIconButton aria-label="Clear" (click)="fileRemove($event)">
-      <mat-icon>delete</mat-icon>
-    </button>            
-  }  
-</div>
+    <mat-form-field class="full-width">
+      <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
+      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
+        @for (entry of systemService.ragFiles; track $index) {
+          <mat-option [value]="entry.name">{{ basename(entry.name) }}</mat-option>
+        }
+      </mat-select>    
+    </mat-form-field>
+    @if (!this.isOpened && systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
+      <button matSuffix matIconButton aria-label="Clear" (click)="fileRemove($event)">
+        <mat-icon>delete</mat-icon>
+      </button>            
+    }  
+  </div>
 
   <div class="vertscroll">
   <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">
