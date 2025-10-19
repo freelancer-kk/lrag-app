@@ -119,7 +119,13 @@
         "USE_SEMANTIC": "Semantic Chunker",
         "USE_SEMANTIC_TIP": "Optionally activate intelligent chunking to improve results. More cpu intensive, can be much slower",
         "USE_LOCAL_VECTOR": "Local Ingestion",
-        "USE_LOCAL_VECTOR_TIP": "Do not use any external services for ingesting your documents. You can disable your internet and work with your documents on your PC. There will be limitations on certain features"
+        "USE_LOCAL_VECTOR_TIP": "Do not use any external services for ingesting your documents. You can disable your internet and work with your documents on your PC. There will be limitations on certain features",
+        "COLLECTIONS": "Collections",
+        "COLLECTIONS_TIP": "Group documents into collections for analysis. You cannot mix different document domains in the same collection. This will lead to incorrect insight analysis. For example property related docs in a collection. The fewer docs in a collection the better the analysis",
+        "COLLECTION_NAME": "New Collection Name",
+        "COLLECTION_NAME_TIP": "Add a new collection by giving it a name",
+        "COLLECTION_NAME_ERROR": "Collection name too short, min 8 chars",
+        "CREATE_ARE_YOU_SURE": "Create collection"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",

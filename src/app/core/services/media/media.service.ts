@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SystemService } from '../system/system.service';
+import path from 'path';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +11,15 @@ export class MediaService {
   docStatus: any[] | undefined = undefined;
   files: string[] = [];
   loadedIndex: boolean = false;
+  rootPath: string = '';
 
   constructor(
     private systemService: SystemService
-  ) {}
+  ) {
+    this.systemService.lragfiles('rootpath', {}).then((value: string) => {
+      this.rootPath = value;
+    });
+  }
 
   getFileSize = (fileSize: number): number => {
     if (fileSize > 0) {
@@ -99,6 +105,7 @@ export class MediaService {
       return this.systemService.lragfiles('ls', {
         collection: this.systemService.collection
       }).then(async (names: string[]) => {
+        console.log('getFiles:names:', names);
         for await (const name of names) {          
           const response: boolean = await this.systemService.commandIngest(
             'indexed', 
@@ -129,6 +136,10 @@ export class MediaService {
     }
   }
 
+  basename = (fullpath: string): string => {    
+    return path.basename(fullpath.replace(/\\/g,'/'));
+  }
+
   loadIndex = async () => {
     const response: any = await this.systemService.commandIngest(
       'load', 
@@ -149,6 +160,25 @@ export class MediaService {
       }
     );
     console.log('saveIndex:', response);
+  }
+
+  getCollections = (): Promise<any[]> => {
+    return this.systemService.lragfiles('ls', {}).then((paths: string[]) => {
+      if (paths) {
+        return paths.map((value: string) => ({ 
+          name: this.basename(value),
+          value
+        }))
+      } else {
+        return [];
+      }
+    });
+  }
+
+  createCollection = (collection: string): Promise<void> => {
+    return this.systemService.lragfiles('mkdir', {
+      collection
+    });
   }
 
   ls = (force: boolean = false) : Promise<any[]> => {    

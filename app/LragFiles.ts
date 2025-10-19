@@ -81,6 +81,19 @@ export default class LRagFiles {
             response = this.ls(fullPath).map(f => path.join(fullPath, f));
           }
           break;
+          case "rootpath": {
+            response = this.docPath;
+          }
+          break;
+          case "mkdir": {
+            console.log('LRagFiles:', callbackId, command);
+            try {
+              response = fs.mkdirSync(fullPath);
+            } catch (e) {
+              console.error(e);
+            }
+          }
+          break;
           case "rm": {
             console.log('LRagFiles:', callbackId, command);
             try {

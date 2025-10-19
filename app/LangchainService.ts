@@ -111,7 +111,7 @@ export default class LangchainService {
     })                
   }
 
-  isDocumentIndexed = async (vectorStoreType: EVectorStoreType, docSource: string): Promise<boolean | undefined> => {
+  isDocumentIndexed = async (vectorStoreType: EVectorStoreType, docSource: string): Promise<boolean> => {
     if (vectorStoreType !== EVectorStoreType.Memory && this.vectorStore) {
       try {
         const similaritySearchResults: Document[] = await this.vectorStore.similaritySearch(
@@ -125,6 +125,7 @@ export default class LangchainService {
         return false;
       }
     }
+    return false;
   }
 
   loadVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean | undefined> => {

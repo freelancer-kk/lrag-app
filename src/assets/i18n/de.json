@@ -119,7 +119,13 @@
       "USE_SEMANTIC": "Semantischer Chunker",
       "USE_SEMANTIC_TIP": "Aktivieren Sie optional intelligentes Chunking, um die Ergebnisse zu verbessern. CPU-intensiver, langsamer",
       "USE_LOCAL": "Lokale Einnahme",
-      "USE_LOCAL_TIP": "Nutzen Sie keine externen Dienste für die Aufnahme Ihrer Dokumente. Sie können Ihr Internet deaktivieren und mit Ihren Dokumenten auf Ihrem PC arbeiten. Bei bestimmten Funktionen wird es Einschränkungen geben"
+      "USE_LOCAL_TIP": "Nutzen Sie keine externen Dienste für die Aufnahme Ihrer Dokumente. Sie können Ihr Internet deaktivieren und mit Ihren Dokumenten auf Ihrem PC arbeiten. Bei bestimmten Funktionen wird es Einschränkungen geben",
+      "COLLECTIONS": "Sammlungen",
+      "COLLECTIONS_TIP": "Gruppieren Sie Dokumente zur Analyse in Sammlungen. Sie können verschiedene Dokumentdomänen nicht in derselben Sammlung mischen. Dies führt zu einer falschen Insight-Analyse. Zum Beispiel immobilienbezogene Dokumente in einer Sammlung. Je weniger Dokumente in einer Sammlung vorhanden sind, desto besser ist die Analyse",
+      "COLLECTION_NAME": "Neuer Sammlungsname",
+      "COLLECTION_NAME_TIP": "Fügen Sie eine neue Sammlung hinzu, indem Sie ihr einen Namen geben",
+      "COLLECTION_NAME_ERROR": "Sammlungsname zu kurz, mindestens 8 Zeichen",
+      "CREATE_ARE_YOU_SURE": "Sammlung erstellen"
     },
     "INSIGHT": {
       "TITLE": "AI Einblicke",

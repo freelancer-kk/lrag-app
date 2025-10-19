@@ -56,7 +56,10 @@ export class SystemService {
   separator: string = ';';
   useSemantic: boolean = false;
   localVector: boolean = true;
-  collection: string = "general";
+  collection: string = 'general';
+  collections: any[] = [];
+  selectedCollections = new FormControl(null);
+
   
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
@@ -87,7 +90,8 @@ export class SystemService {
       chunkSize: this.chunkSize,
       overlap: this.overlap,
       useSemantic: this.useSemantic,
-      localVector: this.localVector
+      localVector: this.localVector,
+      collection: this.collection
     }))
   }
 

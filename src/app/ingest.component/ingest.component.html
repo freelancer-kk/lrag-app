@@ -93,6 +93,31 @@
     </mat-expansion-panel>        
   </mat-accordion>  
   <div class="onerow">
+    <mat-form-field>
+      <mat-label>{{ 'PAGES.INGEST.COLLECTION_NAME' | translate }}</mat-label>
+      <input matInput specialIsAlphaNumeric [disabled]="systemService.overallStatus() !== 'running: healthy' || this.systemService.ingestStatus() !== 'not running'" matInput type="text" [(ngModel)]="collection" [maxLength]="80" [minlength]="8" (blur)="newCollection($event)">
+      @if (this.collection.length < 8) {
+        <mat-error>{{ 'PAGES.INGEST.COLLECTION_NAME_ERROR' | translate}}</mat-error>
+      }
+    </mat-form-field>
+    <span class="spacer"></span>
+    &nbsp;<mat-form-field class="full-width">
+      <mat-label [matTooltip]="'PAGES.INGEST.COLLECTIONS_TIP' | translate">{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
+      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
+        @for (entry of systemService.collections; track $index) {
+          <mat-option [value]="entry.value">
+            {{ entry.name }}
+          </mat-option>
+        }
+      </mat-select>    
+    </mat-form-field>    
+    @if (!this.isOpened && systemService.selectedCollections.value && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
+      <button matSuffix matIconButton aria-label="Clear" (click)="collectionRemove($event)">
+        <mat-icon>delete</mat-icon>
+      </button>            
+    }  
+  </div>
+  <div class="onerow">
     <mat-form-field class="full-width">
       <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
       <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">

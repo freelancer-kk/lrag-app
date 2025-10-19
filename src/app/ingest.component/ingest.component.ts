@@ -24,6 +24,7 @@ import { Router, RouterLink } from '@angular/router';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { SpecialCharacterDirective } from '../directives/specialCharacterDirective';
 
 import path from 'path';
 
@@ -49,7 +50,8 @@ import path from 'path';
     ReactiveFormsModule,
     MatSliderModule,
     MatExpansionModule,
-    MatSlideToggle
+    MatSlideToggle,
+    SpecialCharacterDirective
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
@@ -66,6 +68,7 @@ export class IngestComponent implements OnInit {
   selectedAll: boolean = false;
   isOpened: boolean = false;
   afterLastFinish: boolean = true;
+  collection: string = '';
 
   constructor(
     public systemService: SystemService,
@@ -81,10 +84,15 @@ export class IngestComponent implements OnInit {
   async ngOnInit() {
     this.breakpoint = Math.floor(window.innerWidth / 300);
     console.log('breakpoint:', this.breakpoint);
-    this.systemService.ragFiles = await this.mediaService.ls();    
     // console.log('FILES', this.ragFiles);
     this.systemService.MAX_FILES = Number.parseInt(await this.systemService.get('PAGES.INGEST.MAX_DOCS'));
     // console.log('MAX:', this.systemService.MAX_FILES)
+    await this.mediaService.createCollection(this.systemService.collection);
+    this.systemService.collections = await this.mediaService.getCollections();
+    const selectedCollection: any = this.systemService.collections.find(f => f.name === this.systemService.collection).value
+    console.log('selected:', selectedCollection);
+    this.systemService.selectedCollections.setValue(selectedCollection);
+    this.systemService.ragFiles = await this.mediaService.ls();
   }
 
   resetDefaults = (ev: any) => {
@@ -302,5 +310,44 @@ export class IngestComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  newCollection = async (ev: any) => {
+    if (this.collection.length > 7) {
+      const dialogRef = this.dialog.open(
+        AlertComponent, {
+          data: {
+            type: 1,
+            params: {
+              message: await this.systemService.get('PAGES.INGEST.CREATE_ARE_YOU_SURE') + ' ' + this.collection
+            }
+          }
+        });
+      dialogRef.afterClosed().subscribe(async (result) => {
+        console.log(`Dialog result: ${result}`);
+        if (result === true) {
+          await this.mediaService.createCollection(this.collection);
+          this.systemService.collections = await this.mediaService.getCollections();
+          const selectedCollection = this.systemService.collections.find(f => f.name = this.collection).value;
+          console.log('selectedCollection:', selectedCollection);
+          this.systemService.selectedCollections.setValue(selectedCollection);
+          this.systemService.collection = this.collection;          
+          this.systemService.ragFiles = await this.mediaService.ls();
+        }
+        this.collection = '';
+      });    
+    }    
+  }
+
+  changeCollection = async (ev: any) => {
+    this.systemService.collection = this.systemService.selectedCollections.value ? this.basename(this.systemService.selectedCollections.value) : 'general';
+    console.log('change to collection:', this.systemService.collection)
+    await this.systemService.saveChunkSettings();
+    this.mediaService.loadedIndex = false;
+    this.systemService.ragFiles = await this.mediaService.ls(true);    
+  }
+
+  collectionRemove = async (ev: any) => {
+    console.log('remove collection:', this.systemService.selectedCollections.value)
   }
 }
