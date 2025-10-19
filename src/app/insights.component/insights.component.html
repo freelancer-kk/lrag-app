@@ -68,7 +68,19 @@
       </h1>    
     </mat-toolbar>
   } @else {
-    @if (systemService.overallStatus() === 'running: healthy') {      
+    @if (systemService.overallStatus() === 'running: healthy') {
+      <div class="onerow">
+      <mat-form-field class="full-width">
+          <mat-label>{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
+          <mat-select [disabled]="systemService.insightStatus() !== 'thinking' || this.systemService.overallStatus() !== 'running: healthy'" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
+            @for (entry of systemService.collections; track $index) {
+              <mat-option [value]="entry.value">
+                {{ entry.name }}
+              </mat-option>
+            }
+          </mat-select>    
+        </mat-form-field>          
+      </div>
       <mat-form-field class="full-width">
         <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
         <textarea [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="question">{{ question }}</textarea>

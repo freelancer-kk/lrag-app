@@ -16,11 +16,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BridgeService } from '../core/services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-insights.component',
@@ -41,6 +42,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
     FormsModule,
     MatSliderModule,
     MatExpansionModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'
@@ -211,5 +215,13 @@ export class InsightsComponent implements OnInit {
         // Remove ollama and restart          
       }
     });
+  }
+
+  changeCollection = async (ev: any) => {
+    this.systemService.collection = this.systemService.selectedCollections.value ? this.systemService.basename(this.systemService.selectedCollections.value) : 'general';
+    console.log('change to collection:', this.systemService.collection)
+    await this.systemService.saveChunkSettings();
+    this.mediaService.loadedIndex = false;
+    this.systemService.ragFiles = await this.mediaService.ls(true);    
   }
 }

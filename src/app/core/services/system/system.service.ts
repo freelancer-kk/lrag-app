@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { BridgeService } from '../bridge/bridge.service';
 import { TranslateService } from '@ngx-translate/core';
 import {FormControl} from '@angular/forms';
+import path from 'path';
 
 export enum EWho {
   User = 0,
@@ -198,6 +199,10 @@ export class SystemService {
         resolve(data);        
       });
     })
+  }
+
+  basename = (fullpath: string): string => {    
+    return path.basename(fullpath.replace(/\\/g,'/'));
   }
 
   setEnvValue = (key: string, value: string): Promise<string> => {

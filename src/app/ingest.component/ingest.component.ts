@@ -26,8 +26,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SpecialCharacterDirective } from '../directives/specialCharacterDirective';
 
-import path from 'path';
-
 @Component({
   selector: 'app-ingest.component',
   imports: [
@@ -256,7 +254,7 @@ export class IngestComponent implements OnInit {
     console.log('fileRemove:', event);
     if (this.systemService.selectedDocuments.value) {
       const docs: string[] = (this.systemService.selectedDocuments.value as unknown) as string[];
-      const deleteStr: string = docs.map(doc => this.basename(doc)).join(' ');
+      const deleteStr: string = docs.map(doc => this.systemService.basename(doc)).join(' ');
       console.log('fileRemove:', deleteStr)    
       const dialogRef = this.dialog.open(
         AlertComponent, {
@@ -283,10 +281,6 @@ export class IngestComponent implements OnInit {
         this.systemService.selectedDocuments.setValue('');
       });    
     }
-  }
-
-  basename = (fullpath: string): string => {    
-    return path.basename(fullpath.replace(/\\/g,'/'));
   }
 
   download = async (event: any, index: number) => {}
@@ -340,7 +334,7 @@ export class IngestComponent implements OnInit {
   }
 
   changeCollection = async (ev: any) => {
-    this.systemService.collection = this.systemService.selectedCollections.value ? this.basename(this.systemService.selectedCollections.value) : 'general';
+    this.systemService.collection = this.systemService.selectedCollections.value ? this.systemService.basename(this.systemService.selectedCollections.value) : 'general';
     console.log('change to collection:', this.systemService.collection)
     await this.systemService.saveChunkSettings();
     this.mediaService.loadedIndex = false;

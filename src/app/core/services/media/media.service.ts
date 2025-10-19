@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { SystemService } from '../system/system.service';
-import path from 'path';
 
 @Injectable({
   providedIn: 'root'
@@ -137,7 +136,7 @@ export class MediaService {
   }
 
   basename = (fullpath: string): string => {    
-    return path.basename(fullpath.replace(/\\/g,'/'));
+    return this.systemService.basename(fullpath.replace(/\\/g,'/'));
   }
 
   loadIndex = async () => {
