@@ -77,7 +77,7 @@ export default class LRagFiles {
           }
           break;
           case "ls": {
-            console.log('LRagFiles:', callbackId, command);
+            console.log('LRagFiles:', callbackId, command, fullPath);
             response = this.ls(fullPath).map(f => path.join(fullPath, f));
           }
           break;
@@ -86,7 +86,7 @@ export default class LRagFiles {
           }
           break;
           case "mkdir": {
-            console.log('LRagFiles:', callbackId, command);
+            console.log('LRagFiles:', callbackId, command, fullPath);
             try {
               response = fs.mkdirSync(fullPath);
             } catch (e) {
@@ -95,7 +95,7 @@ export default class LRagFiles {
           }
           break;
           case "rm": {
-            console.log('LRagFiles:', callbackId, command);
+            console.log('LRagFiles:', callbackId, command, params.name);
             try {
               fs.unlinkSync(params.name);
               response = {

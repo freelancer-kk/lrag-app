@@ -81,7 +81,7 @@ const calcAssetsFolderPath = () => {
   }
 }
 
-function createWindow(): BrowserWindow {
+async function createWindow(): Promise<BrowserWindow> {
 
   const size = screen.getPrimaryDisplay().workAreaSize;
 
@@ -114,8 +114,11 @@ function createWindow(): BrowserWindow {
       const reloaderFn = (reloader as any).default || reloader;
       reloaderFn(module);
     });
-    win.loadURL('http://localhost:4200');    
     dockerEnv = new DockerEnv(configPath, assetsFolderPath, userHomePath, userDataPath, userTempPath, separator, setDocPathsCB);
+    await dockerEnv.init();
+    dockerEnv.register();
+
+    win.loadURL('http://localhost:4200');     
   } else {
     
     // Path when running electron executable
@@ -127,6 +130,8 @@ function createWindow(): BrowserWindow {
       
     }
     dockerEnv = new DockerEnv(configPath, assetsFolderPath, userHomePath, userDataPath, userTempPath, separator, setDocPathsCB);
+    await dockerEnv.init();
+    dockerEnv.register();
 
     const fullPath = path.join(__dirname, pathIndex);
     const url = `file://${path.resolve(fullPath).replace(/\\/g, '/')}`;
@@ -172,8 +177,7 @@ try {
       }
       
       tray.setToolTip('LRag - Local Document AI Insights!');    
-      createWindow();      
-      dockerEnv.register();        
+      createWindow();            
     }, 400)    
   });  
 

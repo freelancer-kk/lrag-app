@@ -3,6 +3,15 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { KeyValueFile, parseFile } from 'key-value-file'
 
+const mergeKeys: string[] = [
+  "RERANK_SERVICE",
+  "REMOTE_LLM_SERVICE",
+  "OCR_SFTP_HOST",
+  "OCR_SFTP_PORT",
+  "OCR_USER",
+  "OCR_PASSWD"
+];
+
 export default class DockerEnv {
   appConfigPath: string;
   assetsFolderPath: string;
@@ -31,13 +40,17 @@ export default class DockerEnv {
     this.sourceEnvPath = path.join(appConfigPath, '.env');
     // Read the .env and set dsp, ellm, llm
     console.log('DockerEnv:constructor:read:', this.sourceEnvPath)
-    parseFile(this.sourceEnvPath).then((kv: KeyValueFile) => {
+  }
+
+  init = async () => {
+    await parseFile(this.sourceEnvPath).then(async (kv: KeyValueFile) => {
       const dp: string | undefined = kv.get('ROOT_DATA_PATH')?.toString();
       this.dsp = kv.get('DOC_SOURCE_PATH')?.toString();
-      this.docPathsCB(this.dsp, dp);
+      await this.docPathsCB(this.dsp, dp);
       this.ellm = kv.get('EMBEDDINGS_MODEL_NAME')?.toString();
       this.llm = kv.get('LLM_MODEL_NAME')?.toString();
       this.kvFile = kv;
+      await this.mergeEnvFile();
     }).catch(async (reason: any) => {
       this.dsp = path.join(this.userHomePath, 'lrag').replace(new RegExp('\\\\','g'), '\\\\');
       this.ellm = "embeddinggemma:300m";
@@ -46,7 +59,7 @@ export default class DockerEnv {
       this.kvFile = await parseFile(this.sourceEnvPath);
       const dp: string | undefined = this.kvFile.get('ROOT_DATA_PATH')?.toString();
       this.dsp = this.kvFile.get('DOC_SOURCE_PATH')?.toString();      
-      this.docPathsCB(this.dsp, dp);
+      await this.docPathsCB(this.dsp, dp);
     });
   }
 
@@ -106,7 +119,7 @@ export default class DockerEnv {
   getKeyValue = (key: string): string | undefined => {
     return this.kvFile ? this.kvFile.get(key)?.toString() : undefined;
   }
-
+  
   generateEnvFile = (): Promise<string> => {
     let envTemplate: string = fs.readFileSync(path.join(this.assetsFolderPath, 'template.env'), 'utf8');
     envTemplate = envTemplate.replace(new RegExp('#DOC_ROOT_PATH#','g'), this.dsp ? this.dsp : '');
@@ -119,6 +132,21 @@ export default class DockerEnv {
       this.kvFile = kvFile;
       return envTemplate;  
     })    
+  }
+
+  mergeEnvFile = async (): Promise<void> => {
+    // Take entries in the template that don't exist in the main env and write the main env back
+    const envTemplateKv: KeyValueFile = await parseFile(path.join(this.assetsFolderPath, 'template.env'));
+    for await (const key of mergeKeys) {
+      const value: string | undefined = await envTemplateKv.get(key)
+      if (value) {
+        if (!this.kvFile?.get(key)) {
+          console.log('mergeEnvFile:', key, value);
+          this.kvFile?.set(key, value);
+        }
+      }
+    }    
+    await this.kvFile?.writeFile();
   }
 
   writeEnvFile = (data: string): Promise<KeyValueFile> => {

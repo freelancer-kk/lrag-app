@@ -163,6 +163,7 @@ export class MediaService {
 
   getCollections = (): Promise<any[]> => {
     return this.systemService.lragfiles('ls', {}).then((paths: string[]) => {
+      console.log('getCollections:', paths);
       if (paths) {
         return paths.map((value: string) => ({ 
           name: this.basename(value),
