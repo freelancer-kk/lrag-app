@@ -59,18 +59,10 @@
       </button>
     </div>
   </mat-expansion-panel>        
-</mat-accordion>  
-
-  @if (systemService.docsEmpty) {
-    <mat-toolbar>
-      <h1 class="title">
-        {{ 'APP.DOCS_EMPTY' | translate }}
-      </h1>    
-    </mat-toolbar>
-  } @else {
-    @if (systemService.overallStatus() === 'running: healthy') {
+</mat-accordion>
+  @if (systemService.overallStatus() === 'running: healthy') {
       <div class="onerow">
-      <mat-form-field class="full-width">
+        <mat-form-field class="full-width">
           <mat-label>{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
           <mat-select [disabled]="systemService.insightStatus() !== 'thinking' || this.systemService.overallStatus() !== 'running: healthy'" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
             @for (entry of systemService.collections; track $index) {
@@ -81,6 +73,16 @@
           </mat-select>    
         </mat-form-field>          
       </div>
+    }
+
+  @if (systemService.ragFiles.length === 0) {
+    <mat-toolbar>
+      <h1 class="title">
+        {{ 'APP.DOCS_EMPTY' | translate }}
+      </h1>    
+    </mat-toolbar>
+  } @else {
+    @if (systemService.overallStatus() === 'running: healthy') {
       <mat-form-field class="full-width">
         <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
         <textarea [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="question">{{ question }}</textarea>

@@ -86,9 +86,16 @@ export class InsightsComponent implements OnInit {
     })
   }  
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.check();
     // this.askQuestion('How are you today?');
+
+    await this.mediaService.createCollection(this.systemService.collection);
+    this.systemService.collections = await this.mediaService.getCollections();
+    const selectedCollection: any = this.systemService.collections.find(f => f.name === this.systemService.collection).value
+    console.log('selected:', selectedCollection);
+    this.systemService.selectedCollections.setValue(selectedCollection);
+    this.systemService.ragFiles = await this.mediaService.ls();
   }
 
   check = () => {
