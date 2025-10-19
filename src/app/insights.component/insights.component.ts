@@ -227,6 +227,7 @@ export class InsightsComponent implements OnInit {
   changeCollection = async (ev: any) => {
     this.systemService.collection = this.systemService.selectedCollections.value ? this.systemService.basename(this.systemService.selectedCollections.value) : 'general';
     console.log('change to collection:', this.systemService.collection)
+    this.clearHistory();
     await this.systemService.saveChunkSettings();
     this.mediaService.loadedIndex = false;
     this.systemService.ragFiles = await this.mediaService.ls(true);    
