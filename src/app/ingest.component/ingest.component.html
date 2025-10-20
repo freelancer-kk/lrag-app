@@ -139,13 +139,10 @@
       <mat-grid-tile class="gridtile" colspan="1" rowspan="1">
         <mat-list-item>
           @if (entry.status === 0) {
-            <mat-icon class="success">checkmark</mat-icon>
+            <mat-icon matListItemIcon class="success">checkmark</mat-icon>
           } @else if (entry.status === 1) {
-            <mat-icon class="danger">close</mat-icon>
+            <mat-icon matListItemIcon class="danger">close</mat-icon>
           } @else {
-            <!--
-            <mat-icon matListItemIcon class="warning">quiz</mat-icon>
-            -->
             <mat-spinner diameter="20"></mat-spinner>
           }
           <div matListItemTitle>

@@ -161,6 +161,17 @@ export class MediaService {
     console.log('saveIndex:', response);
   }
 
+  deleteIndex = async () => {
+    const response: any = await this.systemService.commandIngest(
+      'delete', 
+      { 
+        localVector: this.systemService.localVector,
+        collection: this.systemService.collection
+      }
+    );
+    console.log('saveIndex:', response);
+  }
+
   getCollections = (): Promise<any[]> => {
     return this.systemService.lragfiles('ls', {
       dirOnly: true

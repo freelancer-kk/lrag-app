@@ -324,8 +324,8 @@ export class IngestComponent implements OnInit {
         if (result === true) {
           await this.mediaService.createCollection(this.collection);
           this.systemService.collections = await this.mediaService.getCollections();
-          const selectedCollection = this.systemService.collections.find(f => f.name = this.collection).value;
-          console.log('selectedCollection:', selectedCollection);
+          const selectedCollection = this.systemService.collections.find(f => f.name === this.collection).value;
+          console.log('selectedCollection:', this.collection, selectedCollection);
           this.systemService.selectedCollections.setValue(selectedCollection);
           this.systemService.collection = this.collection;          
           this.systemService.ragFiles = await this.mediaService.ls();
@@ -344,6 +344,28 @@ export class IngestComponent implements OnInit {
   }
 
   collectionRemove = async (ev: any) => {
-    console.log('remove collection:', this.systemService.selectedCollections.value)
+    const selectedCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
+    console.log('remove collection:', selectedCollection)
+    const dialogRef = this.dialog.open(
+        AlertComponent, {
+          data: {
+            type: 1,
+            params: {
+              message: await this.systemService.get('PAGES.INGEST.REMOVE_COLLECTION_ARE_YOU_SURE') + ' ' + this.systemService.collection
+            }
+          }
+        });
+      dialogRef.afterClosed().subscribe(async (result) => {
+        console.log(`Dialog result: ${result}`);
+        if (result === true) {      
+          await this.mediaService.deleteIndex();
+          await this.mediaService.remove(selectedCollection);           
+          this.systemService.collections = await this.mediaService.getCollections();
+          this.systemService.collection = "general";
+          const generalCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
+          this.systemService.selectedCollections.setValue(generalCollection);
+          await this.systemService.saveChunkSettings();
+        }
+      });
   }
 }

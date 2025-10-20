@@ -125,7 +125,8 @@
         "COLLECTION_NAME": "New Collection Name",
         "COLLECTION_NAME_TIP": "Add a new collection by giving it a name",
         "COLLECTION_NAME_ERROR": "Collection name too short, min 8 chars",
-        "CREATE_ARE_YOU_SURE": "Create collection"
+        "CREATE_ARE_YOU_SURE": "Create collection",
+        "REMOVE_COLLECTION_ARE_YOU_SURE": "Remove collection"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",

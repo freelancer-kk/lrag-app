@@ -105,7 +105,10 @@ export default class LRagFiles {
           case "rm": {
             console.log('LRagFiles:', callbackId, command, params.name);
             try {
-              fs.unlinkSync(params.name);
+              fs.rmSync(params.name, {
+                recursive: true,
+                force: true,
+              });
               response = {
                 success: true
               }
