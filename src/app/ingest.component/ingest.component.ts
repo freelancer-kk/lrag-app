@@ -331,6 +331,7 @@ export class IngestComponent implements OnInit {
           this.systemService.ragFiles = await this.mediaService.ls();
         }
         this.collection = '';
+        await this.systemService.saveChunkSettings();
       });    
     }    
   }
@@ -364,6 +365,7 @@ export class IngestComponent implements OnInit {
           this.systemService.collection = "general";
           const generalCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
           this.systemService.selectedCollections.setValue(generalCollection);
+          this.systemService.ragFiles = await this.mediaService.ls();
           await this.systemService.saveChunkSettings();
         }
       });
