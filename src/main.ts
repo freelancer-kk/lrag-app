@@ -44,16 +44,20 @@ bootstrapApplication(AppComponent, {
         console.log('managedExternally:', systemService.manageOllamaExternally);
 
         const chunkSettingsStr: string | null = localStorage.getItem('chunk-settings');
+        console.log(chunkSettingsStr);
         systemService.chunkSize = chunkSettingsStr ? JSON.parse(chunkSettingsStr).chunkSize : 512;
         systemService.overlap = chunkSettingsStr ? JSON.parse(chunkSettingsStr).overlap : 48;
         systemService.useSemantic = chunkSettingsStr ? JSON.parse(chunkSettingsStr).useSemantic : false;
+        if (!systemService.useSemantic) {
+          systemService.useSemantic = false;
+        }
         systemService.localVector = chunkSettingsStr ? JSON.parse(chunkSettingsStr).localVector : true;
-        console.log(chunkSettingsStr);
+        if (!systemService.localVector) {
+          systemService.localVector = true;
+        }
         systemService.collection = chunkSettingsStr ? JSON.parse(chunkSettingsStr).collection : 'general';
-        if (chunkSettingsStr) {
-          if (!JSON.parse(chunkSettingsStr).collection) {
-            systemService.collection = "general";
-          }
+        if (!systemService.collection) {
+          systemService.collection = "general";          
         }
 
         const insightSettingsStr: string | null = localStorage.getItem('insight-settings');
