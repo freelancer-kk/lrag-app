@@ -189,7 +189,7 @@ export class MediaService {
         if (this.docStatus) {
           return { 
             name: v,
-            status: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).status : 2,
+            status: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).status : this.systemService.localVector ? 1 : 2,
             text: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).text : ocrRequired
           }
         } else {

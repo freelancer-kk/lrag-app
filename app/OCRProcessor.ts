@@ -31,6 +31,7 @@ export default class OCRProcessor {
     this.port = Number(dockerEnv.getKeyValue('OCR_SFTP_PORT'));
     this.username = String(dockerEnv.getKeyValue('OCR_USER'));
     this.password = String(dockerEnv.getKeyValue('OCR_PASSWD'));
+    console.log('OCRProcessor:', this.host, this.port, this.username);
   }
 
   connect = () => {

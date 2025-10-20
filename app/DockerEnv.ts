@@ -45,12 +45,12 @@ export default class DockerEnv {
   init = async () => {
     await parseFile(this.sourceEnvPath).then(async (kv: KeyValueFile) => {
       const dp: string | undefined = kv.get('ROOT_DATA_PATH')?.toString();
-      this.dsp = kv.get('DOC_SOURCE_PATH')?.toString();
-      await this.docPathsCB(this.dsp, dp);
+      this.dsp = kv.get('DOC_SOURCE_PATH')?.toString();      
       this.ellm = kv.get('EMBEDDINGS_MODEL_NAME')?.toString();
       this.llm = kv.get('LLM_MODEL_NAME')?.toString();
       this.kvFile = kv;
       await this.mergeEnvFile();
+      await this.docPathsCB(this.dsp, dp);
     }).catch(async (reason: any) => {
       this.dsp = path.join(this.userHomePath, 'lrag').replace(new RegExp('\\\\','g'), '\\\\');
       this.ellm = "embeddinggemma:300m";
@@ -134,19 +134,24 @@ export default class DockerEnv {
     })    
   }
 
-  mergeEnvFile = async (): Promise<void> => {
-    // Take entries in the template that don't exist in the main env and write the main env back
-    const envTemplateKv: KeyValueFile = await parseFile(path.join(this.assetsFolderPath, 'template.env'));
-    for await (const key of mergeKeys) {
-      const value: string | undefined = await envTemplateKv.get(key)
-      if (value) {
-        if (!this.kvFile?.get(key)) {
-          console.log('mergeEnvFile:', key, value);
-          this.kvFile?.set(key, value);
+  mergeEnvFile = async (): Promise<boolean> => {
+    return new Promise(async (resolve) => {
+      const envTemplateKv: KeyValueFile = await parseFile(path.join(this.assetsFolderPath, 'template.env'));
+      for await (const key of mergeKeys) {
+        const value: string | undefined = await envTemplateKv.get(key)
+        if (value) {
+          const curVal: string | undefined = this.kvFile?.get(key);
+          if (curVal) {
+            console.log('mergeEnvFile:cur:', key, curVal);          
+          } else {
+            console.log('mergeEnvFile:new:', key, value);
+            this.kvFile?.set(key, value);
+          }
         }
-      }
-    }    
-    await this.kvFile?.writeFile();
+      }    
+      await this.kvFile?.writeFile();
+      resolve(true);
+    })    
   }
 
   writeEnvFile = (data: string): Promise<KeyValueFile> => {
