@@ -11,6 +11,11 @@ export default class LRagFiles {
     if (docPath) {
       this.docPath = docPath;
       fs.mkdirSync(this.docPath, { recursive: true });
+      try {
+        fs.mkdirSync(path.join(this.docPath, 'general'));
+      } catch (ce) {
+        console.error(ce);
+      }
     } else {
       this.docPath = '';
     }
@@ -18,8 +23,11 @@ export default class LRagFiles {
     console.log('LRagFiles:', this.docPath, this.dataPath);
   }
 
-  ls = (path: string): string[] => {
-    return fs.readdirSync(path);
+  ls = (path: string, params: any): string[] => {    
+    const dirents: fs.Dirent[] = fs.readdirSync(path, {
+      withFileTypes: true
+    });
+    return dirents.filter(d => params.dirOnly ? d.isDirectory() : d.isFile()).map(d => d.name);
   }
 
   register = () => {
@@ -78,7 +86,7 @@ export default class LRagFiles {
           break;
           case "ls": {
             console.log('LRagFiles:', callbackId, command, fullPath);
-            response = this.ls(fullPath).map(f => path.join(fullPath, f));
+            response = this.ls(fullPath, params).map(f => path.join(fullPath, f));
           }
           break;
           case "rootpath": {
