@@ -321,7 +321,7 @@ export class IngestComponent implements OnInit {
         });
       dialogRef.afterClosed().subscribe(async (result) => {
         console.log(`Dialog result: ${result}`);
-        if (result === true) {
+        if (result === true && !this.systemService.collections.find(f => f.name === this.collection)) {
           await this.mediaService.createCollection(this.collection);
           this.systemService.collections = await this.mediaService.getCollections();
           const selectedCollection = this.systemService.collections.find(f => f.name === this.collection).value;
@@ -329,6 +329,8 @@ export class IngestComponent implements OnInit {
           this.systemService.selectedCollections.setValue(selectedCollection);
           this.systemService.collection = this.collection;          
           this.systemService.ragFiles = await this.mediaService.ls();
+        } else {
+          console.log('collection already exists!:', this.collection)
         }
         this.collection = '';
         await this.systemService.saveChunkSettings();
