@@ -111,7 +111,7 @@
         }
       </mat-select>    
     </mat-form-field>    
-    @if (!this.isOpened && systemService.selectedCollections.value && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
+    @if (!this.isOpened && systemService.selectedCollections.value && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running' && systemService.collection !== 'general') {
       <button matSuffix matIconButton aria-label="Clear" (click)="collectionRemove($event)">
         <mat-icon>delete</mat-icon>
       </button>            
