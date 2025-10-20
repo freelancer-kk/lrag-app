@@ -67,6 +67,7 @@ export class IngestComponent implements OnInit {
   isOpened: boolean = false;
   afterLastFinish: boolean = true;
   collection: string = '';
+  showErrors: boolean = false;
 
   constructor(
     public systemService: SystemService,
@@ -308,6 +309,7 @@ export class IngestComponent implements OnInit {
 
   newCollection = async (ev: any) => {
     if (this.collection.length > 7) {
+      this.showErrors = false;
       const dialogRef = this.dialog.open(
         AlertComponent, {
           data: {
