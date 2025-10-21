@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import DockerEnv from './DockerEnv';
 import * as fs from 'fs';
+import * as path from 'path';
 import sftp from 'ssh2-sftp-client';
 
 export enum EOCRStatus {
@@ -24,6 +25,8 @@ export default class OCRProcessor {
   filesToProcess: any[] = [];
   jobTimer: any;
   firstTime: boolean = true;
+  docRootPath: string;
+  docOkfile: string;
 
   constructor(dockerEnv: DockerEnv) {
     this.client = new sftp();
@@ -31,6 +34,10 @@ export default class OCRProcessor {
     this.port = Number(dockerEnv.getKeyValue('OCR_SFTP_PORT'));
     this.username = String(dockerEnv.getKeyValue('OCR_USER'));
     this.password = String(dockerEnv.getKeyValue('OCR_PASSWD'));
+    this.docRootPath = String(dockerEnv.getKeyValue('DOC_SOURCE_PATH'));
+    this.docOkfile = path.join(this.docRootPath, 'okfile');
+    fs.writeFileSync(this.docOkfile, 'ok');
+                  
     console.log('OCRProcessor:', this.host, this.port, this.username);
   }
 
@@ -78,10 +85,20 @@ export default class OCRProcessor {
                     }
                   }
                 ).then((value: string) => {
-                  console.log('putRes:', value);
                   fe.status = EOCRStatus.UPLOADED;
                   fe.timestamp = Date.now();
                   this.emit( { type: 'ocr-processor-putted', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, putResponse: value } });
+                  const targetOkFile: string = fe.remotefile + '.ok';
+                  console.log('putRes:writing ok file', targetOkFile);
+                  this.client.put(
+                    this.docOkfile,
+                    targetOkFile,                  
+                    {
+                      writeStreamOptions: {
+                        encoding: null
+                      }
+                    }                  
+                  )
                 }).catch((reason: any) => {
                   console.log('OCR:error:', reason);
                   this.processError(fe);
