@@ -67,6 +67,7 @@
       "TITLE": "Konfiguration",
       "MAIN_TITLE": "Modellkonfiguration",
       "MODEL_SELECT": "Wählen Sie ein Modell",
+      "EMBEDDINGS_MODEL_SELECT": "Wählen Sie eine Einbettung",
       "RUN_MODEL": "Laufen",
       "OLLAMA_STATUS": "Modell",
       "MODEL_STATUS": "Status",

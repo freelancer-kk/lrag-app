@@ -489,12 +489,19 @@ export class AppComponent implements OnInit {
           this.systemService.downloadedLLM = value;          
         })
       }
+      if (this.systemService.embeddings_model === '') {
+        this.systemService.getEnvValue('EMBEDDINGS_MODEL_NAME').then((value: string) => {
+          console.log('environment llm:', value);
+          this.systemService.embeddings_model = value;
+          this.systemService.downloadedLLM = value;          
+        })
+      }
       console.log('pullModelsIfNecessary:getAvailableLLMs()');
       await this.systemService.getAvailableLLMs();
-      if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.embeddings) === -1) {
+      if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.embedding_models[0].value) === -1) {
         this.systemService.modelStatus.update(() => 'downloading');
-        console.log('pull:', this.systemService.embeddings);
-        await this.systemService.commandOllama('pull', { model: this.systemService.embeddings, stream: true});
+        console.log('pull:', this.systemService.embedding_models[0].value);
+        await this.systemService.commandOllama('pull', { model: this.systemService.embedding_models[0].value, stream: true});
       }
       if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.models[0].value) === -1) {
         this.systemService.modelStatus.update(() => 'downloading');

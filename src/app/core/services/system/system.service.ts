@@ -75,7 +75,7 @@ export class SystemService {
   modelsDownloaded: boolean = false;
   
   models: any[] = [
-    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
+    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},    
     {value: 'granite3-dense:2b', viewValue: 'granite3-dense:2b (<2GB)', thinking: true, memory: 2},
     {value: 'nemotron-mini:4b', viewValue: 'nemotron-mini:4b (<3GB)', thinking: true, memory: 3},
     {value: 'llama3-chatqa:8b', viewValue: 'llama3-chatqa:8b (<5GB)', thinking: true, memory: 5},
@@ -83,7 +83,18 @@ export class SystemService {
     {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 8},
     {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9}    
   ];
-  embeddings: string = 'embeddinggemma:300m';
+
+  embedding_models: any[] = [
+    {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, memory: 1},
+    {value: 'nomic-embed-text:v1.5', viewValue: 'nomic-embed-text:v1.5 (<1GB)', thinking: false, memory: 1},
+    {value: 'mxbai-embed-large:335m', viewValue: 'mxbai-embed-large:335m (<1GB)', thinking: false, memory: 1},
+    {value: 'bge-m3:567m', viewValue: 'bge-m3:567m (<1GB)', thinking: false, memory: 1},
+    {value: 'all-minilm:22m', viewValue: 'all-minilm:22m (<1GB)', thinking: false, memory: 1},
+    {value: 'bge-large:335m', viewValue: 'bge-large:335m (<1GB)', thinking: false, memory: 1},
+    {value: 'qwen3-embedding:0.6b', viewValue: 'qwen3-embedding:0.6b (<1GB)', thinking: false, memory: 1}
+  ]
+
+  embeddings_model: string = '';
 
   constructor(
     private bridgeService: BridgeService,
@@ -111,6 +122,13 @@ export class SystemService {
               this.modelsDownloaded = true;
               this.models = await (await fetch(
                 await this.getEnvValue('MODELS_FILE'),
+                {
+                  method: 'GET',          
+                }
+              )).json();
+
+              this.embedding_models = await (await fetch(
+                await this.getEnvValue('EMBEDDED_MODELS_FILE'),
                 {
                   method: 'GET',          
                 }

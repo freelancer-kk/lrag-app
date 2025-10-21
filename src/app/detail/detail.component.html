@@ -13,8 +13,17 @@
     <mat-toolbar-row>
       <mat-form-field>
         <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
-        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="systemService.selectedModel" (selectionChange)="modelChange($event)">
+        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="systemService.selectedModel" (selectionChange)="modelChange($event, 0)">
           @for (entry of systemService.models; track $index) {
+            <mat-option [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      &nbsp;
+      <mat-form-field>
+        <mat-label>{{ 'PAGES.DETAIL.EMBEDDINGS_MODEL_SELECT' | translate }}</mat-label>
+        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="systemService.embeddings_model" (selectionChange)="modelChange($event, 1)">
+          @for (entry of systemService.embedding_models; track $index) {
             <mat-option [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
         </mat-select>
@@ -55,7 +64,8 @@
                 systemService.modelStatus() === 'running' &&
                 !entry.name.startsWith('embedding') &&
                 !entry.name.startsWith('gemma3:1b') &&                
-                entry.name !== systemService.selectedModel
+                entry.name !== systemService.selectedModel &&
+                entry.name !== systemService.embeddings_model
               ) {
                 <button matButton (click)="removeModel($event, $index)">
                   <mat-icon class="danger">cancel</mat-icon>

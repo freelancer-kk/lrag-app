@@ -40,6 +40,7 @@ export default class LangchainService {
   vectorStoreType: EVectorStoreType | undefined;
   ocrProcessor: OCRProcessor;
   uuid: string;
+  baseUrl: string;
 
   constructor(doc_path: string, db_dir: string, dockerEnv: DockerEnv, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
@@ -54,6 +55,7 @@ export default class LangchainService {
         model,
         baseUrl
     });
+    this.baseUrl = baseUrl;
     
     this.semanticChunking = new SemanticChunking(baseUrl, model);
 
@@ -346,6 +348,10 @@ export default class LangchainService {
         hasOCRTasks = await this.OCRDocs(docs, this.doc_path);
       }
       if (!hasOCRTasks) {
+        this.embeddings = new OllamaEmbeddings({
+            model: params.embeddings,
+            baseUrl: this.baseUrl
+        });
         await this.resetVectorStore(params.localVector, params.collection);          
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });
         let chunks: Document[] = [];

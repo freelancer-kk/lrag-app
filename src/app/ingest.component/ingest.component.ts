@@ -126,7 +126,8 @@ export class IngestComponent implements OnInit {
           separator: this.systemService.separator,
           useSemantic: this.systemService.useSemantic,
           localVector: this.systemService.localVector,
-          collection: this.systemService.collection
+          collection: this.systemService.collection,
+          embeddings: this.systemService.embeddings_model
         }
       }
     ).then(async (result: any) => {

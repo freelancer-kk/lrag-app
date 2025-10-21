@@ -1,0 +1,44 @@
+[
+  {
+    "value": "embeddinggemma:300m",
+    "viewValue": "embeddinggemma:300m (<1GB)",
+    "thinking": false,
+    "memory": 1
+  },
+  {
+    "value": "nomic-embed-text:v1.5",
+    "viewValue": "nomic-embed-text:v1.5 (<1GB)",
+    "thinking": false,
+    "memory": 1
+  },
+  {
+    "value": "mxbai-embed-large:335m",
+    "viewValue": "mxbai-embed-large:335m (<1GB)",
+    "thinking": false,
+    "memory": 1
+  },
+  {
+    "value": "bge-m3:567m",
+    "viewValue": "bge-m3:567m (<1GB)",
+    "thinking": false,
+    "memory": 1
+  },
+  {
+    "value": "all-minilm:22m",
+    "viewValue": "all-minilm:22m (<1GB)",
+    "thinking": false,
+    "memory": 1
+  },
+  {
+    "value": "bge-large:335m",
+    "viewValue": "bge-large:335m (<1GB)",
+    "thinking": false,
+    "memory": 1
+  },
+  {
+    "value": "qwen3-embedding:0.6b",
+    "viewValue": "qwen3-embedding:0.6b (<1GB)",
+    "thinking": false,
+    "memory": 1
+  }
+]

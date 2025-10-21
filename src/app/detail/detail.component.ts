@@ -114,37 +114,43 @@ export class DetailComponent implements OnInit {
 
   writeModelToEnv = (): Promise<void> => {
     return this.systemService.setEnvValue('LLM_MODEL_NAME', this.systemService.selectedModel).then((value: any) => {
-      return this.systemService.writeEnv().then((res: any) => {})
+      return this.systemService.setEnvValue('EMBEDDINGS_MODEL_NAME', this.systemService.embeddings_model).then((value: any) => {
+        return this.systemService.writeEnv().then((res: any) => {})
+      })
     }) 
   }
 
-  modelChange = async (event: any) => {
+  modelChange = async (event: any, mtype: number) => {
     // Check if model has been already downloaded
-    const fIdx: number = this.systemService.availableModels.findIndex(f => f.name === this.systemService.selectedModel);
+    const fIdx: number = this.systemService.availableModels.findIndex(f => f.name === (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model));
     if (fIdx === -1) {
       const dialogRef = this.dialog.open(
         AlertComponent, {
           data: {
             type: 0,
             params: {
-              model: this.systemService.selectedModel
+              model: (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model)
             }
           }
         });
       dialogRef.afterClosed().subscribe(async (result) => {
         console.log(`Dialog result: ${result}`);
         if (result === true) {
-          await this.systemService.commandOllama('pull', { model: this.systemService.selectedModel, stream: true });
+          await this.systemService.commandOllama('pull', { model: (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model), stream: true });
           await this.writeModelToEnv();
-          this.systemService.downloadedLLM = this.systemService.selectedModel;
+          this.systemService.downloadedLLM = (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model);
         } else {
           console.log('reverting:', this.systemService.downloadedLLM);
-          this.systemService.selectedModel = this.systemService.downloadedLLM;
+          if (mtype === 0) {
+            this.systemService.selectedModel = this.systemService.downloadedLLM;
+          } else {
+            this.systemService.embeddings_model = this.systemService.downloadedLLM;
+          }
         }
       });
     } else {
       await this.writeModelToEnv();      
-      this.systemService.downloadedLLM = this.systemService.selectedModel;      
+      this.systemService.downloadedLLM = (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model);      
     }    
   }    
 }
