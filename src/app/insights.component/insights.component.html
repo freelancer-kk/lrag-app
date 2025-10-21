@@ -34,7 +34,7 @@
         <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
       </mat-slider>
       <span class="spacer"></span>
-      <button [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.k = 4">
+      <button [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.k = 8">
         {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
       </button>
     </div>
