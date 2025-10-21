@@ -5,7 +5,8 @@
     <a matButton="outlined" class="small" [matTooltip]="'APP.GET_OLLAMA_TIP' | translate" (click)="systemService.openExternal(systemService.ollama_get_link)">
       {{ 'APP.GET_OLLAMA' | translate }}
     </a>
-  }  
+  }
+  <span class="small">{{ systemService.status }}</span>
   <span class="spacer"></span>
   @if (!(
         (systemService.overallStatus() === 'running: healthy') ||

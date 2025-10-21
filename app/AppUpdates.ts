@@ -19,44 +19,48 @@ export default class AppUpdates {
   }
 
   check = async () => {
-    const updateData: any = await (await fetch(
-      this.updateJsonFileURL,
-      {
-        method: 'GET',          
-      }
-    )).json();
+    try {
+      const updateData: any = await (await fetch(
+        this.updateJsonFileURL,
+        {
+          method: 'GET',          
+        }
+      )).json();
 
-    const entries: any[] = updateData[process.platform];
-    const currentVersion: string = app.getVersion().replace(/\./g,'');
-    let upgrade: any | undefined = undefined;
-    for await (const entry of entries) {
-      const version = entry.version.replace(/\./g,'');
-      console.log('comparing:', version, '-', currentVersion);
-      if (Number(version) > Number(currentVersion)) {
-        upgrade = {
-          version: entry.version,
-          comment: entry.comment,
-          url: entry.url
+      const entries: any[] = updateData[process.platform];
+      const currentVersion: string = app.getVersion().replace(/\./g,'');
+      let upgrade: any | undefined = undefined;
+      for await (const entry of entries) {
+        const version = entry.version.replace(/\./g,'');
+        console.log('comparing:', version, '-', currentVersion);
+        if (Number(version) > Number(currentVersion)) {
+          upgrade = {
+            version: entry.version,
+            comment: entry.comment,
+            url: entry.url
+          }
         }
       }
-    }
-    if (upgrade) {
-      if (!this.askForDownloads.includes(upgrade.version)) {
-        this.askForDownloads.push(upgrade.version);
-        console.log('found new version:', upgrade.version);
-        this.askUpgrade(upgrade.version, upgrade.comment, upgrade.url);
+      if (upgrade) {
+        if (!this.askForDownloads.includes(upgrade.version)) {
+          this.askForDownloads.push(upgrade.version);
+          console.log('found new version:', upgrade.version);
+          this.askUpgrade(upgrade.version, upgrade.comment, upgrade.url);
+        }
       }
+    } catch (e) {
+      console.error(e);      
     }
   }
         
   askUpgrade = (version: string, comment: string, url: string) => {
     const dialogOpts: any = {
       type: 'info',
-      buttons: ['Download Now', 'Later'],
+      buttons: ['Quit & Download Now', 'Later'],
       title: 'LRag Application',
       message: comment,
       detail:
-        'A new version ' + version + ' is available for download. Would you like to download now?'
+        'A new version ' + version + ' is available for download. Would you like to QUIT the application and download now?'
     }
     
     dialog.showMessageBox(dialogOpts).then(async (returnValue) => {

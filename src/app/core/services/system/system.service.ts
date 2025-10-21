@@ -3,6 +3,8 @@ import { BridgeService } from '../bridge/bridge.service';
 import { TranslateService } from '@ngx-translate/core';
 import {FormControl} from '@angular/forms';
 import path from 'path';
+import { ConnectionService, ConnectionServiceOptions, ConnectionState } from 'ng-connection-service';
+import { Subscription, tap } from 'rxjs';
 
 export enum EWho {
   User = 0,
@@ -13,6 +15,12 @@ export interface IChat {
   content: string
 }
 
+const options: ConnectionServiceOptions = {
+  enableHeartbeat: true,
+  heartbeatUrl: 'https://google.com',
+  heartbeatInterval: 10000
+}
+  
 @Injectable({
   providedIn: 'root'
 })
@@ -60,24 +68,26 @@ export class SystemService {
   collection: string = 'general';
   collections: any[] = [];
   selectedCollections = new FormControl(null);
-
+  
+  currentState!: ConnectionState;
+  subscription = new Subscription();
+  status!: string;
+  modelsDownloaded: boolean = false;
   
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
     {value: 'granite3-dense:2b', viewValue: 'granite3-dense:2b (<2GB)', thinking: true, memory: 2},
     {value: 'nemotron-mini:4b', viewValue: 'nemotron-mini:4b (<3GB)', thinking: true, memory: 3},
     {value: 'llama3-chatqa:8b', viewValue: 'llama3-chatqa:8b (<5GB)', thinking: true, memory: 5},
-    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true, memory: 5},    
-    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true, memory: 5},        
+    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true, memory: 5},
     {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 8},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9},
-    {value: 'alibayram/medgemma', viewValue: 'medgemma:4b (<4GB)', thinking: true, memory: 4},    
-    {value: 'vanilj/palmyra-fin-70b-32k:IQ2_XXS', viewValue: 'palmyra-fin-70b (<25GB)', thinking: true, memory: 32},
+    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9}    
   ];
   embeddings: string = 'embeddinggemma:300m';
-  
+
   constructor(
-    private bridgeService: BridgeService
+    private bridgeService: BridgeService,
+    private connectionService: ConnectionService
   ) {}
 
   get = (key: string): Promise<string> => {
@@ -87,6 +97,36 @@ export class SystemService {
             resolve(res);
         });
     })
+  }
+
+  init = (): void => {
+    this.subscription.add(
+      this.connectionService.monitor(options).pipe(
+        tap(async (newState: ConnectionState) => {
+          this.currentState = newState;
+
+          if (this.currentState.hasNetworkConnection) {
+            this.status = 'online';
+            if (!this.modelsDownloaded) {
+              this.modelsDownloaded = true;
+              this.models = await (await fetch(
+                await this.getEnvValue('MODELS_FILE'),
+                {
+                  method: 'GET',          
+                }
+              )).json();
+              console.log('models downloaded!');
+            }
+          } else {
+            this.status = 'offline';
+          }
+        })
+      ).subscribe()
+    );
+  }
+
+  destroy = (): void => {
+    this.subscription.unsubscribe();
   }
 
   saveChunkSettings = () => {

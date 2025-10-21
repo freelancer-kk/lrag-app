@@ -13,6 +13,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app/app.routes';
 import { SystemService } from './app/core/services/system/system.service';
 import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
+import { sys } from 'typescript';
 
 if (APP_CONFIG.production) {
   enableProdMode();
@@ -33,6 +34,7 @@ bootstrapApplication(AppComponent, {
     ),
     provideAppInitializer(async () => {
       const initializerFn = async (systemService: SystemService) => {
+        systemService.init();
         console.log('app initializer:start');
         const theme: string | null = localStorage.getItem('theme');        
         systemService.dark = theme ? JSON.parse(theme) : 'dark';        
@@ -64,6 +66,8 @@ bootstrapApplication(AppComponent, {
         systemService.k = insightSettingsStr ? JSON.parse(insightSettingsStr).k : 4;
         systemService.filter = insightSettingsStr ? JSON.parse(insightSettingsStr).filter : undefined;
         systemService.numCtx = insightSettingsStr ? JSON.parse(insightSettingsStr).numCtx : undefined;
+
+        // Download models file
       };
       await initializerFn(inject(SystemService));
     }),
