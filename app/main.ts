@@ -9,6 +9,7 @@ import OllamaService from './OllamaService';
 import LangchainService from './LangchainService';
 import ContextChat from './ContextChat';
 import { Systeminformation } from 'systeminformation';
+import AppUpdates from './AppUpdates';
 
 const userHomePath: string = app.getPath('home');
 // const assetsPakFolderPath: string = app.getPath('assets');
@@ -29,6 +30,7 @@ let systemInfo: SystemInfo;
 let tray: Tray;
 let favIconPath: string;
 let favImage: Electron.NativeImage;
+let appUpdates: AppUpdates;
 
 let configPath: string = path.join(__dirname, '..');
 
@@ -65,6 +67,9 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
     contextChat = new ContextChat(langchainService, ollamaService, dockerEnv);
     contextChat.register(win?.webContents);
     // langchainService.inspect();
+
+    appUpdates = new AppUpdates(dockerEnv.getKeyValue('UPDATE_INFO_FILE'));
+    await appUpdates.init();
   })  
 }
 

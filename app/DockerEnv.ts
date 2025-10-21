@@ -9,7 +9,8 @@ const mergeKeys: string[] = [
   "OCR_SFTP_HOST",
   "OCR_SFTP_PORT",
   "OCR_USER",
-  "OCR_PASSWD"
+  "OCR_PASSWD",
+  "UPDATE_INFO_FILE"
 ];
 
 export default class DockerEnv {
