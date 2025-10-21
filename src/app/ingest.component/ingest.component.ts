@@ -97,6 +97,7 @@ export class IngestComponent implements OnInit {
   resetDefaults = (ev: any) => {
     this.systemService.chunkSize = 512;
     this.systemService.overlap = 48;
+    this.systemService.saveChunkSettings();
   }
 
   startIngestion = async () => {

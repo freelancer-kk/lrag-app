@@ -94,6 +94,7 @@ export class SystemService {
       localVector: this.localVector,
       collection: this.collection
     }))
+    console.log(localStorage.getItem('chunk-settings'));
   }
 
   saveInsightSettings = () => {
