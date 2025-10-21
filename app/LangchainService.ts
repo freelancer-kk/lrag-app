@@ -352,6 +352,7 @@ export default class LangchainService {
             model: params.embeddings,
             baseUrl: this.baseUrl
         });
+        console.log('embeddings:', params.embeddings, this.baseUrl);
         await this.resetVectorStore(params.localVector, params.collection);          
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });
         let chunks: Document[] = [];
