@@ -64,11 +64,14 @@ export class SystemService {
   
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
-    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true, memory: 5},
+    {value: 'granite3-dense:2b', viewValue: 'granite3-dense:2b (<2GB)', thinking: true, memory: 2},
+    {value: 'nemotron-mini:4b', viewValue: 'nemotron-mini:4b (<3GB)', thinking: true, memory: 3},
+    {value: 'llama3-chatqa:8b', viewValue: 'llama3-chatqa:8b (<5GB)', thinking: true, memory: 5},
     {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true, memory: 5},    
-    {value: 'alibayram/medgemma', viewValue: 'medgemma:4b (<4GB)', thinking: true, memory: 4},
+    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true, memory: 5},        
     {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 8},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9},    
+    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9},
+    {value: 'alibayram/medgemma', viewValue: 'medgemma:4b (<4GB)', thinking: true, memory: 4},    
     {value: 'vanilj/palmyra-fin-70b-32k:IQ2_XXS', viewValue: 'palmyra-fin-70b (<25GB)', thinking: true, memory: 32},
   ];
   embeddings: string = 'embeddinggemma:300m';
