@@ -54,7 +54,7 @@
                 systemService.ollamaStatus() === 'running' && 
                 systemService.modelStatus() === 'running' &&
                 !entry.name.startsWith('embedding') &&
-                !entry.name.startsWith('gemma3:1b') &&
+                !entry.name.startsWith('gemma3:1b') &&                
                 entry.name !== systemService.selectedModel
               ) {
                 <button matButton (click)="removeModel($event, $index)">

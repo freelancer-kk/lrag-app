@@ -351,7 +351,7 @@ export default class SemanticChunking {
 
       // Step 7: Log each semantic chunk with a clear separator.
       semanticChunks.forEach((chunk, index) => {
-        console.log(`Chunk #${index + 1}:`, chunk.length);
+        // console.log(`Chunk #${index + 1}:`, chunk.length);
         this.emit( { type: 'langchain-run-split-chunk', data: { chunk: chunkNum, total: totalChunks  } });
         const newDoc = new Document({
           metadata: doc.metadata,

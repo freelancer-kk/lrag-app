@@ -12,6 +12,7 @@ export class BridgeService {
   matchCallbacks: any[] = [];
   cb: (ev: any, result: any) => void = () => {};
   chatcb: (ev: any, result: any) => void = () => {};
+  ocrcb: (ev: any, result: any) => void = () => {};
   
   constructor(
     private electronService: ElectronService,    
@@ -54,6 +55,10 @@ export class BridgeService {
       this.electronService.ipcRenderer.on('chat', (_event: any, result: any) => {
         // console.log('chat:event', result.response);
         this.chatcb(_event, result.response);        
+      })
+      this.electronService.ipcRenderer.on('ocr-event', (_event: any, result: any) => {
+        // console.log('bridge:event', result.response);
+        this.ocrcb(_event, result.response);        
       }) 
     }
   }
@@ -64,6 +69,10 @@ export class BridgeService {
 
   chatCallback = (cb: (ev: any, result: any) => void) => {
     this.chatcb = cb;
+  }
+
+  ocrCallback = (cb: (ev: any, result: any) => void) => {
+    this.ocrcb = cb;
   }
 
   callNode = (
@@ -298,6 +307,7 @@ export class BridgeService {
       this.electronService.ipcRenderer.removeAllListeners('message')
       this.electronService.ipcRenderer.removeAllListeners('event')
       this.electronService.ipcRenderer.removeAllListeners('chat')
+      this.electronService.ipcRenderer.removeAllListeners('ocr-event')
     }
   }
 }

@@ -30,7 +30,7 @@
   </mat-expansion-panel-header> 
     <div class="onerow">
       <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" min="4" max="2048" step="1" showTickMarks discrete>
+      <mat-slider [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" min="8" max="2048" step="1" showTickMarks discrete>
         <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
       </mat-slider>
       <span class="spacer"></span>
@@ -59,16 +59,30 @@
       </button>
     </div>
   </mat-expansion-panel>        
-</mat-accordion>  
+</mat-accordion>
+  @if (systemService.overallStatus() === 'running: healthy') {
+      <div class="onerow">
+        <mat-form-field class="full-width">
+          <mat-label>{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
+          <mat-select [disabled]="systemService.insightStatus() === 'thinking' || this.systemService.overallStatus() !== 'running: healthy'" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
+            @for (entry of systemService.collections; track $index) {
+              <mat-option [value]="entry.value">
+                {{ entry.name }}
+              </mat-option>
+            }
+          </mat-select>    
+        </mat-form-field>          
+      </div>
+    }
 
-  @if (systemService.docsEmpty) {
+  @if (systemService.ragFiles.length === 0) {
     <mat-toolbar>
       <h1 class="title">
         {{ 'APP.DOCS_EMPTY' | translate }}
       </h1>    
     </mat-toolbar>
   } @else {
-    @if (systemService.overallStatus() === 'running: healthy') {      
+    @if (systemService.overallStatus() === 'running: healthy') {
       <mat-form-field class="full-width">
         <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
         <textarea [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="question">{{ question }}</textarea>

@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { BridgeService } from '../bridge/bridge.service';
 import { TranslateService } from '@ngx-translate/core';
 import {FormControl} from '@angular/forms';
+import path from 'path';
 
 export enum EWho {
   User = 0,
@@ -51,19 +52,27 @@ export class SystemService {
   chunkSize: number = 512;
   overlap: number = 48;
   filter: string | undefined = undefined;
-  k: number = 4;
+  k: number = 8;
   numCtx: number = 2048;
   separator: string = ';';
   useSemantic: boolean = false;
+  localVector: boolean = true;
+  collection: string = 'general';
+  collections: any[] = [];
+  selectedCollections = new FormControl(null);
 
+  
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},
-    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true, memory: 5},
+    {value: 'granite3-dense:2b', viewValue: 'granite3-dense:2b (<2GB)', thinking: true, memory: 2},
+    {value: 'nemotron-mini:4b', viewValue: 'nemotron-mini:4b (<3GB)', thinking: true, memory: 3},
+    {value: 'llama3-chatqa:8b', viewValue: 'llama3-chatqa:8b (<5GB)', thinking: true, memory: 5},
     {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true, memory: 5},    
-    {value: 'alibayram/medgemma', viewValue: 'medgemma:4b (<4GB)', thinking: true, memory: 4},
-    {value: 'martain7r/finance-llama-8b:q4_k_m', viewValue: 'finance-llama-8b (<6GB)', thinking: true, memory: 5},
+    {value: 'mistral:7b', viewValue: 'mistral:7b (<5GB)', thinking: true, memory: 5},        
     {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 8},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9},    
+    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9},
+    {value: 'alibayram/medgemma', viewValue: 'medgemma:4b (<4GB)', thinking: true, memory: 4},    
+    {value: 'vanilj/palmyra-fin-70b-32k:IQ2_XXS', viewValue: 'palmyra-fin-70b (<25GB)', thinking: true, memory: 32},
   ];
   embeddings: string = 'embeddinggemma:300m';
   
@@ -84,8 +93,11 @@ export class SystemService {
     localStorage.setItem('chunk-settings', JSON.stringify({
       chunkSize: this.chunkSize,
       overlap: this.overlap,
-      useSemantic: this.useSemantic
+      useSemantic: this.useSemantic,
+      localVector: this.localVector,
+      collection: this.collection
     }))
+    console.log(localStorage.getItem('chunk-settings'));
   }
 
   saveInsightSettings = () => {
@@ -193,6 +205,10 @@ export class SystemService {
     })
   }
 
+  basename = (fullpath: string): string => {    
+    return path.basename(fullpath.replace(/\\/g,'/'));
+  }
+
   setEnvValue = (key: string, value: string): Promise<string> => {
     return new Promise((resolve, reject) => {
       this.bridgeService.env(81, 'set', {
@@ -221,7 +237,7 @@ export class SystemService {
   }
 
   getClassFromStatus = (status: string): string => {
-    if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'thinking' || status === 'uploading' || status.startsWith('splitting') || status === 'uploaded' || status === 'loading' || status === 'loaded' || status.startsWith('indexing') || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
+    if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'reranking' || status === 'thinking' || status === 'uploading' || status.startsWith('splitting') || status === 'uploaded' || status === 'loading' || status === 'loaded' || status.startsWith('indexing') || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
       return 'chip-success';
     } else if (status.startsWith('downloading') || status === 'starting' || status === 'running: unhealthy') {
       return 'chip-warning';
@@ -245,6 +261,7 @@ export class SystemService {
       case 'saving':        
       case 'adding':
       case 'thinking':
+      case 'reranking':
       case 'configuring':
       case 'running: healthy': 
       case 'running': {

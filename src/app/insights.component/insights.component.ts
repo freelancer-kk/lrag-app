@@ -16,11 +16,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BridgeService } from '../core/services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-insights.component',
@@ -41,6 +42,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
     FormsModule,
     MatSliderModule,
     MatExpansionModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'
@@ -66,8 +70,10 @@ export class InsightsComponent implements OnInit {
     this.bridgeService.chatCallback((ev: any, response: any) => {
       // console.log('chat-event', response);
       this.ngZone.run(() => {
-        this.streamedResponse += response.chunk;
-        this.scrollToBottom();
+        if (response.chunk) {
+          this.streamedResponse += response.chunk;
+          this.scrollToBottom();
+        }
       });
     });
 
@@ -80,9 +86,16 @@ export class InsightsComponent implements OnInit {
     })
   }  
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.check();
     // this.askQuestion('How are you today?');
+
+    await this.mediaService.createCollection(this.systemService.collection);
+    this.systemService.collections = await this.mediaService.getCollections();
+    const selectedCollection: any = this.systemService.collections.find(f => f.name === this.systemService.collection).value
+    console.log('selected:', selectedCollection);
+    this.systemService.selectedCollections.setValue(selectedCollection);
+    this.systemService.ragFiles = await this.mediaService.ls();
   }
 
   check = () => {
@@ -101,25 +114,7 @@ export class InsightsComponent implements OnInit {
       this.systemService.saveChunkSettings();
       this.systemService.saveInsightSettings();
 
-      let ingestParams: any = {
-        chunkSize: this.systemService.chunkSize,
-        chunkOverlap: this.systemService.overlap,
-        separator: this.systemService.separator,
-        useSemantic: this.systemService.useSemantic
-      }
       const isCSVUseCase: boolean = await this.mediaService.areAllCSV();
-      if (isCSVUseCase) {
-        if (!this.systemService.filter) {
-          this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.FILTER_REQUIRED'), 'OK');
-          return
-        }
-        ingestParams = {
-          chunkSize: 0,
-          chunkOverlap: 0,
-          separator: this.systemService.separator,
-          useSemantic: this.systemService.useSemantic
-        }
-      }
       const question: string = this.question;
       this.question = '';            
 
@@ -140,7 +135,6 @@ export class InsightsComponent implements OnInit {
         think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
         k: isCSVUseCase ? 2048  : this.systemService.k,
         mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
-        chunkParams: JSON.stringify(ingestParams),
         numCtx: isCSVUseCase ? 10240 : this.systemService.numCtx
       };
       if (this.systemService.filter) {
@@ -162,6 +156,7 @@ export class InsightsComponent implements OnInit {
       console.log('Answer:', answer);
       try {
         if (typeof answer === 'string') {
+          console.log('PUSHING ANSWER:', answer);
           this.systemService.chatHistory.push({
             who: EWho.Assistant,
             content: this.reformat(answer)
@@ -227,5 +222,14 @@ export class InsightsComponent implements OnInit {
         // Remove ollama and restart          
       }
     });
+  }
+
+  changeCollection = async (ev: any) => {
+    this.systemService.collection = this.systemService.selectedCollections.value ? this.systemService.basename(this.systemService.selectedCollections.value) : 'general';
+    console.log('change to collection:', this.systemService.collection)
+    this.clearHistory();
+    await this.systemService.saveChunkSettings();
+    this.mediaService.loadedIndex = false;
+    this.systemService.ragFiles = await this.mediaService.ls(true);    
   }
 }

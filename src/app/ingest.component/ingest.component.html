@@ -2,10 +2,12 @@
     <mat-toolbar-row>
       <h1 class="title" [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate">
         {{ 'PAGES.INGEST.MAIN_TITLE' | translate }}
-      </h1>&nbsp;
-      <a matButton="elevated" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
-      {{ 'PAGES.INGEST.SCANNED_DOCS' | translate }}
-      </a>
+      </h1>
+      @if (systemService.localVector) {
+        &nbsp;<a matButton="elevated" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
+        {{ 'PAGES.INGEST.SCANNED_DOCS' | translate }}
+        </a>
+      }
       <span class="spacer"></span>      
       @if (ingestStatus === 'running' || ingestStatus.startsWith('splitting') || ingestStatus === 'loaded' || ingestStatus.startsWith('indexing') || ingestStatus === 'saving' || ingestStatus === 'adding') {
         <div [class]="systemService.getClassFromStatus(ingestStatus)">
@@ -13,13 +15,7 @@
           {{ ingestStatus }}
         </div>
       } @else {
-        <!--
-        <div [class]="systemService.getClassFromStatus(ingestStatus)">
-          <mat-icon>{{ systemService.getIconFromStatus(ingestStatus) }}</mat-icon>
-          {{ ingestStatus }}
-        </div>
-        -->
-        @if (systemService.overallStatus() === 'running: healthy') {
+        @if (systemService.overallStatus() === 'running: healthy' && docsHealthy()) {
           <button matButton="filled" (click)="startIngestion()">
             {{ 'PAGES.INGEST.INDEX' | translate }}
           </button>
@@ -75,6 +71,11 @@
         </button>
       </div>
       <div class="onerow">
+        <mat-slide-toggle [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.localVector" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
+        {{ 'PAGES.INGEST.USE_LOCAL_VECTOR' | translate }}
+        </mat-slide-toggle>  
+      </div>
+      <div class="onerow">
         <mat-slide-toggle [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_SEMANTIC_TIP' | translate" [(ngModel)]="systemService.useSemantic">
         {{ 'PAGES.INGEST.USE_SEMANTIC' | translate }}
         </mat-slide-toggle>  
@@ -92,20 +93,45 @@
     </mat-expansion-panel>        
   </mat-accordion>  
   <div class="onerow">
-  <mat-form-field class="full-width">
-    <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
-    <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
-      @for (entry of systemService.ragFiles; track $index) {
-        <mat-option [value]="entry.name">{{ entry.name }}</mat-option>
+    <mat-form-field>
+      <mat-label>{{ 'PAGES.INGEST.COLLECTION_NAME' | translate }}</mat-label>
+      <input matInput specialIsAlphaNumeric [disabled]="systemService.overallStatus() !== 'running: healthy' || this.systemService.ingestStatus() !== 'not running'" matInput type="text" [(ngModel)]="collection" [maxLength]="80" [minlength]="8" (focus)="showErrors = true" (blur)="newCollection($event)">
+      @if (this.collection.length < 8 && showErrors) {
+        <mat-error>{{ 'PAGES.INGEST.COLLECTION_NAME_ERROR' | translate}}</mat-error>
       }
-    </mat-select>    
-  </mat-form-field>
-  @if (!this.isOpened && systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
-    <button matSuffix matIconButton aria-label="Clear" (click)="fileRemove($event)">
-      <mat-icon>delete</mat-icon>
-    </button>            
-  }  
-</div>
+    </mat-form-field>
+    <span class="spacer"></span>
+    &nbsp;<mat-form-field class="full-width">
+      <mat-label [matTooltip]="'PAGES.INGEST.COLLECTIONS_TIP' | translate">{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
+      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
+        @for (entry of systemService.collections; track $index) {
+          <mat-option [value]="entry.value">
+            {{ entry.name }}
+          </mat-option>
+        }
+      </mat-select>    
+    </mat-form-field>    
+    @if (!this.isOpened && systemService.selectedCollections.value && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running' && systemService.collection !== 'general') {
+      <button matSuffix matIconButton aria-label="Clear" (click)="collectionRemove($event)">
+        <mat-icon>delete</mat-icon>
+      </button>            
+    }  
+  </div>
+  <div class="onerow">
+    <mat-form-field class="full-width">
+      <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
+      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
+        @for (entry of systemService.ragFiles; track $index) {
+          <mat-option [value]="entry.name">{{ systemService.basename(entry.name) }}</mat-option>
+        }
+      </mat-select>    
+    </mat-form-field>
+    @if (!this.isOpened && systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
+      <button matSuffix matIconButton aria-label="Clear" (click)="fileRemove($event)">
+        <mat-icon>delete</mat-icon>
+      </button>            
+    }  
+  </div>
 
   <div class="vertscroll">
   <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">
@@ -117,12 +143,12 @@
           } @else if (entry.status === 1) {
             <mat-icon matListItemIcon class="danger">close</mat-icon>
           } @else {
-            <mat-icon matListItemIcon class="warning">quiz</mat-icon>
+            <mat-spinner diameter="20"></mat-spinner>
           }
           <div matListItemTitle>
-            {{ entry.name }}
+            {{ systemService.basename(entry.name) }}
           </div>
-          <div matListItemLine class="danger">
+          <div matListItemLine [class]="entry.status === 0 ? 'success' : entry.status === 1 ? 'danger' : 'warning'">
             {{ entry.text }}
           </div>
         </mat-list-item>

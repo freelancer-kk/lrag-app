@@ -15,34 +15,39 @@ import { Document } from "@langchain/core/documents";
 import { mkdirSync } from 'fs';
 import * as path from 'path';
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import SemanticChunking, { LanguageTypes } from './SemanticChunking';
+import * as fs from 'fs';
+import OCRProcessor from './OCRProcessor';
+import DockerEnv from './DockerEnv';
+import { v4 as uuidv4 } from 'uuid';
 
-
-//TODO: Build my own native Mac/Win https://github.com/nisaacson/pdf-extract
-// OR get ocrmypdf working on windows with auto install and mac os auto install
-// https://ocrmypdf.readthedocs.io/en/latest/installation.html#native-windows
+export enum EVectorStoreType {
+  Memory = 0,
+  HNSWLib,
+}
 
 export default class LangchainService {
   doc_path: string;
+  root_doc_path: string;
   db_path: string;
-  input_path: string;
   embeddings: OllamaEmbeddings;
-  vectorStore: MemoryVectorStore | undefined;
+  vectorStore: HNSWLib | MemoryVectorStore | undefined;
   webContents: Electron.WebContents | undefined;
   hasAddedDocs = false;
   numOfDocs: number = 0;
   semanticChunking: SemanticChunking;
+  vectorStoreType: EVectorStoreType | undefined;
+  ocrProcessor: OCRProcessor;
+  uuid: string;
 
-  constructor(doc_path: string, db_dir: string, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
+  constructor(doc_path: string, db_dir: string, dockerEnv: DockerEnv, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
-    mkdirSync(path.join(db_dir, 'sql'), { recursive: true });
-    // this.db_path = path.join(db_dir, 'sql', 'sqlite.db');    
-    this.db_path = path.join(db_dir, 'sql');    
-    this.input_path = path.join(db_dir, '_input');
-    mkdirSync(this.input_path, { recursive: true });
-
+    this.root_doc_path = doc_path;
+    mkdirSync(path.join(db_dir, 'hnsw'), { recursive: true });
+    this.db_path = path.join(db_dir, 'hnsw');    
+  
     console.log('db_path:', this.db_path);
-    console.log('input_path:', this.input_path);
     console.log('doc_path:', this.doc_path);
 
     this.embeddings = new OllamaEmbeddings({
@@ -50,28 +55,48 @@ export default class LangchainService {
         baseUrl
     });
     
-    /*
-    this.vectorStore = new MemoryVectorStore(
-      this.embeddings
-    )
-      */
+    this.semanticChunking = new SemanticChunking(baseUrl, model);
 
-    this.semanticChunking = new SemanticChunking(baseUrl, model);    
+    this.ocrProcessor = new OCRProcessor(dockerEnv);
+    this.uuid = uuidv4();
+
     console.log('LangchainService initialized');        
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
     this.semanticChunking.register(webContents);
+    this.ocrProcessor.register(webContents);
     ipcMain.on('ingest', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
       console.log('LangchainService:', callbackId, command, params)
       let response: any = {}
       switch (command) {
         case "start": {
+          this.doc_path = path.join(this.root_doc_path, params.collection);
           response = await this.run(params);          
         }
+        break;
+        case "load": {
+          response = await this.loadVectorStore(params.localVector ? EVectorStoreType.Memory : EVectorStoreType.HNSWLib, params.collection);
+        }
+        break;
+        case "save": {
+          response = await this.saveVectorStore(params.localVector ? EVectorStoreType.Memory : EVectorStoreType.HNSWLib, params.collection);
+        }
+        break;
+        case "delete": {
+          response = await this.deleteVectorStore(params.localVector ? EVectorStoreType.Memory : EVectorStoreType.HNSWLib, params.collection);
+        }
         break;        
+        case "reset": {
+          response = await this.resetVectorStore(params.localVector ? EVectorStoreType.Memory : EVectorStoreType.HNSWLib, params.collection);
+        }
+        break;
+        case "indexed": {
+          response = await this.isDocumentIndexed(params.localVector ? EVectorStoreType.Memory : EVectorStoreType.HNSWLib, params.source);
+        }
+        break;
       }
       event.reply('reply', {
         callbackId,
@@ -86,11 +111,72 @@ export default class LangchainService {
     })                
   }
 
-  resetVectorStore = async () => {
+  isDocumentIndexed = async (vectorStoreType: EVectorStoreType, docSource: string): Promise<boolean> => {
+    if (vectorStoreType !== EVectorStoreType.Memory && this.vectorStore) {
+      try {
+        const similaritySearchResults: Document[] = await this.vectorStore.similaritySearch(
+          path.basename(docSource),
+          1,
+          (doc: Document) => doc.metadata.source === docSource,
+        );
+        return similaritySearchResults.length > 0;
+      } catch (e) {
+        console.error(e);
+        return false;
+      }
+    }
+    return false;
+  }
+
+  loadVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean | undefined> => {
+    if (vectorStoreType !== EVectorStoreType.Memory) {
+      try {
+        this.vectorStore = await HNSWLib.load(path.join(this.db_path, collection), this.embeddings);        
+        this.vectorStoreType = vectorStoreType;        
+        this.hasAddedDocs = true;
+        return true;
+      } catch (e) {
+        console.error(e);
+        await this.resetVectorStore(vectorStoreType, collection);
+        return false;
+      }
+    } else {
+      await this.resetVectorStore(vectorStoreType, collection);
+    }
+  }
+
+  saveVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean | undefined> => {
+    if (vectorStoreType !== EVectorStoreType.Memory && this.vectorStore) {
+      try {
+        await (this.vectorStore as HNSWLib).save(path.join(this.db_path, collection));
+        return true;
+      } catch (e) {
+        console.error(e);
+        return false;
+      }
+    }
+  }
+
+  deleteVectorStore = async (vectorStoreType: EVectorStoreType, collection: string) => {
+    if (vectorStoreType !== EVectorStoreType.Memory && this.vectorStore) {
+      try {
+        await (this.vectorStore as HNSWLib).delete({ directory: path.join(this.db_path, collection) });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }
+  
+  resetVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean> => {
     this.vectorStore = undefined;
-    this.vectorStore = new MemoryVectorStore(
-      this.embeddings
-    )
+    this.vectorStoreType = vectorStoreType;
+    if (vectorStoreType === EVectorStoreType.Memory) {
+      this.vectorStore = await MemoryVectorStore.fromDocuments([], this.embeddings);
+    } else {
+      this.vectorStore = await HNSWLib.fromDocuments([], this.embeddings);
+      await this.deleteVectorStore(vectorStoreType, collection);
+    }
+    return true;
   }
 
   addDocuments = async (docs: Document[]): Promise<void> => {    
@@ -100,7 +186,7 @@ export default class LangchainService {
     let docBatch: Document[] = [];
     for await (const doc of docs) {
       docBatch.push(doc);
-      if (i % 10 === 0) {
+      if (i % 25 === 0) {
         await this.vectorStore?.addDocuments(docBatch);
         this.emit( { type: 'langchain-run-add-chunk', data: { chunk: i, total: docs.length  } });
         docBatch = [];
@@ -112,19 +198,29 @@ export default class LangchainService {
       this.emit( { type: 'langchain-run-add-chunk', data: { chunk: i, total: docs.length  } });
     }
     // return this.vectorStore.addDocuments(docs);    
+
+    const added_doc_names: string[] = [];
+    for await (const ld of docs) {
+      if (added_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
+        added_doc_names.push(ld.metadata.source);
+        this.emit( { type: 'langchain-run-doc-added', data: { source: ld.metadata.source } });
+      }
+    }
   }
 
-  getSearchableVectorStore = (params: any): Promise<MemoryVectorStore | undefined> => {
-    /*
-    if (!this.hasAddedDocs) {
-      return this.run(params).then((value: any) => {
-        return Promise.resolve(this.vectorStore);    
-      })
-    } else {
-      return Promise.resolve(this.vectorStore);
+  setStatusForLoadedDocs = async (docs: Document[]): Promise<void> => {    
+    console.log('set status:', docs.length);    
+    const added_doc_names: string[] = [];
+    for await (const ld of docs) {
+      if (added_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
+        added_doc_names.push(ld.metadata.source);
+        this.emit( { type: 'langchain-run-doc-added', data: { source: ld.metadata.source } });
+      }
     }
-    */
-   return Promise.resolve(this.vectorStore);
+  }
+  
+  getSearchableVectorStore = (): HNSWLib | MemoryVectorStore | undefined => {
+    return this.vectorStore;
   }
 
   load = (params: any): Promise<Document[]> => {
@@ -155,7 +251,7 @@ export default class LangchainService {
     )
     return loader.load().then(async (docs: Document[]) => {
       const uniqueDocs: Document[] = docs.reduce(
-        (acc: Document[], cur: Document) => (acc.findIndex(f => f.metadata.source === f.metadata.source && f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur]),
+        (acc: Document[], cur: Document) => (acc.findIndex(f => f.metadata.source === cur.metadata.source && f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur]),
         [],
       );
       console.log('loaded:', uniqueDocs.length);
@@ -204,12 +300,53 @@ export default class LangchainService {
     }
   }
 
+  OCRDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
+    let hasOCRTasks: boolean = false;
+    const file_names: string[] = fs.readdirSync(doc_path);
+    // console.log('loaded_docs:', loaded_docs[0]);
+    // console.log('file_names:', file_names);
+    const loaded_doc_names: string[] = [];
+    for await (const ld of loaded_docs) {
+      if (loaded_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
+        loaded_doc_names.push(ld.metadata.source);
+      }
+    }
+
+    for await (const fn of file_names) {
+      if (loaded_doc_names.findIndex(ldn => path.basename(ldn) === fn) === -1) {
+        if (fn.endsWith('pdf') || fn.endsWith('PDF')) {
+          // file has not been loaded mark it for OCR processing
+          console.log('OCR:REQUEST:put:', path.join(doc_path, fn));
+          
+          await this.ocrProcessor.connect();
+          
+          this.ocrProcessor.put(
+            path.join(doc_path, fn),
+            this.uuid + '-' + path.basename(fn)
+          )
+          hasOCRTasks = true;
+        } else {
+          console.log('OCR ignoring non pdf:', fn);
+          this.emit( { type: 'langchain-run-ocr-ignore', data: { name: fn } });
+        }
+      }
+    }
+    // await this.ocrProcessor.disconnect();
+    return hasOCRTasks;
+  }
+
   run = async (params: any): Promise<any> => {
     this.emit( { type: 'langchain-run-start', data: {} } );
     return this.load(params).then(async (docs: Document[]) => {
       this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
       console.log('docs:length:', docs.length)
-      // if (docs.length > 0) {
+      let hasOCRTasks: boolean = false
+      if (params.localVector === false) {
+        // Check for OCR
+        hasOCRTasks = await this.OCRDocs(docs, this.doc_path);
+      }
+      if (!hasOCRTasks) {
+        await this.resetVectorStore(params.localVector, params.collection);          
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });
         let chunks: Document[] = [];
         
@@ -235,7 +372,6 @@ export default class LangchainService {
         this.emit( { type: 'langchain-run-split', data: { chunks: chunks.length } });
         if (chunks.length > 0) {        
           this.emit( { type: 'langchain-run-indexing', data: { chunks: chunks.length } });
-          await this.resetVectorStore();
           await this.addDocuments(chunks);
           this.hasAddedDocs = true;
           this.emit( { type: 'langchain-run-complete', data: { chunks: chunks.length } });
@@ -250,6 +386,11 @@ export default class LangchainService {
         return { status: 'warning', message: 'document(s) loaded but not processed, empty or latest was incompatible' };
       }
       */
+      } else {
+        await this.setStatusForLoadedDocs(docs);
+         this.emit( { type: 'langchain-run-warning', data: { message: 'nothing indexed' } });
+        return { status: 'warning', message: 'pending ocr tasks' };
+      }
     }).catch((err) => {
       console.error('load error:', err);
       return { status: 'error', message: err };

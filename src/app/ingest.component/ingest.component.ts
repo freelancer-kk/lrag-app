@@ -24,6 +24,7 @@ import { Router, RouterLink } from '@angular/router';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { SpecialCharacterDirective } from '../directives/specialCharacterDirective';
 
 @Component({
   selector: 'app-ingest.component',
@@ -47,7 +48,8 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
     ReactiveFormsModule,
     MatSliderModule,
     MatExpansionModule,
-    MatSlideToggle
+    MatSlideToggle,
+    SpecialCharacterDirective
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
@@ -63,6 +65,9 @@ export class IngestComponent implements OnInit {
   overallStatus: string = 'not running';
   selectedAll: boolean = false;
   isOpened: boolean = false;
+  afterLastFinish: boolean = true;
+  collection: string = '';
+  showErrors: boolean = false;
 
   constructor(
     public systemService: SystemService,
@@ -78,17 +83,21 @@ export class IngestComponent implements OnInit {
   async ngOnInit() {
     this.breakpoint = Math.floor(window.innerWidth / 300);
     console.log('breakpoint:', this.breakpoint);
-    if (this.systemService.ragFiles.length === 0) {
-      this.systemService.ragFiles = await this.mediaService.ls();
-    }    
     // console.log('FILES', this.ragFiles);
     this.systemService.MAX_FILES = Number.parseInt(await this.systemService.get('PAGES.INGEST.MAX_DOCS'));
     // console.log('MAX:', this.systemService.MAX_FILES)
+    await this.mediaService.createCollection(this.systemService.collection);
+    this.systemService.collections = await this.mediaService.getCollections();
+    const selectedCollection: any = this.systemService.collections.find(f => f.name === this.systemService.collection).value
+    console.log('selected:', selectedCollection);
+    this.systemService.selectedCollections.setValue(selectedCollection);
+    this.systemService.ragFiles = await this.mediaService.ls();
   }
 
   resetDefaults = (ev: any) => {
     this.systemService.chunkSize = 512;
     this.systemService.overlap = 48;
+    this.systemService.saveChunkSettings();
   }
 
   startIngestion = async () => {
@@ -100,24 +109,33 @@ export class IngestComponent implements OnInit {
     let ingestParams: any = {
       chunkSize: this.systemService.chunkSize,
       chunkOverlap: this.systemService.overlap,
-      separator: this.systemService.separator,
-      useSemantic: this.systemService.useSemantic
     }
     if (await this.mediaService.areAllCSV()) {
       console.log('overriding Chunk parameters!');
       ingestParams = {
         chunkSize: 0,
-        chunkOverlap: 0,
-        separator: this.systemService.separator,
-        useSemantic: this.systemService.useSemantic
+        chunkOverlap: 0
       }
     }
 
     this.systemService.commandIngest(
       'start',
-      ingestParams
+      {        
+        ...ingestParams, 
+        ...{
+          separator: this.systemService.separator,
+          useSemantic: this.systemService.useSemantic,
+          localVector: this.systemService.localVector,
+          collection: this.systemService.collection
+        }
+      }
     ).then(async (result: any) => {
       console.log('ingest result:', result);
+      this.afterLastFinish = false;
+      setTimeout(() => {
+        this.afterLastFinish = true;
+      }, 10000);
+      await this.mediaService.saveIndex();
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(() => 'not running');
         this.systemService.ragFiles = await this.mediaService.ls();
@@ -125,24 +143,24 @@ export class IngestComponent implements OnInit {
           duration: 10000
         });
         snackBarRef.onAction().subscribe(() => {
-          if (this.mediaService.noOfValidFiles() > 0) {
+          if (this.mediaService.noOfValidFiles()) {
             this.router.navigate(['insights']);
           }
         });      
       } else {
         this.systemService.ingestStatus.update(() => 'warning');
-        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result ? (': ' + JSON.stringify(result)) : ''), 'OK' );
+        const snackBarRef1 = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.systemService.get('PAGES.INGEST.EXITED')), 'OK' );
         this.systemService.ragFiles = await this.mediaService.ls();
-        snackBarRef.onAction().subscribe(() => {
+        snackBarRef1.onAction().subscribe(() => {
           this.systemService.ingestStatus.update(() => 'not running');
-        });      
+        });              
       }
     }).catch(async (e) => {
       console.error('ingest error:', e);      
       this.systemService.ingestStatus.update(() => 'error');
-      const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK' );
+      const snackBarRef2 = this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK' );
       this.systemService.ragFiles = await this.mediaService.ls();
-      snackBarRef.onAction().subscribe(() => {
+      snackBarRef2.onAction().subscribe(() => {
         this.systemService.ingestStatus.update(() => 'not running');
       });      
     })    
@@ -171,7 +189,8 @@ export class IngestComponent implements OnInit {
         if (this.startIngestTimer) {
           clearTimeout(this.startIngestTimer);
         }
-        this.startIngestTimer = setTimeout(() => {          
+        this.startIngestTimer = setTimeout(async () => {   
+          this.systemService.ragFiles = await this.mediaService.ls(true);
           this.startIngestion();  
         }, 2500)        
       }
@@ -237,7 +256,7 @@ export class IngestComponent implements OnInit {
     console.log('fileRemove:', event);
     if (this.systemService.selectedDocuments.value) {
       const docs: string[] = (this.systemService.selectedDocuments.value as unknown) as string[];
-      const deleteStr: string = docs.join(' ');
+      const deleteStr: string = docs.map(doc => this.systemService.basename(doc)).join(' ');
       console.log('fileRemove:', deleteStr)    
       const dialogRef = this.dialog.open(
         AlertComponent, {
@@ -258,12 +277,15 @@ export class IngestComponent implements OnInit {
               this.systemService.ragFiles.splice(fIdx, 1);            
             }
           }
-          await this.startIngestion();
+          this.systemService.ragFiles = await this.mediaService.ls(true);
+          // await this.startIngestion();
         }
         this.systemService.selectedDocuments.setValue('');
       });    
     }
   }
+
+  download = async (event: any, index: number) => {}
 
   toggleOpen = (event: any) => {
     this.isOpened = !this.isOpened;
@@ -273,5 +295,82 @@ export class IngestComponent implements OnInit {
   toggleAll = (event: any) => {
     console.log(event.target.value);
     this.selectedAll = !this.selectedAll;
+  }
+
+  docsHealthy = (): boolean => {  
+    if (this.mediaService.docStatus && this.afterLastFinish) {
+      return this.mediaService.docStatus.reduce(
+        ((acc: boolean, cur: any) => acc && cur.status < 2),
+        true
+      );      
+    } else {
+      return false;
+    }
+  }
+
+  newCollection = async (ev: any) => {
+    if (this.collection.length > 7) {
+      this.showErrors = false;
+      const dialogRef = this.dialog.open(
+        AlertComponent, {
+          data: {
+            type: 1,
+            params: {
+              message: await this.systemService.get('PAGES.INGEST.CREATE_ARE_YOU_SURE') + ' ' + this.collection
+            }
+          }
+        });
+      dialogRef.afterClosed().subscribe(async (result) => {
+        console.log(`Dialog result: ${result}`);
+        if (result === true && !this.systemService.collections.find(f => f.name === this.collection)) {
+          await this.mediaService.createCollection(this.collection);
+          this.systemService.collections = await this.mediaService.getCollections();
+          const selectedCollection = this.systemService.collections.find(f => f.name === this.collection).value;
+          console.log('selectedCollection:', this.collection, selectedCollection);
+          this.systemService.selectedCollections.setValue(selectedCollection);
+          this.systemService.collection = this.collection;          
+          this.systemService.ragFiles = await this.mediaService.ls();
+        } else {
+          console.log('collection already exists!:', this.collection)
+        }
+        this.collection = '';
+        await this.systemService.saveChunkSettings();
+      });    
+    }    
+  }
+
+  changeCollection = async (ev: any) => {
+    this.systemService.collection = this.systemService.selectedCollections.value ? this.systemService.basename(this.systemService.selectedCollections.value) : 'general';
+    console.log('change to collection:', this.systemService.collection)
+    await this.systemService.saveChunkSettings();
+    this.mediaService.loadedIndex = false;
+    this.systemService.ragFiles = await this.mediaService.ls(true);    
+  }
+
+  collectionRemove = async (ev: any) => {
+    const selectedCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
+    console.log('remove collection:', selectedCollection)
+    const dialogRef = this.dialog.open(
+        AlertComponent, {
+          data: {
+            type: 1,
+            params: {
+              message: await this.systemService.get('PAGES.INGEST.REMOVE_COLLECTION_ARE_YOU_SURE') + ' ' + this.systemService.collection
+            }
+          }
+        });
+      dialogRef.afterClosed().subscribe(async (result) => {
+        console.log(`Dialog result: ${result}`);
+        if (result === true) {      
+          await this.mediaService.deleteIndex();
+          await this.mediaService.remove(selectedCollection);           
+          this.systemService.collections = await this.mediaService.getCollections();
+          this.systemService.collection = "general";
+          const generalCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
+          this.systemService.selectedCollections.setValue(generalCollection);
+          this.systemService.ragFiles = await this.mediaService.ls();
+          await this.systemService.saveChunkSettings();
+        }
+      });
   }
 }

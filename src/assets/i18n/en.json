@@ -96,11 +96,16 @@
         "DURATION_WARNING": "Ingestion may take some minutes depending on the performance of your PC and size of your documents. Please wait until the process completes",
         "ERROR": "Error during ingestion, please try again",
         "WARNING": "Warning during ingestion",
+        "EXITED": "Completed without status",
         "DELETE_ARE_YOU_SURE": "Are you sure you want to remove these document(s) =>",
         "SCANNED_DOCS": "scanned docs?",
         "SCANNED_DOCS_TEXT": "In order to ingest scanned documents they must be converted with an OCR tool. Many are available. Adobe has a free tool, click the button",
         "COMPLETE": "Ingestion completed",
-        "OCR_NEEDED": "OCR conversion required",
+        "OCR_NEEDED": "OCR conversion needed",
+        "OCR_ERROR": "OCR conversion failed",
+        "OCR_PREPARE": "OCR conversion preparing",
+        "OCR_START": "OCR conversion starting",
+        "OCR_DONE": "OCR converstion done",
         "UNKNOWN": "Not indexed",
         "INDEX": "Ingest document(s)",
         "CHUNK_SIZE": "Chunk Size",
@@ -112,7 +117,16 @@
         "SEPARATOR": "Separator",
         "SEPARATOR_TIP": "When ingesting csv files, specify the separator",
         "USE_SEMANTIC": "Semantic Chunker",
-        "USE_SEMANTIC_TIP": "Optionally activate intelligent chunking to improve results. More cpu intensive, slower"
+        "USE_SEMANTIC_TIP": "Optionally activate intelligent chunking to improve results. More cpu intensive, can be much slower",
+        "USE_LOCAL_VECTOR": "Local Ingestion",
+        "USE_LOCAL_VECTOR_TIP": "Do not use any external services for ingesting your documents. You can disable your internet and work with your documents on your PC. There will be limitations on certain features",
+        "COLLECTIONS": "Collections",
+        "COLLECTIONS_TIP": "Group documents into collections for analysis. You cannot mix different document domains in the same collection. This will lead to incorrect insight analysis. For example property related docs in a collection. The fewer docs in a collection the better the analysis",
+        "COLLECTION_NAME": "New Collection Name",
+        "COLLECTION_NAME_TIP": "Add a new collection by giving it a name",
+        "COLLECTION_NAME_ERROR": "Collection name too short, min 8 chars",
+        "CREATE_ARE_YOU_SURE": "Create collection",
+        "REMOVE_COLLECTION_ARE_YOU_SURE": "Remove collection"
       },
       "INSIGHT": {
         "TITLE": "AI Insights",
@@ -135,7 +149,7 @@
         "FILTER_TIP": "Models cannot process large volumes of data as part of their context: Use a filter to limit the results for analysis for accuracy",
         "CONTEXT_SIZE": "Model Context Size",
         "CONTEXT_SIZE_TIP": "Occasionally you may wish to increase the context size in order to accommodate more data input. For example transactional data",
-        "FILTER_REQUIRED": "Your use case is CSV with potentially a high transaction volume, you must specify a filter under options"
+        "FILTER_REQUIRED": "Your use case is CSV with potentially a high transaction volume, you must specify a filter under options"        
       },
       "HELP": {
         "TITLE": "Help",
