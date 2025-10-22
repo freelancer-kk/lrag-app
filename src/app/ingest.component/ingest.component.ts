@@ -77,6 +77,13 @@ export class IngestComponent implements OnInit {
     effect(() => {
       this.ingestStatus = this.systemService.ingestStatus();
       this.overallStatus = this.systemService.overallStatus();
+      if (this.overallStatus !== 'running: healthy' || this.ingestStatus !== 'not running') {
+        this.systemService.selectedCollections.disable();
+        this.systemService.selectedDocuments.disable();
+      } else {
+        this.systemService.selectedCollections.enable();
+        this.systemService.selectedDocuments.enable();
+      }
     })
   }
 

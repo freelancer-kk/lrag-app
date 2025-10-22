@@ -64,7 +64,7 @@
       <div class="onerow">
         <mat-form-field class="full-width">
           <mat-label>{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
-          <mat-select [disabled]="systemService.insightStatus() === 'thinking' || this.systemService.overallStatus() !== 'running: healthy'" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
+          <mat-select [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
             @for (entry of systemService.collections; track $index) {
               <mat-option [value]="entry.value">
                 {{ entry.name }}

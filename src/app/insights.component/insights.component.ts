@@ -82,7 +82,7 @@ export class InsightsComponent implements OnInit {
       this.systemService.insightStatus();
       if (this.systemService.overallStatus() !== 'running: healthy') {
         this.check();
-      }
+      }      
     })
   }  
 

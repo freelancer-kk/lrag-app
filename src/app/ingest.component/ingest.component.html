@@ -103,7 +103,7 @@
     <span class="spacer"></span>
     &nbsp;<mat-form-field class="full-width">
       <mat-label [matTooltip]="'PAGES.INGEST.COLLECTIONS_TIP' | translate">{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
-      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.overallStatus !== 'running: healthy' || this.ingestStatus !== 'not running'" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
+      <mat-select (openedChange)="toggleOpen($event)" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
         @for (entry of systemService.collections; track $index) {
           <mat-option [value]="entry.value">
             {{ entry.name }}
@@ -120,7 +120,7 @@
   <div class="onerow">
     <mat-form-field class="full-width">
       <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
-      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.overallStatus !== 'running: healthy' || this.ingestStatus !== 'not running'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
+      <mat-select (openedChange)="toggleOpen($event)" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
         @for (entry of systemService.ragFiles; track $index) {
           <mat-option [value]="entry.name">{{ systemService.basename(entry.name) }}</mat-option>
         }
