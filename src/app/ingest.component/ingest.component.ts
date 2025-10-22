@@ -330,7 +330,8 @@ export class IngestComponent implements OnInit {
           console.log('selectedCollection:', this.collection, selectedCollection);
           this.systemService.selectedCollections.setValue(selectedCollection);
           this.systemService.collection = this.collection;          
-          this.systemService.ragFiles = await this.mediaService.ls();
+          this.systemService.ragFiles = await this.mediaService.ls(true);
+          console.log('ragFiles:', this.systemService.ragFiles);
         } else {
           console.log('collection already exists!:', this.collection)
         }
@@ -369,7 +370,7 @@ export class IngestComponent implements OnInit {
           this.systemService.collection = "general";
           const generalCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
           this.systemService.selectedCollections.setValue(generalCollection);
-          this.systemService.ragFiles = await this.mediaService.ls();
+          this.systemService.ragFiles = await this.mediaService.ls(true);
           await this.systemService.saveChunkSettings();
         }
       });
