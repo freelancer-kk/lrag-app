@@ -16,14 +16,12 @@ interface SentenceObject {
 export type LanguageTypes = "cpp" | "go" | "java" | "js" | "php" | "proto" | "python" | "rst" | "ruby" | "rust" | "scala" | "swift" | "markdown" | "latex" | "html" | "sol";
 
 export default class SemanticChunking {
-  embeddings: OllamaEmbeddings;
+  embeddings: OllamaEmbeddings | undefined;
   webContents: Electron.WebContents | undefined;
+  baseUrl: string;
 
   constructor(baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
-    this.embeddings = new OllamaEmbeddings({
-        model,
-        baseUrl
-    });
+    this.baseUrl = baseUrl;
   }
 
   /**
@@ -158,7 +156,7 @@ export default class SemanticChunking {
       .map((item) => item.combined_sentence as string);
 
     // Generate embeddings for the combined sentences
-    const embeddingsArray = await this.embeddings.embedDocuments(
+    const embeddingsArray = await this.embeddings?.embedDocuments(
       combinedSentencesStrings
     );
 
@@ -167,7 +165,7 @@ export default class SemanticChunking {
     for (let i = 0; i < sentencesArrayCopy.length; i++) {
       if (sentencesArrayCopy[i].combined_sentence !== undefined) {
         sentencesArrayCopy[i].combined_sentence_embedding =
-          embeddingsArray[embeddingIndex++];
+          embeddingsArray?.[embeddingIndex++];
       }
     }
 
@@ -322,8 +320,14 @@ export default class SemanticChunking {
     })                
   }
 
-  chunk = async (doc: Document, chunkNum: number, totalChunks: number): Promise<Document[]> => {
+  chunk = async (model: string, doc: Document, chunkNum: number, totalChunks: number): Promise<Document[]> => {
     try {
+
+      this.embeddings = new OllamaEmbeddings({
+        model,
+        baseUrl: this.baseUrl
+      });
+
       const returnDocs: Document[] = [];
       
       // Step 2: Split the loaded text into sentences.

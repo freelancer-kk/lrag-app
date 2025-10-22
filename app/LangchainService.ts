@@ -284,14 +284,14 @@ export default class LangchainService {
     }
   }
 
-  semanticSplit = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined, language: LanguageTypes | undefined = undefined ): Promise<Document[]> => {
+  semanticSplit = async (model: string, docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined, language: LanguageTypes | undefined = undefined ): Promise<Document[]> => {
     if (params && params.chunkSize && params.chunkOverlap && (params?.chunkSize > 0 || params?.chunkOverlap > 0)) {
       console.log('semantic:splitting:docs:', params, language, docs.length);
       
       let chunks: Document[] = [];
       let i = 1;
       for await (const doc of docs) {
-        chunks = chunks.concat(await this.semanticChunking.chunk(doc, i, docs.length));
+        chunks = chunks.concat(await this.semanticChunking.chunk(model, doc, i, docs.length));
         i++;
       }
       
@@ -366,7 +366,7 @@ export default class LangchainService {
           chunks = await this.split(docs, params, 'markdown');
         } else {
           if (params.useSemantic) {
-            chunks = await this.semanticSplit(docs, params);
+            chunks = await this.semanticSplit(params.embeddings, docs, params);
           } else {
             chunks = await this.split(docs, params);
           }
