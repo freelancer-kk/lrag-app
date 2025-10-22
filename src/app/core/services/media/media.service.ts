@@ -213,7 +213,7 @@ export class MediaService {
             return { 
               name: v,
               status: 0,
-              text: ocrRequired
+              text: v.toLowerCase().endsWith('.pdf') ? ocrRequired : ''
             }
           }
         } else {
