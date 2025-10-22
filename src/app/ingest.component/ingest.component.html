@@ -58,35 +58,35 @@
     </mat-expansion-panel-header> 
       <div class="onerow">
         <mat-label [matTooltip]="'PAGES.INGEST.CHUNK_SIZE_TIP' | translate">{{ 'PAGES.INGEST.CHUNK_SIZE' | translate }}</mat-label>
-        <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="0" max="4096" step="64" showTickMarks discrete>
+        <mat-slider [disabled]="this.ingestStatus !== 'not running' || this.overallStatus !== 'running: healthy'" min="0" max="4096" step="64" showTickMarks discrete>
           <input matSliderThumb [(ngModel)]="systemService.chunkSize" [value]="systemService.chunkSize">
         </mat-slider>
         <mat-label [matTooltip]="'PAGES.INGEST.OVERLAP_TIP' | translate">{{ 'PAGES.INGEST.OVERLAP' | translate }}</mat-label>
-        <mat-slider [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" min="0" max="1024" step="16" showTickMarks discrete>
+        <mat-slider [disabled]="this.ingestStatus !== 'not running' || this.overallStatus !== 'running: healthy'" min="0" max="1024" step="16" showTickMarks discrete>
           <input matSliderThumb [(ngModel)]="systemService.overlap" [value]="systemService.overlap">
         </mat-slider>
         <span class="spacer"></span>  
-        <button [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" matButton="filled" (click)="resetDefaults($event)">
+        <button [disabled]="this.ingestStatus !== 'not running' || this.overallStatus !== 'running: healthy'" matButton="filled" (click)="resetDefaults($event)">
           {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
         </button>
       </div>
       <div class="onerow">
-        <mat-slide-toggle [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.localVector" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
+        <mat-slide-toggle [disabled]="this.ingestStatus !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.localVector" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
         {{ 'PAGES.INGEST.USE_LOCAL_VECTOR' | translate }}
         </mat-slide-toggle>  
       </div>
       <div class="onerow">
-        <mat-slide-toggle [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_SEMANTIC_TIP' | translate" [(ngModel)]="systemService.useSemantic">
+        <mat-slide-toggle [disabled]="this.ingestStatus !== 'not running' || this.overallStatus !== 'running: healthy'" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_SEMANTIC_TIP' | translate" [(ngModel)]="systemService.useSemantic">
         {{ 'PAGES.INGEST.USE_SEMANTIC' | translate }}
         </mat-slide-toggle>  
       </div>
       <div class="onerow">
         <mat-form-field>
           <mat-label [matTooltip]="'PAGES.INGEST.SEPARATOR_TIP' | translate">{{ 'PAGES.INGEST.SEPARATOR' | translate }}</mat-label>
-          <input matInput [disabled]="systemService.overallStatus() !== 'running: healthy' || this.systemService.ingestStatus() !== 'not running'" matInput type="text" [(ngModel)]="systemService.separator" [maxLength]="1" [minlength]="1">
+          <input matInput [disabled]="this.overallStatus !== 'running: healthy' || this.ingestStatus !== 'not running'" matInput type="text" [(ngModel)]="systemService.separator" [maxLength]="1" [minlength]="1">
         </mat-form-field>
         <span class="spacer"></span>
-        <button [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.ingestStatus() !== 'not running'" matButton="filled" (click)="systemService.separator = ';'">
+        <button [disabled]="this.overallStatus !== 'running: healthy' || this.ingestStatus !== 'not running'" matButton="filled" (click)="systemService.separator = ';'">
           {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
         </button>
       </div>
@@ -95,7 +95,7 @@
   <div class="onerow">
     <mat-form-field>
       <mat-label>{{ 'PAGES.INGEST.COLLECTION_NAME' | translate }}</mat-label>
-      <input matInput specialIsAlphaNumeric [disabled]="systemService.overallStatus() !== 'running: healthy' || this.systemService.ingestStatus() !== 'not running'" matInput type="text" [(ngModel)]="collection" [maxLength]="80" [minlength]="8" (focus)="showErrors = true" (blur)="newCollection($event)">
+      <input matInput specialIsAlphaNumeric [disabled]="this.overallStatus !== 'running: healthy' || this.ingestStatus !== 'not running'" matInput type="text" [(ngModel)]="collection" [maxLength]="80" [minlength]="8" (focus)="showErrors = true" (blur)="newCollection($event)">
       @if (this.collection.length < 8 && showErrors) {
         <mat-error>{{ 'PAGES.INGEST.COLLECTION_NAME_ERROR' | translate}}</mat-error>
       }
@@ -103,7 +103,7 @@
     <span class="spacer"></span>
     &nbsp;<mat-form-field class="full-width">
       <mat-label [matTooltip]="'PAGES.INGEST.COLLECTIONS_TIP' | translate">{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
-      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
+      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.overallStatus !== 'running: healthy' || this.ingestStatus !== 'not running'" [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
         @for (entry of systemService.collections; track $index) {
           <mat-option [value]="entry.value">
             {{ entry.name }}
@@ -111,7 +111,7 @@
         }
       </mat-select>    
     </mat-form-field>    
-    @if (!this.isOpened && systemService.selectedCollections.value && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running' && systemService.collection !== 'general') {
+    @if (!this.isOpened && systemService.selectedCollections.value && this.overallStatus === 'running: healthy' && this.ingestStatus === 'not running' && systemService.collection !== 'general') {
       <button matSuffix matIconButton aria-label="Clear" (click)="collectionRemove($event)">
         <mat-icon>delete</mat-icon>
       </button>            
@@ -120,13 +120,13 @@
   <div class="onerow">
     <mat-form-field class="full-width">
       <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
-      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.systemService.ingestStatus() !== 'not running' || this.overallStatus !== 'running: healthy'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
+      <mat-select (openedChange)="toggleOpen($event)" [disabled]="this.overallStatus !== 'running: healthy' || this.ingestStatus !== 'not running'" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
         @for (entry of systemService.ragFiles; track $index) {
           <mat-option [value]="entry.name">{{ systemService.basename(entry.name) }}</mat-option>
         }
       </mat-select>    
     </mat-form-field>
-    @if (!this.isOpened && systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.systemService.ingestStatus() === 'not running') {
+    @if (!this.isOpened && systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && this.overallStatus === 'running: healthy' && this.ingestStatus === 'not running') {
       <button matSuffix matIconButton aria-label="Clear" (click)="fileRemove($event)">
         <mat-icon>delete</mat-icon>
       </button>            
