@@ -118,12 +118,14 @@ export class MediaService {
             if (fIdx > -1) {
               this.docStatus[fIdx].status = response === true ? 0 : 1;
               this.docStatus[fIdx].text = response === true ? 'indexed' : 'Not indexed';
+              console.log('getFiles:status:', this.docStatus[fIdx]);
             } else {
               this.docStatus.push({
                 name,
                 status: response === true ? 0 : 1,
                 text: response === true ? 'indexed' : 'Not indexed'
-              });               
+              });
+              console.log('getFiles:status:new:', this.docStatus[this.docStatus.length - 1]);
             }
           }
         }        
@@ -200,10 +202,19 @@ export class MediaService {
       const unknown: string = await this.systemService.get('PAGES.INGEST.UNKNOWN');
       return names.map((v: string) => {
         if (this.docStatus) {
-          return { 
-            name: v,
-            status: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).status : this.systemService.localVector ? 1 : 2,
-            text: this.docStatus.findIndex(f => f.name === v) > -1 ? this.docStatus.find(f => f.name === v).text : ocrRequired
+          const statusEntry: any = this.docStatus.find(f => f.name === v);
+          if (statusEntry) {
+            return { 
+              name: v,
+              status: statusEntry.status !== 0 ? (this.systemService.localVector ? 1 : 2) : 0,
+              text: statusEntry.text ? statusEntry.text : ocrRequired
+            }
+          } else {
+            return { 
+              name: v,
+              status: 0,
+              text: ocrRequired
+            }
           }
         } else {
           return { 

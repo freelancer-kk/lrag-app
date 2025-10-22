@@ -52,9 +52,14 @@
             {{ 'PAGES.DETAIL.MODEL_NAME' | translate }}            
           </td>
           <td class="underline" mat-col>
+            @if (
+                systemService.ollamaStatus() === 'running' && 
+                systemService.modelStatus() === 'running'              
+              ) {
             <button matButton (click)="updateAllModels($event)">
               <mat-icon class="warning">refresh</mat-icon>
             </button>
+            }
           </td>
           <td class="underline" mat-col>
             {{ 'PAGES.DETAIL.MODEL_SIZE' | translate }}
@@ -68,9 +73,14 @@
               </button>
             </td>
             <td mat-col>
+              @if (
+                systemService.ollamaStatus() === 'running' && 
+                systemService.modelStatus() === 'running'              
+              ) {
               <button matButton (click)="updateModel($event, entry.name)">
                 <mat-icon class="warning">refresh</mat-icon>
               </button>
+              }
               @if (
                 systemService.ollamaStatus() === 'running' && 
                 systemService.modelStatus() === 'running' &&
