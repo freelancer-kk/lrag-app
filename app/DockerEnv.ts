@@ -11,7 +11,8 @@ const mergeKeys: string[] = [
   "OCR_USER",
   "OCR_PASSWD",
   "UPDATE_INFO_FILE",
-  "MODELS_FILE"
+  "MODELS_FILE",
+  "LIBRARY_PREFIX"
 ];
 
 export default class DockerEnv {

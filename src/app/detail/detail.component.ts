@@ -42,14 +42,17 @@ export class DetailComponent implements OnInit {
   readonly dialog = inject(MatDialog);
   showModelList: boolean = true;
   wt: any;
+  libPrefix: string | undefined;
   
   constructor(
     public systemService: SystemService,
-  ) {
+  ) {    
     effect(() => {})    
   }
 
-  async ngOnInit() {}  
+  async ngOnInit() {
+    this.libPrefix = await this.systemService.getEnvValue('LIBRARY_PREFIX');
+  }  
 
   showDownloadImageWarning = (message: string = '') => {
     this.wt = setTimeout(async () => {
@@ -119,6 +122,19 @@ export class DetailComponent implements OnInit {
       })
     }) 
   }
+  
+  updateModel = async (ev: any, model: string): Promise<void> => {
+    await this.systemService.commandOllama(
+      'pull', 
+      { model, stream: true }
+    );
+  }
+
+  updateAllModels = async (ev: any): Promise<void> => {
+    this.systemService.availableModels.forEach(async (e: any) => {
+      await this.updateModel(ev, e.name);
+    })
+  };
 
   modelChange = async (event: any, mtype: number) => {
     // Check if model has been already downloaded
@@ -152,5 +168,9 @@ export class DetailComponent implements OnInit {
       await this.writeModelToEnv();      
       this.systemService.downloadedLLM = (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model);      
     }    
-  }    
+  }
+  
+  openModelDetails = (ev: any, model: string) => {
+    this.systemService.openExternal(this.libPrefix + model);
+  }
 }
