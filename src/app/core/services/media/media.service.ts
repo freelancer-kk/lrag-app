@@ -206,7 +206,7 @@ export class MediaService {
           if (statusEntry) {
             return { 
               name: v,
-              status: statusEntry.status !== 0 ? (this.systemService.localVector ? 1 : 2) : 0,
+              status: statusEntry.status > 1 ? (this.systemService.localVector ? 1 : 2) : statusEntry.status,
               text: statusEntry.text ? statusEntry.text : ocrRequired
             }
           } else {
