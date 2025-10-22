@@ -21,6 +21,20 @@
     </button>          
   }  
 </mat-toolbar>
+@if (systemService.overallStatus() === 'running: healthy' && systemService.insightStatus() !== 'thinking') {
+  <div class="onerow">
+    <mat-form-field class="full-width">
+      <mat-label>{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
+      <mat-select [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
+        @for (entry of systemService.collections; track $index) {
+          <mat-option [value]="entry.value">
+            {{ entry.name }}
+          </mat-option>
+        }
+      </mat-select>    
+    </mat-form-field>          
+  </div>
+}
 <mat-accordion>
   <mat-expansion-panel [expanded]="systemService.filter">
     <mat-expansion-panel-header>
@@ -59,21 +73,7 @@
       </button>
     </div>
   </mat-expansion-panel>        
-</mat-accordion>
-  @if (systemService.overallStatus() === 'running: healthy') {
-      <div class="onerow">
-        <mat-form-field class="full-width">
-          <mat-label>{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
-          <mat-select [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
-            @for (entry of systemService.collections; track $index) {
-              <mat-option [value]="entry.value">
-                {{ entry.name }}
-              </mat-option>
-            }
-          </mat-select>    
-        </mat-form-field>          
-      </div>
-    }
+</mat-accordion>  
 
   @if (systemService.ragFiles.length === 0) {
     <mat-toolbar>

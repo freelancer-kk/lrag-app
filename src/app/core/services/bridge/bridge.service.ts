@@ -54,7 +54,7 @@ export class BridgeService {
       }) 
       this.electronService.ipcRenderer.on('chat', (_event: any, result: any) => {
         // console.log('chat:event', result.response);
-        this.chatcb(_event, result.response);        
+        this.chatcb(_event, JSON.parse(result.response));
       })
       this.electronService.ipcRenderer.on('ocr-event', (_event: any, result: any) => {
         // console.log('bridge:event', result.response);

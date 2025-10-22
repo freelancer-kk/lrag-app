@@ -7,6 +7,8 @@ import { Document } from "@langchain/core/documents";
 import { Ollama } from "@langchain/ollama";
 import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
 import DockerEnv from './DockerEnv'
+import { AIMessageChunk } from '@langchain/core/messages'
+import { concat } from "@langchain/core/utils/stream";
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -28,7 +30,7 @@ export default class ContextChat {
 
   emit = (args: any) => {
     this.webContents?.send('chat', {
-      response: args
+      response: JSON.stringify(args)
     })                
   }
 
@@ -94,7 +96,7 @@ export default class ContextChat {
     }    
   }
   
-  getAnswer = async (options: any): Promise<string> => {
+  getAnswer = async (options: any): Promise<string | undefined> => {
     if (!this.ollamaService.isReady || !this.ollamaService.ollama) {
       return 'Services not ready';
     }
@@ -176,19 +178,46 @@ export default class ContextChat {
           .pipe(this.ollamaLlm)
           .pipe(new StringOutputParser());
         
+        const ref = this;
         const llmResponse: IterableReadableStream<string> = await answerChain.stream({
           prompt: options.prompt,
           context: combinedDocs,
           userQuestion: options.question
+        }, {
+          callbacks: [
+            {
+              handleLLMEnd(output) {
+                // console.log('handleLLMEnd:', JSON.stringify(output, null, 2));
+                ref.emit({ type: 'chat-chunk-metadata', data: output });
+              },
+            },
+          ],
         });
 
-        let finalAnswer: string = '';
-        for await (const chunk of llmResponse) {
-          finalAnswer += chunk;
-          // console.log('chat-chunk', chunk);
-          this.emit({ type: 'chat-chunk', chunk });
+        /*
+        for await (const event of answerChain.streamEvents({
+          prompt: options.prompt,
+          context: combinedDocs,
+          userQuestion: options.question
+        }, {
+          version: "v2"
+        })) {
+          console.log(event);
         }
-        return finalAnswer;
+          */
+
+        let finalAnswer: AIMessageChunk | undefined;
+        for await (const chunk of llmResponse) {
+          if (finalAnswer) {
+            finalAnswer = concat(finalAnswer, new AIMessageChunk(chunk));
+          } else {
+            finalAnswer = new AIMessageChunk(chunk);
+          }
+          // console.log('chat-chunk', chunk);
+          this.emit({ type: 'chat-chunk', data: chunk });
+        }
+        console.log(finalAnswer?.usage_metadata)
+        return finalAnswer?.content.toString();
       } else {
         console.log('INSIGHT: NO DOC CONTEXT!')
 
@@ -201,18 +230,25 @@ export default class ContextChat {
           .pipe(new StringOutputParser())
         
         const llmResponse: IterableReadableStream<string> = await questionChain.stream({
-//          prompt: options.historyPrompt,
-//          chatHistory: options.chatHistory,
           userQuestion: options.question
+        }, {
+          metadata: {
+            include_usage: true,
+          }
         });
 
-        let finalAnswer: string = '';
+        let finalAnswer: AIMessageChunk | undefined;
         for await (const chunk of llmResponse) {
-          finalAnswer += chunk;
+          if (finalAnswer) {
+            finalAnswer = concat(finalAnswer, new AIMessageChunk(chunk));
+          } else {
+            finalAnswer = new AIMessageChunk(chunk);
+          }
           // console.log('chat-chunk', chunk);
-          this.emit({ type: 'chat-chunk', chunk });
+          this.emit({ type: 'chat-chunk', data: chunk });
         }
-        return finalAnswer;
+        console.log(finalAnswer?.usage_metadata)
+        return finalAnswer?.content.toString();
       }
     } catch (e: any) {
       console.error(e);

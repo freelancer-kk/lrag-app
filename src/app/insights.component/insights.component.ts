@@ -58,6 +58,7 @@ export class InsightsComponent implements OnInit {
   question: string = '';
   streaming: boolean = false;
   streamedResponse: string = '';
+  generationInfo: any;
   
   constructor(
     private bridgeService: BridgeService,
@@ -68,11 +69,22 @@ export class InsightsComponent implements OnInit {
   ) {
 
     this.bridgeService.chatCallback((ev: any, response: any) => {
-      // console.log('chat-event', response);
+      const { type, data } = response;
+      // console.log('chat-event:', type);
       this.ngZone.run(() => {
-        if (response.chunk) {
-          this.streamedResponse += response.chunk;
-          this.scrollToBottom();
+        switch (type) {
+          case 'chat-chunk-metadata': {
+            this.generationInfo = data.generations[0][0].generationInfo;
+            console.log('generationInfo:', this.generationInfo);            
+          }
+          break;
+          case 'chat-chunk': {
+            if (response.data) {
+              this.streamedResponse += response.data;
+              this.scrollToBottom();
+            }
+          }
+          break;
         }
       });
     });
@@ -153,13 +165,13 @@ export class InsightsComponent implements OnInit {
       this.streamedResponse = '';
       this.streaming = false;
       this.systemService.insightStatus.update(() => 'running');
-      console.log('Answer:', answer);
+      // console.log('Answer:', answer);
       try {
         if (typeof answer === 'string') {
           console.log('PUSHING ANSWER:', answer);
           this.systemService.chatHistory.push({
             who: EWho.Assistant,
-            content: this.reformat(answer)
+            content: this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count)
           });
           this.scrollToBottom();
 
@@ -184,7 +196,7 @@ export class InsightsComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustHtml(unsafe);
   }
 
-  reformat = (answer: string): string => {
+  reformat = (answer: string, input_tokens: number, output_tokens: number): string => {
     // Look for 'answer:' and add 2 line seps
     const fIdx: number = answer.toLowerCase().indexOf('</think>');
     if (fIdx > -1) {
@@ -196,7 +208,7 @@ export class InsightsComponent implements OnInit {
       console.log('splicing answer');
       answer = answer.substring(0, fIdx1) + '<br><br>' + answer.substring(fIdx1);
     }
-    return answer;
+    return answer + '<br><br> <small><I>tokens:' + input_tokens + ' in / ' + output_tokens + " out<I></small>";
   }
 
   scrollToBottom = () => {
