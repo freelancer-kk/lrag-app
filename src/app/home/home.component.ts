@@ -151,6 +151,7 @@ export class HomeComponent implements OnInit {
     this.systemService.localVector = this.systemService.history[index].ingest.localVector;
     this.systemService.overlap = this.systemService.history[index].ingest.overlap;
     this.systemService.useSemantic = this.systemService.history[index].ingest.useSemantic;
+    this.systemService.separator = this.systemService.history[index].ingest.separator;
 
     this.systemService.selectedModel = this.systemService.history[index].insight.model;
     this.systemService.userPrompt = this.systemService.history[index].insight.userPrompt;

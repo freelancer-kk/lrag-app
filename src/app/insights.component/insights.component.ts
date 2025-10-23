@@ -185,6 +185,7 @@ export class InsightsComponent implements OnInit {
               embeddings_model: this.systemService.embeddings_model,
               chunkSize: this.systemService.chunkSize,
               overlap: this.systemService.overlap,
+              separator: this.systemService.separator,
               useSemantic: this.systemService.useSemantic,
               localVector: this.systemService.localVector,
               collection: this.systemService.collection

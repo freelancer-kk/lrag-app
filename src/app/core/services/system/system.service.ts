@@ -35,6 +35,7 @@ export interface IHistory {
     embeddings_model: string
     chunkSize: number,
     overlap: number,
+    separator: string,
     useSemantic: boolean,
     localVector: boolean,
     collection: string
