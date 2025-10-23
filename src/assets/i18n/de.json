@@ -68,7 +68,8 @@
       "DATE": "Datum",
       "HISTORY": "Geschichte",
       "HISTORY_DETAILS": "Historische Fragen und Antworten",
-      "RESTORE_SETTINGS": "Einstellungen und Frage von diesem Lauf werden wiederhergestellt!"
+      "RESTORE_SETTINGS": "Einstellungen und Frage von diesem Lauf werden wiederhergestellt!",
+      "RESTORE_TIP": "Möglicherweise möchten Sie die Einstellungen und Fragen für eine Abfrage wiederherstellen, die Sie in der Vergangenheit ausgeführt haben. Dadurch werden die erweiterten Aufnahme-, Einblick- und Modelleinstellungen wiederhergestellt"
     },
     "DETAIL": {
       "TITLE": "Konfiguration",

@@ -142,7 +142,7 @@
                       <mat-icon class="danger">close</mat-icon>
                     </button>
                     @if (systemService.overallStatus() === 'running: healthy' && systemService.ingestStatus() === 'not running' && systemService.insightStatus() === 'not running') {
-                      <button matButton (click)="restore($event, $index)">
+                      <button [matTooltip]="'PAGES.HOME.RESTORE_TIP' | translate" matButton (click)="restore($event, $index)">
                         <mat-icon class="success">restore</mat-icon>
                       </button> 
                     }

@@ -68,7 +68,8 @@
         "DATE": "Date",
         "HISTORY": "History",
         "HISTORY_DETAILS": "Historical questions and answers",
-        "RESTORE_SETTINGS": "Restoring settings and question from this run!"
+        "RESTORE_SETTINGS": "Restoring settings and question from this run!",
+        "RESTORE_TIP": "You may wish to restore the settings and question for a query you ran in the past. This will restore advanced ingestion, insight and model settings"
       },
       "DETAIL": {
         "TITLE": "Config",
