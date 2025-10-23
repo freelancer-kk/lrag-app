@@ -159,6 +159,12 @@ export class InsightsComponent implements OnInit {
         who: EWho.User,
         content: question
       });
+      this.systemService.history.unshift({
+        when: new Date(),
+        expanded: false,
+        text: question,
+      })
+      this.systemService.saveMainHistory();
       this.scrollToBottom();
       this.systemService.insightStatus.update(() => 'thinking');
       this.streaming = true;
@@ -175,6 +181,13 @@ export class InsightsComponent implements OnInit {
             who: EWho.Assistant,
             content: this.generationInfo ? this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count) : this.reformat(answer, 0, 0)
           });
+          this.systemService.history.unshift({
+            when: new Date(),
+            expanded: false,
+            text: answer,
+            genInfo: this.generationInfo
+          })
+          this.systemService.saveMainHistory();
           this.scrollToBottom();
 
           // Get the model usage  

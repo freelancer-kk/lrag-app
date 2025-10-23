@@ -15,6 +15,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
+import {Clipboard} from '@angular/cdk/clipboard';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-home',
@@ -37,6 +39,7 @@ import { AlertComponent } from '../alert.component/alert.component';
     ]
 })
 export class HomeComponent implements OnInit {
+  private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
   @ViewChild('cpu', {static: true}) cpu!: JsonViewComponent;
   @ViewChild('gpu', {static: true}) gpu!: JsonViewComponent;
@@ -45,7 +48,8 @@ export class HomeComponent implements OnInit {
   private translate = inject(TranslateService);
 
   constructor(
-    public systemService: SystemService,    
+    public systemService: SystemService,
+    private clipboard: Clipboard 
   ) {    
     effect(() => {
       this.cpu.expandTo(0);
@@ -87,5 +91,46 @@ export class HomeComponent implements OnInit {
     }
 
     return `${value}`;
+  }
+
+  copyContent = async (ev: any, text: string) => {
+    this.clipboard.copy(text);
+    this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.COPY_CONTENT'), 'OK', {
+      duration: 2500
+    });
+  }
+
+  formatGenInfo = (info: any): string => {
+    return JSON.stringify(info);
+  }
+
+  reformat = (text: string): string => {
+    return text.length > 60 ? text.substring(0, 60) + '...' : text;
+  }
+
+  showFullText = (ev: any, index: number) => {
+    const htmlTextElement: HTMLElement | null = document.getElementById("textHistoryPart" + index);
+    if (htmlTextElement) {
+      htmlTextElement.innerHTML = this.systemService.history[index].text;
+      this.systemService.history[index].expanded = true;
+    }
+  }
+
+  hideFullText = (ev: any, index: number) => {
+    const htmlTextElement: HTMLElement | null = document.getElementById("textHistoryPart" + index);
+    if (htmlTextElement) {
+      htmlTextElement.innerHTML = this.systemService.history[index].text.substring(0, 60) + '...';
+      this.systemService.history[index].expanded = false;
+    }
+  }
+
+  clearAll = (ev: any) => {
+    this.systemService.history = [];
+    this.systemService.saveMainHistory();
+  }
+
+  clear = (ev: any, index: number) => {
+    this.systemService.history.splice(index, 1);
+    this.systemService.saveMainHistory();
   }
 }

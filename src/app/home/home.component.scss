@@ -39,3 +39,8 @@ mat-slider {
 ::ng-deep .mat-mdc-slider.mdc-slider--disabled {
   opacity: 100% !important;
 }
+
+.copyIcon {
+  float: left !important;
+  transform: scale(0.5);  
+}

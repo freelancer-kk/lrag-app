@@ -27,6 +27,13 @@ export interface IGenInfo {
   eval_duration: number
 }
 
+export interface IHistory {
+  when: Date,
+  text: string,
+  expanded: boolean,
+  genInfo?: IGenInfo
+}
+
 const options: ConnectionServiceOptions = {
   enableHeartbeat: true,
   heartbeatUrl: 'https://google.com',
@@ -87,6 +94,7 @@ export class SystemService {
   subscription = new Subscription();
   status!: string;
   modelsDownloaded: boolean = false;
+  history: IHistory[] = [];
   
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},    
@@ -122,6 +130,11 @@ export class SystemService {
             resolve(res);
         });
     })
+  }
+
+  saveMainHistory = () => {
+    this.history.splice(100);
+    localStorage.setItem('history', JSON.stringify(this.history))
   }
 
   init = (): void => {

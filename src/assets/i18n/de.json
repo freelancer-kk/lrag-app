@@ -61,7 +61,10 @@
       "RATING_TIP": "Ihre PC -Bewertung basiert auf CPU, Speicher, GPU und VRAM. ",
       "MANAGE_EXTERNALLY": "Extern verwalten",
       "MANAGE_EXTERNALLY_TIP": "Den Modellprozess (Ollama) extern verwalten? ",
-      "EXTERNAL_ARE_YOU_SURE": "Bist du sicher? "
+      "EXTERNAL_ARE_YOU_SURE": "Bist du sicher? ",
+      "TEXT": "Historische Fragen und Antworten",
+      "STATS": "Statistiken",
+      "DATE": "Datum"
     },
     "DETAIL": {
       "TITLE": "Konfiguration",

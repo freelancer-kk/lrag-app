@@ -73,6 +73,10 @@ bootstrapApplication(AppComponent, {
         if (systemService.userPrompt === undefined) {
           systemService.userPrompt = await systemService.get('PAGES.INSIGHT.PROMPT')
         }
+        const historyStr: string | null  = localStorage.getItem('history');
+        if (historyStr) {
+          systemService.history = JSON.parse(historyStr);
+        }
       };
       await initializerFn(inject(SystemService));
     }),
