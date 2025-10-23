@@ -80,6 +80,8 @@ export class SystemService {
   collection: string = 'general';
   collections: any[] = [];
   selectedCollections = new FormControl(null);
+  ragPrompt: string | undefined = undefined;
+  userPrompt: string | undefined = undefined;
   
   currentState!: ConnectionState;
   subscription = new Subscription();
@@ -174,7 +176,9 @@ export class SystemService {
     localStorage.setItem('insight-settings', JSON.stringify({
       k: this.k,
       filter: this.filter,
-      numCtx: this.numCtx
+      numCtx: this.numCtx,
+      ragPrompt: this.ragPrompt,
+      userPrompt: this.userPrompt
     }))
   }
 
@@ -264,7 +268,7 @@ export class SystemService {
         usage: model.usage
       }
     });
-    console.log('getAvailableLLMs:', this.availableModels);
+    // console.log('getAvailableLLMs:', this.availableModels);
   }
 
   getEnvValue = (key: string): Promise<string> => {

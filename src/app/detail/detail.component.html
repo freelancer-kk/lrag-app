@@ -44,6 +44,27 @@
       }
     </mat-toolbar-row>    
   </mat-toolbar>
+  <mat-accordion>
+  <mat-expansion-panel expanded="false">
+    <mat-expansion-panel-header>
+    <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
+    <mat-panel-description>        
+    </mat-panel-description>
+  </mat-expansion-panel-header> 
+    <div class="onerow">
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'PAGES.DETAIL.RAG_PROMPT' | translate }}</mat-label>
+        <textarea [disabled]="this.systemService.overallStatus() !== 'running: healthy'" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
+      </mat-form-field>                        
+    </div>
+    <div class="onerow">
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'PAGES.DETAIL.USER_PROMPT' | translate }}</mat-label>
+        <textarea [disabled]="this.systemService.overallStatus() !== 'running: healthy'" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
+      </mat-form-field>                        
+    </div>
+  </mat-expansion-panel>        
+  </mat-accordion>    
   @if (showModelList) {
     <div class="vertscroll">
       <table mat-table class="model_table">

@@ -75,7 +75,11 @@
         "MODEL_SIZE": "Raw Model Size",
         "MODEL_USAGE": "Usage",
         "DOWNLOAD_MSG": "Downloading a model uses your internet and may take some time and requires the corresponding local disk space.",
-        "DELETE_ARE_YOU_SURE": "Are you sure you want to remove this model?"
+        "DELETE_ARE_YOU_SURE": "Are you sure you want to remove this model?",
+        "RAG_PROMPT": "Tune the RAG prompt",
+        "USER_PROMPT": "Tune the USER prompt",
+        "RAG_PROMPT_TIP": "Optionally tune the RAG prompt that is responsible for reformulating your question for better processing. Only adjust this if necessary",
+        "USER_PROMPT_TIP": "Optionally tune the USER prompt that is responsible for processing your question after retrieval of the related document data"
       },
       "INGEST": {
         "TITLE": "Ingest",

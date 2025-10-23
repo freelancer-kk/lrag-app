@@ -75,7 +75,11 @@
       "MODEL_SIZE": "Rohmodellgröße",
       "MODEL_USAGE": "Verwendung",
       "DOWNLOAD_MSG": "Das Herunterladen eines Modells verwendet Ihr Internet und kann einige Zeit in Anspruch nehmen und den entsprechenden lokalen Speicherplatz benötigen.",
-      "DELETE_ARE_YOU_SURE": "Sind Sie sicher, dass Sie dieses Modell entfernen möchten?"
+      "DELETE_ARE_YOU_SURE": "Sind Sie sicher, dass Sie dieses Modell entfernen möchten?",
+      "RAG_PROMPT": "Optimieren Sie die RAG-Eingabeaufforderung",
+      "USER_PROMPT": "Passen Sie die USER-Eingabeaufforderung an",
+      "RAG_PROMPT_TIP": "Optimieren Sie optional die RAG-Eingabeaufforderung, die für die Neuformulierung Ihrer Frage verantwortlich ist, um eine bessere Verarbeitung zu ermöglichen. Passen Sie dies nur bei Bedarf an",
+      "USER_PROMPT_TIP": "Optimieren Sie optional die USER-Eingabeaufforderung, die für die Verarbeitung Ihrer Frage nach dem Abruf der zugehörigen Dokumentdaten verantwortlich ist"
     },
     "INGEST": {
       "TITLE": "Aufnehmen",

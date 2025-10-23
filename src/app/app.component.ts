@@ -483,15 +483,15 @@ export class AppComponent implements OnInit {
   pullModelsIfNecessary = async () => {
     try {
       if (this.systemService.selectedModel === '') {
-        this.systemService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
-          console.log('environment llm:', value);
+        await this.systemService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
+          console.log('environment model llm:', value);
           this.systemService.selectedModel = value;
           this.systemService.downloadedLLM = value;          
         })
       }
       if (this.systemService.embeddings_model === '') {
-        this.systemService.getEnvValue('EMBEDDINGS_MODEL_NAME').then((value: string) => {
-          console.log('environment llm:', value);
+        await this.systemService.getEnvValue('EMBEDDINGS_MODEL_NAME').then((value: string) => {
+          console.log('environment embed llm:', value);
           this.systemService.embeddings_model = value;
           this.systemService.downloadedLLM = value;          
         })

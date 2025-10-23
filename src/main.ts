@@ -13,7 +13,6 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app/app.routes';
 import { SystemService } from './app/core/services/system/system.service';
 import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
-import { sys } from 'typescript';
 
 if (APP_CONFIG.production) {
   enableProdMode();
@@ -34,7 +33,7 @@ bootstrapApplication(AppComponent, {
     ),
     provideAppInitializer(async () => {
       const initializerFn = async (systemService: SystemService) => {
-        systemService.init();
+        await systemService.init();
         console.log('app initializer:start');
         const theme: string | null = localStorage.getItem('theme');        
         systemService.dark = theme ? JSON.parse(theme) : 'dark';        
@@ -66,8 +65,14 @@ bootstrapApplication(AppComponent, {
         systemService.k = insightSettingsStr ? JSON.parse(insightSettingsStr).k : 4;
         systemService.filter = insightSettingsStr ? JSON.parse(insightSettingsStr).filter : undefined;
         systemService.numCtx = insightSettingsStr ? JSON.parse(insightSettingsStr).numCtx : undefined;
-
-        // Download models file
+        systemService.ragPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).ragPrompt : undefined;
+        systemService.userPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).userPrompt : undefined;
+        if (systemService.ragPrompt === undefined) {
+          systemService.ragPrompt = await systemService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT')
+        }
+        if (systemService.userPrompt === undefined) {
+          systemService.userPrompt = await systemService.get('PAGES.INSIGHT.PROMPT')
+        }
       };
       await initializerFn(inject(SystemService));
     }),

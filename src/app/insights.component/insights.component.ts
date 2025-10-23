@@ -250,7 +250,7 @@ export class InsightsComponent implements OnInit {
     console.log('change to collection:', this.systemService.collection)
     this.clearHistory();
     await this.systemService.saveChunkSettings();
-    this.mediaService.loadedIndex = false;
+    this.mediaService.loadedIndex = false;    
     this.systemService.ragFiles = await this.mediaService.ls(true);    
   }
 }

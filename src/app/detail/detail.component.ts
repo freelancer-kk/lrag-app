@@ -15,6 +15,7 @@ import { AlertComponent } from '../alert.component/alert.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
     selector: 'app-detail',
@@ -35,6 +36,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
       MatProgressSpinnerModule,
       MatSlideToggleModule,
       MatTooltipModule,
+      MatExpansionModule,
   ]
 })
 export class DetailComponent implements OnInit {
