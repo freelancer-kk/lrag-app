@@ -146,16 +146,20 @@ export class SystemService {
           if (this.currentState.hasNetworkConnection) {
             this.status = 'online';
             if (!this.modelsDownloaded) {
+              let url: string = await this.getEnvValue('MODELS_FILE', 82)
+              console.log('init:model file url:', url)            
               this.modelsDownloaded = true;
               this.models = await (await fetch(
-                await this.getEnvValue('MODELS_FILE'),
+                url,
                 {
                   method: 'GET',          
                 }
               )).json();
 
+              url = await this.getEnvValue('EMBEDDED_MODELS_FILE', 83)
+              console.log('init:embedded file url:', url)
               this.embedding_models = await (await fetch(
-                await this.getEnvValue('EMBEDDED_MODELS_FILE'),
+                url,
                 {
                   method: 'GET',          
                 }
@@ -284,9 +288,9 @@ export class SystemService {
     // console.log('getAvailableLLMs:', this.availableModels);
   }
 
-  getEnvValue = (key: string): Promise<string> => {
+  getEnvValue = (key: string, callbackId: number = 80) : Promise<string> => {
     return new Promise((resolve, reject) => {
-      this.bridgeService.env(80, 'get', { key }, async (data: any) => {
+      this.bridgeService.env(callbackId, 'get', { key }, async (data: any) => {
         resolve(data);        
       });
     })

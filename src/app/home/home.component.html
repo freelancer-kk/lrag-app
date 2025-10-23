@@ -66,62 +66,72 @@
         <nxt-json-view #disks [data]="systemService.disks"></nxt-json-view>
       </mat-expansion-panel>
     </mat-accordion>
-    <div class="vertscroll">
-      <table mat-table class="model_table">
-        <tr mat-header-row>
-          <td class="underline" mat-col>
-            {{ 'PAGES.HOME.DATE' | translate }}            
-          </td>
-          <td class="underline" mat-col>
-            {{ 'PAGES.HOME.TEXT' | translate }}            
-          </td>
-          <td class="underline" mat-col>
-            @if (systemService.history.length > 0) {
-              <button matButton (click)="clearAll($event)">
-                <mat-icon class="danger">close</mat-icon>
-              </button>      
-            }
-          </td>
-          <td class="underline" mat-col>
-            {{ 'PAGES.HOME.STATS' | translate }}
-          </td>          
-        </tr>      
-        @for (entry of systemService.history; track $index) {
-          <tr mat-row>
-            <td mat-col>
-              <small>
-              {{ entry.when }}
-              </small>
-            </td>
-            <td mat-col>
-              <mat-icon class="copyIcon" (click)="copyContent($event, entry.text)">content_copy</mat-icon>
-              <small>
-                <span [id]="'textHistoryPart' + $index">
-                {{ reformat(entry.text) }}
-                </span>                
-              </small>
-              @if (entry.text.length > 60 && !entry.expanded) {
-                <mat-icon (click)="showFullText($event, $index)">expand_more</mat-icon>
-              }
-              @if (entry.text.length > 60 && entry.expanded) {
-                <mat-icon (click)="hideFullText($event, $index)">expand_less</mat-icon>
-              }
-            </td>
-            <td mat-col>
-              <button matButton (click)="clear($event, $index)">
-                <mat-icon class="danger">close</mat-icon>
-              </button> 
-            </td>
-            <td mat-col>
-              @if (entry.genInfo) {
-                <small>
-                <nxt-json-view [data]="entry.genInfo"></nxt-json-view>
-                </small>
-              }
-            </td>            
-          </tr>          
-        }         
-      </table>    
-    </div>
+    <mat-accordion>
+      <mat-expansion-panel expanded="false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ 'PAGES.HOME.HISTORY' | translate }}</mat-panel-title>
+          <mat-panel-description>
+            {{ 'PAGES.HOME.HISTORY_DETAILS' | translate }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>    
+          <div class="vertscroll">
+            <table mat-table class="model_table">
+              <tr mat-header-row>
+                <td class="underline" mat-col>
+                  {{ 'PAGES.HOME.DATE' | translate }}            
+                </td>
+                <td class="underline" mat-col>
+                  {{ 'PAGES.HOME.TEXT' | translate }}            
+                </td>
+                <td class="underline" mat-col>
+                  @if (systemService.history.length > 0) {
+                    <button matButton (click)="clearAll($event)">
+                      <mat-icon class="danger">close</mat-icon>
+                    </button>      
+                  }
+                </td>
+                <td class="underline" mat-col>
+                  {{ 'PAGES.HOME.STATS' | translate }}
+                </td>          
+              </tr>      
+              @for (entry of systemService.history; track $index) {
+                <tr mat-row>
+                  <td mat-col>
+                    <small>
+                    {{ entry.when }}
+                    </small>
+                  </td>
+                  <td mat-col>
+                    <mat-icon class="copyIcon" (click)="copyContent($event, entry.text)">content_copy</mat-icon>
+                    <small>
+                      <span [id]="'textHistoryPart' + $index">
+                      {{ reformat(entry.text) }}
+                      </span>                
+                    </small>
+                    @if (entry.text.length > 60 && !entry.expanded) {
+                      <mat-icon (click)="showFullText($event, $index)">expand_more</mat-icon>
+                    }
+                    @if (entry.text.length > 60 && entry.expanded) {
+                      <mat-icon (click)="hideFullText($event, $index)">expand_less</mat-icon>
+                    }
+                  </td>
+                  <td mat-col>
+                    <button matButton (click)="clear($event, $index)">
+                      <mat-icon class="danger">close</mat-icon>
+                    </button> 
+                  </td>
+                  <td mat-col>
+                    @if (entry.genInfo) {
+                      <small>
+                      <nxt-json-view [data]="entry.genInfo"></nxt-json-view>
+                      </small>
+                    }
+                  </td>            
+                </tr>          
+              }         
+            </table>    
+          </div>
+      </mat-expansion-panel>
+    </mat-accordion>
   </mat-card-content>  
 </mat-card>
