@@ -1,7 +1,7 @@
 import { Component, NgZone, OnInit, effect, inject } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { EWho, SystemService } from '../core/services/system/system.service';
+import { EWho, IGenInfo, SystemService } from '../core/services/system/system.service';
 import {MatInputModule} from '@angular/material/input';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -22,6 +22,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
+import {Clipboard} from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-insights.component',
@@ -58,14 +59,15 @@ export class InsightsComponent implements OnInit {
   question: string = '';
   streaming: boolean = false;
   streamedResponse: string = '';
-  generationInfo: any;
+  generationInfo: IGenInfo | undefined;
   
   constructor(
     private bridgeService: BridgeService,
     public systemService: SystemService,
     private sanitizer: DomSanitizer,
     private mediaService: MediaService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private clipboard: Clipboard,
   ) {
 
     this.bridgeService.chatCallback((ev: any, response: any) => {
@@ -74,7 +76,7 @@ export class InsightsComponent implements OnInit {
       this.ngZone.run(() => {
         switch (type) {
           case 'chat-chunk-metadata': {
-            this.generationInfo = data.generations[0][0].generationInfo;
+            this.generationInfo = data.generations[0][0].generationInfo as IGenInfo;
             console.log('generationInfo:', this.generationInfo);            
           }
           break;
@@ -171,7 +173,7 @@ export class InsightsComponent implements OnInit {
           console.log('PUSHING ANSWER:', answer);
           this.systemService.chatHistory.push({
             who: EWho.Assistant,
-            content: this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count)
+            content: this.generationInfo ? this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count) : this.reformat(answer, 0, 0)
           });
           this.scrollToBottom();
 
@@ -216,6 +218,13 @@ export class InsightsComponent implements OnInit {
     if (chatDiv) {
       chatDiv.scrollTop = chatDiv.scrollHeight;
     }
+  }
+
+  copyContent = async (ev: any, text: string) => {
+    this.clipboard.copy(text);
+    this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.COPY_CONTENT'), 'OK', {
+      duration: 2500
+    });
   }
 
   reset = async (event: any) => {

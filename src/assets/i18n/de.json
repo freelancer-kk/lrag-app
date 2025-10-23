@@ -150,7 +150,8 @@
       "FILTER_TIP": "Modelle können große Datenmengen nicht als Teil ihres Kontextes verarbeiten: Verwenden Sie einen Filter, um die Ergebnisse für die Analyse für die Genauigkeit zu begrenzen",
       "CONTEXT_SIZE": "Modellkontextgröße",
       "CONTEXT_SIZE_TIP": "Gelegentlich möchten Sie möglicherweise die Kontextgröße erhöhen, um mehr Dateneingaben zu erfüllen. Zum Beispiel Transaktionsdaten",
-      "FILTER_REQUIRED": "Ihr Anwendungsfall ist CSV mit potenziell hohem Transaktionsvolumen. Sie müssen unter Optionen einen Filter angeben"
+      "FILTER_REQUIRED": "Ihr Anwendungsfall ist CSV mit potenziell hohem Transaktionsvolumen. Sie müssen unter Optionen einen Filter angeben",
+      "COPY_CONTENT": "Inhalt in die Zwischenablage kopiert"
     },
     "HELP": {
       "TITLE": "Helfen",

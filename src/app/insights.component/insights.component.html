@@ -99,8 +99,10 @@
               @if (entry.who === 0) {
                   <mat-icon matListItemIcon class="user">face</mat-icon>
                   <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
+                  <mat-icon class="copyUser" (click)="copyContent($event, entry.content)">content_copy</mat-icon>
               }          
               @if (entry.who === 1) {
+                  <mat-icon class="copyAss" (click)="copyContent($event, entry.content)">content_copy</mat-icon>
                   <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
                   <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
               }              
