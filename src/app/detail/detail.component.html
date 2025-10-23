@@ -35,12 +35,15 @@
             <mat-spinner diameter="30"></mat-spinner>
             {{ systemService.modelStatus() }}
           </div>
+        }
+        <!--
         } @else {
           <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
             <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus()) }}</mat-icon>
             {{ systemService.modelStatus() }}
           </div>
-        }      
+        }
+        -->   
       }
     </mat-toolbar-row>    
   </mat-toolbar>

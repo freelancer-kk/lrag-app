@@ -29,8 +29,26 @@ export interface IGenInfo {
 
 export interface IHistory {
   when: Date,
-  text: string,
-  expanded: boolean,
+  question: string,
+  answer: string,
+  ingest: {
+    embeddings_model: string
+    chunkSize: number,
+    overlap: number,
+    useSemantic: boolean,
+    localVector: boolean,
+    collection: string
+  },
+  insight: {
+    model: string,
+    k: number,
+    filter: string | undefined,
+    numCtx: number,
+    ragPrompt: string | undefined,
+    userPrompt: string | undefined
+  }
+  q_expanded: boolean,
+  a_expanded: boolean,  
   genInfo?: IGenInfo
 }
 
@@ -95,6 +113,8 @@ export class SystemService {
   status!: string;
   modelsDownloaded: boolean = false;
   history: IHistory[] = [];
+  question: string | undefined;
+  historyExpanded: boolean = false;
   
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},    

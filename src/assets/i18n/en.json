@@ -62,11 +62,13 @@
         "MANAGE_EXTERNALLY": "Manage Externally",
         "MANAGE_EXTERNALLY_TIP": "Manage the model process (Ollama) externally? This will allow more control over how you use Ollama on your PC",
         "EXTERNAL_ARE_YOU_SURE": "Are you sure? you will have to make sure Ollama is installed and started before running LRag, requires more management. LRag will exit and you will need to restart for this option",
-        "TEXT": "Question or Answer",
+        "QUESTION": "Question",
+        "ANSWER": "Answer",
         "STATS": "Statistics",
         "DATE": "Date",
         "HISTORY": "History",
-        "HISTORY_DETAILS": "Historical questions and answers"
+        "HISTORY_DETAILS": "Historical questions and answers",
+        "RESTORE_SETTINGS": "Restoring settings and question from this run!"
       },
       "DETAIL": {
         "TITLE": "Config",

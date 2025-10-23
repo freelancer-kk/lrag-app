@@ -56,7 +56,6 @@ export class InsightsComponent implements OnInit {
   url: string = 'http://localhost:8501';
   urlSafe: SafeResourceUrl;
   modelUsage: string = '';
-  question: string = '';
   streaming: boolean = false;
   streamedResponse: string = '';
   generationInfo: IGenInfo | undefined;
@@ -124,13 +123,13 @@ export class InsightsComponent implements OnInit {
 
   //TODO: When we submit a query perform a ps to get the model usage
   askQuestion = async () => {
-    if (this.question) {
+    if (this.systemService.question) {
       this.systemService.saveChunkSettings();
       this.systemService.saveInsightSettings();
 
       const isCSVUseCase: boolean = await this.mediaService.areAllCSV();
-      const question: string = this.question;
-      this.question = '';            
+      const question: string = this.systemService.question;
+      this.systemService.question = '';            
 
       const options: any = {
         question,
@@ -159,11 +158,6 @@ export class InsightsComponent implements OnInit {
         who: EWho.User,
         content: question
       });
-      this.systemService.history.unshift({
-        when: new Date(),
-        expanded: false,
-        text: question,
-      })
       this.systemService.saveMainHistory();
       this.scrollToBottom();
       this.systemService.insightStatus.update(() => 'thinking');
@@ -183,8 +177,26 @@ export class InsightsComponent implements OnInit {
           });
           this.systemService.history.unshift({
             when: new Date(),
-            expanded: false,
-            text: answer,
+            q_expanded: false,
+            a_expanded: false,
+            question,
+            answer,
+            ingest: {
+              embeddings_model: this.systemService.embeddings_model,
+              chunkSize: this.systemService.chunkSize,
+              overlap: this.systemService.overlap,
+              useSemantic: this.systemService.useSemantic,
+              localVector: this.systemService.localVector,
+              collection: this.systemService.collection
+            },
+            insight: {
+              model: this.systemService.selectedModel,
+              k: this.systemService.k,
+              filter: this.systemService.filter,
+              numCtx: this.systemService.numCtx,
+              ragPrompt: this.systemService.ragPrompt,
+              userPrompt: this.systemService.userPrompt
+            },
             genInfo: this.generationInfo
           })
           this.systemService.saveMainHistory();

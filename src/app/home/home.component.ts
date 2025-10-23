@@ -104,23 +104,32 @@ export class HomeComponent implements OnInit {
     return JSON.stringify(info);
   }
 
-  reformat = (text: string): string => {
-    return text.length > 60 ? text.substring(0, 60) + '...' : text;
-  }
-
-  showFullText = (ev: any, index: number) => {
-    const htmlTextElement: HTMLElement | null = document.getElementById("textHistoryPart" + index);
-    if (htmlTextElement) {
-      htmlTextElement.innerHTML = this.systemService.history[index].text;
-      this.systemService.history[index].expanded = true;
+  reformat = (text: string | undefined): string | undefined => {
+    if (text) {
+      return text.length > 60 ? text.substring(0, 60) + '...' : text;
     }
   }
 
-  hideFullText = (ev: any, index: number) => {
-    const htmlTextElement: HTMLElement | null = document.getElementById("textHistoryPart" + index);
+  toggleFullText = (ev: any, QorA: string, index: number) => {
+    const htmlTextElement: HTMLElement | null = document.getElementById("historyPart" + QorA + index);
     if (htmlTextElement) {
-      htmlTextElement.innerHTML = this.systemService.history[index].text.substring(0, 60) + '...';
-      this.systemService.history[index].expanded = false;
+      if (QorA === 'Q') {
+        const expand: boolean = this.systemService.history[index].q_expanded;
+        if (expand) {
+          htmlTextElement.innerHTML = this.systemService.history[index].question.substring(0, 60) + '...';
+        } else {
+          htmlTextElement.innerHTML = this.systemService.history[index].question;
+        }
+        this.systemService.history[index].q_expanded = !expand;
+      } else {
+        const expand: boolean = this.systemService.history[index].a_expanded;
+        if (expand) {
+          htmlTextElement.innerHTML = this.systemService.history[index].answer.substring(0, 60) + '...';
+        } else {
+          htmlTextElement.innerHTML = this.systemService.history[index].answer;
+        }
+        this.systemService.history[index].a_expanded = !expand;
+      }
     }
   }
 
@@ -132,5 +141,26 @@ export class HomeComponent implements OnInit {
   clear = (ev: any, index: number) => {
     this.systemService.history.splice(index, 1);
     this.systemService.saveMainHistory();
+  }
+
+  restore = async (ev: any, index: number) => {
+    console.log('restoring:', this.systemService.history[index].ingest, this.systemService.history[index].insight);
+    this.systemService.chunkSize = this.systemService.history[index].ingest.chunkSize;
+    this.systemService.collection = this.systemService.history[index].ingest.collection;
+    this.systemService.embeddings_model = this.systemService.history[index].ingest.embeddings_model;
+    this.systemService.localVector = this.systemService.history[index].ingest.localVector;
+    this.systemService.overlap = this.systemService.history[index].ingest.overlap;
+    this.systemService.useSemantic = this.systemService.history[index].ingest.useSemantic;
+
+    this.systemService.selectedModel = this.systemService.history[index].insight.model;
+    this.systemService.userPrompt = this.systemService.history[index].insight.userPrompt;
+    this.systemService.ragPrompt = this.systemService.history[index].insight.ragPrompt;
+    this.systemService.k = this.systemService.history[index].insight.k;
+    this.systemService.numCtx = this.systemService.history[index].insight.numCtx;
+    this.systemService.question = this.systemService.history[index].question;
+
+    this._snackBar.open(await this.systemService.get('PAGES.HOME.RESTORE_SETTINGS'), 'OK', {
+      duration: 2500
+    });
   }
 }
