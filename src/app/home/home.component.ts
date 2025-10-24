@@ -18,6 +18,7 @@ import { AlertComponent } from '../alert.component/alert.component';
 import {Clipboard} from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MediaService } from '../core/services';
+import { SplashComponent } from '../splash.component/splash.component';
 
 @Component({
     selector: 'app-home',
@@ -36,7 +37,8 @@ import { MediaService } from '../core/services';
       MatExpansionModule,
       MatChipsModule,
       MatTooltipModule,
-      MatSlideToggleModule
+      MatSlideToggleModule,
+      SplashComponent
     ]
 })
 export class HomeComponent implements OnInit {
@@ -54,10 +56,20 @@ export class HomeComponent implements OnInit {
     private mediaService: MediaService
   ) {    
     effect(() => {
-      this.cpu.expandTo(0);
-      this.gpu.expandTo(0);
-      this.mem.expandTo(0);
-      this.disks.expandTo(2);      
+      /*
+      if (this.cpu) {
+        this.cpu.expandTo(0);
+      }
+      if (this.gpu) {
+        this.gpu.expandTo(0);
+      }
+      if (this.mem) {
+        this.mem.expandTo(0);
+      }
+      if (this.disks) {
+        this.disks.expandTo(2);
+      }
+      */
     })
   }
 

@@ -15,7 +15,7 @@ export interface IUser {
   affiliate: string;
   uuid: string;
   email: string;
-  email_confirmed: string | undefined;  
+  email_confirmed: string | undefined;
 }
 
 export interface IChat {

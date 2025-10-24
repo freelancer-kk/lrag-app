@@ -47,7 +47,7 @@
         "VRAM": "VRAM",
         "STATUS": "Status",
         "DETAIL": "Service",
-        "DETAIL_DESC": "Status of dependent service(s)",
+        "DETAIL_DESC": "Status of services",
         "YOUR_PC": "Your PC",
         "TECHNICAL_DETAILS": "Technical Details",
         "LLM": "Model Process",
@@ -60,7 +60,7 @@
         "RESTART_TIP": "Some services have failed a complete services restart is recommended",
         "RATING_TIP": "Your PC rating is based on CPU, Memory, GPU and VRAM. LRag works best with a rating of 60% or higher",
         "MANAGE_EXTERNALLY": "Manage Externally",
-        "MANAGE_EXTERNALLY_TIP": "Manage the model process (Ollama) externally? This will allow more control over how you use Ollama on your PC",
+        "MANAGE_EXTERNALLY_TIP": "Optionally, manage the model process (Ollama) externally? This will allow more control over how you use Ollama on your PC",
         "EXTERNAL_ARE_YOU_SURE": "Are you sure? you will have to make sure Ollama is installed and started before running LRag, requires more management. LRag will exit and you will need to restart for this option",
         "QUESTION": "Question",
         "ANSWER": "Answer",
@@ -69,7 +69,9 @@
         "HISTORY": "History",
         "HISTORY_DETAILS": "Past questions and answers",
         "RESTORE_SETTINGS": "Restoring settings and question from this run!",
-        "RESTORE_TIP": "You may wish to restore the settings and question for a query you ran in the past. This will restore advanced embedding, insight and model settings"
+        "RESTORE_TIP": "You may wish to restore the settings and question for a query you ran in the past. This will restore advanced embedding, insight and model settings",
+        "BOOTSTRAP": "Startup",
+        "BOOTSTRAP_DESC": "About LRag"
       },
       "DETAIL": {
         "TITLE": "Model Options",
@@ -146,7 +148,7 @@
         "TITLE": "Chat",
         "MAIN_TITLE": "Document Chat",
         "INSIGHT_STATUS": "Chat status",
-        "RESET_CONTEXT_TIP": "Improve results by embedding documents related to a single domain. Before asking questions about a different domain, remove those documents and embed documents about the new domain. This will allow the context to reset",
+        "RESET_CONTEXT_TIP": "Improve results by grouping similar documents to specific collections. i.e Financial statements under finance, property documents under property etc.",
         "RESET_ARE_YOU_SURE": "Resetting the context will flush the model service, reload and rerun the model, this may take a minute",
         "CONTEXTUAL_PROMPT": "Given the chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.",
         "PROMPT": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use a maximum of three sentences and keep the answer concise.",
