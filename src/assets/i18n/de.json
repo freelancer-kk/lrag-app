@@ -69,7 +69,7 @@
       "HISTORY": "Geschichte",
       "HISTORY_DETAILS": "Historische Fragen und Antworten",
       "RESTORE_SETTINGS": "Einstellungen und Frage von diesem Lauf werden wiederhergestellt!",
-      "RESTORE_TIP": "Möglicherweise möchten Sie die Einstellungen und Fragen für eine Abfrage wiederherstellen, die Sie in der Vergangenheit ausgeführt haben. Dadurch werden die erweiterten Aufnahme-, Einblick- und Modelleinstellungen wiederhergestellt"
+      "RESTORE_TIP": "Möglicherweise möchten Sie die Einstellungen und Fragen für eine Abfrage wiederherstellen, die Sie in der Vergangenheit ausgeführt haben. Dadurch werden die erweiterten Einbettungs-, Einblick- und Modelleinstellungen wiederhergestellt"
     },
     "DETAIL": {
       "TITLE": "Model Option",
@@ -91,8 +91,8 @@
       "REFRESH_LLM_TIP": "Laden Sie Updates für zuvor heruntergeladene Modelle herunter"
     },
     "INGEST": {
-      "TITLE": "Aufnehmen",
-      "MAIN_TITLE": "Aufnahme von Dokumenten",
+      "TITLE": "Einbetten",
+      "MAIN_TITLE": "Einbetten von Dokumenten",
       "INGEST_STATUS": "Status",
       "FOLDER_SUBTITLE": "Ziehen Sie Ihre Dateien unten (PDF, XLXS, DOC, CSV).",
       "DROP_HERE": "Lass dich hier aus",
@@ -121,7 +121,7 @@
       "OCR_START": "OCR-Konvertierung beginnt",
       "OCR_DONE": "OCR-Konvertierung abgeschlossen",
       "UNKNOWN": "Nicht indiziert",
-      "INDEX": "Dokument(en) aufnehmen",
+      "INDEX": "Dokument(en) einbetten",
       "CHUNK_SIZE": "Chunkgröße",
       "CHUNK_SIZE_TIP": "Die definierte Länge für einzelne Textsegmente. Größere Stücke: Kann mehr Kontext erfassen, aber die Kosten für ein Einbettung und Abrufen erhöhen und spezifische Informationen verwässern. Kleinere Brocken: sind rechnerisch billiger und präziser, könnten aber einen breiteren Kontext verpassen, was möglicherweise zu weniger umfassenden Antworten führt",
       "OVERLAP": "Überlappen",

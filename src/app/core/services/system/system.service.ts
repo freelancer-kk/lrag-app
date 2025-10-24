@@ -10,6 +10,14 @@ export enum EWho {
   User = 0,
   Assistant
 }
+
+export interface IUser {
+  affiliate: string;
+  uuid: string;
+  email: string;
+  email_confirmed: string | undefined;  
+}
+
 export interface IChat {
   who: EWho,
   content: string
@@ -155,7 +163,7 @@ export class SystemService {
   }
 
   saveMainHistory = () => {
-    this.history.splice(100);
+    this.history.splice(25);
     localStorage.setItem('history', JSON.stringify(this.history))
   }
 
