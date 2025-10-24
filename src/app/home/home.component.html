@@ -52,20 +52,6 @@
           }
         </mat-expansion-panel>        
       </mat-accordion>
-    <mat-accordion>
-      <mat-expansion-panel expanded="false">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'PAGES.HOME.YOUR_PC' | translate }}</mat-panel-title>
-          <mat-panel-description>
-            {{ 'PAGES.HOME.TECHNICAL_DETAILS' | translate }}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <nxt-json-view #cpu [data]="systemService.cpu"></nxt-json-view>
-        <nxt-json-view #gpu [data]="systemService.gpu"></nxt-json-view>
-        <nxt-json-view #mem [data]="systemService.mem"></nxt-json-view>
-        <nxt-json-view #disks [data]="systemService.disks"></nxt-json-view>
-      </mat-expansion-panel>
-    </mat-accordion>
     @if (systemService.hasBasicSetup) {
     <mat-accordion>
       <mat-expansion-panel [(expanded)]="systemService.historyExpanded">
@@ -155,5 +141,19 @@
       </mat-expansion-panel>
     </mat-accordion>
     }
+    <mat-accordion>
+      <mat-expansion-panel expanded="false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ 'PAGES.HOME.YOUR_PC' | translate }}</mat-panel-title>
+          <mat-panel-description>
+            {{ 'PAGES.HOME.TECHNICAL_DETAILS' | translate }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <nxt-json-view #cpu [data]="systemService.cpu"></nxt-json-view>
+        <nxt-json-view #gpu [data]="systemService.gpu"></nxt-json-view>
+        <nxt-json-view #mem [data]="systemService.mem"></nxt-json-view>
+        <nxt-json-view #disks [data]="systemService.disks"></nxt-json-view>
+      </mat-expansion-panel>
+    </mat-accordion>    
   </mat-card-content>  
 </mat-card>

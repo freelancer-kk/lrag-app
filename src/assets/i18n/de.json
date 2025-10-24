@@ -67,7 +67,7 @@
       "STATS": "Statistiken",
       "DATE": "Datum",
       "HISTORY": "Geschichte",
-      "HISTORY_DETAILS": "Historische Fragen und Antworten",
+      "HISTORY_DETAILS": "Vergangene Fragen und Antworten",
       "RESTORE_SETTINGS": "Einstellungen und Frage von diesem Lauf werden wiederhergestellt!",
       "RESTORE_TIP": "Möglicherweise möchten Sie die Einstellungen und Fragen für eine Abfrage wiederherstellen, die Sie in der Vergangenheit ausgeführt haben. Dadurch werden die erweiterten Einbettungs-, Einblick- und Modelleinstellungen wiederhergestellt"
     },
@@ -143,9 +143,9 @@
       "REMOVE_COLLECTION_ARE_YOU_SURE": "Sammlung entfernen"
     },
     "INSIGHT": {
-      "TITLE": "AI Einblicke",
-      "MAIN_TITLE": "Erkenntnis dokumentieren",
-      "INSIGHT_STATUS": "Einsichtsstatus",
+      "TITLE": "Chatten",
+      "MAIN_TITLE": "Dokumenten-Chat",
+      "INSIGHT_STATUS": "Chat status",
       "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie Dokumente im Zusammenhang mit einer einzelnen Domäne einnehmen. Entfernen Sie diese Dokumente und Einnahme von Dokumenten über die neue Domäne, bevor Sie Fragen zu einer anderen Domäne stellen. Dadurch kann der Kontext zurückgesetzt werden",
       "RESET_ARE_YOU_SURE": "Durch das Zurücksetzen des Kontexts wird der Modelldienst gespült, das Modell neu laden und erneut ausgeladen. Dies kann eine Minute dauern",
       "CONTEXTUAL_PROMPT": "Angesichts eines Chat -Historie und der neuesten Benutzerfrage, die den Kontext im Chat -Verlauf verweisen könnte, formulieren Sie eine eigenständige Frage, die ohne den Chat -History verstanden werden kann. ",
