@@ -17,6 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import {Clipboard} from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MediaService } from '../core/services';
 
 @Component({
     selector: 'app-home',
@@ -49,7 +50,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     public systemService: SystemService,
-    private clipboard: Clipboard 
+    private clipboard: Clipboard,
+    private mediaService: MediaService
   ) {    
     effect(() => {
       this.cpu.expandTo(0);
@@ -146,14 +148,23 @@ export class HomeComponent implements OnInit {
   restore = async (ev: any, index: number) => {
     console.log('restoring:', this.systemService.history[index].ingest, this.systemService.history[index].insight);
     this.systemService.chunkSize = this.systemService.history[index].ingest.chunkSize;
-    this.systemService.collection = this.systemService.history[index].ingest.collection;
-    this.systemService.embeddings_model = this.systemService.history[index].ingest.embeddings_model;
+    if (this.systemService.collections.length === 0) {
+      this.systemService.collections = await this.mediaService.getCollections();
+    }
+    if (this.systemService.collections.findIndex(f => this.systemService.basename(f.value) === this.systemService.history[index].ingest.collection) > -1) {
+      this.systemService.collection = this.systemService.history[index].ingest.collection;
+    }
+    if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.history[index].ingest.embeddings_model) > -1) {
+      this.systemService.embeddings_model = this.systemService.history[index].ingest.embeddings_model;
+    }
     this.systemService.localVector = this.systemService.history[index].ingest.localVector;
     this.systemService.overlap = this.systemService.history[index].ingest.overlap;
     this.systemService.useSemantic = this.systemService.history[index].ingest.useSemantic;
     this.systemService.separator = this.systemService.history[index].ingest.separator;
 
-    this.systemService.selectedModel = this.systemService.history[index].insight.model;
+    if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.history[index].insight.model) > -1) {
+      this.systemService.selectedModel = this.systemService.history[index].insight.model;
+    }
     this.systemService.userPrompt = this.systemService.history[index].insight.userPrompt;
     this.systemService.ragPrompt = this.systemService.history[index].insight.ragPrompt;
     this.systemService.k = this.systemService.history[index].insight.k;
