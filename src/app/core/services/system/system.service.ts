@@ -58,7 +58,8 @@ export interface IHistory {
   }
   q_expanded: boolean,
   a_expanded: boolean,  
-  genInfo?: IGenInfo
+  genInfo?: IGenInfo,
+  assessment: number
 }
 
 const options: ConnectionServiceOptions = {

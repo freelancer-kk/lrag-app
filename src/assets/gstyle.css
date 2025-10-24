@@ -88,3 +88,8 @@
 .danger {
   color: red;
 }
+
+
+.smallIcon {
+  transform: scale(0.75);  
+}

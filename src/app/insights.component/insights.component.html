@@ -104,6 +104,10 @@
               @if (entry.who === 1) {
                   <mat-icon class="copyAss" (click)="copyContent($event, entry.content)">content_copy</mat-icon>
                   <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
+                  <small>{{ 'PAGES.INSIGHT.RATE' | translate }}&nbsp;
+                  <mat-icon class="smallIcon" matIcon (click)="rate($event, $index, 1)">thumb_up</mat-icon>&nbsp;
+                  <mat-icon class="smallIcon" matIcon (click)="rate($event, $index, -1)">thumb_down</mat-icon>
+                  </small>
                   <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
               }              
             </tr>            

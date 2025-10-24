@@ -164,7 +164,9 @@
         "CONTEXT_SIZE": "Model Context Size",
         "CONTEXT_SIZE_TIP": "Occasionally you may wish to increase the context size in order to accommodate more data input. For example transactional data",
         "FILTER_REQUIRED": "Your use case is CSV with potentially a high transaction volume, you must specify a filter under options"        ,
-        "COPY_CONTENT": "Copied content to clipboard"
+        "COPY_CONTENT": "Copied content to clipboard",
+        "RATE": "Good answer?",
+        "RATING_THANKS": "Thanks for your rating"
       },
       "HELP": {
         "TITLE": "Help",

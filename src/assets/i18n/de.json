@@ -164,7 +164,9 @@
       "CONTEXT_SIZE": "Modellkontextgröße",
       "CONTEXT_SIZE_TIP": "Gelegentlich möchten Sie möglicherweise die Kontextgröße erhöhen, um mehr Dateneingaben zu erfüllen. Zum Beispiel Transaktionsdaten",
       "FILTER_REQUIRED": "Ihr Anwendungsfall ist CSV mit potenziell hohem Transaktionsvolumen. Sie müssen unter Optionen einen Filter angeben",
-      "COPY_CONTENT": "Inhalt in die Zwischenablage kopiert"
+      "COPY_CONTENT": "Inhalt in die Zwischenablage kopiert",
+      "RATE": "Gute Antwort?",
+      "RATING_THANKS": "Vielen Dank für Ihre Bewertung"
     },
     "HELP": {
       "TITLE": "Helfen",

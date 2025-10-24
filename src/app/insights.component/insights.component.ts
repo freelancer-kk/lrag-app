@@ -158,7 +158,6 @@ export class InsightsComponent implements OnInit {
         who: EWho.User,
         content: question
       });
-      this.systemService.saveMainHistory();
       this.scrollToBottom();
       this.systemService.insightStatus.update(() => 'thinking');
       this.streaming = true;
@@ -198,7 +197,8 @@ export class InsightsComponent implements OnInit {
               ragPrompt: this.systemService.ragPrompt,
               userPrompt: this.systemService.userPrompt
             },
-            genInfo: this.generationInfo
+            genInfo: this.generationInfo,
+            assessment: 0
           })
           this.systemService.saveMainHistory();
           this.scrollToBottom();
@@ -249,6 +249,14 @@ export class InsightsComponent implements OnInit {
   copyContent = async (ev: any, text: string) => {
     this.clipboard.copy(text);
     this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.COPY_CONTENT'), 'OK', {
+      duration: 2500
+    });
+  }
+
+  rate = async (ev: any, index: number, rating: number) => {
+    this.systemService.history[index].assessment = rating;
+    this.systemService.saveMainHistory();
+    this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.RATING_THANKS'), 'OK', {
       duration: 2500
     });
   }
