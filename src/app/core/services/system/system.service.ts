@@ -116,6 +116,7 @@ export class SystemService {
   history: IHistory[] = [];
   question: string | undefined;
   historyExpanded: boolean = false;
+  hasBasicSetup: boolean = false;
   
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},    

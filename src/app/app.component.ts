@@ -509,7 +509,8 @@ export class AppComponent implements OnInit {
         await this.systemService.commandOllama('pull', { model: this.systemService.models[0].value, stream: true});
       }
       this.firstTime = false;
-      this.systemService.modelStatus.update(() => 'running');      
+      this.systemService.modelStatus.update(() => 'running');
+      this.systemService.hasBasicSetup = true;     
     } catch (e) {
       console.error(e);
       if (this.firstTime) {

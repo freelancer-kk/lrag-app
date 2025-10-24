@@ -14,7 +14,7 @@
   </mat-slider>  
   <mat-card-content>
       <mat-accordion>
-        <mat-expansion-panel expanded="false">
+        <mat-expansion-panel [expanded]="!systemService.hasBasicSetup">
           <mat-expansion-panel-header>
             <mat-panel-title>{{ 'PAGES.HOME.DETAIL' | translate }}</mat-panel-title>
             <mat-panel-description>
@@ -66,6 +66,7 @@
         <nxt-json-view #disks [data]="systemService.disks"></nxt-json-view>
       </mat-expansion-panel>
     </mat-accordion>
+    @if (systemService.hasBasicSetup) {
     <mat-accordion>
       <mat-expansion-panel [(expanded)]="systemService.historyExpanded">
         <mat-expansion-panel-header>
@@ -153,5 +154,6 @@
           </div>
       </mat-expansion-panel>
     </mat-accordion>
+    }
   </mat-card-content>  
 </mat-card>

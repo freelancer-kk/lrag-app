@@ -72,7 +72,7 @@
       "RESTORE_TIP": "Möglicherweise möchten Sie die Einstellungen und Fragen für eine Abfrage wiederherstellen, die Sie in der Vergangenheit ausgeführt haben. Dadurch werden die erweiterten Aufnahme-, Einblick- und Modelleinstellungen wiederhergestellt"
     },
     "DETAIL": {
-      "TITLE": "Konfiguration",
+      "TITLE": "Model Option",
       "MAIN_TITLE": "Modellkonfiguration",
       "MODEL_SELECT": "Wählen Sie ein Modell",
       "EMBEDDINGS_MODEL_SELECT": "Wählen Sie eine Einbettung",
@@ -87,7 +87,8 @@
       "RAG_PROMPT": "Optimieren Sie die RAG-Eingabeaufforderung",
       "USER_PROMPT": "Passen Sie die USER-Eingabeaufforderung an",
       "RAG_PROMPT_TIP": "Optimieren Sie optional die RAG-Eingabeaufforderung, die für die Neuformulierung Ihrer Frage verantwortlich ist, um eine bessere Verarbeitung zu ermöglichen. Passen Sie dies nur bei Bedarf an",
-      "USER_PROMPT_TIP": "Optimieren Sie optional die USER-Eingabeaufforderung, die für die Verarbeitung Ihrer Frage nach dem Abruf der zugehörigen Dokumentdaten verantwortlich ist"
+      "USER_PROMPT_TIP": "Optimieren Sie optional die USER-Eingabeaufforderung, die für die Verarbeitung Ihrer Frage nach dem Abruf der zugehörigen Dokumentdaten verantwortlich ist",
+      "REFRESH_LLM_TIP": "Laden Sie Updates für zuvor heruntergeladene Modelle herunter"
     },
     "INGEST": {
       "TITLE": "Aufnehmen",
@@ -132,7 +133,7 @@
       "USE_SEMANTIC": "Semantischer Chunker",
       "USE_SEMANTIC_TIP": "Aktivieren Sie optional intelligentes Chunking, um die Ergebnisse zu verbessern. CPU-intensiver, langsamer",
       "USE_LOCAL": "Lokale Einnahme",
-      "USE_LOCAL_TIP": "Nutzen Sie keine externen Dienste für die Aufnahme Ihrer Dokumente. Sie können Ihr Internet deaktivieren und mit Ihren Dokumenten auf Ihrem PC arbeiten. Bei bestimmten Funktionen wird es Einschränkungen geben",
+      "USE_LOCAL_TIP": "Verwenden Sie zum Erfassen von Dokumenten keine OCR- oder Reranking-Dienste. Bleiben Sie für maximale Privatsphäre zu 100 % lokal auf Ihrem PC",
       "COLLECTIONS": "Sammlungen",
       "COLLECTIONS_TIP": "Gruppieren Sie Dokumente zur Analyse in Sammlungen. Sie können verschiedene Dokumentdomänen nicht in derselben Sammlung mischen. Dies führt zu einer falschen Insight-Analyse. Zum Beispiel immobilienbezogene Dokumente in einer Sammlung. Je weniger Dokumente in einer Sammlung vorhanden sind, desto besser ist die Analyse",
       "COLLECTION_NAME": "Neuer Sammlungsname",

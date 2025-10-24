@@ -80,7 +80,7 @@
                 systemService.ollamaStatus() === 'running' && 
                 systemService.modelStatus() === 'running'              
               ) {
-            <button matButton (click)="updateAllModels($event)">
+            <button [matTooltip]="'PAGES.DETAIL.REFRESH_LLM_TIP' | translate" matButton (click)="updateAllModels($event)">
               <mat-icon class="warning">refresh</mat-icon>
             </button>
             }

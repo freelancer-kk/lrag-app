@@ -72,7 +72,7 @@
         "RESTORE_TIP": "You may wish to restore the settings and question for a query you ran in the past. This will restore advanced ingestion, insight and model settings"
       },
       "DETAIL": {
-        "TITLE": "Config",
+        "TITLE": "Model Options",
         "MAIN_TITLE": "Model Configuration",
         "MODEL_SELECT": "Choose a Model",
         "EMBEDDINGS_MODEL_SELECT": "Choose an Embedding",
@@ -87,7 +87,8 @@
         "RAG_PROMPT": "Tune the RAG prompt",
         "USER_PROMPT": "Tune the USER prompt",
         "RAG_PROMPT_TIP": "Optionally tune the RAG prompt that is responsible for reformulating your question for better processing. Only adjust this if necessary",
-        "USER_PROMPT_TIP": "Optionally tune the USER prompt that is responsible for processing your question after retrieval of the related document data"
+        "USER_PROMPT_TIP": "Optionally tune the USER prompt that is responsible for processing your question after retrieval of the related document data",
+        "REFRESH_LLM_TIP": "Download updates for previously downloaded models"
       },
       "INGEST": {
         "TITLE": "Ingest",
@@ -132,7 +133,7 @@
         "USE_SEMANTIC": "Semantic Chunker",
         "USE_SEMANTIC_TIP": "Optionally activate intelligent chunking to improve results. More cpu intensive, can be much slower",
         "USE_LOCAL_VECTOR": "Local Ingestion",
-        "USE_LOCAL_VECTOR_TIP": "Do not use any external services for ingesting your documents. You can disable your internet and work with your documents on your PC. There will be limitations on certain features",
+        "USE_LOCAL_VECTOR_TIP": "Do not use OCR or reranking services for ingesting documents. Remain 100% local to your PC for maximum privacy",
         "COLLECTIONS": "Collections",
         "COLLECTIONS_TIP": "Group documents into collections for analysis. You cannot mix different document domains in the same collection. This will lead to incorrect insight analysis. For example property related docs in a collection. The fewer docs in a collection the better the analysis",
         "COLLECTION_NAME": "New Collection Name",
