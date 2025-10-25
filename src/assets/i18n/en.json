@@ -53,7 +53,8 @@
           "PARA2": "*General Chat - Choose a model under Model Options then Chat with that model*",
           "PARA3": "*Analyse a doc - Choose a document under Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
           "PARA4": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
-          "PARA5": "Consult our forums and support pages for help and tips"
+          "PARA5": "The larger model you use the more accurate the answers will be. Under Model Options you may select other models",
+          "PARA6": "Consult our forums and support pages for help and tips"
         }
       },
       "HOME": {
