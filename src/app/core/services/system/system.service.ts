@@ -86,10 +86,12 @@ export class SystemService {
   ingestStatus = signal<any>('not running');
   insightStatus = signal<any>("not running");
   gpuChangeStatus = signal<any>("not running");
+  startShow = signal(false);
   selectedDocuments = new FormControl('');
   totalMainMemory = 0;
   ocr_pdf_link: string = "https://acrobat.adobe.com/link/acrobat/ocr-pdf?x_api_client_id=adobe_com&x_api_client_location=ocr_pdf";
   ollama_get_link: string = "https://ollama.com/download";
+  appVersionChange: boolean = false;
 
   selectedModel: string = ''
   downloadedLLM: string = '';

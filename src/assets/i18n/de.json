@@ -36,6 +36,10 @@
     "WAITING_FOR_OLLAMA_START": "Bitte rennen Sie Ollama"
   },
   "PAGES": {
+    "SPLASH": {
+      "SLIDE_1": "Welcome to LRag. A 100% Private document AI analyser that runs your PC. Benefit from complete privacy and query your documents directly on your PC. No fees for usage locally.<br/> Fees apply when using online features",
+      "SLIDE_2": "As part of the setup, LRag needs to download the model process Ollama, this may take some depending on your Internet Connection."
+    },
     "HOME": {
       "TITLE": "Heim",
       "SUB_TITLE": "Ihre PC -Bewertung für LRag",
@@ -171,7 +175,7 @@
       "RATING_THANKS": "Vielen Dank für Ihre Bewertung"
     },
     "HELP": {
-      "TITLE": "Helfen",
+      "TITLE": "Faq",
       "WHAT_IS_LRAG_TITLE": "Was ist LRag?",
       "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) ist eine 100% ige lokale Lösung, die auf Ihrem PC läuft und es Ihnen ermöglicht, KI -Einblicke in Ihre privaten Dokumente zu genießen. ",
       "ACCURACY_TITLE": "Wie gut ist LRag?",

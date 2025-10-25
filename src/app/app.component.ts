@@ -411,6 +411,12 @@ export class AppComponent implements OnInit {
     this.systemService.gpu = await this.systemService.getGpu();
     this.systemService.mem = await this.systemService.getTotalMemory();
     this.systemService.disks = await this.systemService.getDisks();
+    const appVersion: string | null = localStorage.getItem('LRAG_VERSION');
+    const readVersion: string = await this.systemService.getEnvValue('VERSION');
+    if (appVersion !== readVersion) {
+      this.systemService.appVersionChange = true;
+      localStorage.setItem('LRAG_VERSION', readVersion);
+    }
     setTimeout(() => {
       this.startServicesIfNecessary();  
     }, 400)   

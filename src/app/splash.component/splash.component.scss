@@ -1,0 +1,26 @@
+.mySlide {
+  width: 100% !important;
+  // display: flex;
+  justify-content: center;
+  height: 70%;
+  background-image: url('/assets/icons/Logo.png');
+  background-repeat: no-repeat;
+  background-position-x: right;
+  background-blend-mode: darken;  
+}
+
+.title {
+  font-size: 1.2rem;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.normal {
+  font-style: normal;
+}
+
+.smallish {
+  font-size: 0.8rem;
+}

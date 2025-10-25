@@ -187,4 +187,8 @@ export class HomeComponent implements OnInit {
       duration: 2500
     });
   }
+
+  startShow = (ev: any) => {
+    this.systemService.startShow.update(() => true);
+  }
 }

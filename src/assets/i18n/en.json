@@ -35,7 +35,20 @@
     "OLLAMA_DOWNLOADING": "LRag needs to download the Model Processor Ollama. This will take some time depending on your PC and Internet speed",
     "WAITING_FOR_OLLAMA_START": "Please run Ollama"
   },
-  "PAGES": {      
+  "PAGES": { 
+      "SPLASH": {
+        "SLIDE1": {
+          "PARA1": "Welcome to LRag.",
+          "PARA2": "A 100% Private document AI analyser that runs your PC",
+          "PARA3": "*Benefit from complete privacy, query your documents directly on your PC*",
+          "PARA4": "*No reliance on online providers to protect your data*",
+          "PARA5": "*No fees for direct PC usage*",
+          "PARA6": "If you have a windows PC, as part of the setup, LRag needs to download the model process Ollama, please wait for this to complete ...",
+          "PARA7": "The download may take some depending on your Internet Connection.",
+          "PARA8": "If you have a Mac PC, you will need to download and install Ollama. Please click the 'Get Ollama' button above ...",
+          "PARA9": "Swipe the slide to learn more about LRag ..."
+        }
+      },
       "HOME": {
         "TITLE": "Home",
         "SUB_TITLE": "Your PC Rating for LRag",
@@ -171,7 +184,7 @@
         "RATING_THANKS": "Thanks for your rating"
       },
       "HELP": {
-        "TITLE": "Help",
+        "TITLE": "Faq",
         "WHAT_IS_LRAG_TITLE": "What is LRag?",
         "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",
         "ACCURACY_TITLE": "How good is LRag?",

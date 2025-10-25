@@ -1,8 +1,21 @@
-<splide>
+<splide #mainSplide class="mainSlide">
     <splide-slide>
-        <img src="assets/icons/favicon.512x512.png" alt="" />
+      <div class="mySlide">        
+      @for (entry of slides[0].paragraphs; track $index) {
+        <span [innerHTML]="entry.before"></span>
+        <span [class]="entry.class">
+          {{ entry.text }}
+        </span>
+        <span [innerHTML]="entry.after"></span>
+      }      
+      </div>
     </splide-slide>
     <splide-slide>
-        <img src="assets/icons/electron.png" alt="" />
+      <div class="splide_img">
+        <img src="assets/icons/electron.png" alt="" />        
+      </div>
+      <p>
+        Description 02
+      </p>
     </splide-slide>
 </splide>
