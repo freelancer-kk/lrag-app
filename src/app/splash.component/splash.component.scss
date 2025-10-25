@@ -2,7 +2,10 @@
   width: 100%;
   background-image: url('/assets/icons/Logo.png');
   background-repeat: no-repeat;
-  background-position-x: right;  
+  background-position-x: left;  
+  border: 2px solid limegreen;  
+  border-radius: 10px;
+  padding: 2px;
 }
 
 .aSlide {
