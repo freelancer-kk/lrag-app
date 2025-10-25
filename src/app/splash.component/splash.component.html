@@ -1,21 +1,26 @@
-<splide #mainSplide class="mainSlide">
+<div class="slideShow">
+  <splide #mainSplide (onMoved)="slideMoved($event)" [selectedSlideIndex]="slideIndex">
     <splide-slide>
-      <div class="mySlide">        
-      @for (entry of slides[0].paragraphs; track $index) {
-        <span [innerHTML]="entry.before"></span>
-        <span [class]="entry.class">
-          {{ entry.text }}
-        </span>
-        <span [innerHTML]="entry.after"></span>
-      }      
+      <div class="aSlide">
+        @for (entry of slides[0].paragraphs; track $index) {
+          <span [innerHTML]="entry.before"></span>
+          <span [class]="entry.class">
+            {{ entry.text }}
+          </span>
+          <span [innerHTML]="entry.after"></span>
+        }            
       </div>
     </splide-slide>
-    <splide-slide>
-      <div class="splide_img">
-        <img src="assets/icons/electron.png" alt="" />        
+    <splide-slide>      
+      <div class="aSlide">
+        @for (entry of slides[1].paragraphs; track $index) {
+          <span [innerHTML]="entry.before"></span>
+          <span [class]="entry.class">
+            {{ entry.text }}
+          </span>
+          <span [innerHTML]="entry.after"></span>
+        }          
       </div>
-      <p>
-        Description 02
-      </p>
     </splide-slide>
 </splide>
+</div>

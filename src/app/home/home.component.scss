@@ -44,3 +44,8 @@ mat-slider {
   float: left !important;
   transform: scale(0.5);  
 }
+
+.unblur {
+  position: relative;
+  z-index: 1;
+}

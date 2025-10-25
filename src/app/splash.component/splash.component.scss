@@ -1,12 +1,15 @@
-.mySlide {
-  width: 100% !important;
-  // display: flex;
-  justify-content: center;
-  height: 70%;
+.slideShow {
+  width: 100%;
   background-image: url('/assets/icons/Logo.png');
   background-repeat: no-repeat;
-  background-position-x: right;
-  background-blend-mode: darken;  
+  background-position-x: right;  
+}
+
+.aSlide {
+  width: 80%!important;
+  height: 60vh !important;
+  padding-left: 10%;
+  justify-content: center;
 }
 
 .title {

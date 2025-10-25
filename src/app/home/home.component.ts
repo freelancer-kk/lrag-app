@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect, ViewChild } from '@angular/core';
+import { Component, OnInit, inject, effect, ViewChild, OnDestroy } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -38,10 +38,10 @@ import { SplashComponent } from '../splash.component/splash.component';
       MatChipsModule,
       MatTooltipModule,
       MatSlideToggleModule,
-      SplashComponent
+      SplashComponent 
     ]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
   @ViewChild('cpu', {static: true}) cpu!: JsonViewComponent;
@@ -74,6 +74,9 @@ export class HomeComponent implements OnInit {
   }
 
   async ngOnInit() {}
+  ngOnDestroy(): void {
+    this.endShow(undefined);
+  }
 
   manageExternally = async (event: any) => {
     const dialogRef = this.dialog.open(
@@ -188,7 +191,11 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  startShow = (ev: any) => {
-    this.systemService.startShow.update(() => true);
+  startShow = async (ev: any) => {
+    this.systemService.startShow.update(() => true);    
+  }
+
+  endShow = (ev: any) => {
+    this.systemService.startShow.update(() => false);
   }
 }

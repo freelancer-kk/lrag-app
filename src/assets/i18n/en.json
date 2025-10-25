@@ -38,7 +38,7 @@
   "PAGES": { 
       "SPLASH": {
         "SLIDE1": {
-          "PARA1": "Welcome to LRag.",
+          "PARA1": "Welcome to LRag",
           "PARA2": "A 100% Private document AI analyser that runs your PC",
           "PARA3": "*Benefit from complete privacy, query your documents directly on your PC*",
           "PARA4": "*No reliance on online providers to protect your data*",
@@ -47,6 +47,13 @@
           "PARA7": "The download may take some depending on your Internet Connection.",
           "PARA8": "If you have a Mac PC, you will need to download and install Ollama. Please click the 'Get Ollama' button above ...",
           "PARA9": "Swipe the slide to learn more about LRag ..."
+        },
+        "SLIDE2": {
+          "PARA1": "LRag Use Cases",
+          "PARA2": "*General Chat - Choose a model under Model Options then Chat with that model*",
+          "PARA3": "*Analyse a doc - Choose a document under Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
+          "PARA4": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
+          "PARA5": "Consult our forums and support pages for help and tips"
         }
       },
       "HOME": {
