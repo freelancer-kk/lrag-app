@@ -5,12 +5,13 @@
 <mat-toolbar>
   <mat-icon class="main-menu" (click)="rotate($event)">keyboard_arrow_right</mat-icon>  
 	<h1>{{ 'APP.TITLE' | translate }}&nbsp;v{{ 'APP.VERSION' | translate }}</h1>&nbsp;
+  <span class="small">{{ systemService.status }}</span>
   @if (systemService.showGetOllama) {
+    &nbsp;
     <a matButton="outlined" class="small" [matTooltip]="'APP.GET_OLLAMA_TIP' | translate" (click)="systemService.openExternal(systemService.ollama_get_link)">
       {{ 'APP.GET_OLLAMA' | translate }}
     </a>
-  }
-  <span class="small">{{ systemService.status }}</span>
+  }  
   <span class="spacer"></span>
   @if (!(
         (systemService.overallStatus() === 'running: healthy') ||
