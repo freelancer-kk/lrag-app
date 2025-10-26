@@ -1,18 +1,16 @@
 <mat-card class="home-card" appearance="outlined">
   <mat-card-content>
-    <div class="unblur">
-      <mat-accordion>
-        <mat-expansion-panel (afterExpand)="startShow($event)" (afterCollapse)="endShow($event)" [expanded]="systemService.appVersionChange">
-          <mat-expansion-panel-header>
-            <mat-panel-title></mat-panel-title>
-            <mat-panel-description>
-              {{ 'PAGES.HOME.BOOTSTRAP_DESC' | translate }}
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          <app-splash></app-splash>
-        </mat-expansion-panel>        
-      </mat-accordion>
-    </div>
+    <mat-accordion>
+      <mat-expansion-panel (afterExpand)="startShow($event)" (afterCollapse)="endShow($event)" [expanded]="systemService.appVersionChange">
+        <mat-expansion-panel-header>
+          <mat-panel-title></mat-panel-title>
+          <mat-panel-description>
+            {{ 'PAGES.HOME.BOOTSTRAP_DESC' | translate }}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <app-splash></app-splash>
+      </mat-expansion-panel>        
+    </mat-accordion>    
 
     <mat-accordion>
       <mat-expansion-panel [expanded]="!systemService.hasBasicSetup">

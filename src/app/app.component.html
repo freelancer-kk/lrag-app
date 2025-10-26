@@ -1,5 +1,7 @@
+<!--
 <div class="appContainer">
 <div [class]="this.systemService.startShow() ? 'blurPart' : ''">
+-->
 <mat-toolbar>
   <mat-icon class="main-menu" (click)="rotate($event)">keyboard_arrow_right</mat-icon>  
 	<h1>{{ 'APP.TITLE' | translate }}&nbsp;v{{ 'APP.VERSION' | translate }}</h1>&nbsp;
@@ -78,5 +80,7 @@
 		<router-outlet></router-outlet>
 	</div>
 </mat-sidenav-container>
+<!--
 </div>
 </div>
+-->

@@ -19,7 +19,7 @@ export class SplashComponent implements OnInit {
   startText: string = '';
   text: string = '';
   animatedText: string = '';
-  duration: number = 4000;
+  duration: number = 1500;
   slideIndex: number = 0;
   slides: any[] = [{
     "name": "SLIDE1",
@@ -51,15 +51,33 @@ export class SplashComponent implements OnInit {
   ) {
     effect(() => {
       if (this.systemService.startShow() === true) {
-        this.restartAnimation(1);
+        if (this.slideIndex !== 1) {
+          this.restartAnimation(1);
+        }
       }
     });
   }
 
   async ngOnInit(): Promise<void> {
     if (this.systemService.appVersionChange) {
-      this.restartAnimation(0);
+      this.restartAnimation(0);      
     }
+    const divElem: HTMLElement | null = document.getElementById("slideShowElem");
+    if (divElem) {
+      const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+        for (const entry of entries) {
+          if (entry.contentRect) {
+            // console.log('width:', entry.contentRect.width);
+            this.refresh();
+          }
+        }
+      })
+      resizeObserver.observe(divElem);
+    }
+  }
+
+  refresh = () => {
+    this.mainSplide.getSplideInstance().refresh();
   }
 
   // Easing function (easeOutQuart for a smooth ease-out effect)
@@ -81,7 +99,9 @@ export class SplashComponent implements OnInit {
       this.slides[slide].paragraphs[para].text = this.startText + this.text.slice(0, cursor);
 
       if (progress < 1) {
-        requestAnimationFrame(() => this.animateText(startTime, slide, para)); // Continue animating if not complete
+        setTimeout(() => {
+          requestAnimationFrame(() => this.animateText(startTime, slide, para)); // Continue animating if not complete          
+        }, 20);
       } else {
         // console.log('next:', slide, para);
         this.startText = this.animatedText;
@@ -93,7 +113,7 @@ export class SplashComponent implements OnInit {
 
   slideMoved = (ev: any) => {
     const newIndex: number = ev[0];
-    console.log('move to:', newIndex);    
+    // console.log('move to:', newIndex);    
     if (newIndex !== this.slideIndex) {
       this.restartAnimation(newIndex);
     }
@@ -121,6 +141,6 @@ export class SplashComponent implements OnInit {
       requestAnimationFrame((startTime) => this.animateText(startTime, slideNumber, para));
     } else {
       console.log('startAnimation:completed all paragraphs');
-    }
+    }    
   }  
 }
