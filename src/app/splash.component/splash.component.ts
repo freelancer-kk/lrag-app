@@ -132,7 +132,7 @@ export class SplashComponent implements OnInit {
 
   // Start the animation
   startAnimation = async (slideNumber: number, para: number): Promise<void> => {
-    console.log('startAnimation:', slideNumber, para);    
+    // console.log('startAnimation:', slideNumber, para);    
     const slideName: string = this.slides[slideNumber].name;
     const slideParagraphs: any[] = this.slides[slideNumber].paragraphs;
     if (para < slideParagraphs.length) {
@@ -140,7 +140,7 @@ export class SplashComponent implements OnInit {
       this.animatedText = '';
       requestAnimationFrame((startTime) => this.animateText(startTime, slideNumber, para));
     } else {
-      console.log('startAnimation:completed all paragraphs');
+      // console.log('startAnimation:completed all paragraphs');
     }    
   }  
 }
