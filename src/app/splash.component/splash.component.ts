@@ -19,7 +19,7 @@ export class SplashComponent implements OnInit {
   startText: string = '';
   text: string = '';
   animatedText: string = '';
-  duration: number = 1500;
+  max_duration: number = 3500;
   slideIndex: number = 0;
   slides: any[] = [{
     "name": "SLIDE1",
@@ -90,7 +90,7 @@ export class SplashComponent implements OnInit {
     if (slide === this.slideIndex) {
       const currentTime = performance.now();
       const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / this.duration, 1); // Calculates progress    
+      const progress = Math.min(elapsed / this.max_duration, 1); // Calculates progress    
       // Apply easing to progress
       const easedProgress = this.easeOutQuart(progress);
       const cursor = Math.floor(easedProgress * this.text.length); // Update cursor with easing
