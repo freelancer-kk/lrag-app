@@ -92,7 +92,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       console.log(`Dialog result: ${result}`);
       if (result === true) {            
         this.systemService.manageOllamaExternally = event.checked;
-        localStorage.setItem('manage-ollama-externally', JSON.stringify(this.systemService.manageOllamaExternally));
+        await this.systemService.setEnvValue('MANAGE_EXTERNAL', this.systemService.manageOllamaExternally ? "true" : "false");
+        localStorage.setItem('manage-ollama-externally', JSON.stringify(this.systemService.manageOllamaExternally));        
         // Force exit
         this.systemService.ollamaStatus.update(() => 'configuring');
         await this.systemService.quitApp();

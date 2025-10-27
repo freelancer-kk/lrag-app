@@ -59,10 +59,43 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
     lragFiles.register();
     langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'), dockerEnv);
     langchainService.register(win?.webContents);
-    ollamaService = new OllamaService(userTempPath, appDataPath, graphics.controllers.map(v => v.vendor));
-    ollamaService.register(win?.webContents);
-    if (isWindows === true || isLinux === true) {
-      await ollamaService.extract();
+
+    const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
+    const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
+    const ollama_dls_file: string | undefined = await dockerEnv.getKeyValue('OLLAMA_DLS_FILE');
+    if (ollama_dls_file) {
+      const ollamaDLS: any = await (await fetch(
+        ollama_dls_file,
+        {
+          method: 'GET',          
+        }
+      )).json();
+
+      const darwin_dl = ollamaDLS.DARWIN_DOWNLOAD_LINK;
+      const ipex_dl = ollamaDLS.IPEX_DOWNLOAD_LINK;
+      const rocm_dl = ollamaDLS.ROCM_DOWNLOAD_LINK;
+      const default_dl = ollamaDLS.DEFAULT_DOWNLOAD_LINK;
+      if (darwin_dl && ipex_dl && rocm_dl && default_dl) {
+        await dockerEnv.kvFile?.set('OLLAMA_VERSION', ollamaDLS.OLLAMA_VERSION)
+        await dockerEnv.kvFile?.set('IPEX_VERSION', ollamaDLS.IPEX_VERSION)
+        await dockerEnv.kvFile?.writeFile();
+        ollamaService = new OllamaService(
+          ollamaDLS.OLLAMA_VERSION !== ollama_version,
+          ollamaDLS.IPEX_VERSION !== ipex_version,
+          darwin_dl,
+          ipex_dl,
+          rocm_dl,
+          default_dl,
+          userTempPath,
+          appDataPath,
+          graphics.controllers.map(v => v.vendor)
+        );
+        ollamaService.register(win?.webContents);
+        const managed_externally: string | undefined = dockerEnv.getKeyValue('MANAGE_EXTERNAL');
+        if ((isWindows === true || isLinux === true) && (managed_externally === 'false')) {
+          await ollamaService.extract();
+        }
+      }
     }
     contextChat = new ContextChat(langchainService, ollamaService, dockerEnv);
     contextChat.register(win?.webContents);

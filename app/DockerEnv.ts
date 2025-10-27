@@ -13,7 +13,11 @@ const mergeKeys: string[] = [
   "UPDATE_INFO_FILE",
   "MODELS_FILE",
   "LIBRARY_PREFIX",
-  "VERSION"
+  "VERSION",
+  "OLLAMA_DLS_FILE",
+  "OLLAMA_VERSION",
+  "IPEX_VERSION",
+  "MANAGE_EXTERNAL"
 ];
 
 export default class DockerEnv {
@@ -78,7 +82,8 @@ export default class DockerEnv {
         }
         break;
         case "set": {
-          response = await this.kvFile?.set(params.key, params.value);
+          await this.kvFile?.set(params.key, params.value);
+          response = await this.kvFile?.writeFile();
         }
         break;
         case "write": {

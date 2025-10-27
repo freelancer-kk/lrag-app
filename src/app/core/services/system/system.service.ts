@@ -335,7 +335,7 @@ export class SystemService {
 
   setEnvValue = (key: string, value: string): Promise<string> => {
     return new Promise((resolve, reject) => {
-      this.bridgeService.env(81, 'set', {
+      this.bridgeService.env(82, 'set', {
         key,
         value
       }, async (data: any) => {
