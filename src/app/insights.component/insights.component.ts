@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatListModule} from '@angular/material/list';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { MediaService } from '../core/services/media/media.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -53,8 +53,6 @@ import {Clipboard} from '@angular/cdk/clipboard';
 export class InsightsComponent implements OnInit { 
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
-  url: string = 'http://localhost:8501';
-  urlSafe: SafeResourceUrl;
   modelUsage: string = '';
   streaming: boolean = false;
   streamedResponse: string = '';
@@ -90,7 +88,6 @@ export class InsightsComponent implements OnInit {
       });
     });
 
-    this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this.url);
     effect(() => {      
       this.systemService.insightStatus();
       if (this.systemService.overallStatus() !== 'running: healthy') {
@@ -132,6 +129,7 @@ export class InsightsComponent implements OnInit {
       this.systemService.question = '';            
 
       const options: any = {
+        baseUrl: "http://localhost:11434",
         question,
         model: this.systemService.selectedModel,
         prompt: await this.systemService.get('PAGES.INSIGHT.PROMPT'),
