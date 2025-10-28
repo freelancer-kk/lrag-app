@@ -45,6 +45,12 @@
         }
 				<mat-icon matListItemIcon>home</mat-icon>
 			</a>
+      <a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'privacy'">
+        @if (isExpanded) {
+          <span>{{ 'PAGES.PRIVACY.TITLE' | translate }}</span>        
+        }
+				<mat-icon matListItemIcon>health_and_safety</mat-icon>
+      </a>			
       <a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'ingest'">
         @if (isExpanded) {
           <span>{{ 'PAGES.INGEST.TITLE' | translate }}</span>        
@@ -63,13 +69,7 @@
         }
 				<mat-icon matListItemIcon>settings</mat-icon>
       </a>
-      <a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'privacy'">
-        @if (isExpanded) {
-          <span>{{ 'PAGES.PRIVACY.TITLE' | translate }}</span>        
-        }
-				<mat-icon matListItemIcon>health_and_safety</mat-icon>
-      </a>
-			<a mat-list-item [routerLink]="'help'">
+      <a mat-list-item [routerLink]="'help'">
         @if (isExpanded) {
           <span>{{ 'PAGES.HELP.TITLE' | translate }}</span>        
         }

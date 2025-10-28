@@ -1,0 +1,14 @@
+{
+  "OLLAMA_VERSION": "0.12.6", 
+  "DARWIN_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.12.6/Ollama-darwin.zip",
+  "ROCM_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.12.6/ollama-windows-amd64-rocm.zip",
+  "DEFAULT_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.12.6/ollama-windows-amd64.zip",
+  "IPEX_VERSION": "2.2.0",
+  "IPEX_DOWNLOAD_LINK": "https://github.com/ipex-llm/ipex-llm/releases/download/v2.2.0/ollama-ipex-llm-2.2.0-win.zip",
+  "GHOSTSCRIPT_WIN_VERSION": "10.06.0",
+  "GHOSTSCRIPT_WIN_DOWNLOAD_LINK": "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10060/gs10060w64.exe",
+  "OCRMYPDF_WIN_VERSION": "16.0.1",
+  "OCRMYPDF_WIN_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=777a0d79b1ef49d5",
+  "FLASHRANKER_WIN_VERSION": "0.2.9",
+  "FLASHRANKER_WIN_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=fcb0380dc4606708"
+}

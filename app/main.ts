@@ -62,7 +62,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
 
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
-    const ollama_dls_file: string | undefined = await dockerEnv.getKeyValue('OLLAMA_DLS_FILE');
+    const ollama_dls_file: string | undefined = await dockerEnv.getKeyValue('TOOLS_DLS_FILE');
     if (ollama_dls_file) {
       const ollamaDLS: any = await (await fetch(
         ollama_dls_file,

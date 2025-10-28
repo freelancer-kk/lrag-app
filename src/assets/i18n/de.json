@@ -38,24 +38,30 @@
   "PAGES": {
     "SPLASH": {
       "SLIDE1": {
-        "PARA1": "Welcome to LRag",
-        "PARA2": "A 100% Private document AI analyser that runs your PC",
-        "PARA3": "*Benefit from complete privacy, query your documents directly on your PC*",
-        "PARA4": "*No reliance on online providers to protect your data*",
-        "PARA5": "*No fees for direct PC usage*",
-        "PARA6": "If you have a windows PC, as part of the setup, LRag needs to download the model process Ollama, please wait for this to complete ...",
-        "PARA7": "The download may take some depending on your Internet Connection.",
-        "PARA8": "If you have a Mac PC, you will need to download and install Ollama. Please click the 'Get Ollama' button above ...",
-        "PARA9": "Swipe the slide to learn more about LRag ..."
-      },
-      "SLIDE2": {
-        "PARA1": "LRag Use Cases",
-        "PARA2": "*General Chat - Choose a model under Model Options then Chat with that model*",
-        "PARA3": "*Analyse a doc - Choose a document under Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
-        "PARA4": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
-        "PARA5": "The larger model you use the more accurate the answers will be. Under Model Options you may select other models",
-        "PARA6": "Consult our forums and support pages for help and tips"
-      }
+          "PARA1": "Welcome to LRag",
+          "PARA2": "A 100% Private document AI analyser that runs your PC",
+          "PARA3": "*Benefit from complete privacy, query your documents directly on your PC*",
+          "PARA4": "*No reliance on online providers to protect your data*",
+          "PARA5": "*No fees for direct PC usage*",
+          "PARA6": "If you have a windows PC, as part of the setup, LRag needs to download the model process Ollama, please wait for this to complete ...",
+          "PARA7": "The download may take some time depending on your Internet Connection.",
+          "PARA8": "If you have a Mac PC, you will need to download and install Ollama. Please click the 'Get Ollama' button above ...",
+          "PARA9": "Swipe the slide to learn more about LRag ..."
+        },
+        "SLIDE2": {
+          "PARA1": "LRag Use Cases",
+          "PARA2": "*Choose a privacy level you wish to use under Privacy*",
+          "PARA3": "*General Chat - Choose a model under Models then Chat with that model*",
+          "PARA4": "*Analyse a doc - Choose a document under Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
+          "PARA5": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
+          "PARA6": "The larger model, the more accurate the answers will be. Under Models you may select other models",
+          "PARA7": "Consult our forums and support pages for help and tips"
+        },
+        "SLIDE3": {
+          "PARA1": "Model Process Download/Upgrade",
+          "PARA2": "Please wait whilst the model process is downloading...",
+          "PARA3": "The download may take some time depending on your Internet Connection."
+        }
     },
     "HOME": {
       "TITLE": "Heim",
@@ -95,10 +101,10 @@
       "BOOTSTRAP_DESC": "Über LRag"
     },
     "PRIVACY": {
-      "TITLE": "Privacy Options"
+      "TITLE": "Privatsphäre"
     },
     "DETAIL": {
-      "TITLE": "Model Option",
+      "TITLE": "Modelle",
       "MAIN_TITLE": "Modellkonfiguration",
       "MODEL_SELECT": "Wählen Sie ein Modell",
       "EMBEDDINGS_MODEL_SELECT": "Wählen Sie eine Einbettung",

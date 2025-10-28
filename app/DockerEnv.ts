@@ -14,7 +14,7 @@ const mergeKeys: string[] = [
   "MODELS_FILE",
   "LIBRARY_PREFIX",
   "VERSION",
-  "OLLAMA_DLS_FILE",
+  "TOOLS_DLS_FILE",
   "OLLAMA_VERSION",
   "IPEX_VERSION",
   "MANAGE_EXTERNAL"

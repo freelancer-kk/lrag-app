@@ -40,9 +40,10 @@ export class SplashComponent implements OnInit {
       { name: "PARA1", text: '', before: '', class: 'title', after: '<br/><br/>' },
       { name: "PARA2", text: '', before: '', class: 'bold', after: '<br/>' },
       { name: "PARA3", text: '', before: '', class: 'bold', after: '<br/>' },
-      { name: "PARA4", text: '', before: '', class: 'bold', after: '<br/><br/>' },      
-      { name: "PARA5", text: '', before: '', class: 'italic', after: '<br/><br/>' },      
-      { name: "PARA6", text: '', before: '', class: 'normal', after: '' },      
+      { name: "PARA4", text: '', before: '', class: 'bold', after: '<br/>' },
+      { name: "PARA5", text: '', before: '', class: 'bold', after: '<br/><br/>' },      
+      { name: "PARA6", text: '', before: '', class: 'italic', after: '<br/><br/>' },      
+      { name: "PARA7", text: '', before: '', class: 'normal', after: '' },      
     ]
   },{
     "name": "SLIDE3",
