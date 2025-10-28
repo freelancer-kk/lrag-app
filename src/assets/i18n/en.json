@@ -44,7 +44,7 @@
           "PARA4": "*No reliance on online providers to protect your data*",
           "PARA5": "*No fees for direct PC usage*",
           "PARA6": "If you have a windows PC, as part of the setup, LRag needs to download the model process Ollama, please wait for this to complete ...",
-          "PARA7": "The download may take some depending on your Internet Connection.",
+          "PARA7": "The download may take some time depending on your Internet Connection.",
           "PARA8": "If you have a Mac PC, you will need to download and install Ollama. Please click the 'Get Ollama' button above ...",
           "PARA9": "Swipe the slide to learn more about LRag ..."
         },
@@ -55,6 +55,11 @@
           "PARA4": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
           "PARA5": "The larger model you use the more accurate the answers will be. Under Model Options you may select other models",
           "PARA6": "Consult our forums and support pages for help and tips"
+        },
+        "SLIDE3": {
+          "PARA1": "Model Process Download/Upgrade",
+          "PARA2": "Please wait whilst the model process is downloading...",
+          "PARA3": "The download may take some time depending on your Internet Connection."
         }
       },
       "HOME": {
@@ -93,6 +98,9 @@
         "RESTORE_TIP": "You may wish to restore the settings and question for a query you ran in the past. This will restore advanced embedding, insight and model settings",
         "BOOTSTRAP": "Startup",
         "BOOTSTRAP_DESC": "About LRag"
+      },
+      "PRIVACY": {
+        "TITLE": "Privacy Options"
       },
       "DETAIL": {
         "TITLE": "Model Options",

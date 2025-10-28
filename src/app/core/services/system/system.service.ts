@@ -128,6 +128,7 @@ export class SystemService {
   question: string | undefined;
   historyExpanded: boolean = false;
   hasBasicSetup: boolean = false;
+  ollamaDownloading: boolean = false;
   
   models: any[] = [
     {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},    

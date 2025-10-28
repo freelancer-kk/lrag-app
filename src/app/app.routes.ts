@@ -13,6 +13,10 @@ export const routes: Routes = [
     component: HomeComponent
   },
   {
+    path: 'privacy',
+    loadComponent: () => import('./privacy.component/privacy.component').then(m => m.PrivacyComponent)
+  },
+  {
     path: 'detail',
     loadComponent: () => import('./detail/detail.component').then(m => m.DetailComponent)
   },

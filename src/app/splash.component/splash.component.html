@@ -22,5 +22,16 @@
         }          
       </div>
     </splide-slide>
+    <splide-slide>      
+      <div class="aSlide">
+        @for (entry of slides[2].paragraphs; track $index) {
+          <span [innerHTML]="entry.before"></span>
+          <span [class]="entry.class">
+            {{ entry.text }}
+          </span>
+          <span [innerHTML]="entry.after"></span>
+        }          
+      </div>
+    </splide-slide>
   </splide>
 </div>

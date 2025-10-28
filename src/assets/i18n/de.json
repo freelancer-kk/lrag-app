@@ -94,6 +94,9 @@
       "BOOTSTRAP": "Startup",
       "BOOTSTRAP_DESC": "Über LRag"
     },
+    "PRIVACY": {
+      "TITLE": "Privacy Options"
+    },
     "DETAIL": {
       "TITLE": "Model Option",
       "MAIN_TITLE": "Modellkonfiguration",

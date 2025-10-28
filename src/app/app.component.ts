@@ -194,6 +194,7 @@ export class AppComponent implements OnInit {
           }
           break;
           case 'ollama-download': {
+            this.systemService.ollamaDownloading = true;
             this.ngZone.run(() => {
               this.systemService.ollamaStatus.update(() => `downloading ${data.percentage}%`);              
             })
@@ -363,7 +364,8 @@ export class AppComponent implements OnInit {
         }
       }
       if (this.systemService.overallStatus() === "running: healthy") {
-        systemService.showGetOllama = false;        
+        this.systemService.ollamaDownloading = false;
+        this.systemService.showGetOllama = false;        
         if (systemService.ollamaPID === -1) {
           this.findOllamaProcess();
         }

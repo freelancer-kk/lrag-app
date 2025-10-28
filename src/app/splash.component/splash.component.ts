@@ -20,7 +20,7 @@ export class SplashComponent implements OnInit {
   text: string = '';
   animatedText: string = '';
   max_duration: number = 3500;
-  slideIndex: number = 0;
+  slideIndex: number = 0;  
   slides: any[] = [{
     "name": "SLIDE1",
     "paragraphs": [
@@ -44,6 +44,13 @@ export class SplashComponent implements OnInit {
       { name: "PARA5", text: '', before: '', class: 'italic', after: '<br/><br/>' },      
       { name: "PARA6", text: '', before: '', class: 'normal', after: '' },      
     ]
+  },{
+    "name": "SLIDE3",
+    "paragraphs": [
+      { name: "PARA1", text: '', before: '', class: 'title', after: '<br/><br/>' },
+      { name: "PARA2", text: '', before: '', class: 'bold', after: '<br/><br/>' },
+      { name: "PARA3", text: '', before: '', class: 'normal', after: '<br/>' }  
+    ]
   }]
 
   constructor(
@@ -61,7 +68,10 @@ export class SplashComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     if (this.systemService.appVersionChange) {
       this.restartAnimation(0);      
+    } else if (this.systemService.ollamaDownloading) {
+      this.restartAnimation(2);      
     }
+
     const divElem: HTMLElement | null = document.getElementById("slideShowElem");
     if (divElem) {
       const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
