@@ -17,7 +17,10 @@ const mergeKeys: string[] = [
   "TOOLS_DLS_FILE",
   "OLLAMA_VERSION",
   "IPEX_VERSION",
-  "MANAGE_EXTERNAL"
+  "MANAGE_EXTERNAL",
+  "GHOSTSCRIPT_VERSION",
+  "RERANKER_VERSION",
+  "OCRMYPDF_VERSION"
 ];
 
 export default class DockerEnv {

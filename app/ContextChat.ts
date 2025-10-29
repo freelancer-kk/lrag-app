@@ -97,7 +97,7 @@ export default class ContextChat {
   }
   
   getAnswer = async (options: any): Promise<string | undefined> => {
-    if (!this.ollamaService.isReady || !this.ollamaService.ollama) {
+    if (!this.ollamaService.isReady() || !this.ollamaService.ollama) {
       return 'Services not ready';
     }
 

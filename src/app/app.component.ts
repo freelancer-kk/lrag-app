@@ -167,7 +167,90 @@ export class AppComponent implements OnInit {
       try {          
         const { type, data } = eventObj;
         // console.log('type', type, 'data', data);        
+        // service-prereq-check-start
+        // service-prereq-check-stdout
+        // service-prereq-check-stderr
+        // service-prereq-check-exit
+        // service-prereq-check-notinstalled
+        // service-download-complete
+        // service-download-part
+        // service-extract-download-starting
+        // service-extract-download-done
+        // service-start
+        // service-ready-state
+        // service-running-stdout
+        // service-running-stderr
+        // service-running-exit
+        // service-stop
+
         switch(type) {
+          case 'service-download-complete': {
+            this.ngZone.run(() => {
+              if (data.serviceName === 'ollama') {
+                this.systemService.ollamaStatus.update(() => `extracting`);
+              }
+            })
+          }
+          break;
+          case 'service-download-part': {
+            this.ngZone.run(() => {
+              if (data.serviceName === 'ollama') {
+                this.systemService.ollamaDownloading = true;            
+                this.systemService.ollamaStatus.update(() => `downloading ${data.percentage}%`);
+              }
+            })
+          }
+          break;
+          case 'service-extract-download-starting': {
+            this.ngZone.run(async () => {
+              if (data.serviceName === 'ollama') {
+                this._snackBar.open(
+                  await this.systemService.get('APP.OLLAMA_DOWNLOADING'),
+                  await this.systemService.get('OK'), {
+                    duration: 20000,
+                  }
+                );              
+                this.systemService.ollamaStatus.update(() => `preparing`);
+              }
+            })
+          }
+          break;
+          case 'service-extract-download-done': {
+            this.ngZone.run(() => {
+              if (data.serviceName === 'ollama') {
+                this.startServicesIfNecessary();
+              }
+            })
+          }
+          break;
+          case 'service-start': {
+
+          }
+          break;
+          case 'service-ready-state': {
+            this.ngZone.run(() => {
+              if (data.serviceName === 'ollama' && (data.ready === true)) {
+                this.systemService.ollamaStatus.update(() => 'running');
+              }
+            })
+          }
+          break;
+          case 'service-running-stdout': {
+
+          }
+          break;
+          case 'service-running-stderr': {
+
+          }
+          break;
+          case 'service-running-exit': {
+
+          }
+          break;
+          case 'service-stop': {
+
+          }
+          break;
           case 'ollama-gpu-accel-started': {
             this.ngZone.run(() => {
               this.systemService.gpuChangeStatus.update(() => 'running');
@@ -180,43 +263,7 @@ export class AppComponent implements OnInit {
               this.forceExit(undefined);
             })
           }
-          break;
-          case 'ollama-extract-starting': {
-            this.ngZone.run(async () => {
-              this._snackBar.open(
-                await this.systemService.get('APP.OLLAMA_DOWNLOADING'),
-                await this.systemService.get('OK'), {
-                  duration: 20000,
-                }
-              );              
-              this.systemService.ollamaStatus.update(() => `preparing`);
-            })
-          }
-          break;
-          case 'ollama-download': {
-            this.systemService.ollamaDownloading = true;
-            this.ngZone.run(() => {
-              this.systemService.ollamaStatus.update(() => `downloading ${data.percentage}%`);              
-            })
-          }
-          break;
-          case 'ollama-extract-extract': {
-            this.ngZone.run(() => {
-              this.systemService.ollamaStatus.update(() => `extracting`);
-            })
-          }
-          break;
-          case 'ollama-extract-done': {
-            this.ngZone.run(() => {
-              this.startServicesIfNecessary();
-            })
-          }
-          case 'ollama-ready': {
-            this.ngZone.run(() => {
-              this.systemService.ollamaStatus.update(() => 'running');
-            })
-          }
-          break;
+          break;          
           case 'ollama-pull-start': {
             this.ngZone.run(() => {
               this.systemService.modelStatus.update(() => `downloading 0%`);
@@ -391,7 +438,7 @@ export class AppComponent implements OnInit {
   findOllamaProcess = async () => {
     const response: any = await this.systemService.findProcesses();
     console.log('findProcess:', response);
-    this.systemService.ollamaPID = response.ollamaPID;
+    this.systemService.ollamaPID = response.servicePID;
   }
 
   switchTheme = (event: any) => {
@@ -439,7 +486,7 @@ export class AppComponent implements OnInit {
   startServicesIfNecessary = async () => {    
     // Check if ollama is running
     console.log('startServicesIfNecessary:');
-    const { isReady } = await this.systemService.commandOllama('isRunning');
+    const { isReady } = await this.systemService.commandOllama('isReady');
     console.log('ollama check RUNNING:', isReady, this.systemService.manageOllamaExternally);
     if (isReady === true) {
       if (this.systemService.manageOllamaExternally === true) {

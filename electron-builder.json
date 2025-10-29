@@ -26,7 +26,7 @@
     "icon": "dist/assets/icons",    
     "target": [
       "portable"
-    ]    
+    ]
   },
   "portable": {
     "splashImage": "dist/assets/icons/electron.bmp"

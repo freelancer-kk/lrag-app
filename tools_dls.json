@@ -7,8 +7,12 @@
   "IPEX_DOWNLOAD_LINK": "https://github.com/ipex-llm/ipex-llm/releases/download/v2.2.0/ollama-ipex-llm-2.2.0-win.zip",
   "GHOSTSCRIPT_WIN_VERSION": "10.06.0",
   "GHOSTSCRIPT_WIN_DOWNLOAD_LINK": "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs10060/gs10060w64.exe",
-  "OCRMYPDF_WIN_VERSION": "16.0.1",
-  "OCRMYPDF_WIN_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=777a0d79b1ef49d5",
-  "FLASHRANKER_WIN_VERSION": "0.2.9",
-  "FLASHRANKER_WIN_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=fcb0380dc4606708"
+  "HOMEBREW_MAC_VERSION": "4.6.19",
+  "HOMEBREW_MAC_DOWNLOAD_LINK": "https://github.com/Homebrew/brew/releases/download/4.6.19/Homebrew-4.6.19.pkg",
+  "WATCHER_VERSION": "1.0.0",
+  "WATCHER_WIN_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=852517c9649592c0",
+  "WATCHER_MAC_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=916bbce1c84258a7",
+  "RERANKER_VERSION": "1.0.0",
+  "RERANKER_WIN_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=7fc849093f4ebe35",
+  "RERANKER_MAC_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=181079ef2a4f997f"
 }

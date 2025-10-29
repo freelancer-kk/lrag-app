@@ -80,8 +80,10 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
         await dockerEnv.kvFile?.set('IPEX_VERSION', ollamaDLS.IPEX_VERSION)
         await dockerEnv.kvFile?.writeFile();
         ollamaService = new OllamaService(
-          ollamaDLS.OLLAMA_VERSION !== ollama_version,
-          ollamaDLS.IPEX_VERSION !== ipex_version,
+          ollama_version ? ollama_version : '',
+          ollamaDLS.OLLAMA_VERSION,
+          ipex_version ? ipex_version : '',
+          ollamaDLS.IPEX_VERSION,
           darwin_dl,
           ipex_dl,
           rocm_dl,
@@ -93,7 +95,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
         ollamaService.register(win?.webContents);
         const managed_externally: string | undefined = dockerEnv.getKeyValue('MANAGE_EXTERNAL');
         if ((isWindows === true || isLinux === true) && (managed_externally === 'false')) {
-          await ollamaService.extract();
+          await ollamaService.install();
         }
       }
     }
