@@ -16,6 +16,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { CommonService } from '../core/services/common-service';
+import { OllamaService } from '../core/services/ollama-service';
+import { EStatus } from '../shared/model';
 
 @Component({
     selector: 'app-detail',
@@ -45,23 +48,27 @@ export class DetailComponent implements OnInit {
   showModelList: boolean = true;
   wt: any;
   libPrefix: string | undefined;
+
+  EStatus: typeof EStatus = EStatus;
   
   constructor(
+    public commonService: CommonService,
     public systemService: SystemService,
+    public ollamaService: OllamaService
   ) {    
     effect(() => {})    
   }
 
   async ngOnInit() {
-    this.libPrefix = await this.systemService.getEnvValue('LIBRARY_PREFIX');
+    this.libPrefix = await this.commonService.getEnvValue('LIBRARY_PREFIX');
   }  
 
   showDownloadImageWarning = (message: string = '') => {
     this.wt = setTimeout(async () => {
       this.wt = undefined
       this._snackBar.open(
-        message === '' ? await this.systemService.get('APP.DOWNLOAD_IMAGE_WARNING') : message, 
-        await this.systemService.get('OK')
+        message === '' ? await this.commonService.get('APP.DOWNLOAD_IMAGE_WARNING') : message, 
+        await this.commonService.get('OK')
       );
     }, 1000)
   }
@@ -78,19 +85,19 @@ export class DetailComponent implements OnInit {
         data: {
           type: 1,
           params: {
-            message: await this.systemService.get('GPU_ARE_YOU_SURE')
+            message: await this.commonService.get('GPU_ARE_YOU_SURE')
           }
         }
       });
     dialogRef.afterClosed().subscribe(async (result) => {
       console.log(`Dialog result: ${result}`);
       if (result === true) {            
-        this.systemService.gpuAcceleration = event.checked;
-        localStorage.setItem('gpu-accel', JSON.stringify(this.systemService.gpuAcceleration));
+        this.ollamaService.gpuAcceleration = event.checked;
+        localStorage.setItem('gpu-accel', JSON.stringify(this.ollamaService.gpuAcceleration));
         // Remove and restart ollama
         this.systemService.gpuChangeStatus.update(() => 'running');
-        await this.systemService.commandOllama('gpuAccel', {
-          gpuAcceleration: this.systemService.gpuAcceleration
+        await this.ollamaService.commandOllama('gpuAccel', {
+          gpuAcceleration: this.ollamaService.gpuAcceleration
         })
       } else {
         event.source.checked = !event.checked;
@@ -104,71 +111,71 @@ export class DetailComponent implements OnInit {
         data: {
           type: 1,
           params: {
-            message: await this.systemService.get('PAGES.DETAIL.DELETE_ARE_YOU_SURE')
+            message: await this.commonService.get('PAGES.DETAIL.DELETE_ARE_YOU_SURE')
           }
         }
       });
     dialogRef.afterClosed().subscribe(async (result) => {
       console.log(`Dialog result: ${result}`);
       if (result === true) {
-        this.systemService.commandOllama('rm', { model: this.systemService.availableModels[index].name });
-        this.systemService.availableModels.splice(index, 1);
+        this.ollamaService.commandOllama('rm', { model: this.ollamaService.availableModels[index].name });
+        this.ollamaService.availableModels.splice(index, 1);
       }
     });
   }
 
   writeModelToEnv = (): Promise<void> => {
-    return this.systemService.setEnvValue('LLM_MODEL_NAME', this.systemService.selectedModel).then((value: any) => {
-      return this.systemService.setEnvValue('EMBEDDINGS_MODEL_NAME', this.systemService.embeddings_model).then((value: any) => {
-        return this.systemService.writeEnv().then((res: any) => {})
+    return this.commonService.setEnvValue('LLM_MODEL_NAME', this.ollamaService.selectedModel).then((value: any) => {
+      return this.commonService.setEnvValue('EMBEDDINGS_MODEL_NAME', this.ollamaService.embeddings_model).then((value: any) => {
+        return this.commonService.writeEnv().then((res: any) => {})
       })
     }) 
   }
   
   updateModel = async (ev: any, model: string): Promise<void> => {
-    await this.systemService.commandOllama(
+    await this.ollamaService.commandOllama(
       'pull', 
       { model, stream: true }
     );
   }
 
   updateAllModels = async (ev: any): Promise<void> => {
-    this.systemService.availableModels.forEach(async (e: any) => {
+    this.ollamaService.availableModels.forEach(async (e: any) => {
       await this.updateModel(ev, e.name);
     })
   };
 
   modelChange = async (event: any, mtype: number) => {
     // Check if model has been already downloaded
-    const fIdx: number = this.systemService.availableModels.findIndex(f => f.name === (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model));
+    const fIdx: number = this.ollamaService.availableModels.findIndex(f => f.name === (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model));
     if (fIdx === -1) {
       const dialogRef = this.dialog.open(
         AlertComponent, {
           data: {
             type: 0,
             params: {
-              model: (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model)
+              model: (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model)
             }
           }
         });
       dialogRef.afterClosed().subscribe(async (result) => {
         console.log(`Dialog result: ${result}`);
         if (result === true) {
-          await this.systemService.commandOllama('pull', { model: (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model), stream: true });
+          await this.ollamaService.commandOllama('pull', { model: (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model), stream: true });
           await this.writeModelToEnv();
-          this.systemService.downloadedLLM = (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model);
+          this.ollamaService.downloadedLLM = (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model);
         } else {
-          console.log('reverting:', this.systemService.downloadedLLM);
+          console.log('reverting:', this.ollamaService.downloadedLLM);
           if (mtype === 0) {
-            this.systemService.selectedModel = this.systemService.downloadedLLM;
+            this.ollamaService.selectedModel = this.ollamaService.downloadedLLM;
           } else {
-            this.systemService.embeddings_model = this.systemService.downloadedLLM;
+            this.ollamaService.embeddings_model = this.ollamaService.downloadedLLM;
           }
         }
       });
     } else {
       await this.writeModelToEnv();      
-      this.systemService.downloadedLLM = (mtype === 0 ? this.systemService.selectedModel : this.systemService.embeddings_model);      
+      this.ollamaService.downloadedLLM = (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model);
     }    
   }
   

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SystemService } from '../system/system.service';
+import { CommonService } from '../common-service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class MediaService {
   rootPath: string = '';
 
   constructor(
-    private systemService: SystemService
+    private systemService: SystemService,
+    private commonService: CommonService,
   ) {
     this.systemService.lragfiles('rootpath', {}).then((value: string) => {
       this.rootPath = value;
@@ -138,7 +140,7 @@ export class MediaService {
   }
 
   basename = (fullpath: string): string => {    
-    return this.systemService.basename(fullpath.replace(/\\/g,'/'));
+    return this.commonService.basename(fullpath.replace(/\\/g,'/'));
   }
 
   loadIndex = async () => {
@@ -198,8 +200,8 @@ export class MediaService {
 
   ls = (force: boolean = false) : Promise<any[]> => {    
     return this.getFiles(force).then(async (names: string[]) => {
-      const ocrRequired: string = await this.systemService.get('PAGES.INGEST.OCR_NEEDED');
-      const unknown: string = await this.systemService.get('PAGES.INGEST.UNKNOWN');
+      const ocrRequired: string = await this.commonService.get('PAGES.INGEST.OCR_NEEDED');
+      const unknown: string = await this.commonService.get('PAGES.INGEST.UNKNOWN');
       return names.map((v: string) => {
         if (this.docStatus) {
           const statusEntry: any = this.docStatus.find(f => f.name === v);

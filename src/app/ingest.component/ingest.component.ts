@@ -25,6 +25,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SpecialCharacterDirective } from '../directives/specialCharacterDirective';
+import { CommonService } from '../core/services/common-service';
+import { OllamaService } from '../core/services/ollama-service';
 
 @Component({
   selector: 'app-ingest.component',
@@ -71,6 +73,8 @@ export class IngestComponent implements OnInit {
 
   constructor(
     public systemService: SystemService,
+    public commonService: CommonService,
+    public ollamaService: OllamaService,
     public mediaService: MediaService,
     private router: Router,
   ) {
@@ -91,7 +95,7 @@ export class IngestComponent implements OnInit {
     this.breakpoint = Math.floor(window.innerWidth / 300);
     console.log('breakpoint:', this.breakpoint);
     // console.log('FILES', this.ragFiles);
-    this.systemService.MAX_FILES = Number.parseInt(await this.systemService.get('PAGES.INGEST.MAX_DOCS'));
+    this.systemService.MAX_FILES = Number.parseInt(await this.commonService.get('PAGES.INGEST.MAX_DOCS'));
     // console.log('MAX:', this.systemService.MAX_FILES)
     await this.mediaService.createCollection(this.systemService.collection);
     this.systemService.collections = await this.mediaService.getCollections();
@@ -134,7 +138,7 @@ export class IngestComponent implements OnInit {
           useSemantic: this.systemService.useSemantic,
           localVector: this.systemService.localVector,
           collection: this.systemService.collection,
-          embeddings: this.systemService.embeddings_model
+          embeddings: this.ollamaService.embeddings_model
         }
       }
     ).then(async (result: any) => {
@@ -147,7 +151,7 @@ export class IngestComponent implements OnInit {
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(() => 'not running');
         this.systemService.ragFiles = await this.mediaService.ls();
-        const snackBarRef = this._snackBar.open(await this.systemService.get('PAGES.INGEST.COMPLETE'), 'OK', {
+        const snackBarRef = this._snackBar.open(await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
           duration: 10000
         });
         snackBarRef.onAction().subscribe(() => {
@@ -157,7 +161,7 @@ export class IngestComponent implements OnInit {
         });      
       } else {
         this.systemService.ingestStatus.update(() => 'warning');
-        const snackBarRef1 = this._snackBar.open(await this.systemService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.systemService.get('PAGES.INGEST.EXITED')), 'OK' );
+        const snackBarRef1 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.commonService.get('PAGES.INGEST.EXITED')), 'OK' );
         this.systemService.ragFiles = await this.mediaService.ls();
         snackBarRef1.onAction().subscribe(() => {
           this.systemService.ingestStatus.update(() => 'not running');
@@ -166,7 +170,7 @@ export class IngestComponent implements OnInit {
     }).catch(async (e) => {
       console.error('ingest error:', e);      
       this.systemService.ingestStatus.update(() => 'error');
-      const snackBarRef2 = this._snackBar.open(await this.systemService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK' );
+      const snackBarRef2 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK' );
       this.systemService.ragFiles = await this.mediaService.ls();
       snackBarRef2.onAction().subscribe(() => {
         this.systemService.ingestStatus.update(() => 'not running');
@@ -239,11 +243,11 @@ export class IngestComponent implements OnInit {
         } else {
           const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
           console.log(droppedFile.relativePath, fileEntry);
-          this._snackBar.open(await this.systemService.get('PAGES.INGEST.DIR_NOT_SUPPORTED'), 'OK');
+          this._snackBar.open(await this.commonService.get('PAGES.INGEST.DIR_NOT_SUPPORTED'), 'OK');
         }
       }
     } else {
-      this._snackBar.open(await this.systemService.get('PAGES.INGEST.TOO_MANY_FILES') + this.systemService.MAX_FILES, 'OK');
+      this._snackBar.open(await this.commonService.get('PAGES.INGEST.TOO_MANY_FILES') + this.systemService.MAX_FILES, 'OK');
     }
     
   }
@@ -264,14 +268,14 @@ export class IngestComponent implements OnInit {
     console.log('fileRemove:', event);
     if (this.systemService.selectedDocuments.value) {
       const docs: string[] = (this.systemService.selectedDocuments.value as unknown) as string[];
-      const deleteStr: string = docs.map(doc => this.systemService.basename(doc)).join(' ');
+      const deleteStr: string = docs.map(doc => this.commonService.basename(doc)).join(' ');
       console.log('fileRemove:', deleteStr)    
       const dialogRef = this.dialog.open(
         AlertComponent, {
           data: {
             type: 1,
             params: {
-              message: await this.systemService.get('PAGES.INGEST.DELETE_ARE_YOU_SURE') + ' ' + deleteStr
+              message: await this.commonService.get('PAGES.INGEST.DELETE_ARE_YOU_SURE') + ' ' + deleteStr
             }
           }
         });
@@ -324,7 +328,7 @@ export class IngestComponent implements OnInit {
           data: {
             type: 1,
             params: {
-              message: await this.systemService.get('PAGES.INGEST.CREATE_ARE_YOU_SURE') + ' ' + this.collection
+              message: await this.commonService.get('PAGES.INGEST.CREATE_ARE_YOU_SURE') + ' ' + this.collection
             }
           }
         });
@@ -349,7 +353,7 @@ export class IngestComponent implements OnInit {
   }
 
   changeCollection = async (ev: any) => {
-    this.systemService.collection = this.systemService.selectedCollections.value ? this.systemService.basename(this.systemService.selectedCollections.value) : 'general';
+    this.systemService.collection = this.systemService.selectedCollections.value ? this.commonService.basename(this.systemService.selectedCollections.value) : 'general';
     console.log('change to collection:', this.systemService.collection)
     await this.systemService.saveChunkSettings();
     this.mediaService.loadedIndex = false;
@@ -364,7 +368,7 @@ export class IngestComponent implements OnInit {
           data: {
             type: 1,
             params: {
-              message: await this.systemService.get('PAGES.INGEST.REMOVE_COLLECTION_ARE_YOU_SURE') + ' ' + this.systemService.collection
+              message: await this.commonService.get('PAGES.INGEST.REMOVE_COLLECTION_ARE_YOU_SURE') + ' ' + this.systemService.collection
             }
           }
         });

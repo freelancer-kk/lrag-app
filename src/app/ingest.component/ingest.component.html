@@ -122,7 +122,7 @@
       <mat-label>{{ 'PAGES.INGEST.FILES' | translate }}</mat-label>
       <mat-select (openedChange)="toggleOpen($event)" [formControl]="systemService.selectedDocuments" multiple [value]="systemService.selectedDocuments">
         @for (entry of systemService.ragFiles; track $index) {
-          <mat-option [value]="entry.name">{{ systemService.basename(entry.name) }}</mat-option>
+          <mat-option [value]="entry.name">{{ commonService.basename(entry.name) }}</mat-option>
         }
       </mat-select>    
     </mat-form-field>
@@ -146,7 +146,7 @@
             <mat-spinner diameter="20"></mat-spinner>
           }
           <div matListItemTitle>
-            {{ systemService.basename(entry.name) }}
+            {{ commonService.basename(entry.name) }}
           </div>
           <div matListItemLine [class]="entry.status === 0 ? 'success' : entry.status === 1 ? 'danger' : 'warning'">
             {{ entry.text }}

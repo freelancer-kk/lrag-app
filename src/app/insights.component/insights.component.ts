@@ -1,7 +1,8 @@
 import { Component, NgZone, OnInit, effect, inject } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { EWho, IGenInfo, SystemService } from '../core/services/system/system.service';
+import { SystemService } from '../core/services/system/system.service';
+import { EWho, IGenInfo } from '../shared/model';
 import {MatInputModule} from '@angular/material/input';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -23,6 +24,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
 import {Clipboard} from '@angular/cdk/clipboard';
+import { CommonService } from '../core/services/common-service';
+import { OllamaService } from '../core/services/ollama-service';
 
 @Component({
   selector: 'app-insights.component',
@@ -61,6 +64,8 @@ export class InsightsComponent implements OnInit {
   constructor(
     private bridgeService: BridgeService,
     public systemService: SystemService,
+    public commonService: CommonService,
+    public ollamaService: OllamaService,
     private sanitizer: DomSanitizer,
     private mediaService: MediaService,
     private ngZone: NgZone,
@@ -131,10 +136,10 @@ export class InsightsComponent implements OnInit {
       const options: any = {
         baseUrl: "http://localhost:11434",
         question,
-        model: this.systemService.selectedModel,
-        prompt: await this.systemService.get('PAGES.INSIGHT.PROMPT'),
-        historyPrompt: await this.systemService.get('PAGES.INSIGHT.HISTORY_PROMPT'),
-        contextPrompt: await this.systemService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT'),
+        model: this.ollamaService.selectedModel,
+        prompt: await this.commonService.get('PAGES.INSIGHT.PROMPT'),
+        historyPrompt: await this.commonService.get('PAGES.INSIGHT.HISTORY_PROMPT'),
+        contextPrompt: await this.commonService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT'),
         chatHistory: this.systemService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n'),
         max_tokens: 256,
         temperature: 0.7,
@@ -143,7 +148,7 @@ export class InsightsComponent implements OnInit {
         presence_penalty: 0,
         stop: ["\n"],
         stream: true,
-        think: this.systemService.getThinkingForModel(this.systemService.selectedModel),
+        think: this.ollamaService.getThinkingForModel(this.ollamaService.selectedModel),
         k: isCSVUseCase ? 2048  : this.systemService.k,
         mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
         numCtx: isCSVUseCase ? 10240 : this.systemService.numCtx
@@ -179,7 +184,7 @@ export class InsightsComponent implements OnInit {
             question,
             answer,
             ingest: {
-              embeddings_model: this.systemService.embeddings_model,
+              embeddings_model: this.ollamaService.embeddings_model,
               chunkSize: this.systemService.chunkSize,
               overlap: this.systemService.overlap,
               separator: this.systemService.separator,
@@ -188,7 +193,7 @@ export class InsightsComponent implements OnInit {
               collection: this.systemService.collection
             },
             insight: {
-              model: this.systemService.selectedModel,
+              model: this.ollamaService.selectedModel,
               k: this.systemService.k,
               filter: this.systemService.filter,
               numCtx: this.systemService.numCtx,
@@ -203,14 +208,14 @@ export class InsightsComponent implements OnInit {
 
           // Get the model usage  
           const usageTimer = setInterval(async () => {
-            const usage = await this.systemService.getRunningModelsUsage();
+            const usage = await this.ollamaService.getRunningModelsUsage();
             if (usage) {
               clearInterval(usageTimer);
               this.modelUsage = usage + ' ';
             }
           }, 2000);    
         } else {
-          this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.LLM_ERROR'), 'OK');        
+          this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.LLM_ERROR'), 'OK');        
         }
       } finally {
         this.systemService.insightStatus.update(() => 'not running');
@@ -246,7 +251,7 @@ export class InsightsComponent implements OnInit {
 
   copyContent = async (ev: any, text: string) => {
     this.clipboard.copy(text);
-    this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.COPY_CONTENT'), 'OK', {
+    this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.COPY_CONTENT'), 'OK', {
       duration: 2500
     });
   }
@@ -254,7 +259,7 @@ export class InsightsComponent implements OnInit {
   rate = async (ev: any, index: number, rating: number) => {
     this.systemService.history[index].assessment = rating;
     this.systemService.saveMainHistory();
-    this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.RATING_THANKS'), 'OK', {
+    this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.RATING_THANKS'), 'OK', {
       duration: 2500
     });
   }
@@ -265,7 +270,7 @@ export class InsightsComponent implements OnInit {
         data: {
           type: 1,
           params: {
-            message: await this.systemService.get('PAGES.INSIGHT.RESET_ARE_YOU_SURE')
+            message: await this.commonService.get('PAGES.INSIGHT.RESET_ARE_YOU_SURE')
           }
         }
     });
@@ -278,7 +283,7 @@ export class InsightsComponent implements OnInit {
   }
 
   changeCollection = async (ev: any) => {
-    this.systemService.collection = this.systemService.selectedCollections.value ? this.systemService.basename(this.systemService.selectedCollections.value) : 'general';
+    this.systemService.collection = this.systemService.selectedCollections.value ? this.commonService.basename(this.systemService.selectedCollections.value) : 'general';
     console.log('change to collection:', this.systemService.collection)
     this.clearHistory();
     await this.systemService.saveChunkSettings();

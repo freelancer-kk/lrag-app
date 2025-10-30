@@ -13,6 +13,8 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app/app.routes';
 import { SystemService } from './app/core/services/system/system.service';
 import { provideNgxSkeletonLoader } from 'ngx-skeleton-loader';
+import { CommonService } from './app/core/services/common-service';
+import { OllamaService } from './app/core/services/ollama-service';
 
 if (APP_CONFIG.production) {
   enableProdMode();
@@ -32,17 +34,17 @@ bootstrapApplication(AppComponent, {
       SharedModule
     ),
     provideAppInitializer(async () => {
-      const initializerFn = async (systemService: SystemService) => {
+      const initializerFn = async (systemService: SystemService, commonService: CommonService, ollamaService: OllamaService) => {
         await systemService.init();
         console.log('app initializer:start');
         const theme: string | null = localStorage.getItem('theme');        
         systemService.dark = theme ? JSON.parse(theme) : 'dark';        
         console.log('theme:', systemService.dark);
         const gpuAccelStr: string | null = localStorage.getItem('gpu-accel');
-        systemService.gpuAcceleration= gpuAccelStr ? JSON.parse(gpuAccelStr) : 'true';        
+        ollamaService.gpuAcceleration= gpuAccelStr ? JSON.parse(gpuAccelStr) : 'true';        
         const manageOllamaExternally: string | null = localStorage.getItem('manage-ollama-externally');
-        systemService.manageOllamaExternally = manageOllamaExternally ? JSON.parse(manageOllamaExternally) : 'false';
-        console.log('managedExternally:', systemService.manageOllamaExternally);
+        ollamaService.manageOllamaExternally = manageOllamaExternally ? JSON.parse(manageOllamaExternally) : 'false';
+        console.log('managedExternally:', ollamaService.manageOllamaExternally);
 
         const chunkSettingsStr: string | null = localStorage.getItem('chunk-settings');
         console.log(chunkSettingsStr);
@@ -68,17 +70,17 @@ bootstrapApplication(AppComponent, {
         systemService.ragPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).ragPrompt : undefined;
         systemService.userPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).userPrompt : undefined;
         if (systemService.ragPrompt === undefined) {
-          systemService.ragPrompt = await systemService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT')
+          systemService.ragPrompt = await commonService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT')
         }
         if (systemService.userPrompt === undefined) {
-          systemService.userPrompt = await systemService.get('PAGES.INSIGHT.PROMPT')
+          systemService.userPrompt = await commonService.get('PAGES.INSIGHT.PROMPT')
         }
         const historyStr: string | null  = localStorage.getItem('history');
         if (historyStr) {
           systemService.history = JSON.parse(historyStr);
         }
       };
-      await initializerFn(inject(SystemService));
+      await initializerFn(inject(SystemService),inject(CommonService),inject(OllamaService));
     }),
     provideNgxSkeletonLoader({
       theme: {

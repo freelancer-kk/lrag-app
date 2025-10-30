@@ -271,9 +271,9 @@ export class BridgeService {
     }
   }
 
-  ollama = (callbackId: number, command: string, options: any, cb: (response: any) => void) => {
+  service = (callbackId: number, serviceName: string, command: string, options: any, cb: (response: any) => void) => {
     if (this.isElectronRendered) {
-      this.callNode('ollama', callbackId, cb, command, options, undefined); 
+      this.callNode('service-' + serviceName, callbackId, cb, command, options, undefined); 
     } else {
       cb({
           "response": "ok"

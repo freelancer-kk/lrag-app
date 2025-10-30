@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, effect } from '@angular/core';
 import { SystemService } from '../core/services';
 import { NgxSplideComponent, NgxSplideModule } from 'ngx-splide';
 import { TranslateModule } from '@ngx-translate/core';
+import { CommonService } from '../core/services/common-service';
 
 @Component({
   selector: 'app-splash',
@@ -55,6 +56,7 @@ export class SplashComponent implements OnInit {
   }]
 
   constructor(
+    public commonService: CommonService,
     public systemService: SystemService,    
   ) {
     effect(() => {
@@ -69,7 +71,7 @@ export class SplashComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     if (this.systemService.appVersionChange) {
       this.restartAnimation(0);      
-    } else if (this.systemService.ollamaDownloading) {
+    } else if (this.systemService.servicesDownloading) {
       this.restartAnimation(2);      
     }
 
@@ -147,7 +149,7 @@ export class SplashComponent implements OnInit {
     const slideName: string = this.slides[slideNumber].name;
     const slideParagraphs: any[] = this.slides[slideNumber].paragraphs;
     if (para < slideParagraphs.length) {
-      this.text = await this.systemService.get('PAGES.SPLASH.' + slideName + '.' + slideParagraphs[para].name);
+      this.text = await this.commonService.get('PAGES.SPLASH.' + slideName + '.' + slideParagraphs[para].name);
       this.animatedText = '';
       requestAnimationFrame((startTime) => this.animateText(startTime, slideNumber, para));
     } else {

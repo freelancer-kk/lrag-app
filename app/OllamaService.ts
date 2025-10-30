@@ -113,7 +113,7 @@ export default class OllamaService {
     if (this.serviceInstanceNoGPU) {
       this.serviceInstanceNoGPU.register(this.webContents);
     }
-    ipcMain.on('ollama', async (event: any, arg: any) => {
+    ipcMain.on('service-ollama', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
       console.log('ollama:', callbackId, command, params)
       let response: any = {}

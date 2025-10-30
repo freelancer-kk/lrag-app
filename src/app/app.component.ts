@@ -19,6 +19,9 @@ import { MediaService } from './core/services/media/media.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { AlertComponent } from './alert.component/alert.component';
 import { MatDialog } from '@angular/material/dialog';
+import { CommonService } from './core/services/common-service';
+import { OllamaService } from './core/services/ollama-service';
+import { EStatus } from './shared/model';
 
 @Component({
     selector: 'app-root',
@@ -44,10 +47,12 @@ export class AppComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
   @ViewChild('sidenav', {static: true}) sidenav!: MatSidenav;
+
+  EStatus: typeof EStatus = EStatus;
+
   isExpanded: boolean = true;
   dockerConnectInterval: any;
   firstTime: boolean = true;
-  serviceTimer: any;
   firstRun: boolean = true;
 
   constructor(
@@ -55,9 +60,11 @@ export class AppComponent implements OnInit {
     private translate: TranslateService,
     private bridgeService: BridgeService,
     private router: Router,
+    private commonService: CommonService,
     public systemService: SystemService,
     private ngZone: NgZone,
-    private mediaService: MediaService
+    private mediaService: MediaService,
+    public ollamaService: OllamaService,
   ) {
     console.log('APP_CONFIG', APP_CONFIG);
 
@@ -86,12 +93,12 @@ export class AppComponent implements OnInit {
                 const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
                 if (fIdx > -1) {
                   this.mediaService.docStatus[fIdx].status = 1;
-                  this.mediaService.docStatus[fIdx].text = await this.systemService.get('PAGES.INGEST.OCR_ERROR');
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_ERROR');
                 } else {
                   this.mediaService.docStatus.push({
                     name: data.localfile,
                     status: 1,
-                    text: await this.systemService.get('PAGES.INGEST.OCR_ERROR')
+                    text: await this.commonService.get('PAGES.INGEST.OCR_ERROR')
                   });               
                 }
                 this.systemService.ragFiles = await this.mediaService.ls();
@@ -105,13 +112,13 @@ export class AppComponent implements OnInit {
                 const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
                 if (fIdx > -1) {
                   this.mediaService.docStatus[fIdx].status = 2;
-                  this.mediaService.docStatus[fIdx].text = await this.systemService.get('PAGES.INGEST.OCR_PREPARE');
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_PREPARE');
                 } else {
                   console.log('ocr-processor-put:', data.localfile);
                   this.mediaService.docStatus.push({
                     name: data.localfile,
                     status: 2,
-                    text: await this.systemService.get('PAGES.INGEST.OCR_PREPARE')
+                    text: await this.commonService.get('PAGES.INGEST.OCR_PREPARE')
                   });               
                 }
                 this.systemService.ragFiles = await this.mediaService.ls();
@@ -125,12 +132,12 @@ export class AppComponent implements OnInit {
                 const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
                 if (fIdx > -1) {
                   this.mediaService.docStatus[fIdx].status = 2;
-                  this.mediaService.docStatus[fIdx].text = await this.systemService.get('PAGES.INGEST.OCR_START');
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_START');
                 } else {
                   this.mediaService.docStatus.push({
                     name: data.localfile,
                     status: 2,
-                    text: await this.systemService.get('PAGES.INGEST.OCR_START')
+                    text: await this.commonService.get('PAGES.INGEST.OCR_START')
                   });               
                 }
                 this.systemService.ragFiles = await this.mediaService.ls();
@@ -144,12 +151,12 @@ export class AppComponent implements OnInit {
                 const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
                 if (fIdx > -1) {
                   this.mediaService.docStatus[fIdx].status = 0;
-                  this.mediaService.docStatus[fIdx].text = await this.systemService.get('PAGES.INGEST.OCR_DONE');
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_DONE');
                 } else {
                   this.mediaService.docStatus.push({
                     name: data.localfile,
                     status: 0,
-                    text: await this.systemService.get('PAGES.INGEST.OCR_DONE')
+                    text: await this.commonService.get('PAGES.INGEST.OCR_DONE')
                   });               
                 }
                 this.systemService.ragFiles = await this.mediaService.ls();
@@ -172,22 +179,12 @@ export class AppComponent implements OnInit {
         // service-prereq-check-stderr
         // service-prereq-check-exit
         // service-prereq-check-notinstalled
-        // service-download-complete
-        // service-download-part
-        // service-extract-download-starting
-        // service-extract-download-done
-        // service-start
-        // service-ready-state
-        // service-running-stdout
-        // service-running-stderr
-        // service-running-exit
-        // service-stop
-
+        
         switch(type) {
           case 'service-download-complete': {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {
-                this.systemService.ollamaStatus.update(() => `extracting`);
+                this.ollamaService.status.update(EStatus.extracting);
               }
             })
           }
@@ -195,8 +192,8 @@ export class AppComponent implements OnInit {
           case 'service-download-part': {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {
-                this.systemService.ollamaDownloading = true;            
-                this.systemService.ollamaStatus.update(() => `downloading ${data.percentage}%`);
+                this.systemService.servicesDownloading = true;            
+                this.ollamaService.status.updateSN(EStatus.downloading, data.percentage);                
               }
             })
           }
@@ -205,12 +202,12 @@ export class AppComponent implements OnInit {
             this.ngZone.run(async () => {
               if (data.serviceName === 'ollama') {
                 this._snackBar.open(
-                  await this.systemService.get('APP.OLLAMA_DOWNLOADING'),
-                  await this.systemService.get('OK'), {
+                  await this.commonService.get('APP.OLLAMA_DOWNLOADING'),
+                  await this.commonService.get('OK'), {
                     duration: 20000,
                   }
                 );              
-                this.systemService.ollamaStatus.update(() => `preparing`);
+                this.ollamaService.status.update(EStatus.preparing);
               }
             })
           }
@@ -218,7 +215,7 @@ export class AppComponent implements OnInit {
           case 'service-extract-download-done': {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {
-                this.startServicesIfNecessary();
+                this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
               }
             })
           }
@@ -230,7 +227,7 @@ export class AppComponent implements OnInit {
           case 'service-ready-state': {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama' && (data.ready === true)) {
-                this.systemService.ollamaStatus.update(() => 'running');
+                this.ollamaService.status.update(EStatus.running);
               }
             })
           }
@@ -291,7 +288,7 @@ export class AppComponent implements OnInit {
           case 'ollama-pull-done': {
             this.ngZone.run(() => {
               this.systemService.modelStatus.update(() => 'running');
-              this.systemService.getAvailableLLMs();
+              this.ollamaService.getAvailableLLMs();
             })            
           }
           break;
@@ -398,27 +395,38 @@ export class AppComponent implements OnInit {
     })
 
     effect(() => {
-      this.systemService.ollamaStatus();
+      this.ollamaService.status.getSV();
       this.systemService.modelStatus();
       this.systemService.ingestStatus();
       this.systemService.gpuChangeStatus();
       this.systemService.calcOverallStatus();
       // console.log('overall status:', this.systemService.overallStatus());
       if (this.systemService.overallStatus() === "running: unhealthy") {
-        if (this.firstTime && (this.systemService.ollamaStatus() === "running")) {
-          this.findOllamaProcess();
+        if (this.firstTime && (this.ollamaService.status.get() === EStatus.running)) {
+          this.ollamaService.findOllamaProcess();
           this.pullModelsIfNecessary();
         }
       }
       if (this.systemService.overallStatus() === "running: healthy") {
-        this.systemService.ollamaDownloading = false;
+        this.systemService.servicesDownloading = false;
         this.systemService.showGetOllama = false;        
-        if (systemService.ollamaPID === -1) {
-          this.findOllamaProcess();
+        if (ollamaService.ollamaPID === -1) {
+          this.ollamaService.findOllamaProcess();
         }
         this.navigateAway();
       }
     })
+  }
+
+  toastOllamaNotRunning = async () => {
+    const snackBarRef = this._snackBar.open(
+      await this.commonService.get('APP.OLLAMA_NOT_RUNNING'), 
+      await this.commonService.get('OK')
+    );
+    snackBarRef.afterDismissed().subscribe(() => {
+      this.systemService.showGetOllama = true;
+    });
+    this.ollamaService.setOllamaCheckTimer();
   }
 
   navigateAway = async () => {
@@ -435,12 +443,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  findOllamaProcess = async () => {
-    const response: any = await this.systemService.findProcesses();
-    console.log('findProcess:', response);
-    this.systemService.ollamaPID = response.servicePID;
-  }
-
   switchTheme = (event: any) => {
     this.systemService.dark = !this.systemService.dark;    
     document.body.setAttribute(
@@ -453,21 +455,21 @@ export class AppComponent implements OnInit {
   async ngOnInit() {    
     this.systemService.osType = await this.systemService.getOSType();
     if (this.systemService.osType && (this.systemService.osType.isMac === true)) { 
-      this.systemService.manageOllamaExternally = true; 
+      this.ollamaService.manageOllamaExternally = true; 
     };
-    console.log('osType:', this.systemService.osType, this.systemService.manageOllamaExternally);
+    console.log('osType:', this.systemService.osType, this.ollamaService.manageOllamaExternally);
     this.systemService.cpu = await this.systemService.getCpu();
     this.systemService.gpu = await this.systemService.getGpu();
     this.systemService.mem = await this.systemService.getTotalMemory();
     this.systemService.disks = await this.systemService.getDisks();
     const appVersion: string | null = localStorage.getItem('LRAG_VERSION');
-    const readVersion: string = await this.systemService.getEnvValue('VERSION');
+    const readVersion: string = await this.commonService.getEnvValue('VERSION');
     if (appVersion !== readVersion) {
       this.systemService.appVersionChange = true;
       localStorage.setItem('LRAG_VERSION', readVersion);
     }
     setTimeout(() => {
-      this.startServicesIfNecessary();  
+      this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);  
     }, 400)   
   }
 
@@ -483,86 +485,32 @@ export class AppComponent implements OnInit {
     }
   }
 
-  startServicesIfNecessary = async () => {    
-    // Check if ollama is running
-    console.log('startServicesIfNecessary:');
-    const { isReady } = await this.systemService.commandOllama('isReady');
-    console.log('ollama check RUNNING:', isReady, this.systemService.manageOllamaExternally);
-    if (isReady === true) {
-      if (this.systemService.manageOllamaExternally === true) {
-        this.setOllamaCheckTimer();
-      }
-      this.systemService.ollamaStatus.update(() => 'running');      
-    } else {
-      if (this.systemService.manageOllamaExternally === true) {
-        console.log('SHOWING OLLAMA MANAUAL WARNING:', this.systemService.manageOllamaExternally);
-        const snackBarRef = this._snackBar.open(
-          await this.systemService.get('APP.OLLAMA_NOT_RUNNING'), 
-          await this.systemService.get('OK')
-        );
-        snackBarRef.afterDismissed().subscribe(() => {
-          this.systemService.showGetOllama = true;
-        });
-        this.setOllamaCheckTimer();
-      } else {
-        const response = await this.systemService.commandOllama(
-          'start',
-          {
-            gpuAccel: this.systemService.gpuAcceleration
-          }
-        );
-        if (response.status === 'error' && response.error === 'extraction') {
-          this.systemService.ollamaStatus.update(() => 'extracting');
-          console.log('waiting for extraction to complete, then start...');
-        } else {
-          this.systemService.ollamaStatus.update(() => 'running');
-        }
-      }
-    }
-  }   
-
-  setOllamaCheckTimer = () => {
-    if (this.serviceTimer) {
-      clearInterval(this.serviceTimer);
-    }
-    this.serviceTimer = setInterval(async () => {
-      const { isReady } = await this.systemService.commandOllama('isRunning');
-      if (!isReady) {
-        this.systemService.ollamaStatus.update(() => 'not running');            
-      } else {
-        this.systemService.ollamaStatus.update(() => 'running');
-      }
-    }, 10000);
-  }
-
   pullModelsIfNecessary = async () => {
     try {
-      if (this.systemService.selectedModel === '') {
-        await this.systemService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
+      if (this.ollamaService.selectedModel === '') {
+        await this.commonService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
           console.log('environment model llm:', value);
-          this.systemService.selectedModel = value;
-          this.systemService.downloadedLLM = value;          
+          this.ollamaService.selectedModel = value;
+          this.ollamaService.downloadedLLM = value;          
         })
       }
-      if (this.systemService.embeddings_model === '') {
-        await this.systemService.getEnvValue('EMBEDDINGS_MODEL_NAME').then((value: string) => {
+      if (this.ollamaService.embeddings_model === '') {
+        await this.commonService.getEnvValue('EMBEDDINGS_MODEL_NAME').then((value: string) => {
           console.log('environment embed llm:', value);
-          this.systemService.embeddings_model = value;
-          this.systemService.downloadedLLM = value;          
+          this.ollamaService.embeddings_model = value;
+          this.ollamaService.downloadedLLM = value;          
         })
       }
       console.log('pullModelsIfNecessary:getAvailableLLMs()');
-      await this.systemService.getAvailableLLMs();
-      if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.embedding_models[0].value) === -1) {
-        this.systemService.modelStatus.update(() => 'downloading');
-        console.log('pull:', this.systemService.embedding_models[0].value);
-        await this.systemService.commandOllama('pull', { model: this.systemService.embedding_models[0].value, stream: true});
+      await this.ollamaService.getAvailableLLMs();
+      const responseE: any = await this.ollamaService.pull(this.ollamaService.embedding_models[0].value);
+      if (responseE !== 'pulled') {
+        this.systemService.modelStatus.update(() => 'downloading');      
       }
-      if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.models[0].value) === -1) {
+      const responseM: any = await this.ollamaService.pull(this.ollamaService.models[0].value);
+      if (responseM !== 'pulled') {
         this.systemService.modelStatus.update(() => 'downloading');
-        console.log('pull:', this.systemService.models[0].value);
-        await this.systemService.commandOllama('pull', { model: this.systemService.models[0].value, stream: true});
-      }
+      }      
       this.firstTime = false;
       this.systemService.modelStatus.update(() => 'running');
       this.systemService.hasBasicSetup = true;     
@@ -576,14 +524,14 @@ export class AppComponent implements OnInit {
       }
     }    
   }
-  
+
   appExit = async (ev: any) => {
     const dialogRef = this.dialog.open(
       AlertComponent, {
         data: {
           type: 1,
           params: {
-            message: await this.systemService.get('APP.EXIT_ARE_YOU_SURE')
+            message: await this.commonService.get('APP.EXIT_ARE_YOU_SURE')
           }
         }
       });
@@ -603,7 +551,7 @@ export class AppComponent implements OnInit {
         data: {
           type: 2,
           params: {
-            message: await this.systemService.get('GPU_CHANGE_RESTART')
+            message: await this.commonService.get('GPU_CHANGE_RESTART')
           }
         }
       });

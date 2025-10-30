@@ -1,88 +1,24 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { BridgeService } from '../bridge/bridge.service';
-import { TranslateService } from '@ngx-translate/core';
 import {FormControl} from '@angular/forms';
-import path from 'path';
-import { ConnectionService, ConnectionServiceOptions, ConnectionState } from 'ng-connection-service';
+import { ConnectionService, ConnectionState } from 'ng-connection-service';
 import { Subscription, tap } from 'rxjs';
+import { connOptions, EStatus, IChat, IHistory } from '../../../shared/model';
+import { OllamaService } from '../ollama-service';
+import { CommonService } from '../common-service';
 
-export enum EWho {
-  User = 0,
-  Assistant
-}
-
-export interface IUser {
-  affiliate: string;
-  uuid: string;
-  email: string;
-  email_confirmed: string | undefined;
-}
-
-export interface IChat {
-  who: EWho,
-  content: string
-}
-
-export interface IGenInfo {
-  model: string,
-  created_at: number,
-  done: boolean,
-  total_duration: number,
-  load_duration: number,
-  prompt_eval_count: number,
-  prompt_eval_duration: number,
-  eval_count: number,
-  eval_duration: number
-}
-
-export interface IHistory {
-  when: Date,
-  question: string,
-  answer: string,
-  ingest: {
-    embeddings_model: string
-    chunkSize: number,
-    overlap: number,
-    separator: string,
-    useSemantic: boolean,
-    localVector: boolean,
-    collection: string
-  },
-  insight: {
-    model: string,
-    k: number,
-    filter: string | undefined,
-    numCtx: number,
-    ragPrompt: string | undefined,
-    userPrompt: string | undefined
-  }
-  q_expanded: boolean,
-  a_expanded: boolean,  
-  genInfo?: IGenInfo,
-  assessment: number
-}
-
-const options: ConnectionServiceOptions = {
-  enableHeartbeat: true,
-  heartbeatUrl: 'https://google.com',
-  heartbeatInterval: 10000
-}
-  
 @Injectable({
   providedIn: 'root'
 })
 export class SystemService {
-  private translate = inject(TranslateService)
-
+  
   power: number = 50;
   cpu: any;
   gpu: any;
   mem: any;
   disks: any;
-  availableModels: any[] = [];
   overallStatus = signal<any>('not running');
   modelStatus = signal<any>('unknown');
-  ollamaStatus = signal<any>('not running');
   ingestStatus = signal<any>('not running');
   insightStatus = signal<any>("not running");
   gpuChangeStatus = signal<any>("not running");
@@ -93,19 +29,13 @@ export class SystemService {
   ollama_get_link: string = "https://ollama.com/download";
   appVersionChange: boolean = false;
 
-  selectedModel: string = ''
-  downloadedLLM: string = '';
   MAX_FILES: number = 15;
   ragFiles: any[] = [];
   dark: boolean = true;
   docsEmpty: boolean = true;
-  gpuAcceleration: boolean = true;
   osType: any;
   chatHistory: IChat[] = [];
-  ollamaPID: number = -1;
   brand: string = '';
-  manageOllamaExternally: boolean = false;
-  showGetOllama: boolean = false;
   chunkSize: number = 512;
   overlap: number = 48;
   filter: string | undefined = undefined;
@@ -123,48 +53,20 @@ export class SystemService {
   currentState!: ConnectionState;
   subscription = new Subscription();
   status!: string;
-  modelsDownloaded: boolean = false;
   history: IHistory[] = [];
   question: string | undefined;
   historyExpanded: boolean = false;
   hasBasicSetup: boolean = false;
-  ollamaDownloading: boolean = false;
+
+  showGetOllama: boolean = false;
+  servicesDownloading: boolean = false;
   
-  models: any[] = [
-    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1},    
-    {value: 'granite3-dense:2b', viewValue: 'granite3-dense:2b (<2GB)', thinking: true, memory: 2},
-    {value: 'nemotron-mini:4b', viewValue: 'nemotron-mini:4b (<3GB)', thinking: true, memory: 3},
-    {value: 'llama3-chatqa:8b', viewValue: 'llama3-chatqa:8b (<5GB)', thinking: true, memory: 5},
-    {value: 'llama3.1:8b', viewValue: 'llama3.1:8b (<5GB)', thinking: true, memory: 5},
-    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 8},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9}    
-  ];
-
-  embedding_models: any[] = [
-    {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, memory: 1},
-    {value: 'nomic-embed-text:v1.5', viewValue: 'nomic-embed-text:v1.5 (<1GB)', thinking: false, memory: 1},
-    {value: 'mxbai-embed-large:335m', viewValue: 'mxbai-embed-large:335m (<1GB)', thinking: false, memory: 1},
-    {value: 'bge-m3:567m', viewValue: 'bge-m3:567m (<1GB)', thinking: false, memory: 1},
-    {value: 'all-minilm:22m', viewValue: 'all-minilm:22m (<1GB)', thinking: false, memory: 1},
-    {value: 'bge-large:335m', viewValue: 'bge-large:335m (<1GB)', thinking: false, memory: 1},
-    {value: 'qwen3-embedding:0.6b', viewValue: 'qwen3-embedding:0.6b (<1GB)', thinking: false, memory: 1}
-  ]
-
-  embeddings_model: string = '';
-
   constructor(
     private bridgeService: BridgeService,
-    private connectionService: ConnectionService
+    private connectionService: ConnectionService,
+    private commonService: CommonService,
+    private ollamaService: OllamaService
   ) {}
-
-  get = (key: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      this.translate.get(key)
-        .subscribe((res: string) => {
-            resolve(res);
-        });
-    })
-  }
 
   saveMainHistory = () => {
     this.history.splice(25);
@@ -173,33 +75,13 @@ export class SystemService {
 
   init = (): void => {
     this.subscription.add(
-      this.connectionService.monitor(options).pipe(
+      this.connectionService.monitor(connOptions).pipe(
         tap(async (newState: ConnectionState) => {
           this.currentState = newState;
 
           if (this.currentState.hasNetworkConnection) {
             this.status = 'online';
-            if (!this.modelsDownloaded) {
-              let url: string = await this.getEnvValue('MODELS_FILE', 82)
-              console.log('init:model file url:', url)            
-              this.modelsDownloaded = true;
-              this.models = await (await fetch(
-                url,
-                {
-                  method: 'GET',          
-                }
-              )).json();
-
-              url = await this.getEnvValue('EMBEDDED_MODELS_FILE', 83)
-              console.log('init:embedded file url:', url)
-              this.embedding_models = await (await fetch(
-                url,
-                {
-                  method: 'GET',          
-                }
-              )).json();
-              console.log('models downloaded!');
-            }
+            this.ollamaService.fetchModelList();
           } else {
             this.status = 'offline';
           }
@@ -233,17 +115,8 @@ export class SystemService {
     }))
   }
 
-  getThinkingForModel = (model: string): boolean => {
-    const idx = this.models.findIndex(m => m.value === model);
-    if (idx > -1) {
-      return this.models[idx].thinking;
-    } else {
-      return false;
-    }
-  }
-
   calcOverallStatus = () => {
-    if (this.ollamaStatus() === 'running') {
+    if (this.ollamaService.status.get() === EStatus.running) {
       if (this.modelStatus() === 'running' && this.ingestStatus() === 'not running' && this.gpuChangeStatus() === 'not running') {
         this.overallStatus.update(() => 'running: healthy');
       } else {
@@ -253,25 +126,7 @@ export class SystemService {
       this.overallStatus.update(() => 'not running');
     }
   }
-
-  getRunningModelsUsage = async (): Promise<string> => {
-    const modelUsage: any = await this.commandOllama('ps');
-    for await (const entry of modelUsage.models) {      
-      if (entry.model === this.selectedModel) {
-        const { size, size_vram } = entry;
-        
-        let part = '';
-        /*
-        if (size-size_vram > 0) {
-          part += `CPU ${Math.floor(size-size_vram / size * 100)}%`;
-        }
-          */
-        part += ` GPU ${Math.floor(size_vram / size * 100)}%`
-        return part;
-      }         
-    }
-    return '';
-  }
+  
 
   commandInsight = (command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
@@ -291,68 +146,6 @@ export class SystemService {
     });
   }  
   
-  commandOllama = (command: string, options: any = {}): Promise<any> => {
-    return new Promise((resolve, reject) => { 
-      this.bridgeService.ollama(90, command, options, async (data: any) => {
-        console.log('ollama command response:', command, options, data);
-        resolve(data);
-      });
-    });
-  }  
-
-  findProcesses = (): Promise<any> => {
-    return new Promise((resolve, reject) => { 
-      this.bridgeService.ollama(91, 'find', {}, async (data: any) => {        
-        resolve(data);
-      });
-    });
-  }  
-
-  getAvailableLLMs = async (): Promise<void> => {
-    // const currentModels: any[] = this.availableModels;
-    const value: any = await this.commandOllama('list');
-    // console.log('getAvailableLLMs:', value.models);
-    this.availableModels = value.models.map((model: any) => {
-      return {
-        name: model.name,
-        size: Math.floor(model.size / 1024 / 1000),
-        usage: model.usage
-      }
-    });
-    // console.log('getAvailableLLMs:', this.availableModels);
-  }
-
-  getEnvValue = (key: string, callbackId: number = 80) : Promise<string> => {
-    return new Promise((resolve, reject) => {
-      this.bridgeService.env(callbackId, 'get', { key }, async (data: any) => {
-        resolve(data);        
-      });
-    })
-  }
-
-  basename = (fullpath: string): string => {    
-    return path.basename(fullpath.replace(/\\/g,'/'));
-  }
-
-  setEnvValue = (key: string, value: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      this.bridgeService.env(82, 'set', {
-        key,
-        value
-      }, async (data: any) => {
-        resolve(data);        
-      });
-    })
-  }
-
-  writeEnv = (): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      this.bridgeService.env(81, 'write', {}, async (data: any) => {
-        resolve(data);        
-      });
-    })
-  }
-
   lragfiles = (command: string, options: any): Promise<any> => {
     return new Promise((resolve, reject) => {
       this.bridgeService.lragfiles(70, command, options, async (data: any) => {
@@ -441,7 +234,7 @@ export class SystemService {
           this.power = this.power * 1.5;
         }
         resolve({
-          "name": await this.get("SYSTEM.CPU"),
+          "name": await this.commonService.get("SYSTEM.CPU"),
           "brand": brand,
           "speed": speed,
           "threads": cores
@@ -479,7 +272,7 @@ export class SystemService {
           }
         } else {
           device = {
-            name: await this.get("SYSTEM.GPU"),
+            name: await this.commonService.get("SYSTEM.GPU"),
             brand: '',
             model: 'none',
             vram: 0
@@ -493,7 +286,7 @@ export class SystemService {
         }
         this.brand = device.brand;
         resolve({
-          "name": await this.get("SYSTEM.GPU"),
+          "name": await this.commonService.get("SYSTEM.GPU"),
           "brand": device.brand, 
           "gpu": device.model,
           "vram": device.vram
@@ -515,7 +308,7 @@ export class SystemService {
         }
         this.totalMainMemory = total;
         resolve({
-          "name": await this.get("SYSTEM.MEM"),
+          "name": await this.commonService.get("SYSTEM.MEM"),
           "totalGB": total
         });      
       });
@@ -549,7 +342,7 @@ export class SystemService {
       });
     })    
   }
-
+  
   openExternal = (url: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       this.bridgeService.openExternal(6, url, async () => {

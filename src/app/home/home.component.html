@@ -1,7 +1,7 @@
 <mat-card class="home-card" appearance="outlined">
   <mat-card-content>
     <mat-accordion>
-      <mat-expansion-panel (afterExpand)="startShow($event)" (afterCollapse)="endShow($event)" [expanded]="systemService.appVersionChange || systemService.ollamaDownloading">
+      <mat-expansion-panel (afterExpand)="startShow($event)" (afterCollapse)="endShow($event)" [expanded]="systemService.appVersionChange || systemService.servicesDownloading">
         <mat-expansion-panel-header>
           <mat-panel-title></mat-panel-title>
           <mat-panel-description>
@@ -22,23 +22,24 @@
         </mat-expansion-panel-header>
         <div class="onerow">
           {{ 'PAGES.HOME.LLM' | translate }}
-          @if (systemService.manageOllamaExternally !== true) {
-            &nbsp;<span class="small">({{ systemService.ollamaPID }})</span>
+          @if (ollamaService.manageOllamaExternally !== true) {
+            &nbsp;<span class="small">({{ ollamaService.ollamaPID }})</span>
           }
           <span class="spacer"></span>            
-          <mat-slide-toggle [disabled]="!this.systemService.osType || (this.systemService.osType && this.systemService.osType.isMac)" [checked]="systemService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
+          <mat-slide-toggle [disabled]="!this.systemService.osType || (this.systemService.osType && this.systemService.osType.isMac)" [checked]="ollamaService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
           {{ 'PAGES.HOME.MANAGE_EXTERNALLY' | translate }}
           </mat-slide-toggle>  
-          <div [class]="systemService.getClassFromStatus(systemService.ollamaStatus())">  
-            @if (systemService.ollamaStatus().startsWith('downloading')) {
+          <div [class]="ollamaService.status.getC()">  
+            @if (ollamaService.status.get() === EStatus.downloading) {
               <mat-spinner diameter="30"></mat-spinner>
+              {{ ollamaService.status.getS() }}-{{ ollamaService.status.getV() }}%
             } @else {            
-              <mat-icon>{{ systemService.getIconFromStatus(systemService.ollamaStatus()) }}</mat-icon>
-            }
-            {{ systemService.ollamaStatus() }}
+              <mat-icon>{{ ollamaService.status.getI() }}</mat-icon>
+              {{ ollamaService.status.getS() }}
+            }            
           </div>            
         </div>
-        @if (systemService.ollamaStatus() === 'running') {
+        @if (ollamaService.status.get() === EStatus.running) {
           <div class="onerow">
             {{ 'PAGES.HOME.MODEL' | translate }}&nbsp;            
             <span class="spacer"></span>

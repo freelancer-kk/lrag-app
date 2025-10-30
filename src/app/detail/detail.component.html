@@ -4,7 +4,7 @@
 </h1>
 @if (systemService.brand === 'Intel' || systemService.brand === 'Amd') {
   <span class="spacer"></span>
-  <mat-slide-toggle [disabled]="this.systemService.overallStatus() !== 'running: healthy' || this.systemService.insightStatus() !== 'not running'" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="systemService.gpuAcceleration" (change)="switchGPUAccel($event)">
+  <mat-slide-toggle [disabled]="this.systemService.overallStatus() !== 'running: healthy' || this.systemService.insightStatus() !== 'not running'" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="ollamaService.gpuAcceleration" (change)="switchGPUAccel($event)">
     {{ 'GPU_ACCEL' | translate }}
   </mat-slide-toggle>
 }
@@ -13,8 +13,8 @@
     <mat-toolbar-row>
       <mat-form-field>
         <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
-        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="systemService.selectedModel" (selectionChange)="modelChange($event, 0)">
-          @for (entry of systemService.models; track $index) {
+        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
+          @for (entry of ollamaService.models; track $index) {
             <mat-option [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
         </mat-select>
@@ -22,14 +22,14 @@
       &nbsp;
       <mat-form-field>
         <mat-label>{{ 'PAGES.DETAIL.EMBEDDINGS_MODEL_SELECT' | translate }}</mat-label>
-        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="systemService.embeddings_model" (selectionChange)="modelChange($event, 1)">
-          @for (entry of systemService.embedding_models; track $index) {
+        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="ollamaService.embeddings_model" (selectionChange)="modelChange($event, 1)">
+          @for (entry of ollamaService.embedding_models; track $index) {
             <mat-option [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
       <span class="spacer"></span>
-      @if (systemService.ollamaStatus() === 'running') {
+      @if (ollamaService.status.get() === EStatus.running) {
         @if (systemService.modelStatus() !== 'running') {
           <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
             <mat-spinner diameter="30"></mat-spinner>
@@ -77,7 +77,7 @@
           </td>
           <td class="underline" mat-col>
             @if (
-                systemService.ollamaStatus() === 'running' && 
+                ollamaService.status.get() === EStatus.running && 
                 systemService.modelStatus() === 'running'              
               ) {
             <button [matTooltip]="'PAGES.DETAIL.REFRESH_LLM_TIP' | translate" matButton (click)="updateAllModels($event)">
@@ -89,7 +89,7 @@
             {{ 'PAGES.DETAIL.MODEL_SIZE' | translate }}
           </td>          
         </tr>      
-        @for (entry of systemService.availableModels; track $index) {
+        @for (entry of ollamaService.availableModels; track $index) {
           <tr mat-row>
             <td class="centercol" mat-col>
               <button matButton (click)="openModelDetails($event, entry.name)">
@@ -98,7 +98,7 @@
             </td>
             <td mat-col>
               @if (
-                systemService.ollamaStatus() === 'running' && 
+                ollamaService.status.get() === EStatus.running && 
                 systemService.modelStatus() === 'running'              
               ) {
               <button matButton (click)="updateModel($event, entry.name)">
@@ -106,12 +106,12 @@
               </button>
               }
               @if (
-                systemService.ollamaStatus() === 'running' && 
+                ollamaService.status.get() === EStatus.running && 
                 systemService.modelStatus() === 'running' &&
                 !entry.name.startsWith('embedding') &&
                 !entry.name.startsWith('gemma3:1b') &&                
-                entry.name !== systemService.selectedModel &&
-                entry.name !== systemService.embeddings_model
+                entry.name !== ollamaService.selectedModel &&
+                entry.name !== ollamaService.embeddings_model
               ) {
                 <button matButton (click)="removeModel($event, $index)">
                   <mat-icon class="danger">cancel</mat-icon>

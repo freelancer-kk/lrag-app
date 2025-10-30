@@ -22,7 +22,7 @@
       <span class="spacer"></span>
       {{ systemService.overallStatus() }}
     </div>
-    @if (systemService.manageOllamaExternally === true && systemService.ollamaStatus() === 'not running') {
+    @if (ollamaService.manageOllamaExternally === true && ollamaService.status.get() === EStatus.not_running) {
       <span class="small">({{ 'APP.WAITING_FOR_OLLAMA_START' | translate }})</span>
     }
   } @else {            

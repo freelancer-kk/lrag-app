@@ -19,6 +19,9 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MediaService } from '../core/services';
 import { SplashComponent } from '../splash.component/splash.component';
+import { OllamaService } from '../core/services/ollama-service';
+import { EStatus } from '../shared/model';
+import { CommonService } from '../core/services/common-service';
 
 @Component({
     selector: 'app-home',
@@ -50,8 +53,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('disks', {static: true}) disks!: JsonViewComponent;
   private translate = inject(TranslateService);
 
+  EStatus: typeof EStatus = EStatus;
+
   constructor(
+    public commonService: CommonService,
     public systemService: SystemService,
+    public ollamaService: OllamaService,
     private clipboard: Clipboard,
     private mediaService: MediaService
   ) {    
@@ -84,18 +91,18 @@ export class HomeComponent implements OnInit, OnDestroy {
         data: {
           type: 1,
           params: {
-            message: await this.systemService.get('PAGES.HOME.EXTERNAL_ARE_YOU_SURE')
+            message: await this.commonService.get('PAGES.HOME.EXTERNAL_ARE_YOU_SURE')
           }
         }
       });
     dialogRef.afterClosed().subscribe(async (result) => {
       console.log(`Dialog result: ${result}`);
       if (result === true) {            
-        this.systemService.manageOllamaExternally = event.checked;
-        await this.systemService.setEnvValue('MANAGE_EXTERNAL', this.systemService.manageOllamaExternally ? "true" : "false");
-        localStorage.setItem('manage-ollama-externally', JSON.stringify(this.systemService.manageOllamaExternally));        
+        this.ollamaService.manageOllamaExternally = event.checked;
+        await this.commonService.setEnvValue('MANAGE_EXTERNAL', this.ollamaService.manageOllamaExternally ? "true" : "false");
+        localStorage.setItem('manage-ollama-externally', JSON.stringify(this.ollamaService.manageOllamaExternally));        
         // Force exit
-        this.systemService.ollamaStatus.update(() => 'configuring');
+        this.ollamaService.status.update(EStatus.configuring);
         await this.systemService.quitApp();
       } else {
         event.source.checked = !event.checked;
@@ -113,7 +120,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   copyContent = async (ev: any, text: string) => {
     this.clipboard.copy(text);
-    this._snackBar.open(await this.systemService.get('PAGES.INSIGHT.COPY_CONTENT'), 'OK', {
+    this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.COPY_CONTENT'), 'OK', {
       duration: 2500
     });
   }
@@ -167,19 +174,19 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.systemService.collections.length === 0) {
       this.systemService.collections = await this.mediaService.getCollections();
     }
-    if (this.systemService.collections.findIndex(f => this.systemService.basename(f.value) === this.systemService.history[index].ingest.collection) > -1) {
+    if (this.systemService.collections.findIndex(f => this.commonService.basename(f.value) === this.systemService.history[index].ingest.collection) > -1) {
       this.systemService.collection = this.systemService.history[index].ingest.collection;
     }
-    if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.history[index].ingest.embeddings_model) > -1) {
-      this.systemService.embeddings_model = this.systemService.history[index].ingest.embeddings_model;
+    if (this.ollamaService.availableModels.findIndex(f => f.name === this.systemService.history[index].ingest.embeddings_model) > -1) {
+      this.ollamaService.embeddings_model = this.systemService.history[index].ingest.embeddings_model;
     }
     this.systemService.localVector = this.systemService.history[index].ingest.localVector;
     this.systemService.overlap = this.systemService.history[index].ingest.overlap;
     this.systemService.useSemantic = this.systemService.history[index].ingest.useSemantic;
     this.systemService.separator = this.systemService.history[index].ingest.separator;
 
-    if (this.systemService.availableModels.findIndex(f => f.name === this.systemService.history[index].insight.model) > -1) {
-      this.systemService.selectedModel = this.systemService.history[index].insight.model;
+    if (this.ollamaService.availableModels.findIndex(f => f.name === this.systemService.history[index].insight.model) > -1) {
+      this.ollamaService.selectedModel = this.systemService.history[index].insight.model;
     }
     this.systemService.userPrompt = this.systemService.history[index].insight.userPrompt;
     this.systemService.ragPrompt = this.systemService.history[index].insight.ragPrompt;
@@ -187,7 +194,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.systemService.numCtx = this.systemService.history[index].insight.numCtx;
     this.systemService.question = this.systemService.history[index].question;
 
-    this._snackBar.open(await this.systemService.get('PAGES.HOME.RESTORE_SETTINGS'), 'OK', {
+    this._snackBar.open(await this.commonService.get('PAGES.HOME.RESTORE_SETTINGS'), 'OK', {
       duration: 2500
     });
   }
