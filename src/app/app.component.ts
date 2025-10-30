@@ -21,7 +21,7 @@ import { AlertComponent } from './alert.component/alert.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonService } from './core/services/common-service';
 import { OllamaService } from './core/services/ollama-service';
-import { EStatus } from './shared/model';
+import { EStatus, IStatus } from './shared/model';
 
 @Component({
     selector: 'app-root',
@@ -54,6 +54,12 @@ export class AppComponent implements OnInit {
   dockerConnectInterval: any;
   firstTime: boolean = true;
   firstRun: boolean = true;
+
+  ollamaStatus: IStatus | undefined;
+  modelStatus: string | undefined;
+  ingestStatus: string | undefined;
+  gpuStatus: string | undefined;
+  overallStatus: string | undefined;
 
   constructor(
     private electronService: ElectronService,
@@ -395,19 +401,20 @@ export class AppComponent implements OnInit {
     })
 
     effect(() => {
-      this.ollamaService.status.getSV();
-      this.systemService.modelStatus();
-      this.systemService.ingestStatus();
-      this.systemService.gpuChangeStatus();
-      this.systemService.calcOverallStatus();
+      this.ollamaStatus = this.ollamaService.status.getSV();
+      this.modelStatus = this.systemService.modelStatus();
+      this.ingestStatus = this.systemService.ingestStatus();
+      this.gpuStatus = this.systemService.gpuChangeStatus();
+      this.overallStatus = this.systemService.calcOverallStatus();
+      
       // console.log('overall status:', this.systemService.overallStatus());
-      if (this.systemService.overallStatus() === "running: unhealthy") {
-        if (this.firstTime && (this.ollamaService.status.get() === EStatus.running)) {
+      if (this.overallStatus === "running: unhealthy") {
+        if (this.firstTime && (this.ollamaStatus.status === EStatus.running)) {
           this.ollamaService.findOllamaProcess();
           this.pullModelsIfNecessary();
         }
       }
-      if (this.systemService.overallStatus() === "running: healthy") {
+      if (this.overallStatus === "running: healthy") {
         this.systemService.servicesDownloading = false;
         this.systemService.showGetOllama = false;        
         if (ollamaService.ollamaPID === -1) {

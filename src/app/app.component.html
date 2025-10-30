@@ -14,13 +14,13 @@
   }  
   <span class="spacer"></span>
   @if (!(
-        (systemService.overallStatus() === 'running: healthy') ||
-        (systemService.overallStatus() === 'running: unhealthy') 
+        (overallStatus === 'running: healthy') ||
+        (overallStatus === 'running: unhealthy') 
       )) {
     <div [class]="systemService.getClassFromStatus(systemService.overallStatus())">
       <mat-spinner diameter="30"></mat-spinner>
       <span class="spacer"></span>
-      {{ systemService.overallStatus() }}
+      {{ overallStatus }}
     </div>
     @if (ollamaService.manageOllamaExternally === true && ollamaService.status.get() === EStatus.not_running) {
       <span class="small">({{ 'APP.WAITING_FOR_OLLAMA_START' | translate }})</span>
@@ -28,7 +28,7 @@
   } @else {            
     <div [class]="systemService.getClassFromStatus(systemService.overallStatus())">
       <mat-icon>{{ systemService.getIconFromStatus(systemService.overallStatus()) }}</mat-icon>
-      {{ systemService.overallStatus() }}
+      {{ overallStatus }}
     </div>
   }
   <span class="spacer"></span>  

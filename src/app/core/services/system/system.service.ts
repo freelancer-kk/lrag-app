@@ -12,16 +12,17 @@ import { CommonService } from '../common-service';
 })
 export class SystemService {
   
-  power: number = 50;
-  cpu: any;
-  gpu: any;
-  mem: any;
-  disks: any;
   overallStatus = signal<any>('not running');
   modelStatus = signal<any>('unknown');
   ingestStatus = signal<any>('not running');
   insightStatus = signal<any>("not running");
   gpuChangeStatus = signal<any>("not running");
+  
+  power: number = 50;
+  cpu: any;
+  gpu: any;
+  mem: any;
+  disks: any;
   startShow = signal(false);
   selectedDocuments = new FormControl('');
   totalMainMemory = 0;
@@ -115,7 +116,7 @@ export class SystemService {
     }))
   }
 
-  calcOverallStatus = () => {
+  calcOverallStatus = (): string => {
     if (this.ollamaService.status.get() === EStatus.running) {
       if (this.modelStatus() === 'running' && this.ingestStatus() === 'not running' && this.gpuChangeStatus() === 'not running') {
         this.overallStatus.update(() => 'running: healthy');
@@ -125,6 +126,7 @@ export class SystemService {
     } else {
       this.overallStatus.update(() => 'not running');
     }
+    return this.overallStatus();
   }
   
 
