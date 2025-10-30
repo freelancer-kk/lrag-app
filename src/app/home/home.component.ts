@@ -20,8 +20,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MediaService } from '../core/services';
 import { SplashComponent } from '../splash.component/splash.component';
 import { OllamaService } from '../core/services/ollama-service';
-import { EStatus } from '../shared/model';
-import { CommonService } from '../core/services/common-service';
+import { EStatus, IStatus } from '../shared/model';
+import { CommonService, LStatus } from '../core/services/common-service';
 
 @Component({
     selector: 'app-home',
@@ -55,6 +55,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   EStatus: typeof EStatus = EStatus;
 
+  modelStatus: string | undefined;
+  ingestStatus: string | undefined;
+  insightStatus: string | undefined;
+  overallStatus: string | undefined;
+
   constructor(
     public commonService: CommonService,
     public systemService: SystemService,
@@ -63,6 +68,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     private mediaService: MediaService
   ) {    
     effect(() => {
+      this.modelStatus = this.systemService.modelStatus();
+      this.ingestStatus = this.systemService.ingestStatus();
+      this.insightStatus = this.systemService.insightStatus();
+      this.overallStatus = this.systemService.overallStatus();
       /*
       if (this.cpu) {
         this.cpu.expandTo(0);
