@@ -68,7 +68,8 @@ export default class OllamaService {
         this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
         try {
           const response: ListResponse  = await this.ollama.ps();
-          return Array.isArray(response);
+          console.log('ollamaService:readyCheck:', response);
+          return Array.isArray(response.models);
         } catch (e) {
           console.error('ollamaService:not:ready', e);
         }
@@ -94,9 +95,10 @@ export default class OllamaService {
           this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
           try {
             const response: ListResponse  = await this.ollama.ps();
+            console.log('ollamaService:readyCheck:', response)
             return Array.isArray(response);
           } catch (e) {
-            console.error('ollamaService:isReady', e);
+            console.error('ollamaService:readyCheck:error:', e);
           }
           return false
         },

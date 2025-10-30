@@ -151,7 +151,7 @@ export default class DepService {
     if (processes.length === 0) {
       console.error('Cannot find service process:', processes);
     } else {
-      console.log('findByProcessName:', this.executable, processes, processes[0].pid);
+      // console.log('findByProcessName:', this.executable, processes, processes[0].pid);
       this.servicePID = processes.map(v => v.pid);
       return { 
         servicePID: processes[0].pid
@@ -351,7 +351,7 @@ export default class DepService {
     return true;    
   }
 
-  checkReady = async () => {
+  checkReady = async (): Promise<boolean> => {
     this.isReady = await this.readyCheckFunc();            
     this.emit({ 
       type: 'service-ready-state',
@@ -361,6 +361,24 @@ export default class DepService {
         ready: this.isReady,
       }
     });
+    return this.isReady;
+  }
+
+  pollForServiceReady = () => {
+    let cnt: number = 0;
+    const tt = setInterval(async () => {      
+      const isReady: boolean = await this.checkReady();
+      if (isReady === true) {
+        clearInterval(tt);
+        console.error('DepService:poll:ready:true', this.serviceName);
+      } else {
+        cnt++
+        if (cnt>10) {
+          clearInterval(tt);
+          console.error('DepService:poll:ready:timeout!', this.serviceName)
+        }
+      }
+    }, 5000);    
   }
 
   start = () => {
@@ -390,10 +408,7 @@ export default class DepService {
       )              
       if (this.spawnedProcess) {
         this.spawnedProcess.on('spawn', async () => {
-          setTimeout(() => {
-            // Check if service is ready
-            this.checkReady();
-          }, 5000)
+          this.pollForServiceReady();          
         })
 
         this.spawnedProcess.stdout.on('data', (data: string) => {

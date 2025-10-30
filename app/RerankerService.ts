@@ -100,6 +100,10 @@ export default class ReRankerService {
     return this.serviceInstance.stop(true);
   }
 
+  isReady = (): boolean => {
+    return this.serviceInstance.isReady
+  }
+
   rerank = async (query: string, docs: Document[]): Promise<Document[] | undefined> => {
     try {
       const body: any = {
@@ -112,7 +116,7 @@ export default class ReRankerService {
         }),
       }
 
-      // console.log('body', body);
+      console.log('rerankerService:rerank:', body);
 
       const data: any = await (await fetch(
         'http://localhost:2021/rerank',
