@@ -43,13 +43,13 @@
           <div class="onerow">
             {{ 'PAGES.HOME.MODEL' | translate }}&nbsp;            
             <span class="spacer"></span>
-            <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">  
-              @if (systemService.modelStatus().startsWith('downloading')) {
+            <div [class]="systemService.modelStatus.getC()">  
+              @if (modelStatus === EStatus.downloading) {
                 <mat-spinner diameter="30"></mat-spinner>
               } @else {            
-                <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus()) }}</mat-icon>
+                <mat-icon>{{ systemService.modelStatus.getI() }}</mat-icon>
               }
-              {{ systemService.modelStatus() }}
+              {{ systemService.modelStatus.getS() }}
             </div>            
           </div>          
         }
@@ -131,7 +131,7 @@
                     <button matButton (click)="clear($event, $index)">
                       <mat-icon class="danger">close</mat-icon>
                     </button>
-                    @if (overallStatus === EStatus.running_healthy && ingestStatus === 'not running' && insightStatus === 'not running') {
+                    @if (overallStatus === EStatus.running_healthy && ingestStatus === EStatus.not_running && insightStatus === EStatus.not_running) {
                       <button [matTooltip]="'PAGES.HOME.RESTORE_TIP' | translate" matButton (click)="restore($event, $index)">
                         <mat-icon class="success">restore</mat-icon>
                       </button> 

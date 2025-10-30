@@ -55,9 +55,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   EStatus: typeof EStatus = EStatus;
 
-  modelStatus: string | undefined;
-  ingestStatus: string | undefined;
-  insightStatus: string | undefined;
+  modelStatus: EStatus | undefined;
+  ingestStatus: EStatus | undefined;
+  insightStatus: EStatus | undefined;
   overallStatus: EStatus | undefined;
 
   constructor(
@@ -68,9 +68,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     private mediaService: MediaService
   ) {    
     effect(() => {
-      this.modelStatus = this.systemService.modelStatus();
-      this.ingestStatus = this.systemService.ingestStatus();
-      this.insightStatus = this.systemService.insightStatus();
+      this.modelStatus = this.systemService.modelStatus.get();
+      this.ingestStatus = this.systemService.ingestStatus.get();
+      this.insightStatus = this.systemService.insightStatus.get();
       this.overallStatus = this.systemService.mainStatus.get();
       /*
       if (this.cpu) {

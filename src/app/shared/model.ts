@@ -36,12 +36,14 @@ export enum EStatus {
   downloading,
   health_status_healthy,
   dead,
-  not_running
+  not_running,
+  unknown,
+  warning
 }
 
 export interface IStatus {
   status: EStatus,
-  value: number
+  value: any
 }
 
 export interface IUser {

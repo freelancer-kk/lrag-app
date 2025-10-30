@@ -61,6 +61,7 @@ export class InsightsComponent implements OnInit {
   streamedResponse: string = '';
   generationInfo: IGenInfo | undefined;
   overallStatus: EStatus | undefined;
+  insightStatus: EStatus | undefined;
 
   EStatus: typeof EStatus = EStatus;
   
@@ -97,7 +98,7 @@ export class InsightsComponent implements OnInit {
     });
 
     effect(() => {      
-      this.systemService.insightStatus();
+      this.insightStatus = this.systemService.insightStatus.get();
       this.overallStatus = this.systemService.mainStatus.get();
       if (this.overallStatus !== EStatus.running_healthy) {
         this.check();
@@ -166,13 +167,13 @@ export class InsightsComponent implements OnInit {
         content: question
       });
       this.scrollToBottom();
-      this.systemService.insightStatus.update(() => 'thinking');
+      this.systemService.insightStatus.update(EStatus.thinking);
       this.streaming = true;
       this.streamedResponse = '';
       const answer: string = await this.systemService.commandInsight('question', options);
       this.streamedResponse = '';
       this.streaming = false;
-      this.systemService.insightStatus.update(() => 'running');
+      this.systemService.insightStatus.update(EStatus.running);
       // console.log('Answer:', answer);
       try {
         if (typeof answer === 'string') {
@@ -222,7 +223,7 @@ export class InsightsComponent implements OnInit {
           this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.LLM_ERROR'), 'OK');        
         }
       } finally {
-        this.systemService.insightStatus.update(() => 'not running');
+        this.systemService.insightStatus.update(EStatus.not_running);
       }
     }
   }

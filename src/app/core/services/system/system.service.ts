@@ -13,10 +13,10 @@ import { CommonService, LStatus } from '../common-service';
 export class SystemService {
   
   mainStatus: LStatus = new LStatus(EStatus.not_running);
-  modelStatus = signal<any>('unknown');
-  ingestStatus = signal<any>('not running');
-  insightStatus = signal<any>("not running");
-  gpuChangeStatus = signal<any>("not running");
+  modelStatus: LStatus = new LStatus(EStatus.unknown);
+  ingestStatus: LStatus = new LStatus(EStatus.not_running);
+  insightStatus: LStatus = new LStatus(EStatus.not_running);
+  gpuChangeStatus: LStatus = new LStatus(EStatus.not_running);
   
   power: number = 50;
   cpu: any;
@@ -118,7 +118,7 @@ export class SystemService {
 
   setOverallStatus = (): EStatus => {
     if (this.ollamaService.status.get() === EStatus.running) {
-      if (this.modelStatus() === 'running' && this.ingestStatus() === 'not running' && this.gpuChangeStatus() === 'not running') {
+      if (this.modelStatus.get() === EStatus.running && this.ingestStatus.get() === EStatus.not_running && this.gpuChangeStatus.get() === EStatus.not_running) {
         this.mainStatus.update(EStatus.running_healthy);
       } else {
         this.mainStatus.update(EStatus.running_unhealthy);
@@ -154,75 +154,6 @@ export class SystemService {
         resolve(data);        
       });
     })
-  }
-
-  getClassFromStatus = (status: string): string => {
-    if (status === 'running' || status === 'configuring' || status === 'extracting' || status === 'reranking' || status === 'thinking' || status === 'uploading' || status.startsWith('splitting') || status === 'uploaded' || status === 'loading' || status === 'loaded' || status.startsWith('indexing') || status === 'saving' || status === 'adding' || status === 'running: healthy' || status === 'health_status: healthy' || status === 'exited') {
-      return 'chip-success';
-    } else if (status.startsWith('downloading') || status === 'starting' || status === 'running: unhealthy') {
-      return 'chip-warning';
-    } else if ((status === 'die') || (status === 'error') || (status === 'destroy')) {
-      return 'chip-error';
-    } else {
-      return 'chip';
-    }
-  }
-
-  getIconFromStatus = (status: string) => {
-    switch (status) {
-
-      case 'uploading':
-      case 'uploaded':
-      case 'loaded':
-      case 'loading':
-      case 'indexing':
-      case 'splitting':
-      case 'extracting':
-      case 'saving':        
-      case 'adding':
-      case 'thinking':
-      case 'reranking':
-      case 'configuring':
-      case 'running: healthy': 
-      case 'running': {
-        return 'directions_run';
-      }
-      case 'created': {
-        return 'create';
-      }
-      case 'unpause':
-      case 'start':
-      case 'starting': {
-        return 'start';
-      }
-      case 'restarting': {
-        return 'restart_alt';
-      }
-      case 'error':
-      case 'destroy':
-      case 'die':
-      case 'running: unhealthy':
-      case 'exited': {
-        return 'exit_to_app';
-      }
-      case 'pause':
-      case 'paused': {
-        return 'pause';
-      }
-      case 'downloading': {
-        return 'file_download';
-      }
-      case 'health_status: healthy': {
-        return 'health_and_safety';
-      }
-      case 'dead': {
-        return 'block';
-      }
-      default:
-      case 'not running': {
-        return 'question_mark';
-      }    
-    }
   }
   
   getCpu = (): Promise<any> => {

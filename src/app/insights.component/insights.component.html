@@ -4,24 +4,24 @@
   </h1>
   <span class="spacer"></span>
   <span class="small">{{ modelUsage }}</span>
-  @if (this.systemService.insightStatus() === 'thinking') {    
+  @if (insightStatus === EStatus.thinking) {    
     <mat-spinner diameter="30"></mat-spinner>    
   }
-  @if (systemService.insightStatus() !== 'not running') {
-    <div [matTooltip]="'PAGES.INSIGHT.RUNNING_TIP' | translate" [class]="systemService.getClassFromStatus(systemService.insightStatus())">
-      @if (this.systemService.insightStatus() !== 'thinking') {
-        <mat-icon>{{ systemService.getIconFromStatus(systemService.insightStatus()) }}</mat-icon>
+  @if (insightStatus !== EStatus.not_running) {
+    <div [matTooltip]="'PAGES.INSIGHT.RUNNING_TIP' | translate" [class]="systemService.insightStatus.getC()">
+      @if (insightStatus !== EStatus.thinking) {
+        <mat-icon>{{ systemService.insightStatus.getI() }}</mat-icon>
       }    
-      {{ systemService.insightStatus() }}      
+      {{ systemService.insightStatus.getS() }}      
     </div>
   }
   @if (systemService.chatHistory.length>0) {                  
-    <button [disabled]="this.systemService.insightStatus() === 'thinking'" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="clearHistory()">
+    <button [disabled]="insightStatus === EStatus.thinking" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="clearHistory()">
       <mat-icon>playlist_remove</mat-icon>
     </button>          
   }  
 </mat-toolbar>
-@if (overallStatus === EStatus.running_healthy && systemService.insightStatus() !== 'thinking') {
+@if (overallStatus === EStatus.running_healthy && insightStatus !== EStatus.thinking) {
   <div class="onerow">
     <mat-form-field class="full-width">
       <mat-label>{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
@@ -44,31 +44,31 @@
   </mat-expansion-panel-header> 
     <div class="onerow">
       <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || systemService.insightStatus() === 'thinking'" min="8" max="2048" step="1" showTickMarks discrete>
+      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="8" max="2048" step="1" showTickMarks discrete>
         <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
       </mat-slider>
       <span class="spacer"></span>
-      <button [disabled]="overallStatus !== EStatus.running_healthy || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.k = 8">
+      <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.k = 8">
         {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
       </button>
     </div>
     <div class="onerow">
       <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus() === 'thinking'" min="2048" max="10240" step="32" showTickMarks discrete>
+      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" min="2048" max="10240" step="32" showTickMarks discrete>
         <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
       </mat-slider>
       <span class="spacer"></span>
-      <button [disabled]="overallStatus !== EStatus.running_healthy || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.numCtx = 2048">
+      <button [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.numCtx = 2048">
         {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
       </button>
     </div>
     <div class="onerow">
       <mat-form-field class="half-width">
         <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>
-        <input matInput [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="systemService.filter">      
+        <input matInput [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.filter">      
       </mat-form-field>
       <span class="spacer"></span>
-      <button [disabled]="overallStatus !== EStatus.running_healthy || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.filter = undefined">
+      <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.filter = undefined">
         {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
       </button>
     </div>
@@ -85,8 +85,8 @@
     @if (overallStatus === EStatus.running_healthy) {
       <mat-form-field class="full-width">
         <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
-        <textarea [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="systemService.question">{{ systemService.question }}</textarea>
-        @if (systemService.question && systemService.question.length>0 && this.systemService.insightStatus() !== 'thinking') {
+        <textarea [disabled]="insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.question">{{ systemService.question }}</textarea>
+        @if (systemService.question && systemService.question.length>0 && insightStatus !== EStatus.thinking) {
           <button matSuffix matIconButton aria-label="Clear" (click)="askQuestion()">
             <mat-icon>arrow_circle_right</mat-icon>
           </button>            

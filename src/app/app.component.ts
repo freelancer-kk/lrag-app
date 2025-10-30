@@ -56,9 +56,9 @@ export class AppComponent implements OnInit {
   firstRun: boolean = true;
 
   ollamaStatus: IStatus | undefined;
-  modelStatus: string | undefined;
-  ingestStatus: string | undefined;
-  gpuStatus: string | undefined;
+  modelStatus: EStatus | undefined;
+  ingestStatus: EStatus | undefined;
+  gpuStatus: EStatus | undefined;
   overallStatus: EStatus | undefined;
 
   constructor(
@@ -199,7 +199,7 @@ export class AppComponent implements OnInit {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {
                 this.systemService.servicesDownloading = true;            
-                this.ollamaService.status.updateSN(EStatus.downloading, data.percentage);                
+                this.ollamaService.status.update(EStatus.downloading, { percentage: data.percentage });                
               }
             })
           }
@@ -256,8 +256,8 @@ export class AppComponent implements OnInit {
           break;
           case 'ollama-gpu-accel-started': {
             this.ngZone.run(() => {
-              this.systemService.gpuChangeStatus.update(() => 'running');
-              this.systemService.modelStatus.update(() => 'configuring');
+              this.systemService.gpuChangeStatus.update(EStatus.running);
+              this.systemService.modelStatus.update(EStatus.configuring);
             })
           }
           break;
@@ -269,31 +269,31 @@ export class AppComponent implements OnInit {
           break;          
           case 'ollama-pull-start': {
             this.ngZone.run(() => {
-              this.systemService.modelStatus.update(() => `downloading 0%`);
+              this.systemService.modelStatus.update(EStatus.downloading, 0);
             })
           }
           break;
           case 'ollama-pull-progress': {
             this.ngZone.run(() => {
-              this.systemService.modelStatus.update(() => `downloading ${data.percent}%`);              
+              this.systemService.modelStatus.update(EStatus.downloading, { percentage: data.percent });              
             })            
           }
           break;          
           case 'ollama-pull-complete': {
             this.ngZone.run(() => {
-              this.systemService.modelStatus.update(() => `finalising...`);              
+              this.systemService.modelStatus.update(EStatus.configuring);              
             })            
           }
           break;
           case 'ollama-pull-part': {
             this.ngZone.run(() => {              
-              this.systemService.modelStatus.update(() => `${data.partStatus}`);              
+              this.systemService.modelStatus.update(EStatus.downloading, { percentage: data.partStatus });              
             })            
           }
           break;
           case 'ollama-pull-done': {
             this.ngZone.run(() => {
-              this.systemService.modelStatus.update(() => 'running');
+              this.systemService.modelStatus.update(EStatus.running);
               this.ollamaService.getAvailableLLMs();
             })            
           }
@@ -315,31 +315,31 @@ export class AppComponent implements OnInit {
           break;
           case 'langchain-run-start': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'running');
+              this.systemService.ingestStatus.update(EStatus.running);
             })            
           }
           break;
           case 'langchain-run-loaded': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'loaded');
+              this.systemService.ingestStatus.update(EStatus.loaded);
             })            
           }
           break;
           case 'langchain-run-splitting': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'splitting');
+              this.systemService.ingestStatus.update(EStatus.splitting);
             })            
           }
           break;
           case 'langchain-run-indexing': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'indexing');
+              this.systemService.ingestStatus.update(EStatus.indexing);
             })            
           }
           break;
           case 'langchain-run-add-chunk': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'indexing ' + data.chunk + ' of ' + data.total);
+              this.systemService.ingestStatus.update(EStatus.indexing, {part: data.chunk, total: data.total});
             })            
           }
           break;
@@ -360,37 +360,37 @@ export class AppComponent implements OnInit {
           break;
           case 'langchain-run-split-chunk': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'splitting ' + data.chunk + ' of ' + data.total);
+              this.systemService.ingestStatus.update(EStatus.splitting, {part: data.chunk, total: data.total});
             })            
           }
           break;
           case 'langchain-run-saving': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'saving');
+              this.systemService.ingestStatus.update(EStatus.saving);
             })            
           }
           break;
           case 'langchain-run-adding'  : {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'adding');
+              this.systemService.ingestStatus.update(EStatus.adding);
             })            
           }
           break;
           case 'langchain-run-complete'  : {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'not running');
+              this.systemService.ingestStatus.update(EStatus.not_running);
             })            
           }
           break;
           case 'langchain-run-error'  : {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'error');
+              this.systemService.ingestStatus.update(EStatus.error);
             })            
           }
           break;
           case 'langchain-run-warning'  : {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(() => 'warning');
+              this.systemService.ingestStatus.update(EStatus.warning);
             })            
           }
           break;          
@@ -402,9 +402,9 @@ export class AppComponent implements OnInit {
 
     effect(() => {
       this.ollamaStatus = this.ollamaService.status.getSV();
-      this.modelStatus = this.systemService.modelStatus();
-      this.ingestStatus = this.systemService.ingestStatus();
-      this.gpuStatus = this.systemService.gpuChangeStatus();
+      this.modelStatus = this.systemService.modelStatus.get();
+      this.ingestStatus = this.systemService.ingestStatus.get();
+      this.gpuStatus = this.systemService.gpuChangeStatus.get();
       this.overallStatus = this.systemService.setOverallStatus();
       
       // console.log('overall status:', this.systemService.overallStatus());
@@ -512,14 +512,14 @@ export class AppComponent implements OnInit {
       await this.ollamaService.getAvailableLLMs();
       const responseE: any = await this.ollamaService.pull(this.ollamaService.embedding_models[0].value);
       if (responseE !== 'pulled') {
-        this.systemService.modelStatus.update(() => 'downloading');      
+        this.systemService.modelStatus.update(EStatus.downloading);      
       }
       const responseM: any = await this.ollamaService.pull(this.ollamaService.models[0].value);
       if (responseM !== 'pulled') {
-        this.systemService.modelStatus.update(() => 'downloading');
+        this.systemService.modelStatus.update(EStatus.downloading);
       }      
       this.firstTime = false;
-      this.systemService.modelStatus.update(() => 'running');
+      this.systemService.modelStatus.update(EStatus.running);
       this.systemService.hasBasicSetup = true;     
     } catch (e) {
       console.error(e);

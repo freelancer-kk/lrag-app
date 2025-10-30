@@ -64,7 +64,7 @@ export class IngestComponent implements OnInit {
   isUploading: boolean = false;
   breakpoint: number = 4;
   startIngestTimer: any;
-  ingestStatus: string = 'not running';
+
   selectedAll: boolean = false;
   isOpened: boolean = false;
   afterLastFinish: boolean = true;
@@ -72,6 +72,7 @@ export class IngestComponent implements OnInit {
   showErrors: boolean = false;
 
   overallStatus: EStatus | undefined;
+  ingestStatus: EStatus = EStatus.not_running;
 
   EStatus: typeof EStatus = EStatus;
 
@@ -83,9 +84,9 @@ export class IngestComponent implements OnInit {
     private router: Router,
   ) {
     effect(() => {
-      this.ingestStatus = this.systemService.ingestStatus();
+      this.ingestStatus = this.systemService.ingestStatus.get();
       this.overallStatus = this.systemService.mainStatus.get();
-      if (this.overallStatus !== EStatus.running_healthy|| this.ingestStatus !== 'not running') {
+      if (this.overallStatus !== EStatus.running_healthy|| this.ingestStatus !== EStatus.not_running) {
         this.systemService.selectedCollections.disable();
         this.systemService.selectedDocuments.disable();
       } else {
@@ -116,7 +117,7 @@ export class IngestComponent implements OnInit {
   }
 
   startIngestion = async () => {
-    this.systemService.ingestStatus.update(() => 'starting');
+    this.systemService.ingestStatus.update(EStatus.starting);
     this.mediaService.docStatus = [];
     this.systemService.saveChunkSettings();
 
@@ -153,7 +154,7 @@ export class IngestComponent implements OnInit {
       }, 10000);
       await this.mediaService.saveIndex();
       if ((result && result.status === 'completed')) {
-        this.systemService.ingestStatus.update(() => 'not running');
+        this.systemService.ingestStatus.update(EStatus.not_running);
         this.systemService.ragFiles = await this.mediaService.ls();
         const snackBarRef = this._snackBar.open(await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
           duration: 10000
@@ -164,20 +165,20 @@ export class IngestComponent implements OnInit {
           }
         });      
       } else {
-        this.systemService.ingestStatus.update(() => 'warning');
+        this.systemService.ingestStatus.update(EStatus.warning);
         const snackBarRef1 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.commonService.get('PAGES.INGEST.EXITED')), 'OK' );
         this.systemService.ragFiles = await this.mediaService.ls();
         snackBarRef1.onAction().subscribe(() => {
-          this.systemService.ingestStatus.update(() => 'not running');
+          this.systemService.ingestStatus.update(EStatus.not_running);
         });              
       }
     }).catch(async (e) => {
       console.error('ingest error:', e);      
-      this.systemService.ingestStatus.update(() => 'error');
+      this.systemService.ingestStatus.update(EStatus.error);
       const snackBarRef2 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK' );
       this.systemService.ragFiles = await this.mediaService.ls();
       snackBarRef2.onAction().subscribe(() => {
-        this.systemService.ingestStatus.update(() => 'not running');
+        this.systemService.ingestStatus.update(EStatus.not_running);
       });      
     })    
   }
@@ -201,7 +202,7 @@ export class IngestComponent implements OnInit {
         console.log('completed');
         await this.mediaService.completedUpload(file);
         this.isUploading = false;
-        this.systemService.ingestStatus.update(() => 'uploaded');
+        this.systemService.ingestStatus.update(EStatus.uploaded);
         if (this.startIngestTimer) {
           clearTimeout(this.startIngestTimer);
         }
@@ -233,14 +234,14 @@ export class IngestComponent implements OnInit {
               const reader: FileReader = new FileReader();          
               reader.onload = (event: any) => {
                 this.isUploading = true;
-                this.systemService.ingestStatus.update(() => 'uploading');
+                this.systemService.ingestStatus.update(EStatus.uploading);
                 this.progress(file, reader.result);
               };
               await this.mediaService.startUpload(file);
               reader.readAsArrayBuffer(file); // read file as data url
             } finally {
               this.isUploading = false;
-              this.systemService.ingestStatus.update(() => 'uploaded');
+              this.systemService.ingestStatus.update(EStatus.uploaded);
             }
             
           });          

@@ -4,7 +4,7 @@
 </h1>
 @if (systemService.brand === 'Intel' || systemService.brand === 'Amd') {
   <span class="spacer"></span>
-  <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus() !== 'not running'" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="ollamaService.gpuAcceleration" (change)="switchGPUAccel($event)">
+  <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="ollamaService.gpuAcceleration" (change)="switchGPUAccel($event)">
     {{ 'GPU_ACCEL' | translate }}
   </mat-slide-toggle>
 }
@@ -30,10 +30,10 @@
       </mat-form-field>
       <span class="spacer"></span>
       @if (ollamaService.status.get() === EStatus.running) {
-        @if (systemService.modelStatus() !== 'running') {
-          <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
+        @if (systemService.modelStatus.get() !== EStatus.running) {
+          <div [class]="systemService.modelStatus.getC()">
             <mat-spinner diameter="30"></mat-spinner>
-            {{ systemService.modelStatus() }}
+            {{ systemService.modelStatus.getS() }}
           </div>
         }
         <!--
@@ -78,7 +78,7 @@
           <td class="underline" mat-col>
             @if (
                 ollamaService.status.get() === EStatus.running && 
-                systemService.modelStatus() === 'running'              
+                systemService.modelStatus.get() === EStatus.running
               ) {
             <button [matTooltip]="'PAGES.DETAIL.REFRESH_LLM_TIP' | translate" matButton (click)="updateAllModels($event)">
               <mat-icon class="warning">refresh</mat-icon>
@@ -99,7 +99,7 @@
             <td mat-col>
               @if (
                 ollamaService.status.get() === EStatus.running && 
-                systemService.modelStatus() === 'running'              
+                systemService.modelStatus.get() === EStatus.running
               ) {
               <button matButton (click)="updateModel($event, entry.name)">
                 <mat-icon class="warning">refresh</mat-icon>
@@ -107,7 +107,7 @@
               }
               @if (
                 ollamaService.status.get() === EStatus.running && 
-                systemService.modelStatus() === 'running' &&
+                systemService.modelStatus.get() === EStatus.running &&
                 !entry.name.startsWith('embedding') &&
                 !entry.name.startsWith('gemma3:1b') &&                
                 entry.name !== ollamaService.selectedModel &&

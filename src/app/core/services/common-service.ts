@@ -104,24 +104,22 @@ const EStatusMap: { [key in EStatus]: string } = {
   [EStatus.downloading]: 'Downloading',
   [EStatus.health_status_healthy]: 'Health status healthy',
   [EStatus.dead]: 'Dead',
-  [EStatus.not_running]: 'Not Running'
+  [EStatus.not_running]: 'Not Running',
+  [EStatus.unknown]: 'Unknown',
+  [EStatus.warning]: 'Warning'
 };
 
 export class LStatus {
   internalStatus = signal<IStatus>({status: EStatus.not_running, value: 0});
 
-  constructor(estatus: EStatus, value: number = 0) {
+  constructor(estatus: EStatus, value: any = {}) {
     this.internalStatus = signal<IStatus>({
       status: estatus,
       value
     });
   }
 
-  update = (status: EStatus, value: number = 0) => {
-    this.internalStatus.update(() => ({status, value}))
-  }
-
-  updateSN = (status: EStatus, value: number) => {
+  update = (status: EStatus, value: any = {}) => {
     this.internalStatus.update(() => ({status, value}))
   }
 
@@ -130,7 +128,15 @@ export class LStatus {
   }
 
   getS = (): string => {
-    return EStatusMap[this.internalStatus().status];
+    const firstPart: string = EStatusMap[this.internalStatus().status];
+    const value: any  = this.internalStatus().value;
+    if (value && value.percentage) {
+      return firstPart + '(' + value.percentage + '%)'
+    }
+    if (value && value.part && value.total) {
+      return firstPart + '(' + value.part + ' of ' + value.total + ')'
+    }
+    return firstPart;
   }
 
   getV = (): EStatus => {

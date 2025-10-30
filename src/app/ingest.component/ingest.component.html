@@ -9,10 +9,10 @@
         </a>
       }
       <span class="spacer"></span>      
-      @if (ingestStatus === 'running' || ingestStatus.startsWith('splitting') || ingestStatus === 'loaded' || ingestStatus.startsWith('indexing') || ingestStatus === 'saving' || ingestStatus === 'adding') {
-        <div [class]="systemService.getClassFromStatus(ingestStatus)">
+      @if (ingestStatus === EStatus.running || ingestStatus === EStatus.splitting || ingestStatus === EStatus.loaded || ingestStatus === EStatus.indexing || ingestStatus === EStatus.saving || ingestStatus === EStatus.adding) {
+        <div [class]="systemService.ingestStatus.getC()">
           <mat-spinner diameter="30"></mat-spinner>
-          {{ ingestStatus }}
+          {{ systemService.ingestStatus.getS() }}
         </div>
       } @else {
         @if (overallStatus === EStatus.running_healthy && docsHealthy()) {
@@ -34,16 +34,16 @@
     accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt,.json,*.xml,*.md"
     dropZoneClassName="dropzone"
     (onFileDrop)="dropped($event)"
-    [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== 'not running' || systemService.ragFiles.length >= systemService.MAX_FILES"
+    [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running || systemService.ragFiles.length >= systemService.MAX_FILES"
     >
       <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
         <mat-icon>file_upload</mat-icon>
-        @if (overallStatus === EStatus.running_healthy && ingestStatus === 'not running' && systemService.ragFiles.length < systemService.MAX_FILES) {
+        @if (overallStatus === EStatus.running_healthy && ingestStatus === EStatus.not_running && systemService.ragFiles.length < systemService.MAX_FILES) {
           <mat-label>{{ 'PAGES.INGEST.DROP_HERE'| translate }}</mat-label><br/>
         } @else {
           <mat-label>{{ 'PAGES.INGEST.PLEASE_WAIT'| translate }}</mat-label><br/>
         }
-        @if (overallStatus === EStatus.running_healthy && ingestStatus === 'not running' && systemService.ragFiles.length < systemService.MAX_FILES) {
+        @if (overallStatus === EStatus.running_healthy && ingestStatus === EStatus.not_running && systemService.ragFiles.length < systemService.MAX_FILES) {
           <button matButton (click)="openFileSelector()">{{ 'PAGES.INGEST.SELECT_FILE' | translate }}</button>
         }
       </ng-template>    
@@ -58,35 +58,35 @@
     </mat-expansion-panel-header> 
       <div class="onerow">
         <mat-label [matTooltip]="'PAGES.INGEST.CHUNK_SIZE_TIP' | translate">{{ 'PAGES.INGEST.CHUNK_SIZE' | translate }}</mat-label>
-        <mat-slider [disabled]="this.ingestStatus !== 'not running' || overallStatus !== EStatus.running_healthy" min="0" max="4096" step="64" showTickMarks discrete>
+        <mat-slider [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" min="0" max="4096" step="64" showTickMarks discrete>
           <input matSliderThumb [(ngModel)]="systemService.chunkSize" [value]="systemService.chunkSize">
         </mat-slider>
         <mat-label [matTooltip]="'PAGES.INGEST.OVERLAP_TIP' | translate">{{ 'PAGES.INGEST.OVERLAP' | translate }}</mat-label>
-        <mat-slider [disabled]="this.ingestStatus !== 'not running' || overallStatus !== EStatus.running_healthy" min="0" max="1024" step="16" showTickMarks discrete>
+        <mat-slider [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" min="0" max="1024" step="16" showTickMarks discrete>
           <input matSliderThumb [(ngModel)]="systemService.overlap" [value]="systemService.overlap">
         </mat-slider>
         <span class="spacer"></span>  
-        <button [disabled]="this.ingestStatus !== 'not running' || overallStatus !== EStatus.running_healthy" matButton="filled" (click)="resetDefaults($event)">
+        <button [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" matButton="filled" (click)="resetDefaults($event)">
           {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
         </button>
       </div>
       <div class="onerow">
-        <mat-slide-toggle [disabled]="this.ingestStatus !== 'not running' || overallStatus !== EStatus.running_healthy" [checked]="systemService.localVector" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
+        <mat-slide-toggle [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" [checked]="systemService.localVector" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
         {{ 'PAGES.INGEST.USE_LOCAL_VECTOR' | translate }}
         </mat-slide-toggle>  
       </div>
       <div class="onerow">
-        <mat-slide-toggle [disabled]="this.ingestStatus !== 'not running' || overallStatus !== EStatus.running_healthy" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_SEMANTIC_TIP' | translate" [(ngModel)]="systemService.useSemantic">
+        <mat-slide-toggle [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_SEMANTIC_TIP' | translate" [(ngModel)]="systemService.useSemantic">
         {{ 'PAGES.INGEST.USE_SEMANTIC' | translate }}
         </mat-slide-toggle>  
       </div>
       <div class="onerow">
         <mat-form-field>
           <mat-label [matTooltip]="'PAGES.INGEST.SEPARATOR_TIP' | translate">{{ 'PAGES.INGEST.SEPARATOR' | translate }}</mat-label>
-          <input matInput [disabled]="overallStatus !== EStatus.running_healthy || this.ingestStatus !== 'not running'" matInput type="text" [(ngModel)]="systemService.separator" [maxLength]="1" [minlength]="1">
+          <input matInput [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running" matInput type="text" [(ngModel)]="systemService.separator" [maxLength]="1" [minlength]="1">
         </mat-form-field>
         <span class="spacer"></span>
-        <button [disabled]="overallStatus !== EStatus.running_healthy|| this.ingestStatus !== 'not running'" matButton="filled" (click)="systemService.separator = ';'">
+        <button [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running" matButton="filled" (click)="systemService.separator = ';'">
           {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
         </button>
       </div>
@@ -95,7 +95,7 @@
   <div class="onerow">
     <mat-form-field>
       <mat-label>{{ 'PAGES.INGEST.COLLECTION_NAME' | translate }}</mat-label>
-      <input matInput specialIsAlphaNumeric [disabled]="overallStatus !== EStatus.running_healthy || this.ingestStatus !== 'not running'" matInput type="text" [(ngModel)]="collection" [maxLength]="80" [minlength]="8" (focus)="showErrors = true" (blur)="newCollection($event)">
+      <input matInput specialIsAlphaNumeric [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running" matInput type="text" [(ngModel)]="collection" [maxLength]="80" [minlength]="8" (focus)="showErrors = true" (blur)="newCollection($event)">
       @if (this.collection.length < 8 && showErrors) {
         <mat-error>{{ 'PAGES.INGEST.COLLECTION_NAME_ERROR' | translate}}</mat-error>
       }
@@ -111,7 +111,7 @@
         }
       </mat-select>    
     </mat-form-field>    
-    @if (!this.isOpened && systemService.selectedCollections.value && overallStatus === EStatus.running_healthy && this.ingestStatus === 'not running' && systemService.collection !== 'general') {
+    @if (!this.isOpened && systemService.selectedCollections.value && overallStatus === EStatus.running_healthy && ingestStatus === EStatus.not_running && systemService.collection !== 'general') {
       <button matSuffix matIconButton aria-label="Clear" (click)="collectionRemove($event)">
         <mat-icon>delete</mat-icon>
       </button>            
@@ -126,7 +126,7 @@
         }
       </mat-select>    
     </mat-form-field>
-    @if (!this.isOpened && systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && overallStatus === EStatus.running_healthy && this.ingestStatus === 'not running') {
+    @if (!this.isOpened && systemService.selectedDocuments.value && systemService.selectedDocuments.value.length > 0 && overallStatus === EStatus.running_healthy && ingestStatus === EStatus.not_running) {
       <button matSuffix matIconButton aria-label="Clear" (click)="fileRemove($event)">
         <mat-icon>delete</mat-icon>
       </button>            
