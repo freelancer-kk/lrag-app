@@ -116,7 +116,7 @@ export default class ReRankerService {
         }),
       }
 
-      console.log('rerankerService:rerank:', body);
+      // console.log('rerankerService:rerank:', body);
 
       const data: any = await (await fetch(
         'http://localhost:2021/rerank',
