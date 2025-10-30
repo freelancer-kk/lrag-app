@@ -179,7 +179,7 @@ export default class DepService {
         const prereqExec: string = path.join(prereq.cwd, prereq.executable);
         if (fs.existsSync(prereqExec)) {
           console.log('DepService:init:prereq:checkVersion', prereqExec, prereq.args);
-          this.emit({ type: 'service-prereq-check-start', data: { name: this.serviceName, command: prereqExec, args: prereq.args } });
+          this.emit({ type: 'service-prereq-check-start', data: { serviceName: this.serviceName, command: prereqExec, args: prereq.args } });
         
           const prereqCheckProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> = spawn(
             prereq.executable,
@@ -211,7 +211,7 @@ export default class DepService {
               this.emit({ 
                 type: 'service-prereq-check-stderr',
                 data: {
-                  name: this.serviceName,
+                  serviceName: this.serviceName,
                   prereq: prereqName,
                   text: Buffer.from(data).toString(),
                 }
@@ -222,7 +222,7 @@ export default class DepService {
               this.emit({ 
                 type: 'service-prereq-check-exit',
                 data: {
-                  name: this.serviceName,
+                  serviceName: this.serviceName,
                   prereq: prereqName,
                   exitCode: code ? code.toString() : '0'
                 }
@@ -236,7 +236,7 @@ export default class DepService {
           this.emit({ 
             type: 'service-prereq-check-notinstalled',
             data: {
-              name: this.serviceName,
+              serviceName: this.serviceName,
               prereq: prereqName,
               version: '',
               expectedVersion: prereq.expectedVersion,
@@ -282,7 +282,7 @@ export default class DepService {
           }
           fs.writeFileSync(targetFile, chunksAll);
           console.log("DepService:download:writing to file:", targetFile);            
-          this.emit({ type: 'service-download-complete', data: { name: this.serviceName, url }});
+          this.emit({ type: 'service-download-complete', data: { serviceName: this.serviceName, url }});
           cb();      
           break;
         } else {
@@ -290,7 +290,7 @@ export default class DepService {
           receivedLength += value.length;          
           const percentage: number = Math.floor(receivedLength / totalLength * 100);
           // console.log(`received ${receivedLength} of ${totalLength} - ${percentage}`)          
-          this.emit({ type: 'service-download-part', data: { name: this.serviceName, percentage, url } });
+          this.emit({ type: 'service-download-part', data: { serviceName: this.serviceName, percentage, url } });
         }        
       }
     } else {
@@ -315,7 +315,7 @@ export default class DepService {
         this.emit({ 
           type: 'service-extract-download-starting',
           data: { 
-            name: this.serviceName,
+            serviceName: this.serviceName,
             version: this.availableVersion,
             from: dlpath,
             to: tempZipFile
@@ -329,7 +329,7 @@ export default class DepService {
             this.emit({ 
               type: 'service-extract-download-done',
               data: { 
-                name: this.serviceName,
+                serviceName: this.serviceName,
                 version: this.availableVersion,
                 from: dlpath,
                 to: this.installPath
@@ -356,7 +356,7 @@ export default class DepService {
     this.emit({ 
       type: 'service-ready-state',
       data: { 
-        name: this.serviceName,
+        serviceName: this.serviceName,
         version: this.availableVersion,
         ready: this.isReady,
       }
@@ -389,7 +389,7 @@ export default class DepService {
       this.emit({ 
         type: 'service-start',
         data: { 
-          name: this.serviceName,
+          serviceName: this.serviceName,
           version: this.availableVersion,
           command,
           args: this.args
@@ -416,7 +416,7 @@ export default class DepService {
           this.emit({ 
             type: 'service-running-stdout',
             data: { 
-              name: this.serviceName,
+              serviceName: this.serviceName,
               version: this.availableVersion,
               text: Buffer.from(data).toString(),
             }
@@ -428,7 +428,7 @@ export default class DepService {
           this.emit({ 
             type: 'service-running-stderr',
             data: { 
-              name: this.serviceName,
+              serviceName: this.serviceName,
               version: this.availableVersion,
               text: Buffer.from(data).toString(),
             }
@@ -439,7 +439,7 @@ export default class DepService {
           this.emit({ 
             type: 'service-running-exit',
             data: {
-              name: this.serviceName,
+              serviceName: this.serviceName,
               version: this.availableVersion,
               exitCode: code ? code.toString() : '0'
             }
@@ -473,7 +473,7 @@ export default class DepService {
       this.emit({ 
         type: 'service-stop',
         data: {
-          name: this.serviceName,
+          serviceName: this.serviceName,
           version: this.availableVersion          
         }
       });

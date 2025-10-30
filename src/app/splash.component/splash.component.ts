@@ -61,7 +61,14 @@ export class SplashComponent implements OnInit {
   ) {
     effect(() => {
       if (this.systemService.startShow() === true) {
-        if (this.slideIndex !== 1) {
+        if (this.systemService.appVersionChange) {
+          console.log('splash:starting:slide0');
+          this.restartAnimation(0);      
+        } else if (this.systemService.servicesDownloading) {
+          console.log('splash:starting:slide2');
+          this.restartAnimation(2);      
+        } else if (this.slideIndex !== 1) {
+          console.log('splash:starting:slide1');
           this.restartAnimation(1);
         }
       }
@@ -69,12 +76,6 @@ export class SplashComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    if (this.systemService.appVersionChange) {
-      this.restartAnimation(0);      
-    } else if (this.systemService.servicesDownloading) {
-      this.restartAnimation(2);      
-    }
-
     const divElem: HTMLElement | null = document.getElementById("slideShowElem");
     if (divElem) {
       const resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {

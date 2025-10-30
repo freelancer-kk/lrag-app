@@ -13,7 +13,7 @@
     </mat-accordion>    
 
     <mat-accordion>
-      <mat-expansion-panel [expanded]="!systemService.hasBasicSetup">
+      <mat-expansion-panel [expanded]="!systemService.hasBasicSetup || systemService.appVersionChange || systemService.servicesDownloading">
         <mat-expansion-panel-header>
           <mat-panel-title>{{ 'PAGES.HOME.DETAIL' | translate }}</mat-panel-title>
           <mat-panel-description>
@@ -32,7 +32,7 @@
           <div [class]="ollamaService.status.getC()">  
             @if (ollamaService.status.get() === EStatus.downloading) {
               <mat-spinner diameter="30"></mat-spinner>
-              {{ ollamaService.status.getS() }}-{{ ollamaService.status.getV() }}%
+              {{ ollamaService.status.getS() }}
             } @else {            
               <mat-icon>{{ ollamaService.status.getI() }}</mat-icon>
               {{ ollamaService.status.getS() }}
@@ -46,7 +46,7 @@
           <div [class]="rerankerService.status.getC()">  
             @if (rerankerService.status.get() === EStatus.downloading) {
               <mat-spinner diameter="30"></mat-spinner>
-              {{ rerankerService.status.getS() }}-{{ rerankerService.status.getV() }}%
+              {{ rerankerService.status.getS() }}
             } @else {            
               <mat-icon>{{ rerankerService.status.getI() }}</mat-icon>
               {{ rerankerService.status.getS() }}

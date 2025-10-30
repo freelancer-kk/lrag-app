@@ -211,7 +211,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   startShow = async (ev: any) => {
-    this.systemService.startShow.update(() => true);    
+    this.systemService.startShow.update(() => true);        
   }
 
   endShow = (ev: any) => {

@@ -201,11 +201,10 @@ export class AppComponent implements OnInit {
           break;
           case 'service-download-part': {
             this.ngZone.run(() => {
+              this.systemService.servicesDownloading = true;
               if (data.serviceName === 'ollama') {
-                this.systemService.servicesDownloading = true;            
                 this.ollamaService.status.update(EStatus.downloading, { percentage: data.percentage });                
-              } else if (data.serviceName === 'reranker') {
-                this.systemService.servicesDownloading = true;            
+              } else if (data.serviceName === 'reranker') {                
                 this.rerankerService.status.update(EStatus.downloading, { percentage: data.percentage });                
               }
             })

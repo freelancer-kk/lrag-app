@@ -118,13 +118,15 @@ export class OllamaService {
     // const currentModels: any[] = this.availableModels;
     const value: any = await this.commandOllama('list');
     // console.log('getAvailableLLMs:', value.models);
-    this.availableModels = value.models.map((model: any) => {
-      return {
-        name: model.name,
-        size: Math.floor(model.size / 1024 / 1000),
-        usage: model.usage
-      }
-    });
+    if (value && value.models) {
+      this.availableModels = value.models.map((model: any) => {
+        return {
+          name: model.name,
+          size: Math.floor(model.size / 1024 / 1000),
+          usage: model.usage
+        }
+      });
+    }
     // console.log('getAvailableLLMs:', this.availableModels);
   }
 

@@ -132,10 +132,9 @@ export class LStatus {
     const firstPart: string = EStatusMap[this.internalStatus().status];
     const value: any  = this.internalStatus().value;
     if (value && value.percentage) {
-      return firstPart + '(' + value.percentage + '%)'
-    }
-    if (value && value.part && value.total) {
-      return firstPart + '(' + value.part + ' of ' + value.total + ')'
+      return firstPart + ' (' + value.percentage + '%)'
+    } else if (value && value.part && value.total) {
+      return firstPart + ' (' + value.part + ' of ' + value.total + ')'
     }
     return firstPart;
   }
