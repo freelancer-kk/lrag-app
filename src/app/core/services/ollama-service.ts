@@ -1,12 +1,14 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CommonService, LStatus } from './common-service';
 import { EStatus } from '../../shared/model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OllamaService {  
+export class OllamaService { 
+  serviceName: string = 'ollama';
   status: LStatus = new LStatus(EStatus.not_running);
+  servicePID: number = -1;  
   
   availableModels: any[] = [];
   models: any[] = [
@@ -29,7 +31,6 @@ export class OllamaService {
   ]
   modelsDownloaded: boolean = false;
   manageOllamaExternally: boolean = false;
-  ollamaPID: number = -1;  
   selectedModel: string = ''
   embeddings_model: string = '';
   downloadedLLM: string = '';
@@ -41,10 +42,10 @@ export class OllamaService {
     private commonService: CommonService
   ) {}
 
-  findOllamaProcess = async () => {
-    const response: any = await this.commonService.findProcess('ollama');
+  findProcess = async () => {
+    const response: any = await this.commonService.findProcess(this.serviceName);
     console.log('findProcess:', response);
-    this.ollamaPID = response.servicePID;
+    this.servicePID = response.servicePID;
   }
 
   fetchModelList = async () => {
@@ -81,12 +82,12 @@ export class OllamaService {
   }
 
   commandOllama = (command: string, options: any = {}): Promise<any> => {
-    return this.commonService.commandService('ollama', command, options);
+    return this.commonService.commandService(this.serviceName, command, options);
   }
 
   start = (): Promise<any> => {
     return this.commonService.commandService(
-      'ollama',
+      this.serviceName,
       'start',
       {
         gpuAccel: this.gpuAcceleration
@@ -132,7 +133,7 @@ export class OllamaService {
       clearInterval(this.serviceTimer);
     }
     this.serviceTimer = setInterval(async () => {
-      const { isReady } = await this.commonService.commandService('ollama', 'isReady');
+      const { isReady } = await this.commonService.commandService(this.serviceName, 'isReady');
       if (!isReady) {
         this.status.update(EStatus.not_running);            
       } else {
@@ -153,7 +154,7 @@ export class OllamaService {
       this.status.update(EStatus.running);      
     } else {
       if (this.manageOllamaExternally === true) {        
-        console.log('SHOWING OLLAMA MANAUAL WARNING:', this.manageOllamaExternally);
+        console.log('SHOWING OLLAMA MANUAL WARNING:', this.manageOllamaExternally);
         mecb();        
       } else {
         const response = await this.start();

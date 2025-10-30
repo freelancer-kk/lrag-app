@@ -38,7 +38,8 @@ export enum EStatus {
   dead,
   not_running,
   unknown,
-  warning
+  warning,
+  downloaded
 }
 
 export interface IStatus {

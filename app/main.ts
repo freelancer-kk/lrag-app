@@ -10,6 +10,7 @@ import LangchainService from './LangchainService';
 import ContextChat from './ContextChat';
 import { Systeminformation } from 'systeminformation';
 import AppUpdates from './AppUpdates';
+import ReRankerService from './RerankerService';
 
 const userHomePath: string = app.getPath('home');
 // const assetsPakFolderPath: string = app.getPath('assets');
@@ -24,6 +25,7 @@ let assetsFolderPath: string = '';
 let dockerEnv: DockerEnv;
 let lragFiles: LRagFiles;
 let ollamaService: OllamaService;
+let rerankerService: ReRankerService;
 let langchainService: LangchainService;
 let contextChat: ContextChat;
 let systemInfo: SystemInfo;
@@ -62,28 +64,29 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
 
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
-    const ollama_dls_file: string | undefined = await dockerEnv.getKeyValue('TOOLS_DLS_FILE');
-    if (ollama_dls_file) {
-      const ollamaDLS: any = await (await fetch(
-        ollama_dls_file,
+    const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');
+    const tools_dls_file: string | undefined = await dockerEnv.getKeyValue('TOOLS_DLS_FILE');
+    if (tools_dls_file) {
+      const toolsDLS: any = await (await fetch(
+        tools_dls_file,
         {
           method: 'GET',          
         }
       )).json();
 
-      const darwin_dl = ollamaDLS.DARWIN_DOWNLOAD_LINK;
-      const ipex_dl = ollamaDLS.IPEX_DOWNLOAD_LINK;
-      const rocm_dl = ollamaDLS.ROCM_DOWNLOAD_LINK;
-      const default_dl = ollamaDLS.DEFAULT_DOWNLOAD_LINK;
+      const darwin_dl = toolsDLS.DARWIN_DOWNLOAD_LINK;
+      const ipex_dl = toolsDLS.IPEX_DOWNLOAD_LINK;
+      const rocm_dl = toolsDLS.ROCM_DOWNLOAD_LINK;
+      const default_dl = toolsDLS.DEFAULT_DOWNLOAD_LINK;
       if (darwin_dl && ipex_dl && rocm_dl && default_dl) {
-        await dockerEnv.kvFile?.set('OLLAMA_VERSION', ollamaDLS.OLLAMA_VERSION)
-        await dockerEnv.kvFile?.set('IPEX_VERSION', ollamaDLS.IPEX_VERSION)
+        await dockerEnv.kvFile?.set('OLLAMA_VERSION', toolsDLS.OLLAMA_VERSION)
+        await dockerEnv.kvFile?.set('IPEX_VERSION', toolsDLS.IPEX_VERSION)
         await dockerEnv.kvFile?.writeFile();
         ollamaService = new OllamaService(
           ollama_version ? ollama_version : '',
-          ollamaDLS.OLLAMA_VERSION,
+          toolsDLS.OLLAMA_VERSION,
           ipex_version ? ipex_version : '',
-          ollamaDLS.IPEX_VERSION,
+          toolsDLS.IPEX_VERSION,
           darwin_dl,
           ipex_dl,
           rocm_dl,
@@ -96,10 +99,28 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
         const managed_externally: string | undefined = dockerEnv.getKeyValue('MANAGE_EXTERNAL');
         if ((isWindows === true || isLinux === true) && (managed_externally === 'false')) {
           await ollamaService.install();
-        }
+        }        
+      }
+
+      const reranker_win_dl = toolsDLS.RERANKER_WIN_DOWNLOAD_LINK;
+      const reranker_mac_dl = toolsDLS.RERANKER_MAC_DOWNLOAD_LINK;
+      if (reranker_version && reranker_win_dl && reranker_mac_dl) {
+        console.log('Initialising reranker service:', reranker_version, toolsDLS.RERANKER_VERSION, reranker_win_dl, reranker_mac_dl);
+        rerankerService = new ReRankerService(
+          reranker_version,
+          toolsDLS.RERANKER_VERSION,
+          reranker_mac_dl,
+          reranker_win_dl,
+          userTempPath,
+          appDataPath
+        )
+        rerankerService.register(win?.webContents);
+        await rerankerService.install();
+      } else {
+        console.log('Ignoring RERANKER service:', reranker_version, reranker_win_dl, reranker_mac_dl);
       }
     }
-    contextChat = new ContextChat(langchainService, ollamaService, dockerEnv);
+    contextChat = new ContextChat(langchainService, ollamaService, rerankerService, dockerEnv);
     contextChat.register(win?.webContents);
     // langchainService.inspect();
 
@@ -129,7 +150,7 @@ async function createWindow(): Promise<BrowserWindow> {
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: size.width/2,
+    width: size.width/2.1,
     height: size.height,
     minWidth: 400, // Optional: Set a minimum width
     minHeight: 300, // Optional: Set a minimum height
@@ -221,10 +242,11 @@ try {
     }, 400)    
   });  
 
-  app.on("before-quit", (e) => {
+  app.on("before-quit", async (e) => {
     console.log("before-quit: abort any transactions ollama may be doing");
     ollamaService.abort();
-    ollamaService.stop();
+    await ollamaService.stop();
+    await rerankerService.stop();
   });
 
   /*

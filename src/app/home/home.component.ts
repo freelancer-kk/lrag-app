@@ -20,8 +20,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MediaService } from '../core/services';
 import { SplashComponent } from '../splash.component/splash.component';
 import { OllamaService } from '../core/services/ollama-service';
-import { EStatus, IStatus } from '../shared/model';
-import { CommonService, LStatus } from '../core/services/common-service';
+import { EStatus } from '../shared/model';
+import { CommonService } from '../core/services/common-service';
+import { RerankerService } from '../core/services/reranker-service';
 
 @Component({
     selector: 'app-home',
@@ -64,6 +65,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     public commonService: CommonService,
     public systemService: SystemService,
     public ollamaService: OllamaService,
+    public rerankerService: RerankerService,
     private clipboard: Clipboard,
     private mediaService: MediaService
   ) {    

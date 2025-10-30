@@ -36,13 +36,14 @@ export default class DepService {
   prerequisites: IPrereq[];
   installPath: string;
   webContents: Electron.WebContents | undefined;
-  servicePID: number | undefined;
+  servicePID: number[] | undefined;
   isReady: boolean = false;
   processName: string;
   readyCheckFunc: () => Promise<boolean>;
   installedVersion: string;
   availableVersion: string;
   isExtracting: boolean = false;
+  installed: boolean = false;
   executable: string;
   execDir: string;
   args: string[];
@@ -89,6 +90,10 @@ export default class DepService {
         case "isReady": {
           await this.checkReady();
           response = { isReady: this.isReady };
+        }
+        break;
+        case "installed": {
+          response = { installed: this.installed };
         }
         break;
         case "checkPrequisites": {
@@ -141,16 +146,19 @@ export default class DepService {
   }
 
   findProcessPID = async (): Promise<any> => {
-    console.log('findByProcessName:', this.executable);
+    // console.log('findByProcessName:', this.executable);
     const processes: ProcessInfo[] = await find('name', this.executable);
     if (processes.length === 0) {
       console.error('Cannot find service process:', processes);
     } else {
       console.log('findByProcessName:', this.executable, processes, processes[0].pid);
-      this.servicePID = processes[0].pid;      
+      this.servicePID = processes.map(v => v.pid);
+      return { 
+        servicePID: processes[0].pid
+      }
     }
     return { 
-      servicePID: this.servicePID
+      servicePID: -1
     }
   }
 
@@ -330,6 +338,7 @@ export default class DepService {
             numberOfExtracts--;
             if (numberOfExtracts === 0) {
               this.isExtracting = false;
+              this.installed = true;
               console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully");
             }
           });          
@@ -337,6 +346,7 @@ export default class DepService {
       }
     } else {
       console.log('DepService:extractAndDownload:already downloaded and extracted!');
+      this.installed = true;
     }
     return true;    
   }
@@ -430,12 +440,21 @@ export default class DepService {
     } 
   }
 
-  stop = () => {
-    if (this.servicePID && this.servicePID > -1) {
-      console.error(`DepService:stop:sending terminate signal to ${this.serviceName} - ${this.servicePID}!`);
-      kill(this.servicePID, (error: any) => {
-        console.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${this.servicePID}`, error);
-      });
+  stop = async (all: boolean = false): Promise<any> => {
+    if (this.servicePID && this.servicePID.length > 0) {
+      if (all) {
+        for await (const pid of this.servicePID) {
+          console.log(`DepService:stop:sending terminate signal to ${this.serviceName} - ${pid}!`);
+          kill(pid, (error: any) => {
+            console.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${pid}`, error);
+          });
+        }
+      } else {
+        console.log(`DepService:stop:sending terminate signal to ${this.serviceName} - ${this.servicePID}!`);
+        kill(this.servicePID[0], (error: any) => {
+          console.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${this.servicePID}`, error);
+        });
+      }
       this.emit({ 
         type: 'service-stop',
         data: {

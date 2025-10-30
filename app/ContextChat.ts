@@ -9,6 +9,7 @@ import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
 import DockerEnv from './DockerEnv'
 import { AIMessageChunk } from '@langchain/core/messages'
 import { concat } from "@langchain/core/utils/stream";
+import ReRankerService from './RerankerService'
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -16,16 +17,16 @@ const combineDocuments = (docs: Document[]): string => {
 export default class ContextChat {
   langchainService: LangchainService;
   ollamaService: OllamaService;
-  rankingService: string | undefined;
+  rerankerService: ReRankerService;
   prompt: string = '';
   context: string = ''
   ollamaLlm: Ollama | undefined;
   webContents: Electron.WebContents | undefined
 
-  constructor(langchainService: LangchainService, ollamaService: OllamaService, dockerEnv: DockerEnv) {
+  constructor(langchainService: LangchainService, ollamaService: OllamaService, rerankerService: ReRankerService, dockerEnv: DockerEnv) {
     this.langchainService = langchainService;    
     this.ollamaService = ollamaService;
-    this.rankingService = dockerEnv.getKeyValue('RERANK_SERVICE');
+    this.rerankerService = rerankerService;
   }
 
   emit = (args: any) => {
@@ -57,45 +58,6 @@ export default class ContextChat {
     return doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1;
   }
 
-  rerank_documents = async (query: string, docs: Document[]): Promise<Document[] | undefined> => {
-    try {
-
-      const body: any = {
-        query,
-        documents: docs.map((d: Document) => {
-          return d.pageContent;
-        }),
-        metadata: docs.map((d: Document, index: number) => {
-          return { "source" : index + '-' + d.metadata.source }
-        }),
-      }
-
-      // console.log('body', body);
-
-      const data: any = await (await fetch(
-        this.rankingService + '/rerank',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body)
-        }
-      )).json();
-
-      const ret_docs: Document[] = []
-      for await (const md of data.metadata) {
-        const fIdx: number = docs.findIndex((d, i) => (i + '-' + d.metadata.source) === md.source);
-        // console.log('RERANKING:', docs[fIdx].pageContent.substring(0, 20));      
-        
-        ret_docs.push(docs[fIdx]);
-      }
-      return ret_docs;
-    } catch (e) {
-      console.error(e);    
-    }    
-  }
-  
   getAnswer = async (options: any): Promise<string | undefined> => {
     if (!this.ollamaService.isReady() || !this.ollamaService.ollama) {
       return 'Services not ready';
@@ -156,7 +118,7 @@ export default class ContextChat {
 
         if (this.langchainService.vectorStoreType !== EVectorStoreType.Memory) {          
           this.emit({ type: 'reranking', data: { total: docs.length } });
-          const reranked_docs: Document[] | undefined = await this.rerank_documents(options.question, docs);
+          const reranked_docs: Document[] | undefined = await this.rerankerService.rerank(options.question, docs);
           if (reranked_docs && reranked_docs.length > 0) {
             docs = reranked_docs;
           }

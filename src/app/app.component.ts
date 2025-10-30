@@ -22,6 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CommonService } from './core/services/common-service';
 import { OllamaService } from './core/services/ollama-service';
 import { EStatus, IStatus } from './shared/model';
+import { RerankerService } from './core/services/reranker-service';
 
 @Component({
     selector: 'app-root',
@@ -71,6 +72,7 @@ export class AppComponent implements OnInit {
     private ngZone: NgZone,
     private mediaService: MediaService,
     public ollamaService: OllamaService,
+    public rerankerService: RerankerService,
   ) {
     console.log('APP_CONFIG', APP_CONFIG);
 
@@ -191,6 +193,8 @@ export class AppComponent implements OnInit {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {
                 this.ollamaService.status.update(EStatus.extracting);
+              } else if (data.serviceName === 'reranker') {
+                this.rerankerService.status.update(EStatus.extracting);
               }
             })
           }
@@ -200,6 +204,9 @@ export class AppComponent implements OnInit {
               if (data.serviceName === 'ollama') {
                 this.systemService.servicesDownloading = true;            
                 this.ollamaService.status.update(EStatus.downloading, { percentage: data.percentage });                
+              } else if (data.serviceName === 'reranker') {
+                this.systemService.servicesDownloading = true;            
+                this.rerankerService.status.update(EStatus.downloading, { percentage: data.percentage });                
               }
             })
           }
@@ -214,6 +221,8 @@ export class AppComponent implements OnInit {
                   }
                 );              
                 this.ollamaService.status.update(EStatus.preparing);
+              } else if (data.serviceName === 'reranker') {
+                this.rerankerService.status.update(EStatus.preparing);
               }
             })
           }
@@ -222,6 +231,9 @@ export class AppComponent implements OnInit {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {
                 this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
+              } else if (data.serviceName === 'reranker') {
+                this.rerankerService.status.update(EStatus.downloaded);
+                this.rerankerService.startIfNecessary();                
               }
             })
           }
@@ -234,7 +246,9 @@ export class AppComponent implements OnInit {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama' && (data.ready === true)) {
                 this.ollamaService.status.update(EStatus.running);
-              }
+              } else if (data.serviceName === 'reranker' && (data.ready === true)) {
+                this.rerankerService.status.update(EStatus.running);
+              }              
             })
           }
           break;
@@ -410,15 +424,15 @@ export class AppComponent implements OnInit {
       // console.log('overall status:', this.systemService.overallStatus());
       if (this.overallStatus === EStatus.running_unhealthy) {
         if (this.firstTime && (this.ollamaStatus.status === EStatus.running)) {
-          this.ollamaService.findOllamaProcess();
+          this.ollamaService.findProcess();
           this.pullModelsIfNecessary();
         }
       }
       if (this.overallStatus === EStatus.running_healthy) {
         this.systemService.servicesDownloading = false;
         this.systemService.showGetOllama = false;        
-        if (ollamaService.ollamaPID === -1) {
-          this.ollamaService.findOllamaProcess();
+        if (ollamaService.servicePID === -1) {
+          this.ollamaService.findProcess();
         }
         this.navigateAway();
       }
@@ -477,6 +491,7 @@ export class AppComponent implements OnInit {
     }
     setTimeout(() => {
       this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);  
+      this.rerankerService.startIfNecessary();
     }, 400)   
   }
 

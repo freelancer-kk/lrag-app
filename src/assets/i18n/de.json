@@ -59,7 +59,7 @@
         },
         "SLIDE3": {
           "PARA1": "Model Process Download/Upgrade",
-          "PARA2": "Please wait whilst the model process is downloading...",
+          "PARA2": "Please wait whilst downloading extras...",
           "PARA3": "The download may take some time depending on your Internet Connection."
         }
     },
@@ -78,6 +78,7 @@
       "YOUR_PC": "Ihr PC",
       "TECHNICAL_DETAILS": "Technische Details",
       "LLM": "Modellprozess",
+      "RERANKER": "Rerankerprozess",
       "MODEL": "Modell ",
       "ELASTIC": "Speichern",
       "KIBANA": "Daten",
@@ -153,7 +154,7 @@
       "OCR_START": "OCR-Konvertierung beginnt",
       "OCR_DONE": "OCR-Konvertierung abgeschlossen",
       "UNKNOWN": "Nicht indiziert",
-      "INDEX": "Dokument(en) einbetten",
+      "INDEX": "Dokument einbetten",
       "CHUNK_SIZE": "Chunkgröße",
       "CHUNK_SIZE_TIP": "Die definierte Länge für einzelne Textsegmente. Größere Stücke: Kann mehr Kontext erfassen, aber die Kosten für ein Einbettung und Abrufen erhöhen und spezifische Informationen verwässern. Kleinere Brocken: sind rechnerisch billiger und präziser, könnten aber einen breiteren Kontext verpassen, was möglicherweise zu weniger umfassenden Antworten führt",
       "OVERLAP": "Überlappen",

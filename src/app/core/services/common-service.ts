@@ -106,7 +106,8 @@ const EStatusMap: { [key in EStatus]: string } = {
   [EStatus.dead]: 'Dead',
   [EStatus.not_running]: 'Not Running',
   [EStatus.unknown]: 'Unknown',
-  [EStatus.warning]: 'Warning'
+  [EStatus.warning]: 'Warning',
+  [EStatus.downloaded]: 'Downloaded'
 };
 
 export class LStatus {
