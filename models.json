@@ -54,9 +54,9 @@
     "memory": 4
   },
   {
-    "value": "vanilj/palmyra-fin-70b-32k:IQ2_XXS",
-    "viewValue": "palmyra-fin-70b (<25GB)",
+    "value": "martain7r/finance-llama-8b:q4_k_m",
+    "viewValue": "martain7r/finance-llama-8b (<9GB)",
     "thinking": true,
-    "memory": 32
+    "memory": 12
   }
 ]

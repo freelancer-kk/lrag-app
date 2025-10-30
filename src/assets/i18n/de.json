@@ -50,7 +50,7 @@
         },
         "SLIDE2": {
           "PARA1": "LRag Use Cases",
-          "PARA2": "*Choose a privacy level you wish to use under Privacy*",
+          "PARA2": "*Choose various privacy settings under Privacy*",
           "PARA3": "*General Chat - Choose a model under Models then Chat with that model*",
           "PARA4": "*Analyse a doc - Choose a document under Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
           "PARA5": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
