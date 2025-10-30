@@ -4,7 +4,7 @@
 </h1>
 @if (systemService.brand === 'Intel' || systemService.brand === 'Amd') {
   <span class="spacer"></span>
-  <mat-slide-toggle [disabled]="this.systemService.overallStatus() !== 'running: healthy' || this.systemService.insightStatus() !== 'not running'" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="ollamaService.gpuAcceleration" (change)="switchGPUAccel($event)">
+  <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus() !== 'not running'" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="ollamaService.gpuAcceleration" (change)="switchGPUAccel($event)">
     {{ 'GPU_ACCEL' | translate }}
   </mat-slide-toggle>
 }
@@ -13,7 +13,7 @@
     <mat-toolbar-row>
       <mat-form-field>
         <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
-        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
+        <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
           @for (entry of ollamaService.models; track $index) {
             <mat-option [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
@@ -22,7 +22,7 @@
       &nbsp;
       <mat-form-field>
         <mat-label>{{ 'PAGES.DETAIL.EMBEDDINGS_MODEL_SELECT' | translate }}</mat-label>
-        <mat-select [disabled]="this.systemService.overallStatus() !== 'running: healthy'" [(value)]="ollamaService.embeddings_model" (selectionChange)="modelChange($event, 1)">
+        <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.embeddings_model" (selectionChange)="modelChange($event, 1)">
           @for (entry of ollamaService.embedding_models; track $index) {
             <mat-option [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
@@ -57,13 +57,13 @@
     <div class="onerow">
       <mat-form-field class="full-width">
         <mat-label [matTooltip]="'PAGES.DETAIL.RAG_PROMPT_TIP' | translate">{{ 'PAGES.DETAIL.RAG_PROMPT' | translate }}</mat-label>
-        <textarea [disabled]="this.systemService.overallStatus() !== 'running: healthy'" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
+        <textarea [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
       </mat-form-field>                        
     </div>
     <div class="onerow">
       <mat-form-field class="full-width">
         <mat-label [matTooltip]="'PAGES.DETAIL.USER_PROMPT_TIP'| translate">{{ 'PAGES.DETAIL.USER_PROMPT' | translate }}</mat-label>
-        <textarea [disabled]="this.systemService.overallStatus() !== 'running: healthy'" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
+        <textarea [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
       </mat-form-field>                        
     </div>
   </mat-expansion-panel>        

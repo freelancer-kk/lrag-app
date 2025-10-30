@@ -59,7 +59,7 @@ export class AppComponent implements OnInit {
   modelStatus: string | undefined;
   ingestStatus: string | undefined;
   gpuStatus: string | undefined;
-  overallStatus: string | undefined;
+  overallStatus: EStatus | undefined;
 
   constructor(
     private electronService: ElectronService,
@@ -405,16 +405,16 @@ export class AppComponent implements OnInit {
       this.modelStatus = this.systemService.modelStatus();
       this.ingestStatus = this.systemService.ingestStatus();
       this.gpuStatus = this.systemService.gpuChangeStatus();
-      this.overallStatus = this.systemService.calcOverallStatus();
+      this.overallStatus = this.systemService.setOverallStatus();
       
       // console.log('overall status:', this.systemService.overallStatus());
-      if (this.overallStatus === "running: unhealthy") {
+      if (this.overallStatus === EStatus.running_unhealthy) {
         if (this.firstTime && (this.ollamaStatus.status === EStatus.running)) {
           this.ollamaService.findOllamaProcess();
           this.pullModelsIfNecessary();
         }
       }
-      if (this.overallStatus === "running: healthy") {
+      if (this.overallStatus === EStatus.running_healthy) {
         this.systemService.servicesDownloading = false;
         this.systemService.showGetOllama = false;        
         if (ollamaService.ollamaPID === -1) {

@@ -117,16 +117,12 @@ export class LStatus {
     });
   }
 
-  update = (estatus: EStatus) => {
-    this.internalStatus.update(() => ({status: estatus, value: this.internalStatus().value}))
+  update = (status: EStatus, value: number = 0) => {
+    this.internalStatus.update(() => ({status, value}))
   }
 
-  updateN = (value: number) => {
-    this.internalStatus.update(() => ({status: this.internalStatus().status, value}))
-  }
-
-  updateSN = (estatus: EStatus, value: number) => {
-    this.internalStatus.update(() => ({status: estatus, value}))
+  updateSN = (status: EStatus, value: number) => {
+    this.internalStatus.update(() => ({status, value}))
   }
 
   get = (): EStatus => {

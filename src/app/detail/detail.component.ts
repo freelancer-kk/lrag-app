@@ -48,6 +48,7 @@ export class DetailComponent implements OnInit {
   showModelList: boolean = true;
   wt: any;
   libPrefix: string | undefined;
+  overallStatus: EStatus | undefined;
 
   EStatus: typeof EStatus = EStatus;
   
@@ -56,7 +57,9 @@ export class DetailComponent implements OnInit {
     public systemService: SystemService,
     public ollamaService: OllamaService
   ) {    
-    effect(() => {})    
+    effect(() => {
+        this.overallStatus = this.systemService.mainStatus.get();
+    })    
   }
 
   async ngOnInit() {

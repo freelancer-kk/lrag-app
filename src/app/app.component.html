@@ -1,7 +1,3 @@
-<!--
-<div class="appContainer">
-<div [class]="this.systemService.startShow() ? 'blurPart' : ''">
--->
 <mat-toolbar>
   <mat-icon class="main-menu" (click)="rotate($event)">keyboard_arrow_right</mat-icon>  
 	<h1>{{ 'APP.TITLE' | translate }}&nbsp;v{{ 'APP.VERSION' | translate }}</h1>&nbsp;
@@ -14,21 +10,21 @@
   }  
   <span class="spacer"></span>
   @if (!(
-        (overallStatus === 'running: healthy') ||
-        (overallStatus === 'running: unhealthy') 
+        (overallStatus === EStatus.running_healthy) ||
+        (overallStatus === EStatus.running_unhealthy) 
       )) {
-    <div [class]="systemService.getClassFromStatus(systemService.overallStatus())">
+    <div [class]="systemService.mainStatus.getC()">
       <mat-spinner diameter="30"></mat-spinner>
       <span class="spacer"></span>
-      {{ overallStatus }}
+      {{ systemService.mainStatus.getS() }}
     </div>
     @if (ollamaService.manageOllamaExternally === true && ollamaService.status.get() === EStatus.not_running) {
       <span class="small">({{ 'APP.WAITING_FOR_OLLAMA_START' | translate }})</span>
     }
   } @else {            
-    <div [class]="systemService.getClassFromStatus(systemService.overallStatus())">
-      <mat-icon>{{ systemService.getIconFromStatus(systemService.overallStatus()) }}</mat-icon>
-      {{ overallStatus }}
+    <div [class]="systemService.mainStatus.getC()">
+      <mat-icon>{{ systemService.mainStatus.getI() }}</mat-icon>
+      {{ systemService.mainStatus.getS() }}
     </div>
   }
   <span class="spacer"></span>  
@@ -87,7 +83,3 @@
 		<router-outlet></router-outlet>
 	</div>
 </mat-sidenav-container>
-<!--
-</div>
-</div>
--->

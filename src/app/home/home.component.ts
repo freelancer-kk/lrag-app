@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   modelStatus: string | undefined;
   ingestStatus: string | undefined;
   insightStatus: string | undefined;
-  overallStatus: string | undefined;
+  overallStatus: EStatus | undefined;
 
   constructor(
     public commonService: CommonService,
@@ -71,7 +71,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.modelStatus = this.systemService.modelStatus();
       this.ingestStatus = this.systemService.ingestStatus();
       this.insightStatus = this.systemService.insightStatus();
-      this.overallStatus = this.systemService.overallStatus();
+      this.overallStatus = this.systemService.mainStatus.get();
       /*
       if (this.cpu) {
         this.cpu.expandTo(0);

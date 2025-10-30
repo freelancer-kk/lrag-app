@@ -21,7 +21,7 @@
     </button>          
   }  
 </mat-toolbar>
-@if (systemService.overallStatus() === 'running: healthy' && systemService.insightStatus() !== 'thinking') {
+@if (overallStatus === EStatus.running_healthy && systemService.insightStatus() !== 'thinking') {
   <div class="onerow">
     <mat-form-field class="full-width">
       <mat-label>{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
@@ -44,31 +44,31 @@
   </mat-expansion-panel-header> 
     <div class="onerow">
       <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" min="8" max="2048" step="1" showTickMarks discrete>
+      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || systemService.insightStatus() === 'thinking'" min="8" max="2048" step="1" showTickMarks discrete>
         <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
       </mat-slider>
       <span class="spacer"></span>
-      <button [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.k = 8">
+      <button [disabled]="overallStatus !== EStatus.running_healthy || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.k = 8">
         {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
       </button>
     </div>
     <div class="onerow">
       <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="systemService.overallStatus() !== 'running: healthy' || this.systemService.insightStatus() === 'thinking'" min="2048" max="10240" step="32" showTickMarks discrete>
+      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus() === 'thinking'" min="2048" max="10240" step="32" showTickMarks discrete>
         <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
       </mat-slider>
       <span class="spacer"></span>
-      <button [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.numCtx = 2048">
+      <button [disabled]="overallStatus !== EStatus.running_healthy || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.numCtx = 2048">
         {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
       </button>
     </div>
     <div class="onerow">
       <mat-form-field class="half-width">
         <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>
-        <input matInput [disabled]="systemService.overallStatus() !== 'running: healthy' || this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="systemService.filter">      
+        <input matInput [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="systemService.filter">      
       </mat-form-field>
       <span class="spacer"></span>
-      <button [disabled]="systemService.overallStatus() !== 'running: healthy' || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.filter = undefined">
+      <button [disabled]="overallStatus !== EStatus.running_healthy || systemService.insightStatus() === 'thinking'" matButton="filled" (click)="systemService.filter = undefined">
         {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
       </button>
     </div>
@@ -82,7 +82,7 @@
       </h1>    
     </mat-toolbar>
   } @else {
-    @if (systemService.overallStatus() === 'running: healthy') {
+    @if (overallStatus === EStatus.running_healthy) {
       <mat-form-field class="full-width">
         <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
         <textarea [disabled]="this.systemService.insightStatus() === 'thinking'" matInput type="text" [(ngModel)]="systemService.question">{{ systemService.question }}</textarea>

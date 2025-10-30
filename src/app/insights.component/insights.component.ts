@@ -2,7 +2,7 @@ import { Component, NgZone, OnInit, effect, inject } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { SystemService } from '../core/services/system/system.service';
-import { EWho, IGenInfo } from '../shared/model';
+import { EStatus, EWho, IGenInfo } from '../shared/model';
 import {MatInputModule} from '@angular/material/input';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -60,6 +60,9 @@ export class InsightsComponent implements OnInit {
   streaming: boolean = false;
   streamedResponse: string = '';
   generationInfo: IGenInfo | undefined;
+  overallStatus: EStatus | undefined;
+
+  EStatus: typeof EStatus = EStatus;
   
   constructor(
     private bridgeService: BridgeService,
@@ -95,7 +98,8 @@ export class InsightsComponent implements OnInit {
 
     effect(() => {      
       this.systemService.insightStatus();
-      if (this.systemService.overallStatus() !== 'running: healthy') {
+      this.overallStatus = this.systemService.mainStatus.get();
+      if (this.overallStatus !== EStatus.running_healthy) {
         this.check();
       }      
     })

@@ -5,14 +5,14 @@ import { ConnectionService, ConnectionState } from 'ng-connection-service';
 import { Subscription, tap } from 'rxjs';
 import { connOptions, EStatus, IChat, IHistory } from '../../../shared/model';
 import { OllamaService } from '../ollama-service';
-import { CommonService } from '../common-service';
+import { CommonService, LStatus } from '../common-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SystemService {
   
-  overallStatus = signal<any>('not running');
+  mainStatus: LStatus = new LStatus(EStatus.not_running);
   modelStatus = signal<any>('unknown');
   ingestStatus = signal<any>('not running');
   insightStatus = signal<any>("not running");
@@ -116,17 +116,17 @@ export class SystemService {
     }))
   }
 
-  calcOverallStatus = (): string => {
+  setOverallStatus = (): EStatus => {
     if (this.ollamaService.status.get() === EStatus.running) {
       if (this.modelStatus() === 'running' && this.ingestStatus() === 'not running' && this.gpuChangeStatus() === 'not running') {
-        this.overallStatus.update(() => 'running: healthy');
+        this.mainStatus.update(EStatus.running_healthy);
       } else {
-        this.overallStatus.update(() => 'running: unhealthy');
+        this.mainStatus.update(EStatus.running_unhealthy);
       }     
     } else {
-      this.overallStatus.update(() => 'not running');
+      this.mainStatus.update(EStatus.not_running);
     }
-    return this.overallStatus();
+    return this.mainStatus.get();
   }
   
 

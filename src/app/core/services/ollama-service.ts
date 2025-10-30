@@ -6,7 +6,7 @@ import { EStatus } from '../../shared/model';
   providedIn: 'root'
 })
 export class OllamaService {  
-  status: LStatus;
+  status: LStatus = new LStatus(EStatus.not_running);
   
   availableModels: any[] = [];
   models: any[] = [
@@ -39,9 +39,7 @@ export class OllamaService {
     
   constructor(
     private commonService: CommonService
-  ) {
-    this.status = new LStatus(EStatus.not_running);
-  }
+  ) {}
 
   findOllamaProcess = async () => {
     const response: any = await this.commonService.findProcess('ollama');

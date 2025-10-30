@@ -27,6 +27,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SpecialCharacterDirective } from '../directives/specialCharacterDirective';
 import { CommonService } from '../core/services/common-service';
 import { OllamaService } from '../core/services/ollama-service';
+import { EStatus } from '../shared/model';
 
 @Component({
   selector: 'app-ingest.component',
@@ -64,12 +65,15 @@ export class IngestComponent implements OnInit {
   breakpoint: number = 4;
   startIngestTimer: any;
   ingestStatus: string = 'not running';
-  overallStatus: string = 'not running';
   selectedAll: boolean = false;
   isOpened: boolean = false;
   afterLastFinish: boolean = true;
   collection: string = '';
   showErrors: boolean = false;
+
+  overallStatus: EStatus | undefined;
+
+  EStatus: typeof EStatus = EStatus;
 
   constructor(
     public systemService: SystemService,
@@ -80,8 +84,8 @@ export class IngestComponent implements OnInit {
   ) {
     effect(() => {
       this.ingestStatus = this.systemService.ingestStatus();
-      this.overallStatus = this.systemService.overallStatus();
-      if (this.overallStatus !== 'running: healthy' || this.ingestStatus !== 'not running') {
+      this.overallStatus = this.systemService.mainStatus.get();
+      if (this.overallStatus !== EStatus.running_healthy|| this.ingestStatus !== 'not running') {
         this.systemService.selectedCollections.disable();
         this.systemService.selectedDocuments.disable();
       } else {

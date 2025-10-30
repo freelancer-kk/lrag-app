@@ -131,7 +131,7 @@
                     <button matButton (click)="clear($event, $index)">
                       <mat-icon class="danger">close</mat-icon>
                     </button>
-                    @if (overallStatus === 'running: healthy' && ingestStatus === 'not running' && insightStatus === 'not running') {
+                    @if (overallStatus === EStatus.running_healthy && ingestStatus === 'not running' && insightStatus === 'not running') {
                       <button [matTooltip]="'PAGES.HOME.RESTORE_TIP' | translate" matButton (click)="restore($event, $index)">
                         <mat-icon class="success">restore</mat-icon>
                       </button> 

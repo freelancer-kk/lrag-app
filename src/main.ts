@@ -35,8 +35,8 @@ bootstrapApplication(AppComponent, {
     ),
     provideAppInitializer(async () => {
       const initializerFn = async (systemService: SystemService, commonService: CommonService, ollamaService: OllamaService) => {
+        console.log('app initializer:start');        
         await systemService.init();
-        console.log('app initializer:start');
         const theme: string | null = localStorage.getItem('theme');        
         systemService.dark = theme ? JSON.parse(theme) : 'dark';        
         console.log('theme:', systemService.dark);
