@@ -25,7 +25,8 @@ export default class OllamaService {
     default_dl: string,
     userTempPath: string,
     appDataPath: string,
-    gpuBrands: string[]
+    gpuBrands: string[],
+    versionCB: () => void,
   ) {
     let execDir: string = path.join(appDataPath, 'ollama');
     let ollamaExecutable: string = "ollama.exe";
@@ -77,7 +78,8 @@ export default class OllamaService {
       },
       [],
       this.isIPEX ? installedIPEXVersion : installedVersion,
-      this.isIPEX ? availableIPEXVersion: availableVersion
+      this.isIPEX ? availableIPEXVersion: availableVersion,
+      versionCB,
     )
 
     if (this.isIPEX) {
@@ -104,7 +106,8 @@ export default class OllamaService {
         },
         [],
         installedVersion,
-        availableVersion
+        availableVersion,
+        versionCB,
       )
     }
   }

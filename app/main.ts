@@ -11,6 +11,8 @@ import ContextChat from './ContextChat';
 import { Systeminformation } from 'systeminformation';
 import AppUpdates from './AppUpdates';
 import ReRankerService from './RerankerService';
+import OCRProcessor from './OCRProcessor';
+import WatcherService from './WatcherService';
 
 const userHomePath: string = app.getPath('home');
 // const assetsPakFolderPath: string = app.getPath('assets');
@@ -33,6 +35,8 @@ let tray: Tray;
 let favIconPath: string;
 let favImage: Electron.NativeImage;
 let appUpdates: AppUpdates;
+let watcherService: WatcherService;
+let ocrProcessor: OCRProcessor;
 
 let configPath: string = path.join(__dirname, '..');
 
@@ -59,12 +63,12 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
     console.log('graphics:', graphics.controllers.map(v => v.vendor));
     lragFiles = new LRagFiles(docPath, dataPath);
     lragFiles.register();
-    langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'), dockerEnv);
-    langchainService.register(win?.webContents);
 
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
     const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');
+    const ghostscript_version: string | undefined = await dockerEnv.getKeyValue('GHOSTSCRIPT_VERSION');
+    const watcher_version: string | undefined = await dockerEnv.getKeyValue('WATCHER_VERSION');
     const tools_dls_file: string | undefined = await dockerEnv.getKeyValue('TOOLS_DLS_FILE');
     if (tools_dls_file) {
       const toolsDLS: any = await (await fetch(
@@ -74,14 +78,42 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
         }
       )).json();
 
+      const watcher_win_dl = toolsDLS.WATCHER_WIN_DOWNLOAD_LINK;
+      const watcher_mac_dl = toolsDLS.WATCHER_MAC_DOWNLOAD_LINK;
+      if (ghostscript_version && watcher_version && watcher_win_dl && watcher_mac_dl) {
+        console.log('Initialising watcher service:', watcher_version, toolsDLS.WATCHER_VERSION, watcher_win_dl, watcher_mac_dl);
+        watcherService = new WatcherService(
+          watcher_version,
+          toolsDLS.WATCHER_VERSION,
+          watcher_mac_dl,
+          watcher_win_dl,
+          ghostscript_version,
+          toolsDLS.GHOSTSCRIPT_WIN_DOWNLOAD_LINK,
+          toolsDLS.HOMEBREW_MAC_VERSION,
+          toolsDLS.HOMEBREW_MAC_DOWNLOAD_LINK,
+          toolsDLS.GHOSTSCRIPT_MAC_DOWNLOAD_LINK,
+          docPath ? docPath : path.join(userDataPath, 'docs'),
+          userTempPath,
+          appDataPath,
+          async () => {
+            await dockerEnv.kvFile?.set('WATCHER_VERSION', toolsDLS.WATCHER_VERSION);
+            await dockerEnv.kvFile?.writeFile();
+          }
+        )
+        watcherService.register(win?.webContents);
+        await watcherService.install();
+      } else {
+        console.log('Ignoring WATCHER service:', watcher_version, watcher_win_dl, watcher_mac_dl);
+      }
+      ocrProcessor = new OCRProcessor(watcherService, dockerEnv);
+      langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'), ocrProcessor);
+      langchainService.register(win?.webContents);
+    
       const darwin_dl = toolsDLS.DARWIN_DOWNLOAD_LINK;
       const ipex_dl = toolsDLS.IPEX_DOWNLOAD_LINK;
       const rocm_dl = toolsDLS.ROCM_DOWNLOAD_LINK;
       const default_dl = toolsDLS.DEFAULT_DOWNLOAD_LINK;
       if (darwin_dl && ipex_dl && rocm_dl && default_dl) {
-        await dockerEnv.kvFile?.set('OLLAMA_VERSION', toolsDLS.OLLAMA_VERSION)
-        await dockerEnv.kvFile?.set('IPEX_VERSION', toolsDLS.IPEX_VERSION)
-        await dockerEnv.kvFile?.writeFile();
         ollamaService = new OllamaService(
           ollama_version ? ollama_version : '',
           toolsDLS.OLLAMA_VERSION,
@@ -93,7 +125,12 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
           default_dl,
           userTempPath,
           appDataPath,
-          graphics.controllers.map(v => v.vendor)
+          graphics.controllers.map(v => v.vendor),
+          async () => {
+            await dockerEnv.kvFile?.set('OLLAMA_VERSION', toolsDLS.OLLAMA_VERSION);
+            await dockerEnv.kvFile?.set('IPEX_VERSION', toolsDLS.IPEX_VERSION);    
+            await dockerEnv.kvFile?.writeFile(); 
+          }
         );
         ollamaService.register(win?.webContents);
         const managed_externally: string | undefined = dockerEnv.getKeyValue('MANAGE_EXTERNAL');
@@ -112,7 +149,11 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
           reranker_mac_dl,
           reranker_win_dl,
           userTempPath,
-          appDataPath
+          appDataPath,
+          async () => {
+            await dockerEnv.kvFile?.set('RERANKER_VERSION', toolsDLS.RERANKER_VERSION);
+            await dockerEnv.kvFile?.writeFile();
+          }
         )
         rerankerService.register(win?.webContents);
         await rerankerService.install();
@@ -125,7 +166,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
     // langchainService.inspect();
 
     appUpdates = new AppUpdates(dockerEnv.getKeyValue('UPDATE_INFO_FILE'));
-    await appUpdates.init();
+    await appUpdates.init();    
   })  
 }
 
@@ -247,6 +288,7 @@ try {
     ollamaService.abort();
     await ollamaService.stop();
     await rerankerService.stop();
+    await watcherService.stop();
   });
 
   /*

@@ -20,7 +20,7 @@ const mergeKeys: string[] = [
   "MANAGE_EXTERNAL",
   "GHOSTSCRIPT_VERSION",
   "RERANKER_VERSION",
-  "OCRMYPDF_VERSION"
+  "WATCHER_VERSION"
 ];
 
 export default class DockerEnv {

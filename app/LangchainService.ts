@@ -19,7 +19,6 @@ import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import SemanticChunking, { LanguageTypes } from './SemanticChunking';
 import * as fs from 'fs';
 import OCRProcessor from './OCRProcessor';
-import DockerEnv from './DockerEnv';
 import { v4 as uuidv4 } from 'uuid';
 
 export enum EVectorStoreType {
@@ -42,7 +41,7 @@ export default class LangchainService {
   uuid: string;
   baseUrl: string;
 
-  constructor(doc_path: string, db_dir: string, dockerEnv: DockerEnv, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
+  constructor(doc_path: string, db_dir: string, ocrProcessor: OCRProcessor, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
     this.root_doc_path = doc_path;
     mkdirSync(path.join(db_dir, 'hnsw'), { recursive: true });
@@ -59,7 +58,7 @@ export default class LangchainService {
     
     this.semanticChunking = new SemanticChunking(baseUrl, model);
 
-    this.ocrProcessor = new OCRProcessor(dockerEnv);
+    this.ocrProcessor = ocrProcessor;
     this.uuid = uuidv4();
 
     console.log('LangchainService initialized');        

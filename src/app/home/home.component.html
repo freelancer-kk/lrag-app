@@ -53,6 +53,20 @@
             }            
           </div>            
         </div>
+        <div class="onerow">
+          {{ 'PAGES.HOME.WATCHER' | translate }}
+          &nbsp;<span class="small">({{ watcherService.servicePID }})</span>
+          <span class="spacer"></span>            
+          <div [class]="watcherService.status.getC()">  
+            @if (watcherService.status.get() === EStatus.downloading) {
+              <mat-spinner diameter="30"></mat-spinner>
+              {{ watcherService.status.getS() }}
+            } @else {            
+              <mat-icon>{{ watcherService.status.getI() }}</mat-icon>
+              {{ watcherService.status.getS() }}
+            }            
+          </div>            
+        </div>
         @if (ollamaService.status.get() === EStatus.running) {
           <div class="onerow">
             {{ 'PAGES.HOME.MODEL' | translate }}&nbsp;            

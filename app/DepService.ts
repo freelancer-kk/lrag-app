@@ -10,14 +10,14 @@ import kill from 'tree-kill';
 
 export interface IPrereq {
   name: string,
-  win: {
+  win?: {
     url: string;
     cwd: string;
     executable: string;
     args: string[];
     expected_version: string;
   },
-  mac: {
+  mac?: {
     url: string;
     cwd: string;
     executable: string;
@@ -47,7 +47,9 @@ export default class DepService {
   executable: string;
   execDir: string;
   args: string[];
+  env: any = {};
   spawnedProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> | undefined;
+  versionCB: () => void;  
 
   constructor(
     serviceName: string,
@@ -62,6 +64,8 @@ export default class DepService {
     prerequisites: IPrereq[],
     installedVersion: string,
     availableVersion: string,
+    versionCB: () => void,
+    env: any = {}
   ) {
     this.serviceName = serviceName;
     this.processName = processName;
@@ -74,7 +78,9 @@ export default class DepService {
     this.installPath = path.join(appDataPath, serviceName);
     this.installedVersion = installedVersion;
     this.availableVersion = availableVersion;
-    this.userTempPath = userTempPath;    
+    this.userTempPath = userTempPath;
+    this.versionCB = versionCB;
+    this.env = env;    
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
@@ -175,79 +181,81 @@ export default class DepService {
     for await (const prereq_entry of this.prerequisites) {
       const prereqName: string = prereq_entry.name;
       const prereq: any = isMac ? prereq_entry.mac : prereq_entry.win;
-      try {            
-        const prereqExec: string = path.join(prereq.cwd, prereq.executable);
-        if (fs.existsSync(prereqExec)) {
-          console.log('DepService:init:prereq:checkVersion', prereqExec, prereq.args);
-          this.emit({ type: 'service-prereq-check-start', data: { serviceName: this.serviceName, command: prereqExec, args: prereq.args } });
-        
-          const prereqCheckProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> = spawn(
-            prereq.executable,
-            prereq.args,        
-            {
-              shell: true,
-              cwd: prereq.cwd,
-              stdio: [ 'ignore', 'pipe', 'pipe' ],
-              windowsHide: true
-            }
-          )              
-          if (prereqCheckProcess) {
-            prereqCheckProcess.on('spawn', async () => {})
-            prereqCheckProcess.stdout.on('data', (data: string) => {
-              console.log(`DepService:init:prereq:stdout: ${data}`);
-              this.emit({ 
-                type: 'service-prereq-check-stdout',
-                data: {
-                  name: this.serviceName,
-                  prereq: prereqName,
-                  version: Buffer.from(data).toString(),
-                  expectedVersion: prereq.expectedVersion,
-                  url: prereq.url,
-                }
+      if (prereq) {
+        try {            
+          const prereqExec: string = path.join(prereq.cwd, prereq.executable);
+          if (fs.existsSync(prereqExec)) {
+            console.log('DepService:init:prereq:checkVersion', prereqExec, prereq.args);
+            this.emit({ type: 'service-prereq-check-start', data: { serviceName: this.serviceName, command: prereqExec, args: prereq.args } });
+          
+            const prereqCheckProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> = spawn(
+              prereq.executable,
+              prereq.args,        
+              {
+                shell: true,
+                cwd: prereq.cwd,
+                stdio: [ 'ignore', 'pipe', 'pipe' ],
+                windowsHide: true
+              }
+            )              
+            if (prereqCheckProcess) {
+              prereqCheckProcess.on('spawn', async () => {})
+              prereqCheckProcess.stdout.on('data', (data: string) => {
+                console.log(`DepService:init:prereq:stdout: ${data}`);
+                this.emit({ 
+                  type: 'service-prereq-check-stdout',
+                  data: {
+                    name: this.serviceName,
+                    prereq: prereqName,
+                    version: Buffer.from(data).toString(),
+                    expectedVersion: prereq.expectedVersion,
+                    url: prereq.url,
+                  }
+                });
+              })            
+              prereqCheckProcess.stderr.on("data", (data: string) => {
+                console.error(`DepService:init:prereq:stderr: ${data}`);              
+                this.emit({ 
+                  type: 'service-prereq-check-stderr',
+                  data: {
+                    serviceName: this.serviceName,
+                    prereq: prereqName,
+                    text: Buffer.from(data).toString(),
+                  }
+                });
               });
-            })            
-            prereqCheckProcess.stderr.on("data", (data: string) => {
-              console.error(`DepService:init:prereq:stderr: ${data}`);              
-              this.emit({ 
-                type: 'service-prereq-check-stderr',
-                data: {
-                  serviceName: this.serviceName,
-                  prereq: prereqName,
-                  text: Buffer.from(data).toString(),
-                }
-              });
-            });
-            prereqCheckProcess.on('exit', (code: number | null) => {
-              console.log(`DepService:init:prereq:exit: ${code}`);
-              this.emit({ 
-                type: 'service-prereq-check-exit',
-                data: {
-                  serviceName: this.serviceName,
-                  prereq: prereqName,
-                  exitCode: code ? code.toString() : '0'
-                }
-              });
-            });        
+              prereqCheckProcess.on('exit', (code: number | null) => {
+                console.log(`DepService:init:prereq:exit: ${code}`);
+                this.emit({ 
+                  type: 'service-prereq-check-exit',
+                  data: {
+                    serviceName: this.serviceName,
+                    prereq: prereqName,
+                    exitCode: code ? code.toString() : '0'
+                  }
+                });
+              });        
+            } else {
+              console.error('No valid process for prerequisite', prereqExec, prereq.args);            
+            }          
           } else {
-            console.error('No valid process for prerequisite', prereqExec, prereq.args);            
-          }          
-        } else {
-          // Not installed, cannot start service emit event
-          this.emit({ 
-            type: 'service-prereq-check-notinstalled',
-            data: {
-              serviceName: this.serviceName,
-              prereq: prereqName,
-              version: '',
-              expectedVersion: prereq.expectedVersion,
-              url: prereq.url,
-            }
-          });          
-        }
-      } catch (e) {
-        console.error('DepService:Prerequisite check failed:', e);
-        return false;
-      }      
+            // Not installed, cannot start service emit event
+            this.emit({ 
+              type: 'service-prereq-check-notinstalled',
+              data: {
+                serviceName: this.serviceName,
+                prereq: prereqName,
+                version: '',
+                expectedVersion: prereq.expectedVersion,
+                url: prereq.url,
+              }
+            });          
+          }
+        } catch (e) {
+          console.error('DepService:Prerequisite check failed:', e);
+          return false;
+        }      
+      }
     }
     return true;
   }
@@ -340,6 +348,7 @@ export default class DepService {
               this.isExtracting = false;
               this.installed = true;
               console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully");
+              this.versionCB();
             }
           });          
         })        
@@ -403,7 +412,8 @@ export default class DepService {
           shell: true,
           cwd: this.execDir,
           stdio: [ 'ignore', 'pipe', 'pipe' ],
-          windowsHide: true
+          windowsHide: true,
+          env: this.env,
         }
       )              
       if (this.spawnedProcess) {

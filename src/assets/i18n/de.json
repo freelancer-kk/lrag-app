@@ -79,6 +79,7 @@
       "TECHNICAL_DETAILS": "Technische Details",
       "LLM": "Modellprozess",
       "RERANKER": "Rerankerprozess",
+      "WATCHER": "OCRprozess",
       "MODEL": "Modell ",
       "ELASTIC": "Speichern",
       "KIBANA": "Daten",

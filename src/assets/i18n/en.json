@@ -79,6 +79,7 @@
         "TECHNICAL_DETAILS": "Technical Details",
         "LLM": "Model Process",
         "RERANKER": "Reranker Process",
+        "WATCHER": "OCR Process",
         "MODEL": "Model ",
         "ELASTIC": "Store",
         "KIBANA": "Data",

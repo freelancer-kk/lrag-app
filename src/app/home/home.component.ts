@@ -23,6 +23,7 @@ import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
 import { CommonService } from '../core/services/common-service';
 import { RerankerService } from '../core/services/reranker-service';
+import { WatcherService } from '../core/services/watcher-service';
 
 @Component({
     selector: 'app-home',
@@ -66,6 +67,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     public systemService: SystemService,
     public ollamaService: OllamaService,
     public rerankerService: RerankerService,
+    public watcherService: WatcherService,
     private clipboard: Clipboard,
     private mediaService: MediaService
   ) {    

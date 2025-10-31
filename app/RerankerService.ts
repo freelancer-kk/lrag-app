@@ -16,6 +16,7 @@ export default class ReRankerService {
     default_dl: string,
     userTempPath: string,
     appDataPath: string,
+    versionCB: () => void
   ) {
 
     let execDir: string = path.join(appDataPath, 'reranker', 'dist');
@@ -58,7 +59,8 @@ export default class ReRankerService {
       },
       [],
       installedVersion,
-      availableVersion
+      availableVersion,
+      versionCB
     )
   }
 
