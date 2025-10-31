@@ -39,7 +39,10 @@ export enum EStatus {
   not_running,
   unknown,
   warning,
-  downloaded
+  downloaded,
+  not_installed,
+  upgrade,
+  installed
 }
 
 export interface IStatus {

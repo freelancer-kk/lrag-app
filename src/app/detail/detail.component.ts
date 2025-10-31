@@ -183,6 +183,6 @@ export class DetailComponent implements OnInit {
   }
   
   openModelDetails = (ev: any, model: string) => {
-    this.systemService.openExternal(this.libPrefix + model);
+    this.commonService.openExternal(this.libPrefix + model);
   }
 }

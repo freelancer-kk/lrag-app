@@ -68,7 +68,7 @@ export class AppComponent implements OnInit {
     private translate: TranslateService,
     private bridgeService: BridgeService,
     private router: Router,
-    private commonService: CommonService,
+    public commonService: CommonService,
     public systemService: SystemService,
     private ngZone: NgZone,
     private mediaService: MediaService,
@@ -191,6 +191,23 @@ export class AppComponent implements OnInit {
         // service-prereq-check-notinstalled
         
         switch(type) {
+          case 'service-prereq-check-stdout':
+            this.ngZone.run(() => {
+              if (data.serviceName === 'watcher') {
+                this.watcherService.dependencyURL = data.url;                  
+                if (data.version !== data.expectedVersion) {
+                  this.watcherService.dependencyStatus.update(EStatus.upgrade);
+                } else {
+                  this.watcherService.dependencyStatus.update(EStatus.installed);
+                }
+              } 
+            })
+          case 'service-prereq-check-stderr':
+            this.ngZone.run(() => {
+              if (data.serviceName === 'watcher') {
+                this.watcherService.status.update(EStatus.not_installed);
+              }
+            })
           case 'service-download-complete': {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {

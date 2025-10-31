@@ -281,14 +281,6 @@ export class SystemService {
     })    
   }
   
-  openExternal = (url: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      this.bridgeService.openExternal(6, url, async () => {
-        resolve();      
-      });
-    })    
-  }
-
   quitApp = (): Promise<void> => {
     return new Promise((resolve, reject) => {
       this.bridgeService.quitApp(10, async () => {

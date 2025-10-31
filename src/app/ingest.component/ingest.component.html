@@ -4,7 +4,7 @@
         {{ 'PAGES.INGEST.MAIN_TITLE' | translate }}
       </h1>
       @if (systemService.localVector) {
-        &nbsp;<a matButton="elevated" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="systemService.openExternal(systemService.ocr_pdf_link)">
+        &nbsp;<a matButton="elevated" class="small" [matTooltip]="'PAGES.INGEST.SCANNED_DOCS_TEXT' | translate" (click)="commonService.openExternal(systemService.ocr_pdf_link)">
         {{ 'PAGES.INGEST.SCANNED_DOCS' | translate }}
         </a>
       }

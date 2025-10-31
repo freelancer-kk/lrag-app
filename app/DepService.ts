@@ -179,14 +179,15 @@ export default class DepService {
     // MAC OS shell link to download homebrew and run brew install ghostscript
 
     for await (const prereq_entry of this.prerequisites) {
-      const prereqName: string = prereq_entry.name;
+      const prereqName: string = prereq_entry.name;      
       const prereq: any = isMac ? prereq_entry.mac : prereq_entry.win;
+      console.log('checkPrerequisites:', prereqName, prereq);
       if (prereq) {
         try {            
-          const prereqExec: string = path.join(prereq.cwd, prereq.executable);
-          if (fs.existsSync(prereqExec)) {
-            console.log('DepService:init:prereq:checkVersion', prereqExec, prereq.args);
-            this.emit({ type: 'service-prereq-check-start', data: { serviceName: this.serviceName, command: prereqExec, args: prereq.args } });
+          // const prereqExec: string = path.join(prereq.cwd, prereq.executable);
+          // if (fs.existsSync(prereqExec)) {
+            console.log('DepService:init:prereq:checkVersion', prereq.executable, prereq.args);
+            this.emit({ type: 'service-prereq-check-start', data: { serviceName: this.serviceName, command: prereq.executable, args: prereq.args } });
           
             const prereqCheckProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> = spawn(
               prereq.executable,
@@ -202,13 +203,14 @@ export default class DepService {
               prereqCheckProcess.on('spawn', async () => {})
               prereqCheckProcess.stdout.on('data', (data: string) => {
                 console.log(`DepService:init:prereq:stdout: ${data}`);
+                const version: string = Buffer.from(data).toString().trim();
                 this.emit({ 
                   type: 'service-prereq-check-stdout',
                   data: {
-                    name: this.serviceName,
+                    serviceName: this.serviceName,
                     prereq: prereqName,
-                    version: Buffer.from(data).toString(),
-                    expectedVersion: prereq.expectedVersion,
+                    version,
+                    expectedVersion: prereq.expected_version,
                     url: prereq.url,
                   }
                 });
@@ -221,8 +223,11 @@ export default class DepService {
                     serviceName: this.serviceName,
                     prereq: prereqName,
                     text: Buffer.from(data).toString(),
+                    expectedVersion: prereq.expected_version,
+                    url: prereq.url
                   }
                 });
+                return false;
               });
               prereqCheckProcess.on('exit', (code: number | null) => {
                 console.log(`DepService:init:prereq:exit: ${code}`);
@@ -236,8 +241,10 @@ export default class DepService {
                 });
               });        
             } else {
-              console.error('No valid process for prerequisite', prereqExec, prereq.args);            
-            }          
+              console.error('No valid process for prerequisite', prereq.executable, prereq.args);            
+              return false;
+            }
+            /*     
           } else {
             // Not installed, cannot start service emit event
             this.emit({ 
@@ -246,11 +253,12 @@ export default class DepService {
                 serviceName: this.serviceName,
                 prereq: prereqName,
                 version: '',
-                expectedVersion: prereq.expectedVersion,
+                expected_version: prereq.expected_version,
                 url: prereq.url,
               }
             });          
           }
+            */
         } catch (e) {
           console.error('DepService:Prerequisite check failed:', e);
           return false;
@@ -307,57 +315,67 @@ export default class DepService {
   }
 
   install = async (): Promise<boolean> => {
-    if (this.availableVersion != this.installedVersion) {
-      console.log('DepService:extractAndDownload:new version', this.availableVersion);
-      fs.rmSync(this.installPath, { force: true });
+    // Check dependencies
+    let passed: boolean = true;
+    if (this.prerequisites.length > 0) {
+      passed = await this.checkPrerequisites();
     }
-
-    if (!fs.existsSync(this.installPath)) {
-      let i: number = 0;
-      this.isExtracting = true;
-      let numberOfExtracts = this.urls.length;
-      for await (const dlpath of this.urls) {        
-        console.log('DepService:extractAndDownload:start:', dlpath, '=>', this.installPath);         
-        const tempZipFile: string = path.join(this.userTempPath, this.serviceName + i + '.zip');
-        i++;
-        this.emit({ 
-          type: 'service-extract-download-starting',
-          data: { 
-            serviceName: this.serviceName,
-            version: this.availableVersion,
-            from: dlpath,
-            to: tempZipFile
-          }
-        });                
-        this.download(dlpath, tempZipFile, () => {
-          fs.mkdirSync(this.installPath, { recursive: true });    
-          fs.createReadStream(tempZipFile)
-          .pipe(unzipper.Extract({ path: this.installPath }))
-          .on("close", () => {
-            this.emit({ 
-              type: 'service-extract-download-done',
-              data: { 
-                serviceName: this.serviceName,
-                version: this.availableVersion,
-                from: dlpath,
-                to: this.installPath
-              }
-            });                
-            numberOfExtracts--;
-            if (numberOfExtracts === 0) {
-              this.isExtracting = false;
-              this.installed = true;
-              console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully");
-              this.versionCB();
-            }
-          });          
-        })        
+    if (passed) {
+      if (this.availableVersion != this.installedVersion) {
+        console.log('DepService:extractAndDownload:new version', this.availableVersion);
+        fs.rmSync(this.installPath, { force: true });
       }
+
+      if (!fs.existsSync(this.installPath)) {
+        let i: number = 0;
+        this.isExtracting = true;
+        let numberOfExtracts = this.urls.length;
+        for await (const dlpath of this.urls) {        
+          console.log('DepService:extractAndDownload:start:', dlpath, '=>', this.installPath);         
+          const tempZipFile: string = path.join(this.userTempPath, this.serviceName + i + '.zip');
+          i++;
+          this.emit({ 
+            type: 'service-extract-download-starting',
+            data: { 
+              serviceName: this.serviceName,
+              version: this.availableVersion,
+              from: dlpath,
+              to: tempZipFile
+            }
+          });                
+          this.download(dlpath, tempZipFile, () => {
+            fs.mkdirSync(this.installPath, { recursive: true });    
+            fs.createReadStream(tempZipFile)
+            .pipe(unzipper.Extract({ path: this.installPath }))
+            .on("close", () => {
+              this.emit({ 
+                type: 'service-extract-download-done',
+                data: { 
+                  serviceName: this.serviceName,
+                  version: this.availableVersion,
+                  from: dlpath,
+                  to: this.installPath
+                }
+              });                
+              numberOfExtracts--;
+              if (numberOfExtracts === 0) {
+                this.isExtracting = false;
+                this.installed = true;
+                console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully");
+                this.versionCB();
+              }
+            });          
+          })        
+        }
+      } else {
+        console.log('DepService:extractAndDownload:already downloaded and extracted!');
+        this.installed = true;
+      }
+      return true;    
     } else {
-      console.log('DepService:extractAndDownload:already downloaded and extracted!');
-      this.installed = true;
+      console.log('DepService:failed:prerequisites');
+      return false;
     }
-    return true;    
   }
 
   checkReady = async (): Promise<boolean> => {

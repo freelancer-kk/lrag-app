@@ -70,7 +70,15 @@ export class CommonService {
         resolve(data);
       });
     });
-  } 
+  }
+
+  openExternal = (url: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      this.bridgeService.openExternal(6, url, async () => {
+        resolve();      
+      });
+    })    
+  }  
 }
 
 const EStatusMap: { [key in EStatus]: string } = {
@@ -107,7 +115,10 @@ const EStatusMap: { [key in EStatus]: string } = {
   [EStatus.not_running]: 'Not Running',
   [EStatus.unknown]: 'Unknown',
   [EStatus.warning]: 'Warning',
-  [EStatus.downloaded]: 'Downloaded'
+  [EStatus.downloaded]: 'Downloaded',
+  [EStatus.not_installed]: 'Not installed',
+  [EStatus.upgrade]: 'Upgrade',
+  [EStatus.installed]: 'Installed'
 };
 
 export class LStatus {
@@ -246,6 +257,6 @@ export class LStatus {
         return 'question_mark';
       }    
     }
-  }
+  }  
 }
 

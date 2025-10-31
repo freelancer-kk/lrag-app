@@ -4,7 +4,7 @@
   <span class="small">{{ systemService.status }}</span>
   @if (systemService.showGetOllama) {
     &nbsp;
-    <a matButton="outlined" class="small" [matTooltip]="'APP.GET_OLLAMA_TIP' | translate" (click)="systemService.openExternal(systemService.ollama_get_link)">
+    <a matButton="outlined" class="small" [matTooltip]="'APP.GET_OLLAMA_TIP' | translate" (click)="commonService.openExternal(systemService.ollama_get_link)">
       {{ 'APP.GET_OLLAMA' | translate }}
     </a>
   }  
