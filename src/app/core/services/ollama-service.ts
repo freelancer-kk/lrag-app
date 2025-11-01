@@ -82,11 +82,12 @@ export class OllamaService {
   }
 
   commandOllama = (command: string, options: any = {}): Promise<any> => {
-    return this.commonService.commandService(this.serviceName, command, options);
+    return this.commonService.commandService(93, this.serviceName, command, options);
   }
 
   start = (): Promise<any> => {
     return this.commonService.commandService(
+      93,
       this.serviceName,
       'start',
       {
@@ -135,7 +136,7 @@ export class OllamaService {
       clearInterval(this.serviceTimer);
     }
     this.serviceTimer = setInterval(async () => {
-      const { isReady } = await this.commonService.commandService(this.serviceName, 'isReady');
+      const { isReady } = await this.commonService.commandService(93, this.serviceName, 'isReady');
       if (!isReady) {
         this.status.update(EStatus.not_running);            
       } else {

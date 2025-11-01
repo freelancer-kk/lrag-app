@@ -51,6 +51,8 @@ export default class DepService {
   spawnedProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> | undefined;
   versionCB: () => void;  
   stdoutCB: (text: string) => void;
+  passedPrereqs: number = 0;
+  failedPrereqs: number = 0;
 
   constructor(
     serviceName: string,
@@ -158,7 +160,7 @@ export default class DepService {
     // console.log('findByProcessName:', this.executable);
     const processes: ProcessInfo[] = await find('name', this.executable);
     if (processes.length === 0) {
-      console.error('Cannot find service process:', processes);
+      console.error('Cannot find service process:', this.executable, processes);
     } else {
       // console.log('findByProcessName:', this.executable, processes, processes[0].pid);
       this.servicePID = processes.map(v => v.pid);
@@ -177,98 +179,122 @@ export default class DepService {
     });
   }
 
-  checkPrerequisites = async (): Promise<boolean> => {
+  checkPrerequisites = async (): Promise<void> => {
     // Check prerequisite e.g ghostscript is installed if not shell link to download for windows and run installer
     // MAC OS shell link to download homebrew and run brew install ghostscript
-
-    for await (const prereq_entry of this.prerequisites) {
-      const prereqName: string = prereq_entry.name;      
-      const prereq: any = isMac ? prereq_entry.mac : prereq_entry.win;
-      console.log('checkPrerequisites:', prereqName, prereq);
-      if (prereq) {
-        try {            
-          // const prereqExec: string = path.join(prereq.cwd, prereq.executable);
-          // if (fs.existsSync(prereqExec)) {
-            console.log('DepService:init:prereq:checkVersion', prereq.executable, prereq.args);
-            this.emit({ type: 'service-prereq-check-start', data: { serviceName: this.serviceName, command: prereq.executable, args: prereq.args } });
-          
-            const prereqCheckProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> = spawn(
-              prereq.executable,
-              prereq.args,        
-              {
-                shell: true,
-                cwd: prereq.cwd,
-                stdio: [ 'ignore', 'pipe', 'pipe' ],
-                windowsHide: true
+    this.passedPrereqs = 0;
+    this.failedPrereqs = 0;
+    return new Promise(async (resolve, reject) => {
+      for await (const prereq_entry of this.prerequisites) {
+        const prereqName: string = prereq_entry.name;      
+        const prereq: any = isMac ? prereq_entry.mac : prereq_entry.win;
+        console.log('checkPrerequisites:', prereqName, prereq);
+        if (prereq) {
+          try {            
+            // const prereqExec: string = path.join(prereq.cwd, prereq.executable);
+            // if (fs.existsSync(prereqExec)) {
+              console.log('DepService:init:prereq:checkVersion', prereq.executable, prereq.args);
+              this.emit({ type: 'service-prereq-check-start', data: { serviceName: this.serviceName, command: prereq.executable, args: prereq.args } });
+            
+              const prereqCheckProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> = spawn(
+                prereq.executable,
+                prereq.args,        
+                {
+                  shell: true,
+                  cwd: prereq.cwd,
+                  stdio: [ 'ignore', 'pipe', 'pipe' ],
+                  windowsHide: true
+                }
+              )              
+              if (prereqCheckProcess) {
+                prereqCheckProcess.on('spawn', async () => {})
+                prereqCheckProcess.stdout.on('data', (data: string) => {
+                  console.log(`DepService:init:prereq:stdout: ${data}`);
+                  const version: string = Buffer.from(data).toString().trim();
+                  this.emit({ 
+                    type: 'service-prereq-check-stdout',
+                    data: {
+                      serviceName: this.serviceName,
+                      prereq: prereqName,
+                      version,
+                      expectedVersion: prereq.expected_version,
+                      url: prereq.url,
+                    }
+                  });
+                  if (version === prereq.expected_version) {
+                    console.log('DepService:pass++')
+                    this.passedPrereqs++; 
+                  } else {
+                    console.log('DepService:fail++')
+                    this.failedPrereqs++;
+                  }
+                  if ((this.passedPrereqs+this.failedPrereqs) === this.prerequisites.length) {
+                    resolve();
+                  }
+                })            
+                prereqCheckProcess.stderr.on("data", (data: string) => {
+                  console.error(`DepService:init:prereq:stderr: ${data}`);              
+                  this.emit({ 
+                    type: 'service-prereq-check-stderr',
+                    data: {
+                      serviceName: this.serviceName,
+                      prereq: prereqName,
+                      text: Buffer.from(data).toString(),
+                      expectedVersion: prereq.expected_version,
+                      url: prereq.url
+                    }
+                  });
+                  this.failedPrereqs++;
+                  console.log('DepService:fail++')
+                  if ((this.passedPrereqs+this.failedPrereqs) === this.prerequisites.length) {
+                    resolve();
+                  }
+                });
+                prereqCheckProcess.on('exit', (code: number | null) => {
+                  console.log(`DepService:init:prereq:exit: ${code}`);
+                  this.emit({ 
+                    type: 'service-prereq-check-exit',
+                    data: {
+                      serviceName: this.serviceName,
+                      prereq: prereqName,
+                      exitCode: code ? code.toString() : '0'
+                    }
+                  });
+                });        
+              } else {
+                console.error('No valid process for prerequisite', prereq.executable, prereq.args);  
+                this.failedPrereqs++;
+                console.log('DepService:fail++')
+                if ((this.passedPrereqs+this.failedPrereqs) === this.prerequisites.length) {
+                  resolve();
+                }
               }
-            )              
-            if (prereqCheckProcess) {
-              prereqCheckProcess.on('spawn', async () => {})
-              prereqCheckProcess.stdout.on('data', (data: string) => {
-                console.log(`DepService:init:prereq:stdout: ${data}`);
-                const version: string = Buffer.from(data).toString().trim();
-                this.emit({ 
-                  type: 'service-prereq-check-stdout',
-                  data: {
-                    serviceName: this.serviceName,
-                    prereq: prereqName,
-                    version,
-                    expectedVersion: prereq.expected_version,
-                    url: prereq.url,
-                  }
-                });
-              })            
-              prereqCheckProcess.stderr.on("data", (data: string) => {
-                console.error(`DepService:init:prereq:stderr: ${data}`);              
-                this.emit({ 
-                  type: 'service-prereq-check-stderr',
-                  data: {
-                    serviceName: this.serviceName,
-                    prereq: prereqName,
-                    text: Buffer.from(data).toString(),
-                    expectedVersion: prereq.expected_version,
-                    url: prereq.url
-                  }
-                });
-                return false;
-              });
-              prereqCheckProcess.on('exit', (code: number | null) => {
-                console.log(`DepService:init:prereq:exit: ${code}`);
-                this.emit({ 
-                  type: 'service-prereq-check-exit',
-                  data: {
-                    serviceName: this.serviceName,
-                    prereq: prereqName,
-                    exitCode: code ? code.toString() : '0'
-                  }
-                });
-              });        
+              /*     
             } else {
-              console.error('No valid process for prerequisite', prereq.executable, prereq.args);            
-              return false;
+              // Not installed, cannot start service emit event
+              this.emit({ 
+                type: 'service-prereq-check-notinstalled',
+                data: {
+                  serviceName: this.serviceName,
+                  prereq: prereqName,
+                  version: '',
+                  expected_version: prereq.expected_version,
+                  url: prereq.url,
+                }
+              });          
             }
-            /*     
-          } else {
-            // Not installed, cannot start service emit event
-            this.emit({ 
-              type: 'service-prereq-check-notinstalled',
-              data: {
-                serviceName: this.serviceName,
-                prereq: prereqName,
-                version: '',
-                expected_version: prereq.expected_version,
-                url: prereq.url,
-              }
-            });          
+              */
+          } catch (e) {
+            console.error('DepService:Prerequisite check failed:', e);
+            this.failedPrereqs++;
+            console.log('DepService:fail++')
+            if ((this.passedPrereqs+this.failedPrereqs) === this.prerequisites.length) {
+              resolve();
+            }
           }
-            */
-        } catch (e) {
-          console.error('DepService:Prerequisite check failed:', e);
-          return false;
-        }      
+        }
       }
-    }
-    return true;
+    })
   }
 
   init = (): boolean => {
@@ -318,117 +344,121 @@ export default class DepService {
   }
 
   install = async (): Promise<boolean> => {
-    // Check dependencies
-    let passed: boolean = true;
-    if (this.prerequisites.length > 0) {
-      passed = await this.checkPrerequisites();
+    if (this.availableVersion != this.installedVersion) {
+      console.log('DepService:extractAndDownload:new version', this.availableVersion);
+      fs.rmSync(this.installPath, { force: true });
     }
-    if (passed) {
-      if (this.availableVersion != this.installedVersion) {
-        console.log('DepService:extractAndDownload:new version', this.availableVersion);
-        fs.rmSync(this.installPath, { force: true });
-      }
 
-      if (!fs.existsSync(this.installPath)) {
-        let i: number = 0;
-        this.isExtracting = true;
-        let numberOfExtracts = this.urls.length;
-        for await (const dlpath of this.urls) {        
-          console.log('DepService:extractAndDownload:start:', dlpath, '=>', this.installPath);         
-          const tempZipFile: string = path.join(this.userTempPath, this.serviceName + i + '.zip');
-          i++;
-          this.emit({ 
-            type: 'service-extract-download-starting',
-            data: { 
-              serviceName: this.serviceName,
-              version: this.availableVersion,
-              from: dlpath,
-              to: tempZipFile
+    if (!fs.existsSync(this.installPath)) {
+      let i: number = 0;
+      this.isExtracting = true;
+      let numberOfExtracts = this.urls.length;
+      for await (const dlpath of this.urls) {        
+        console.log('DepService:extractAndDownload:start:', dlpath, '=>', this.installPath);         
+        const tempZipFile: string = path.join(this.userTempPath, this.serviceName + i + '.zip');
+        i++;
+        this.emit({ 
+          type: 'service-extract-download-starting',
+          data: { 
+            serviceName: this.serviceName,
+            version: this.availableVersion,
+            from: dlpath,
+            to: tempZipFile
+          }
+        });                
+        this.download(dlpath, tempZipFile, () => {
+          fs.mkdirSync(this.installPath, { recursive: true });
+          const zip = new AdmZip(tempZipFile);
+          zip.extractAllToAsync(this.installPath, true, true);
+          // fs.createReadStream(tempZipFile)
+          // .pipe(unzipper.Extract({ path: this.installPath }))
+          // .on("close", () => {
+            // If Mac need to chmod +x the executable
+            // Terminal prevented from modify apps, need to set some kind of option
+            /*
+            if (isMac) {
+              const command: string = path.join(this.execDir, this.executable);
+              console.log('DepService:chmod +x', command);
+              const chmodProcess = spawn(
+                'chmod',
+                [
+                  '+x',
+                  '"' + command + '"'
+                ],        
+                {
+                  shell: true,
+                  cwd: '.',
+                  stdio: [ 'ignore', 'pipe', 'pipe' ],
+                  windowsHide: true,
+                }
+              )
+              if (chmodProcess) {
+                chmodProcess.on('spawn', async () => {
+                  console.log('DepService:chmod:spawned')          
+                })
+                chmodProcess.stdout.on('data', (data: string) => {
+                  console.log(`DepService:chmod:stdout: ${data}`);
+                  
+                }) 
+                chmodProcess.stderr.on("data", (data: string) => {
+                  console.error(`DepService:chmod:stderr: ${data}`);                    
+                });
+              } else {
+                console.log('DepService:chmod process not created correctly!')
+              }
             }
-          });                
-          this.download(dlpath, tempZipFile, () => {
-            fs.mkdirSync(this.installPath, { recursive: true });
-            const zip = new AdmZip(tempZipFile);
-            zip.extractAllToAsync(this.installPath, true, true);
-            // fs.createReadStream(tempZipFile)
-            // .pipe(unzipper.Extract({ path: this.installPath }))
-            // .on("close", () => {
-              // If Mac need to chmod +x the executable
-              // Terminal prevented from modify apps, need to set some kind of option
-              /*
-              if (isMac) {
-                const command: string = path.join(this.execDir, this.executable);
-                console.log('DepService:chmod +x', command);
-                const chmodProcess = spawn(
-                  'chmod',
-                  [
-                    '+x',
-                    '"' + command + '"'
-                  ],        
-                  {
-                    shell: true,
-                    cwd: '.',
-                    stdio: [ 'ignore', 'pipe', 'pipe' ],
-                    windowsHide: true,
-                  }
-                )
-                if (chmodProcess) {
-                  chmodProcess.on('spawn', async () => {
-                    console.log('DepService:chmod:spawned')          
-                  })
-                  chmodProcess.stdout.on('data', (data: string) => {
-                    console.log(`DepService:chmod:stdout: ${data}`);
-                    
-                  }) 
-                  chmodProcess.stderr.on("data", (data: string) => {
-                    console.error(`DepService:chmod:stderr: ${data}`);                    
-                  });
-                } else {
-                  console.log('DepService:chmod process not created correctly!')
-                }
+            */
+            this.emit({ 
+              type: 'service-extract-download-done',
+              data: { 
+                serviceName: this.serviceName,
+                version: this.availableVersion,
+                from: dlpath,
+                to: this.installPath
               }
-              */
-              this.emit({ 
-                type: 'service-extract-download-done',
-                data: { 
-                  serviceName: this.serviceName,
-                  version: this.availableVersion,
-                  from: dlpath,
-                  to: this.installPath
-                }
-              });                
-              numberOfExtracts--;
-              if (numberOfExtracts === 0) {
-                this.isExtracting = false;
-                this.installed = true;
-                console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully");
-                this.versionCB();
-              }
-            // });          
-          })        
-        }
-      } else {
-        console.log('DepService:extractAndDownload:already downloaded and extracted!');
-        this.installed = true;
+            });                
+            numberOfExtracts--;
+            if (numberOfExtracts === 0) {
+              this.isExtracting = false;
+              this.installed = true;
+              console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully");
+              this.versionCB();
+            }
+          // });          
+        })        
       }
-      return true;    
     } else {
-      console.log('DepService:failed:prerequisites');
-      return false;
+      console.log('DepService:extractAndDownload:already downloaded and extracted!');
+      this.installed = true;
     }
+    return true;
   }
 
   checkReady = async (): Promise<boolean> => {
-    this.isReady = await this.readyCheckFunc();            
-    this.emit({ 
-      type: 'service-ready-state',
-      data: { 
-        serviceName: this.serviceName,
-        version: this.availableVersion,
-        ready: this.isReady,
-      }
-    });
-    return this.isReady;
+    try {
+      this.isReady = await this.readyCheckFunc();
+      this.emit({ 
+        type: 'service-ready-state',
+        data: { 
+          serviceName: this.serviceName,
+          version: this.availableVersion,
+          ready: this.isReady,
+        }
+      });
+      return this.isReady;
+    } catch (e) {
+      this.emit({ 
+        type: 'service-ready-state-error',
+        data: { 
+          serviceName: this.serviceName,
+          version: this.availableVersion,
+          ready: this.isReady,
+          error: JSON.stringify(e)
+        }
+      });
+      this.isReady = false;
+      return false;
+    }
   }
 
   pollForServiceReady = () => {
@@ -448,79 +478,87 @@ export default class DepService {
     }, 5000);    
   }
 
-  start = () => {
-    try {            
-      const command: string = path.join(this.execDir, this.executable);
-      console.log('DepService:start:execFile:', command, this.args);
-
-      this.emit({ 
-        type: 'service-start',
-        data: { 
-          serviceName: this.serviceName,
-          version: this.availableVersion,
-          command,
-          args: this.args
-        }
-      });
-      
-      this.spawnedProcess = spawn(
-        isMac ? '\"' + command + '\"' : this.executable,
-        this.args,        
-        {
-          shell: true,
-          cwd: isMac ? this.installPath : this.execDir,
-          stdio: [ 'ignore', 'pipe', 'pipe' ],
-          windowsHide: true,
-          env: this.env,
-        }
-      )              
-      if (this.spawnedProcess) {
-        this.spawnedProcess.on('spawn', async () => {
-          this.pollForServiceReady();          
-        })
-
-        this.spawnedProcess.stdout.on('data', (data: string) => {
-          console.log(`DepService:start:stdout: ${data}`);
-          this.stdoutCB(Buffer.from(data).toString());
-          this.emit({ 
-            type: 'service-running-stdout',
-            data: { 
-              serviceName: this.serviceName,
-              command,
-              version: this.availableVersion,
-              text: Buffer.from(data).toString(),
-            }
-          });
-        })
-        
-        this.spawnedProcess.stderr.on("data", (data: string) => {
-          console.error(`DepService:start:stderr: ${data}`);          
-          this.emit({ 
-            type: 'service-running-stderr',
-            data: { 
-              serviceName: this.serviceName,
-              command,
-              version: this.availableVersion,
-              text: Buffer.from(data).toString(),
-            }
-          });
-        });
-        this.spawnedProcess.on('exit', (code: number | null) => {
-          console.error(`DepService:start:exit: ${code}`);          
-          this.emit({ 
-            type: 'service-running-exit',
-            data: {
-              serviceName: this.serviceName,
-              command,
-              version: this.availableVersion,
-              exitCode: code ? code.toString() : '0'
-            }
-          });
-        });        
-      } else {
-        console.error('DepService:start:no valid process for', this.serviceName);
+  start = async () => {
+    try {
+      if (this.prerequisites.length > 0) {
+        await this.checkPrerequisites();
       }
-      return { status: 'starting' };
+      if (this.prerequisites.length ===0 || this.passedPrereqs === this.prerequisites.length) {
+        const command: string = path.join(this.execDir, this.executable);
+        console.log('DepService:start:execFile:', command, this.args);
+
+        this.emit({ 
+          type: 'service-start',
+          data: { 
+            serviceName: this.serviceName,
+            version: this.availableVersion,
+            command,
+            args: this.args
+          }
+        });
+        
+        this.spawnedProcess = spawn(
+          isMac ? '\"' + command + '\"' : this.executable,
+          this.args,        
+          {
+            shell: true,
+            cwd: isMac ? this.installPath : this.execDir,
+            stdio: [ 'ignore', 'pipe', 'pipe' ],
+            windowsHide: true,
+            env: this.env,
+          }
+        )              
+        if (this.spawnedProcess) {
+          this.spawnedProcess.on('spawn', async () => {
+            // this.pollForServiceReady();          
+          })
+
+          this.spawnedProcess.stdout.on('data', (data: string) => {
+            console.log(`DepService:start:stdout: ${data}`);
+            this.stdoutCB(Buffer.from(data).toString());
+            this.emit({ 
+              type: 'service-running-stdout',
+              data: { 
+                serviceName: this.serviceName,
+                command,
+                version: this.availableVersion,
+                text: Buffer.from(data).toString(),
+              }
+            });
+          })
+          
+          this.spawnedProcess.stderr.on("data", (data: string) => {
+            console.error(`DepService:start:stderr: ${data}`);          
+            this.emit({ 
+              type: 'service-running-stderr',
+              data: { 
+                serviceName: this.serviceName,
+                command,
+                version: this.availableVersion,
+                text: Buffer.from(data).toString(),
+              }
+            });
+          });
+          this.spawnedProcess.on('exit', (code: number | null) => {
+            console.error(`DepService:start:exit: ${code}`);          
+            this.emit({ 
+              type: 'service-running-exit',
+              data: {
+                serviceName: this.serviceName,
+                command,
+                version: this.availableVersion,
+                exitCode: code ? code.toString() : '0'
+              }
+            });
+          });        
+        } else {
+          console.error('DepService:start:no valid process for', this.serviceName);
+        }
+        return { status: 'starting' };
+      } else {
+        console.error('DepService:start:prerequisites check failed!');
+        return { status: 'error', error: 'prerequisites failed!' };  
+      }
     } catch (e) {
       console.error('DepService:start:error:', e);
       return { status: 'error', error: e };

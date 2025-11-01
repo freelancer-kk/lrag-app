@@ -107,6 +107,7 @@ export default class WatcherService {
       versionCB,
       (text: string) => {
         if (text.startsWith('USE_POLLING: True')) {
+          console.log('Watcher:service:isready!')
           this.isServiceReady = true;
         }
       },

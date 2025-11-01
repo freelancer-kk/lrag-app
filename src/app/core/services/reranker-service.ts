@@ -23,6 +23,7 @@ export class RerankerService {
 
   start = (): Promise<any> => {
     return this.commonService.commandService(
+      91,
       this.serviceName,
       'start',
       {}
@@ -33,6 +34,7 @@ export class RerankerService {
     let cnt: number = 0;
     const tt = setInterval(async () => {
       const { installed } = await this.commonService.commandService(
+        91,
         this.serviceName,
         'installed',
         {}
@@ -70,6 +72,7 @@ export class RerankerService {
 
   rerank = (query: string, docs: Document[]): Promise<any> => {
     return this.commonService.commandService(
+      91,
       this.serviceName,
       'rerank', 
       { 
@@ -80,7 +83,7 @@ export class RerankerService {
   }
 
   isReady = async (): Promise<boolean> => {
-    const { isReady } = await this.commonService.commandService(this.serviceName, 'isReady');
+    const { isReady } = await this.commonService.commandService(91, this.serviceName, 'isReady');
     if (!isReady) {
       this.status.update(EStatus.not_running);            
     } else {

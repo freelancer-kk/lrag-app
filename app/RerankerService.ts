@@ -46,7 +46,6 @@ export default class ReRankerService {
       userTempPath,
       urls,
       async (): Promise<boolean> => {
-
         try {
           const text: string = await (await fetch(
             'http://localhost:2021/',
@@ -57,7 +56,7 @@ export default class ReRankerService {
           console.log('rerank:service:ready', text);
           return true;
         } catch (e) {
-          console.error('rerank:not:ready', e);
+          console.error('rerank:not:ready');
         }
         return false
       },

@@ -24,6 +24,7 @@ export class WatcherService {
 
   start = (): Promise<any> => {
     return this.commonService.commandService(
+      92,
       this.serviceName,
       'start',
       {}
@@ -34,6 +35,7 @@ export class WatcherService {
     let cnt: number = 0;
     const tt = setInterval(async () => {
       const { installed } = await this.commonService.commandService(
+        92,
         this.serviceName,
         'installed',
         {}
@@ -70,7 +72,7 @@ export class WatcherService {
   }
 
   isReady = async (): Promise<boolean> => {
-    const { isReady } = await this.commonService.commandService(this.serviceName, 'isReady');
+    const { isReady } = await this.commonService.commandService(92, this.serviceName, 'isReady');
     if (!isReady) {
       this.status.update(EStatus.not_running);            
     } else {
