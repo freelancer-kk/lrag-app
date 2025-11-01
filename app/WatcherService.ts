@@ -81,8 +81,10 @@ export default class WatcherService {
          mac: {
             url: homebrew_mac_download_link,
             cwd: '.',
-            args: ['--version'],
-            executable: 'brew',
+            args: [
+              '--version'
+            ],
+            executable: '/opt/homebrew/bin/brew',
             expected_version: homebrew_mac_available_version
          }
         },{
@@ -98,7 +100,7 @@ export default class WatcherService {
             url: ghostscript_mac_download_link,
             cwd: '.',
             args: ['--version'],
-            executable: 'gs',
+            executable: '/opt/homebrew/bin/gs',
             expected_version: ghostscript_available_version
          }
       }],
@@ -106,7 +108,7 @@ export default class WatcherService {
       availableVersion,
       versionCB,
       (text: string) => {
-        if (text.startsWith('USE_POLLING: True')) {
+        if (text.startsWith('Polling ')) {
           console.log('Watcher:service:isready!')
           this.isServiceReady = true;
         }
