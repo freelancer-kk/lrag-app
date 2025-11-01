@@ -25,6 +25,7 @@
     "@langchain/community": "0.3.56",
     "@langchain/core": "0.3.77",
     "@langchain/ollama": "0.2.4",
+    "adm-zip": "^0.5.16",
     "cluster-key-slot": "^1.1.2",
     "csv-parse": "6.1.0",
     "d3-array": "3.2.4",
@@ -69,6 +70,7 @@
     "zone.js": "^0.15.1"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
     "@types/csv-parse": "^1.1.12",
     "@types/pdf-parse": "^1.1.5",
     "@types/ssh2-sftp-client": "^9.0.5",

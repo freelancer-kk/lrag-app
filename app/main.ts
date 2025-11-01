@@ -92,7 +92,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
           toolsDLS.HOMEBREW_MAC_VERSION,
           toolsDLS.HOMEBREW_MAC_DOWNLOAD_LINK,
           toolsDLS.GHOSTSCRIPT_MAC_DOWNLOAD_LINK,
-          docPath ? docPath : path.join(userDataPath, 'docs'),
+          path.join(userDataPath, 'watcher'),
           userTempPath,
           appDataPath,
           async () => {
@@ -150,6 +150,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
           reranker_win_dl,
           userTempPath,
           appDataPath,
+          path.join(userDataPath, 'reranker'),          
           async () => {
             await dockerEnv.kvFile?.set('RERANKER_VERSION', toolsDLS.RERANKER_VERSION);
             await dockerEnv.kvFile?.writeFile();

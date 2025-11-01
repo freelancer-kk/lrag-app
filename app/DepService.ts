@@ -1,11 +1,11 @@
-import { ipcMain } from 'electron';
 import { isMac } from './SystemInfo';
 import { ChildProcessByStdio, spawn } from 'child_process';
 import * as path from 'path';
 import Stream from 'stream';
 import * as fs from 'fs';
 import find, { ProcessInfo } from "find-process";
-import unzipper from 'unzipper';
+// import unzipper from 'unzipper';
+import AdmZip from 'adm-zip';
 import kill from 'tree-kill';
 
 export interface IPrereq {
@@ -50,6 +50,7 @@ export default class DepService {
   env: any = {};
   spawnedProcess: ChildProcessByStdio<null, Stream.Readable, Stream.Readable> | undefined;
   versionCB: () => void;  
+  stdoutCB: (text: string) => void;
 
   constructor(
     serviceName: string,
@@ -65,6 +66,7 @@ export default class DepService {
     installedVersion: string,
     availableVersion: string,
     versionCB: () => void,
+    stdoutCB: (text: string) => void,
     env: any = {}
   ) {
     this.serviceName = serviceName;
@@ -80,6 +82,7 @@ export default class DepService {
     this.availableVersion = availableVersion;
     this.userTempPath = userTempPath;
     this.versionCB = versionCB;
+    this.stdoutCB = stdoutCB;
     this.env = env;    
   }
 
@@ -344,10 +347,47 @@ export default class DepService {
             }
           });                
           this.download(dlpath, tempZipFile, () => {
-            fs.mkdirSync(this.installPath, { recursive: true });    
-            fs.createReadStream(tempZipFile)
-            .pipe(unzipper.Extract({ path: this.installPath }))
-            .on("close", () => {
+            fs.mkdirSync(this.installPath, { recursive: true });
+            const zip = new AdmZip(tempZipFile);
+            zip.extractAllToAsync(this.installPath, true, true);
+            // fs.createReadStream(tempZipFile)
+            // .pipe(unzipper.Extract({ path: this.installPath }))
+            // .on("close", () => {
+              // If Mac need to chmod +x the executable
+              // Terminal prevented from modify apps, need to set some kind of option
+              /*
+              if (isMac) {
+                const command: string = path.join(this.execDir, this.executable);
+                console.log('DepService:chmod +x', command);
+                const chmodProcess = spawn(
+                  'chmod',
+                  [
+                    '+x',
+                    '"' + command + '"'
+                  ],        
+                  {
+                    shell: true,
+                    cwd: '.',
+                    stdio: [ 'ignore', 'pipe', 'pipe' ],
+                    windowsHide: true,
+                  }
+                )
+                if (chmodProcess) {
+                  chmodProcess.on('spawn', async () => {
+                    console.log('DepService:chmod:spawned')          
+                  })
+                  chmodProcess.stdout.on('data', (data: string) => {
+                    console.log(`DepService:chmod:stdout: ${data}`);
+                    
+                  }) 
+                  chmodProcess.stderr.on("data", (data: string) => {
+                    console.error(`DepService:chmod:stderr: ${data}`);                    
+                  });
+                } else {
+                  console.log('DepService:chmod process not created correctly!')
+                }
+              }
+              */
               this.emit({ 
                 type: 'service-extract-download-done',
                 data: { 
@@ -364,7 +404,7 @@ export default class DepService {
                 console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully");
                 this.versionCB();
               }
-            });          
+            // });          
           })        
         }
       } else {
@@ -410,7 +450,7 @@ export default class DepService {
 
   start = () => {
     try {            
-      const command: string = path.join(this.installPath, this.executable);
+      const command: string = path.join(this.execDir, this.executable);
       console.log('DepService:start:execFile:', command, this.args);
 
       this.emit({ 
@@ -424,11 +464,11 @@ export default class DepService {
       });
       
       this.spawnedProcess = spawn(
-        this.executable,
+        isMac ? '\"' + command + '\"' : this.executable,
         this.args,        
         {
           shell: true,
-          cwd: this.execDir,
+          cwd: isMac ? this.installPath : this.execDir,
           stdio: [ 'ignore', 'pipe', 'pipe' ],
           windowsHide: true,
           env: this.env,
@@ -441,10 +481,12 @@ export default class DepService {
 
         this.spawnedProcess.stdout.on('data', (data: string) => {
           console.log(`DepService:start:stdout: ${data}`);
+          this.stdoutCB(Buffer.from(data).toString());
           this.emit({ 
             type: 'service-running-stdout',
             data: { 
               serviceName: this.serviceName,
+              command,
               version: this.availableVersion,
               text: Buffer.from(data).toString(),
             }
@@ -457,6 +499,7 @@ export default class DepService {
             type: 'service-running-stderr',
             data: { 
               serviceName: this.serviceName,
+              command,
               version: this.availableVersion,
               text: Buffer.from(data).toString(),
             }
@@ -468,6 +511,7 @@ export default class DepService {
             type: 'service-running-exit',
             data: {
               serviceName: this.serviceName,
+              command,
               version: this.availableVersion,
               exitCode: code ? code.toString() : '0'
             }

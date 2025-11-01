@@ -9,6 +9,7 @@ export default class WatcherService {
   serviceInstance: DepService;
   webContents: Electron.WebContents | undefined;
   rootDir: string;
+  isServiceReady: boolean = false;
   
   constructor(
     installedVersion: string,
@@ -31,12 +32,13 @@ export default class WatcherService {
     let args: string[] = [];
     let urls: string[] = [];
     
-    const dataPath = path.join(dataRootPath, 'watcher');
-    this.rootDir = dataPath;
-    const inputDir = path.join(dataPath, 'input');
-    const outputDir = path.join(dataPath, 'output');
-    const processedDir = path.join(dataPath, 'processed');
-    const errorDir = path.join(dataPath, 'error');
+    this.rootDir = dataRootPath;
+    fs.mkdirSync(this.rootDir, { recursive: true });
+              
+    const inputDir = path.join(dataRootPath, 'input');
+    const outputDir = path.join(dataRootPath, 'output');
+    const processedDir = path.join(dataRootPath, 'processed');
+    const errorDir = path.join(dataRootPath, 'error');
 
     fs.mkdirSync(inputDir, { recursive: true });
     fs.mkdirSync(outputDir, { recursive: true });
@@ -47,7 +49,19 @@ export default class WatcherService {
       urls = [default_dl];
     } else {
       urls = [darwin_dl];
-      executable = 'watcher.app';    
+      execDir = path.join(appDataPath,'watcher','dist','watcher.app','Contents','MacOS');            
+      executable = 'watcher';  
+      args = [
+        '--error-dir=\"' + errorDir + '\"',
+        '--input-dir=\"' + inputDir + '\"',
+        '--output-dir=\"' + outputDir + '\"',
+        '--archive-dir=\"' + errorDir + '\"',
+        '--on-success-delete',
+        '--deskew',
+        '--poll-new-file-seconds=5',
+        '--use-polling',
+        '--retries-loading-file=50'
+      ]
     }
 
     this.serviceInstance = new DepService(
@@ -60,8 +74,7 @@ export default class WatcherService {
       userTempPath,
       urls,
       async (): Promise<boolean> => {
-        // TODO: Think of an appropriate health check for the python ocr service        
-        return Promise.resolve(true);
+        return Promise.resolve(this.isServiceReady);
       },
       [{
          name: 'homebrew',
@@ -92,6 +105,11 @@ export default class WatcherService {
       installedVersion,
       availableVersion,
       versionCB,
+      (text: string) => {
+        if (text.startsWith('USE_POLLING: True')) {
+          this.isServiceReady = true;
+        }
+      },
       {
         'OCR_INPUT_DIRECTORY': inputDir,
         'OCR_OUTPUT_DIRECTORY': outputDir,

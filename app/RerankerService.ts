@@ -4,6 +4,7 @@ import * as path from 'path';
 import { Document } from "@langchain/core/documents";
 import { isMac, isWindows } from './SystemInfo';
 import DepService from './DepService';
+import * as fs from 'fs';
 
 export default class ReRankerService {
   serviceInstance: DepService;
@@ -16,6 +17,7 @@ export default class ReRankerService {
     default_dl: string,
     userTempPath: string,
     appDataPath: string,
+    dataRootPath: string,
     versionCB: () => void
   ) {
 
@@ -24,12 +26,14 @@ export default class ReRankerService {
     let args: string[] = [];
     let urls: string[] = [];
 
-
+    fs.mkdirSync(dataRootPath, { recursive: true });
+    
     if (isWindows) {
       urls = [default_dl];
     } else {
       urls = [darwin_dl];
-      executable = 'rest-reranker.app';    
+      execDir = path.join(appDataPath,'reranker','dist','rest-reranker.app','Contents','MacOS');
+      executable = 'rest-reranker';
     }
 
     this.serviceInstance = new DepService(
@@ -60,7 +64,11 @@ export default class ReRankerService {
       [],
       installedVersion,
       availableVersion,
-      versionCB
+      versionCB,
+      () => {},
+      {
+        cache_dir: dataRootPath
+      }
     )
   }
 
