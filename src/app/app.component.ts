@@ -250,7 +250,7 @@ export class AppComponent implements OnInit {
                 if (brew) {                
                   this.watcherService.brew = data.brew;
                 }
-                setTimeout(() => {
+                this.watcherService.depNotInstalledTimer = setTimeout(() => {
                   prereq === 'homebrew' ?
                     this.watcherService.brewStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed) :
                     this.watcherService.ghostscriptStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed)

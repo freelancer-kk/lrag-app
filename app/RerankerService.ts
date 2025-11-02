@@ -65,9 +65,7 @@ export default class ReRankerService {
       availableVersion,
       versionCB,
       () => {},
-      {
-        cache_dir: dataRootPath
-      }
+      process.env
     )
   }
 

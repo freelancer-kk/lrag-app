@@ -13,12 +13,14 @@ export class WatcherService {
   ghostscriptStatus: LStatus = new LStatus(EStatus.unknown);
   url: string = '';
   brew: string = '';
+  depNotInstalledTimer: any;
 
   constructor(
     private commonService: CommonService
   ) {}
 
   findProcess = async () => {
+    this.clearTimer();
     const response: any = await this.commonService.findProcess(this.serviceName, 97);
     console.log('findProcess:watcher:', response);
     this.servicePID = response.servicePID;
@@ -31,6 +33,13 @@ export class WatcherService {
       'start',
       {}
     );
+  }
+
+  clearTimer = () => {
+    if (this.depNotInstalledTimer) {
+      clearTimeout(this.depNotInstalledTimer);
+      this.depNotInstalledTimer = undefined;
+    }
   }
 
   startIfNecessary = () => {

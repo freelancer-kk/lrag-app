@@ -113,7 +113,6 @@ export default class WatcherService {
           this.isServiceReady = true;
         }
       },
-      isMac ?
       {
         ...process.env,
         ...{
@@ -127,7 +126,7 @@ export default class WatcherService {
           'OCR_POLL_NEW_FILE_SECONDS': 5,
           'OCR_RETRIES_LOADING_FILE': 50,
         }
-      } : process.env
+      }
     )
   }
 

@@ -80,7 +80,8 @@ export default class OllamaService {
       this.isIPEX ? installedIPEXVersion : installedVersion,
       this.isIPEX ? availableIPEXVersion: availableVersion,
       versionCB,
-      () => {}
+      () => {},
+      process.env
     )
 
     if (this.isIPEX) {
@@ -109,7 +110,8 @@ export default class OllamaService {
         installedVersion,
         availableVersion,
         versionCB,
-        () => {}
+        () => {},
+        process.env
       )
     }
   }
