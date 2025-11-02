@@ -246,14 +246,17 @@ export default class DepService {
     // MAC OS shell link to download homebrew and run brew install ghostscript
     this.passedPrereqs = 0;
     this.failedPrereqs = 0;
-    this.validPrereqs = 0;
+    this.validPrereqs = 
+      isMac ? 
+        this.prerequisites.filter(f => f.mac).length :
+        this.prerequisites.filter(f => f.win).length;
+    console.log('Total prereqs:', this.serviceName, this.validPrereqs);
     return new Promise(async (resolve, reject) => {
       for await (const prereq_entry of this.prerequisites) {
         const prereqName: string = prereq_entry.name;      
         const prereq: any = isMac ? prereq_entry.mac : prereq_entry.win;
         console.log('checkPrerequisites:', prereqName, prereq);
         if (prereq) {
-          this.validPrereqs++;
           try {            
             // const prereqExec: string = path.join(prereq.cwd, prereq.executable);
             // if (fs.existsSync(prereqExec)) {
@@ -293,7 +296,7 @@ export default class DepService {
                     console.log('DepService:fail++')
                     this.failedPrereqs++;
                   }
-                  if ((this.passedPrereqs+this.failedPrereqs) === this.prerequisites.length) {
+                  if ((this.passedPrereqs+this.failedPrereqs) === this.validPrereqs) {
                     resolve();
                   }
                 })            
@@ -312,7 +315,7 @@ export default class DepService {
                   });
                   this.failedPrereqs++;
                   console.log('DepService:fail++')
-                  if ((this.passedPrereqs+this.failedPrereqs) === this.prerequisites.length) {
+                  if ((this.passedPrereqs+this.failedPrereqs) === this.validPrereqs) {
                     resolve();
                   }
                 });
@@ -326,13 +329,15 @@ export default class DepService {
                       exitCode: code ? code.toString() : '0'
                     }
                   });
-                  resolve();
+                  if ((this.passedPrereqs+this.failedPrereqs) === this.validPrereqs) {
+                    resolve();                    
+                  }                  
                 });        
               } else {
                 console.error('No valid process for prerequisite', prereq.executable, prereq.args);  
                 this.failedPrereqs++;
                 console.log('DepService:fail++')
-                if ((this.passedPrereqs+this.failedPrereqs) === this.prerequisites.length) {
+                if ((this.passedPrereqs+this.failedPrereqs) === this.validPrereqs) {
                   resolve();
                 }
               }
@@ -355,7 +360,7 @@ export default class DepService {
             console.error('DepService:Prerequisite check failed:', e);
             this.failedPrereqs++;
             console.log('DepService:fail++')
-            if ((this.passedPrereqs+this.failedPrereqs) === this.prerequisites.length) {
+            if ((this.passedPrereqs+this.failedPrereqs) === this.validPrereqs) {
               resolve();
             }
           }
