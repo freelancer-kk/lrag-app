@@ -4,7 +4,6 @@ import * as path from 'path';
 import Stream from 'stream';
 import * as fs from 'fs';
 import find, { ProcessInfo } from "find-process";
-// import unzipper from 'unzipper';
 import AdmZip from 'adm-zip';
 import kill from 'tree-kill';
 
@@ -54,6 +53,7 @@ export default class DepService {
   stdoutCB: (text: string) => void;
   passedPrereqs: number = 0;
   failedPrereqs: number = 0;
+  validPrereqs: number = 0;
 
   constructor(
     serviceName: string,
@@ -246,12 +246,14 @@ export default class DepService {
     // MAC OS shell link to download homebrew and run brew install ghostscript
     this.passedPrereqs = 0;
     this.failedPrereqs = 0;
+    this.validPrereqs = 0;
     return new Promise(async (resolve, reject) => {
       for await (const prereq_entry of this.prerequisites) {
         const prereqName: string = prereq_entry.name;      
         const prereq: any = isMac ? prereq_entry.mac : prereq_entry.win;
         console.log('checkPrerequisites:', prereqName, prereq);
         if (prereq) {
+          this.validPrereqs++;
           try {            
             // const prereqExec: string = path.join(prereq.cwd, prereq.executable);
             // if (fs.existsSync(prereqExec)) {
@@ -315,7 +317,7 @@ export default class DepService {
                   }
                 });
                 prereqCheckProcess.on('exit', (code: number | null) => {
-                  console.log(`DepService:init:prereq:exit: ${code}`);
+                  console.log(`DepService:init:prereq:service:${this.serviceName} exit:${code} passed:${this.passedPrereqs}`);
                   this.emit({ 
                     type: 'service-prereq-check-exit',
                     data: {
@@ -324,6 +326,7 @@ export default class DepService {
                       exitCode: code ? code.toString() : '0'
                     }
                   });
+                  resolve();
                 });        
               } else {
                 console.error('No valid process for prerequisite', prereq.executable, prereq.args);  
@@ -547,7 +550,7 @@ export default class DepService {
       if (this.prerequisites.length > 0) {
         await this.checkPrerequisites();
       }
-      if (this.prerequisites.length ===0 || this.passedPrereqs === this.prerequisites.length) {
+      if (this.prerequisites.length ===0 || this.passedPrereqs === this.validPrereqs) {
         const command: string = path.join(this.execDir, this.executable);
         console.log('DepService:start:execFile:', command, this.args);
 
@@ -620,8 +623,8 @@ export default class DepService {
         }
         return { status: 'starting' };
       } else {
-        console.error('DepService:start:prerequisites check failed!');
-        return { status: 'error', error: 'prerequisites failed!' };  
+        console.error('DepService:start:prerequisites check failed!', this.serviceName, this.passedPrereqs, this.validPrereqs);
+        return { status: 'error', error: 'prerequisites failed!', serviceName: this.serviceName };  
       }
     } catch (e) {
       console.error('DepService:start:error:', e);
