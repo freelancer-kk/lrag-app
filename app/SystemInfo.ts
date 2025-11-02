@@ -8,6 +8,7 @@ export const isWindows: boolean = platform() === "win32";
 export const isLinux: boolean = platform() === "linux";
 
 export default class SystemInfo {
+  webContents: Electron.WebContents | undefined;
   private graphics: Systeminformation.GraphicsData | undefined;
   constructor() {}
 
@@ -16,7 +17,14 @@ export default class SystemInfo {
     return this.graphics;
   }
 
-  register = () => {
+  emit = (args: any) => {
+    this.webContents?.send('event', {
+      response: args
+    })                
+  }
+
+  register = (webContents: Electron.WebContents | undefined) => {
+    this.webContents = webContents;
     ipcMain.on('system', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
       console.log('system:', callbackId, command, params)
@@ -40,6 +48,10 @@ export default class SystemInfo {
         break;
         case "open": {
           await shell.openExternal(params.url);
+          this.emit({ 
+            type: 'after-link-opened',
+            data: params
+          });
           response = {
             status: 'ok'
           }

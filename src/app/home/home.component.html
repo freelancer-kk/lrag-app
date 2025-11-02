@@ -57,11 +57,38 @@
           {{ 'PAGES.HOME.WATCHER' | translate }}
           &nbsp;<span class="small">({{ watcherService.servicePID }})</span>
           <span class="spacer"></span>
-          @if (watcherService.dependencyStatus.get() === EStatus.not_installed || watcherService.dependencyStatus.get() === EStatus.upgrade) {
-            <button matButton="filled" (click)="watcherService.installUpgrade($event)">
-              {{ watcherService.dependencyStatus.getS() }}
+          @if ( watcherService.brewStatus.get() === EStatus.not_installed || 
+                watcherService.brewStatus.get() === EStatus.upgrade ) {
+            <button matButton="filled" (click)="watcherService.installUpgradeBrew($event)">
+              {{ watcherService.brewStatus.getS() }}
             </button>
+          } @else if (watcherService.brewStatus.get() === EStatus.upgrading || 
+                      watcherService.brewStatus.get() === EStatus.installing) {
+            <div [class]="watcherService.brewStatus.getC()">
+              <mat-spinner diameter="30"></mat-spinner>              
+              {{ watcherService.brewStatus.getS() }}
+            </div>
+          } @else if (watcherService.brewStatus.get() === EStatus.error) {
+            <div [class]="watcherService.brewStatus.getC()">
+              {{ watcherService.brewStatus.getS() }}
+            </div>
           }
+          @if ( watcherService.ghostscriptStatus.get() === EStatus.upgrade_brew || 
+                watcherService.ghostscriptStatus.get() === EStatus.installed_brew) {
+            <button matButton="filled" (click)="watcherService.installUpgradeGS($event)">
+              {{ watcherService.ghostscriptStatus.getS() }}
+            </button>
+          } @else if (watcherService.ghostscriptStatus.get() === EStatus.upgrading_brew || 
+                      watcherService.ghostscriptStatus.get() === EStatus.installing_brew) {
+            <div [class]="watcherService.brewStatus.getC()">
+              <mat-spinner diameter="30"></mat-spinner>              
+              {{ watcherService.ghostscriptStatus.getS() }}
+            </div>
+          } @else if (watcherService.ghostscriptStatus.get() === EStatus.error) {
+            <div [class]="watcherService.ghostscriptStatus.getC()">
+              {{ watcherService.ghostscriptStatus.getS() }}
+            </div>
+          }         
           <div [class]="watcherService.status.getC()">  
             @if (watcherService.status.get() === EStatus.downloading) {
               <mat-spinner diameter="30"></mat-spinner>

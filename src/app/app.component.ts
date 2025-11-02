@@ -191,23 +191,73 @@ export class AppComponent implements OnInit {
         // service-prereq-check-notinstalled
         
         switch(type) {
-          case 'service-prereq-check-stdout':
+          case 'after-link-opened': {
+            if (data.serviceName === 'watcher') {
+              this.forceExit('RESTART_INSTALL')
+            }
+          }
+          break;
+          case 'brew-running-exit':
             this.ngZone.run(() => {
               if (data.serviceName === 'watcher') {
-                this.watcherService.dependencyURL = data.url;                  
-                if (data.version !== data.expectedVersion) {
-                  this.watcherService.dependencyStatus.update(EStatus.upgrade);
+                const { prereq, exitCode } = data;
+                if (exitCode === '0') {
+                  prereq === 'homebrew' ?
+                    this.watcherService.brewStatus.update(EStatus.installed) :
+                    this.watcherService.ghostscriptStatus.update(EStatus.installed)
+
+                    // Application needs to be restarted
+                    this.forceExit('RESTART')
                 } else {
-                  this.watcherService.dependencyStatus.update(EStatus.installed);
+                  prereq === 'homebrew' ?
+                    this.watcherService.brewStatus.update(EStatus.error) :
+                    this.watcherService.ghostscriptStatus.update(EStatus.error)
                 }
               } 
             })
+          break;
+          case 'service-prereq-check-stdout':
+            this.ngZone.run(() => {
+              const { serviceName, prereq, url, brew, version, expectedVersion } = data;            
+              if (serviceName === 'watcher') {
+                console.log('service-prereq-check-std:', data);
+                if (url) {
+                  this.watcherService.url = url;             
+                }
+                if (brew) {                
+                  this.watcherService.brew = data.brew;
+                }
+                if (version !== expectedVersion) {
+                  prereq === 'homebrew' ?
+                    this.watcherService.brewStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade) :
+                    this.watcherService.ghostscriptStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade)
+                } else {
+                  prereq === 'homebrew' ?
+                    this.watcherService.brewStatus.update(EStatus.installed) :
+                    this.watcherService.ghostscriptStatus.update(EStatus.installed)
+                }
+              } 
+            })
+          break;
           case 'service-prereq-check-stderr':
             this.ngZone.run(() => {
-              if (data.serviceName === 'watcher') {
-                this.watcherService.status.update(EStatus.not_installed);
+              const { serviceName, prereq, url, brew } = data;
+              console.log('service-prereq-check-err:', data);
+              if (serviceName === 'watcher') {
+                if (url) {
+                  this.watcherService.url = url;
+                }
+                if (brew) {                
+                  this.watcherService.brew = data.brew;
+                }
+                setTimeout(() => {
+                  prereq === 'homebrew' ?
+                    this.watcherService.brewStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed) :
+                    this.watcherService.ghostscriptStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed)
+                }, 10000);
               }
             })
+          break;
           case 'service-download-complete': {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {
@@ -306,7 +356,7 @@ export class AppComponent implements OnInit {
           break;
           case 'ollama-gpu-accel-done': {
             this.ngZone.run(() => {
-              this.forceExit(undefined);
+              this.forceExit();
             })
           }
           break;          
@@ -590,25 +640,25 @@ export class AppComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (result) => {
       console.log(`Dialog result: ${result}`);
       if (result === true) {
-        const result = await this.systemService.quitApp();
+        const result = await this.commonService.quitApp();
         console.log('app quit:', result);
       }
     });
   }
 
-  forceExit = async (ev: any) => {
+  forceExit = async (lang_token_id: string = 'GPU_CHANGE_RESTART') => {
     console.log('forcing exit!');
     const dialogRef = this.dialog.open(
       AlertComponent, {
         data: {
           type: 2,
           params: {
-            message: await this.commonService.get('GPU_CHANGE_RESTART')
+            message: await this.commonService.get(lang_token_id)
           }
         }
       });
     dialogRef.afterClosed().subscribe(async () => {
-      await this.systemService.quitApp();      
+      await this.commonService.quitApp();      
     });
-  }
+  } 
 }

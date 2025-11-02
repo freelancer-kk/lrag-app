@@ -280,12 +280,4 @@ export class SystemService {
       });
     })    
   }
-  
-  quitApp = (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      this.bridgeService.quitApp(10, async () => {
-        resolve();
-      });
-    })
-  }
 }

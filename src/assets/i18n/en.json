@@ -13,6 +13,8 @@
     "GPU": "Graphics",
     "MEM": "Memory"
   },
+  "RESTART": "Application must be restarted",
+  "RESTART_INSTALL": "Application will exit, please restart after installation",
   "GPU_ACCEL": "GPU Acceleration",
   "GPU_ACCEL_TIP": "This feature usually works, if you experience issues particularly with intel integrated GPUs, switch it off",
   "GPU_ARE_YOU_SURE": "Toggle GPU Acceleration setting, are you sure?",

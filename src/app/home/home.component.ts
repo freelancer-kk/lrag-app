@@ -116,7 +116,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         localStorage.setItem('manage-ollama-externally', JSON.stringify(this.ollamaService.manageOllamaExternally));        
         // Force exit
         this.ollamaService.status.update(EStatus.configuring);
-        await this.systemService.quitApp();
+        await this.commonService.quitApp();
       } else {
         event.source.checked = !event.checked;
       }

@@ -42,7 +42,13 @@ export enum EStatus {
   downloaded,
   not_installed,
   upgrade,
-  installed
+  installed,
+  upgrading,
+  installing,
+  upgrade_brew,
+  installed_brew,
+  upgrading_brew,
+  installing_brew,
 }
 
 export interface IStatus {

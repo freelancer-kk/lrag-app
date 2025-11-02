@@ -58,7 +58,7 @@ console.log('APP:RUN:MODE', runType);
 
 const setDocPathsCB = async (docPath: string | undefined, dataPath: string | undefined) => {
   systemInfo = new SystemInfo();
-  systemInfo.register();
+  systemInfo.register(win?.webContents);
   await systemInfo.getGraphics().then(async (graphics: Systeminformation.GraphicsData) => {
     console.log('graphics:', graphics.controllers.map(v => v.vendor));
     lragFiles = new LRagFiles(docPath, dataPath);

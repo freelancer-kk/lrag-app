@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { isWindows } from './SystemInfo';
+import { isMac, isWindows } from './SystemInfo';
 import DepService from './DepService';
 
 export default class WatcherService {
@@ -97,7 +97,7 @@ export default class WatcherService {
             expected_version: ghostscript_available_version
          },
          mac: {
-            url: ghostscript_mac_download_link,
+            brew: 'ghostscript tesseract-lang',    
             cwd: '.',
             args: ['--version'],
             executable: '/opt/homebrew/bin/gs',
@@ -113,17 +113,21 @@ export default class WatcherService {
           this.isServiceReady = true;
         }
       },
+      isMac ?
       {
-        'OCR_INPUT_DIRECTORY': inputDir,
-        'OCR_OUTPUT_DIRECTORY': outputDir,
-        'OCR_ERROR_DIRECTORY': errorDir,
-        'OCR_ARCHIVE_DIRECTORY': processedDir,
-        'OCR_ON_SUCCESS_DELETE': 'True',
-        'OCR_DESKEW': 'True',
-        'OCR_USE_POLLING': 'True',
-        'OCR_POLL_NEW_FILE_SECONDS': 5,
-        'OCR_RETRIES_LOADING_FILE': 50,
-      }
+        ...process.env,
+        ...{
+          'OCR_INPUT_DIRECTORY': inputDir,
+          'OCR_OUTPUT_DIRECTORY': outputDir,
+          'OCR_ERROR_DIRECTORY': errorDir,
+          'OCR_ARCHIVE_DIRECTORY': processedDir,
+          'OCR_ON_SUCCESS_DELETE': 'True',
+          'OCR_DESKEW': 'True',
+          'OCR_USE_POLLING': 'True',
+          'OCR_POLL_NEW_FILE_SECONDS': 5,
+          'OCR_RETRIES_LOADING_FILE': 50,
+        }
+      } : process.env
     )
   }
 

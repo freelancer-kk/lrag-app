@@ -18,7 +18,8 @@ export interface IPrereq {
     expected_version: string;
   },
   mac?: {
-    url: string;
+    url?: string;
+    brew?: string;
     cwd: string;
     executable: string;
     args: string[];
@@ -134,6 +135,10 @@ export default class DepService {
         case "find": {
           response = await this.findProcessPID();
         }
+        break;
+        case "brew": {
+          response = await this.brew(params.prereq, params.args);
+        }
         break;        
         default: {
           response = { error: 'unknown command' };
@@ -154,6 +159,63 @@ export default class DepService {
     this.webContents?.send('event', {
       response: args
     })                
+  }
+
+  brew = async (prereq: string, args: string[]): Promise<any> => {
+    const brewProcess = spawn(
+      '/opt/homebrew/bin/brew',
+      args,        
+      {
+        shell: true,
+        cwd: '.',
+        stdio: [ 'ignore', 'pipe', 'pipe' ],
+        windowsHide: true,
+        env: process.env,
+      }
+    )              
+    if (brewProcess) {
+      brewProcess.on('spawn', async () => {})
+      brewProcess.stdout.on('data', (data: string) => {
+        console.log(`DepService:brew:stdout: ${data}`);
+        this.emit({ 
+          type: 'brew-running-stdout',
+          data: { 
+            serviceName: this.serviceName,
+            prereq,
+            args,
+            text: Buffer.from(data).toString(),
+          }
+        });
+      })        
+      brewProcess.stderr.on("data", (data: string) => {
+        console.error(`DepService:brew:stderr: ${data}`);          
+        this.emit({ 
+          type: 'brew-running-stderr',
+          data: { 
+            serviceName: this.serviceName,
+            prereq,
+            args,
+            text: Buffer.from(data).toString(),
+          }
+        });
+      });
+      brewProcess.on('exit', (code: number | null) => {
+        console.error(`DepService:brew:exit: ${code}`);          
+        this.emit({ 
+          type: 'brew-running-exit',
+          data: {
+            serviceName: this.serviceName,
+            prereq,
+            args,
+            exitCode: code ? code.toString() : '0'
+          }
+        });
+      });        
+    } else {
+      console.error('DepService:brew:no valid process');
+      return { status: 'error' }
+    }
+    return { status: 'ok' }
   }
 
   findProcessPID = async (): Promise<any> => {
@@ -219,6 +281,7 @@ export default class DepService {
                       version,
                       expectedVersion: prereq.expected_version,
                       url: prereq.url,
+                      brew: prereq.brew,
                     }
                   });
                   if (version === prereq.expected_version) {
@@ -241,7 +304,8 @@ export default class DepService {
                       prereq: prereqName,
                       text: Buffer.from(data).toString(),
                       expectedVersion: prereq.expected_version,
-                      url: prereq.url
+                      url: prereq.url,
+                      brew: prereq.brew,
                     }
                   });
                   this.failedPrereqs++;

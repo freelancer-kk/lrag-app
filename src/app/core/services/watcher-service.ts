@@ -9,16 +9,18 @@ export class WatcherService {
   serviceName: string = 'watcher';
   status: LStatus = new LStatus(EStatus.not_running);
   servicePID: number = -1;
-  dependencyStatus: LStatus = new LStatus(EStatus.not_installed);
-  dependencyURL: string = '';
+  brewStatus: LStatus = new LStatus(EStatus.unknown);
+  ghostscriptStatus: LStatus = new LStatus(EStatus.unknown);
+  url: string = '';
+  brew: string = '';
 
   constructor(
     private commonService: CommonService
   ) {}
 
   findProcess = async () => {
-    const response: any = await this.commonService.findProcess(this.serviceName);
-    console.log('findProcess:', response);
+    const response: any = await this.commonService.findProcess(this.serviceName, 97);
+    console.log('findProcess:watcher:', response);
     this.servicePID = response.servicePID;
   }
 
@@ -42,7 +44,7 @@ export class WatcherService {
       );
       if (installed === true) {
         clearInterval(tt);
-        this.start();
+        await this.start();
         this.checkIfReady();        
       } else {
         cnt++
@@ -59,8 +61,8 @@ export class WatcherService {
     const tt = setInterval(async () => {
       if ((await this.isReady()) === true) {
         clearInterval(tt);
-        this.findProcess();
         this.status.update(EStatus.running);
+        await this.findProcess();        
       } else {
         cnt++
         if (cnt>50) {
@@ -81,7 +83,29 @@ export class WatcherService {
     return isReady;
   }
 
-  installUpgrade = (ev: any) => {
-    this.commonService.openExternal(this.dependencyURL);
+  installUpgradeBrew = async (ev: any) => {
+    this.commonService.openExternal(
+      this.url,
+      {
+        serviceName: 'watcher'
+      }
+    );
+  }
+
+  installUpgradeGS = async (ev: any) => {
+      const command: string = this.brewStatus.get() === EStatus.upgrade_brew ? 'upgrade' : 'install'
+      this.ghostscriptStatus.update(command === 'install' ? EStatus.installing_brew : EStatus.upgrading_brew);      
+      const response: any = await this.commonService.commandService(
+        92, 
+        this.serviceName,
+        'brew',
+        {
+          args: [
+            command,
+            this.brew
+          ]
+        }
+      );
+      console.log('gs:install/upgrade:', response); 
   }
 }

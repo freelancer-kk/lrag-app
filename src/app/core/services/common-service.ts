@@ -3,6 +3,7 @@ import { BridgeService } from './bridge/bridge.service';
 import { TranslateService } from '@ngx-translate/core';
 import path from 'path';
 import { EStatus, IStatus } from '../../shared/model';
+
 import { signal } from '@angular/core';
 
 @Injectable({
@@ -55,9 +56,9 @@ export class CommonService {
     })
   }
 
-  findProcess = (serviceName: string): Promise<any> => {
+  findProcess = (serviceName: string, override: number = 91): Promise<any> => {
     return new Promise((resolve, reject) => { 
-      this.bridgeService.service(91, serviceName, 'find', {}, async (data: any) => {        
+      this.bridgeService.service(override, serviceName, 'find', {}, async (data: any) => {        
         resolve(data);
       });
     });
@@ -72,12 +73,20 @@ export class CommonService {
     });
   }
 
-  openExternal = (url: string): Promise<void> => {
+  openExternal = (url: string, data: any = {}): Promise<void> => {
     return new Promise((resolve, reject) => {
-      this.bridgeService.openExternal(6, url, async () => {
+      this.bridgeService.openExternal(6, url, data, async () => {
         resolve();      
       });
     })    
+  }
+
+  quitApp = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      this.bridgeService.quitApp(10, async () => {
+        resolve();
+      });
+    })
   }  
 }
 
@@ -118,7 +127,13 @@ const EStatusMap: { [key in EStatus]: string } = {
   [EStatus.downloaded]: 'Downloaded',
   [EStatus.not_installed]: 'Not installed',
   [EStatus.upgrade]: 'Upgrade',
-  [EStatus.installed]: 'Installed'
+  [EStatus.upgrading]: 'Upgrading',
+  [EStatus.installed]: 'Installed',
+  [EStatus.installing]: 'Installing',
+  [EStatus.upgrade_brew]: 'Upgrade via Brew',
+  [EStatus.installed_brew]: 'Install via Brew',
+  [EStatus.upgrading_brew]: 'Upgrading via Brew',
+  [EStatus.installing_brew]: 'Installing via Brew',  
 };
 
 export class LStatus {
