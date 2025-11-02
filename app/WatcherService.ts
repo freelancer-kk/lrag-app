@@ -45,17 +45,33 @@ export default class WatcherService {
     fs.mkdirSync(processedDir, { recursive: true });
     fs.mkdirSync(errorDir, { recursive: true });
     
+    const watcherEnv: any = {
+      ...process.env,
+      ...{
+        'OCR_INPUT_DIRECTORY': inputDir,
+        'OCR_OUTPUT_DIRECTORY': outputDir,
+        'OCR_ERROR_DIRECTORY': errorDir,
+        'OCR_ARCHIVE_DIRECTORY': processedDir,
+        'OCR_ON_SUCCESS_DELETE': 'True',
+        'OCR_DESKEW': 'True',
+        'OCR_USE_POLLING': 'True',
+        'OCR_POLL_NEW_FILE_SECONDS': 5,
+        'OCR_RETRIES_LOADING_FILE': 50,
+      }
+    };
+
     if (isWindows) {
       urls = [default_dl];
     } else {
       urls = [darwin_dl];
-      execDir = path.join(appDataPath,'watcher','dist','watcher.app','Contents','MacOS');            
-      executable = 'watcher';  
+      // execDir = path.join(appDataPath,'watcher','dist','watcher.app','Contents','MacOS');            
+      execDir = "/Users/kabirkhaleque/projects/lrag-docker-services/dist/watcher.app/Contents/MacOS";
+      executable = 'watcher';
       args = [
         '--error-dir=\"' + errorDir + '\"',
         '--input-dir=\"' + inputDir + '\"',
         '--output-dir=\"' + outputDir + '\"',
-        '--archive-dir=\"' + errorDir + '\"',
+        '--archive-dir=\"' + processedDir + '\"',
         '--on-success-delete',
         '--deskew',
         '--poll-new-file-seconds=5',
@@ -63,6 +79,8 @@ export default class WatcherService {
         '--retries-loading-file=50'
       ]
     }
+
+    // console.log('WatcherService:env:', watcherEnv);
 
     this.serviceInstance = new DepService(
       "watcher",
@@ -113,20 +131,7 @@ export default class WatcherService {
           this.isServiceReady = true;
         }
       },
-      {
-        ...process.env,
-        ...{
-          'OCR_INPUT_DIRECTORY': inputDir,
-          'OCR_OUTPUT_DIRECTORY': outputDir,
-          'OCR_ERROR_DIRECTORY': errorDir,
-          'OCR_ARCHIVE_DIRECTORY': processedDir,
-          'OCR_ON_SUCCESS_DELETE': 'True',
-          'OCR_DESKEW': 'True',
-          'OCR_USE_POLLING': 'True',
-          'OCR_POLL_NEW_FILE_SECONDS': 5,
-          'OCR_RETRIES_LOADING_FILE': 50,
-        }
-      }
+      watcherEnv
     )
   }
 
