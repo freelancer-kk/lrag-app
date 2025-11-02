@@ -165,7 +165,8 @@ export class OllamaService {
           this.status.update(EStatus.extracting);
           console.log('waiting for extraction to complete, then start...');
         } else {
-          this.status.update(EStatus.running);
+          // this.status.update(EStatus.running);
+          this.setOllamaCheckTimer();
         }
       }
     }
