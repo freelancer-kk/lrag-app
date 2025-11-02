@@ -102,7 +102,8 @@ export class WatcherService {
   }
 
   installUpgradeGS = async (ev: any) => {
-      const command: string = this.brewStatus.get() === EStatus.upgrade_brew ? 'upgrade' : 'install'
+    if (this.ghostscriptStatus.get() === EStatus.upgrade_brew || this.ghostscriptStatus.get() === EStatus.installed_brew) {
+      const command: string = this.ghostscriptStatus.get() === EStatus.upgrade_brew ? 'upgrade' : 'install'
       this.ghostscriptStatus.update(command === 'install' ? EStatus.installing_brew : EStatus.upgrading_brew);      
       const response: any = await this.commonService.commandService(
         92, 
@@ -115,6 +116,15 @@ export class WatcherService {
           ]
         }
       );
-      console.log('gs:install/upgrade:', response); 
+      console.log('gs:install/upgrade:brew:', response); 
+    } else {
+      this.commonService.openExternal(
+        this.url,
+        {
+          serviceName: 'watcher'
+        }
+      );
+      console.log('gs:install/upgrade:url'); 
+    }
   }
 }
