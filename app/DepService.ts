@@ -441,6 +441,16 @@ export default class DepService {
         this.download(dlpath, tempZipFile, () => {
           fs.mkdirSync(this.installPath, { recursive: true });
           const zip = new AdmZip(tempZipFile);
+          this.emit({ 
+            type: 'service-extract-extract-starting',
+            data: { 
+              serviceName: this.serviceName,
+              version: this.availableVersion,
+              from: dlpath,
+              to: tempZipFile
+            }
+          });                
+          
           zip.extractAllToAsync(this.installPath, true, true);
           // fs.createReadStream(tempZipFile)
           // .pipe(unzipper.Extract({ path: this.installPath }))

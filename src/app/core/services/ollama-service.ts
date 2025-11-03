@@ -134,13 +134,15 @@ export class OllamaService {
     // console.log('getAvailableLLMs:', this.availableModels);
   }
 
-  setOllamaCheckTimer = () => {
+  setOllamaCheckTimer = (cb = () => {}) => {
     if (this.serviceTimer) {
       clearInterval(this.serviceTimer);
     }
     this.serviceTimer = setInterval(async () => {
+      await cb();
       const { isReady } = await this.commonService.commandService(93, this.serviceName, 'isReady');
       if (!isReady) {
+        clearInterval(this.serviceTimer);
         this.status.update(EStatus.not_running);            
       } else {
         this.status.update(EStatus.running);
@@ -164,12 +166,14 @@ export class OllamaService {
         mecb();        
       } else {
         const response = await this.start();
-        if (response.status === 'error' && response.error === 'extraction') {
+        if (response && response.status === 'error' && response.error === 'extraction') {
           this.status.update(EStatus.extracting);
           console.log('waiting for extraction to complete, then start...');
         } else {
           // this.status.update(EStatus.running);
-          this.setOllamaCheckTimer();
+          this.setOllamaCheckTimer(async () => {
+            const response = await this.start();          
+          });
         }
       }
     }

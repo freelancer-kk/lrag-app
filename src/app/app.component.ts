@@ -301,6 +301,18 @@ export class AppComponent implements OnInit {
             })
           }
           break;
+          case 'service-extract-extract-starting': {
+            this.ngZone.run(async () => {
+              if (data.serviceName === 'ollama') {
+                this.ollamaService.status.update(EStatus.extracting);
+              } else if (data.serviceName === 'reranker') {
+                this.rerankerService.status.update(EStatus.extracting);
+              } else if (data.serviceName === 'watcher') {
+                this.watcherService.status.update(EStatus.extracting);
+              }
+            })
+          }
+          break;
           case 'service-extract-download-done': {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {

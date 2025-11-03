@@ -213,6 +213,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   startShow = async (ev: any) => {
+    console.log('afterExpand: startShow');
     this.systemService.startShow.update(() => true);        
   }
 

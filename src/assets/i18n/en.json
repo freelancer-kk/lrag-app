@@ -60,8 +60,8 @@
         },
         "SLIDE3": {
           "PARA1": "Component Download/Upgrade",
-          "PARA2": "Please wait whilst downloading extras...",
-          "PARA3": "The download may take some time depending on your Internet Connection."
+          "PARA2": "Please wait whilst downloading and extracting extras...",
+          "PARA3": "The download may take some time depending on your PC and Internet Connection."
         }
       },
       "HOME": {

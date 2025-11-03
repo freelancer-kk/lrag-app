@@ -133,7 +133,7 @@ export default class DockerEnv {
   }
 
   getKeyValue = (key: string): string | undefined => {
-    return this.kvFile ? this.kvFile.get(key)?.toString() : undefined;
+    return this.kvFile ? this.kvFile.get(key)?.toString().replace(/\r$/,'') : undefined;
   }
   
   generateEnvFile = (): Promise<string> => {
