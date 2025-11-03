@@ -21,13 +21,16 @@ export class RerankerService {
     this.servicePID = response.servicePID;
   }
 
-  start = (): Promise<any> => {
-    return this.commonService.commandService(
-      91,
-      this.serviceName,
-      'start',
-      {}
-    );
+  start = async (): Promise<any> => {
+    await this.findProcess();
+    if (this.servicePID === -1) {
+      return this.commonService.commandService(
+        91,
+        this.serviceName,
+        'start',
+        {}
+      );
+    }
   }
 
   startIfNecessary = () => {
@@ -41,7 +44,7 @@ export class RerankerService {
       );
       if (installed === true) {
         clearInterval(tt);
-        this.start();
+        await this.start();
         this.checkIfReady();        
       } else {
         cnt++

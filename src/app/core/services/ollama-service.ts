@@ -85,15 +85,18 @@ export class OllamaService {
     return this.commonService.commandService(93, this.serviceName, command, options);
   }
 
-  start = (): Promise<any> => {
-    return this.commonService.commandService(
-      93,
-      this.serviceName,
-      'start',
-      {
-        gpuAccel: this.gpuAcceleration
-      }
-    );
+  start = async (): Promise<any> => {
+    await this.findProcess();
+    if (this.servicePID === -1) {
+      return this.commonService.commandService(
+        93,
+        this.serviceName,
+        'start',
+        {
+          gpuAccel: this.gpuAcceleration
+        }
+      );
+    }
   }
 
   getRunningModelsUsage = async (): Promise<string> => {

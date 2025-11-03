@@ -26,13 +26,16 @@ export class WatcherService {
     this.servicePID = response.servicePID;
   }
 
-  start = (): Promise<any> => {
-    return this.commonService.commandService(
-      92,
-      this.serviceName,
-      'start',
-      {}
-    );
+  start = async (): Promise<any> => {
+    await this.findProcess();
+    if (this.servicePID === -1) {
+      return this.commonService.commandService(
+        92,
+        this.serviceName,
+        'start',
+        {}
+      );
+    }
   }
 
   clearTimer = () => {
