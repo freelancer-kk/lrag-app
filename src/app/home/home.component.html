@@ -57,6 +57,22 @@
           {{ 'PAGES.HOME.WATCHER' | translate }}
           &nbsp;<span class="small">({{ watcherService.servicePID }})</span>
           <span class="spacer"></span>
+          @if ( watcherService.wingetStatus.get() === EStatus.installed_winget || 
+                watcherService.wingetStatus.get() === EStatus.upgrade_winget ) {
+            <button matButton="filled" (click)="watcherService.installUpgradeTesseract($event)">
+              Tesseract {{ watcherService.wingetStatus.getS() }}
+            </button>
+          } @else if (watcherService.wingetStatus.get() === EStatus.upgrading_winget || 
+                      watcherService.wingetStatus.get() === EStatus.installing_winget) {
+            <div [class]="watcherService.wingetStatus.getC()">
+              <mat-spinner diameter="30"></mat-spinner>              
+              Tesseract {{ watcherService.wingetStatus.getS() }}
+            </div>
+          } @else if (watcherService.wingetStatus.get() === EStatus.error) {
+            <div [class]="watcherService.wingetStatus.getC()">
+              Tesseract {{ watcherService.wingetStatus.getS() }}
+            </div>
+          }
           @if ( watcherService.brewStatus.get() === EStatus.not_installed || 
                 watcherService.brewStatus.get() === EStatus.upgrade ) {
             <button matButton="filled" (click)="watcherService.installUpgradeBrew($event)">

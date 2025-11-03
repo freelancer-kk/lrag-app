@@ -10,9 +10,11 @@ export class WatcherService {
   status: LStatus = new LStatus(EStatus.not_running);
   servicePID: number = -1;
   brewStatus: LStatus = new LStatus(EStatus.unknown);
+  wingetStatus: LStatus = new LStatus(EStatus.unknown);
   ghostscriptStatus: LStatus = new LStatus(EStatus.unknown);
   url: string = '';
   brew: string = '';
+  winget: string = '';
   depNotInstalledTimer: any;
 
   constructor(
@@ -129,5 +131,22 @@ export class WatcherService {
       );
       console.log('gs:install/upgrade:url'); 
     }
+  }
+
+  installUpgradeTesseract = async (ev: any) => {
+      const command: string = this.wingetStatus.get() === EStatus.upgrade_winget ? 'upgrade' : 'install'
+      this.wingetStatus.update(command === 'install' ? EStatus.installing_winget : EStatus.upgrading_winget); 
+      const response: any = await this.commonService.commandService(
+        92, 
+        this.serviceName,
+        'winget',
+        {
+          args: [
+            command,
+            this.winget
+          ]
+        }
+      );
+      console.log('tesseract:install/upgrade:winget:', response);     
   }
 }

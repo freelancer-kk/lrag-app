@@ -106,6 +106,17 @@ export default class WatcherService {
             expected_version: homebrew_mac_available_version
          }
         },{
+         name: 'tesseract',
+         win: {
+            winget: '--silent --disable-interactivity --accept-source-agreements -e --id UB-Mannheim.TesseractOCR',
+            cwd: '\\Program Files\\Tesseract-OCR',
+            args: [
+              '--version'
+            ],
+            executable: 'tesseract.exe',
+            expected_version: 'tesseract'
+         }
+        },{
          name: 'ghostscript',
          win: {
             url: ghostscript_win_download_link,

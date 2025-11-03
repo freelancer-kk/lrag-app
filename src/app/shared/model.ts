@@ -49,6 +49,10 @@ export enum EStatus {
   installed_brew,
   upgrading_brew,
   installing_brew,
+  upgrade_winget,
+  installed_winget,
+  upgrading_winget,
+  installing_winget
 }
 
 export interface IStatus {

@@ -10,7 +10,8 @@ import kill from 'tree-kill';
 export interface IPrereq {
   name: string,
   win?: {
-    url: string;
+    url?: string;
+    winget?: string;
     cwd: string;
     executable: string;
     args: string[];
@@ -18,7 +19,7 @@ export interface IPrereq {
   },
   mac?: {
     url?: string;
-    brew?: string;
+    brew?: string;    
     cwd: string;
     executable: string;
     args: string[];
@@ -137,7 +138,11 @@ export default class DepService {
         }
         break;
         case "brew": {
-          response = await this.brew(params.prereq, params.args);
+          response = await this.packager('/opt/homebrew/bin/brew', 'brew', params.prereq, params.args);
+        }
+        break;        
+        case "winget": {
+          response = await this.packager('winget.exe', 'winget', params.prereq, params.args);
         }
         break;        
         default: {
@@ -161,9 +166,9 @@ export default class DepService {
     })                
   }
 
-  brew = async (prereq: string, args: string[]): Promise<any> => {
-    const brewProcess = spawn(
-      '/opt/homebrew/bin/brew',
+  packager = async (packager_path: string, packager: string, prereq: string, args: string[]): Promise<any> => {
+    const pkgProcess = spawn(
+      packager_path,
       args,        
       {
         shell: true,
@@ -173,12 +178,12 @@ export default class DepService {
         env: process.env,
       }
     )              
-    if (brewProcess) {
-      brewProcess.on('spawn', async () => {})
-      brewProcess.stdout.on('data', (data: string) => {
-        console.log(`DepService:brew:stdout: ${data}`);
+    if (pkgProcess) {
+      pkgProcess.on('spawn', async () => {})
+      pkgProcess.stdout.on('data', (data: string) => {
+        console.log(`DepService:${packager}:stdout: ${data}`);
         this.emit({ 
-          type: 'brew-running-stdout',
+          type: packager + '-running-stdout',
           data: { 
             serviceName: this.serviceName,
             prereq,
@@ -187,10 +192,10 @@ export default class DepService {
           }
         });
       })        
-      brewProcess.stderr.on("data", (data: string) => {
-        console.error(`DepService:brew:stderr: ${data}`);          
+      pkgProcess.stderr.on("data", (data: string) => {
+        console.error(`DepService:${packager}:stderr: ${data}`);          
         this.emit({ 
-          type: 'brew-running-stderr',
+          type: packager + '-running-stderr',
           data: { 
             serviceName: this.serviceName,
             prereq,
@@ -199,10 +204,10 @@ export default class DepService {
           }
         });
       });
-      brewProcess.on('exit', (code: number | null) => {
+      pkgProcess.on('exit', (code: number | null) => {
         console.error(`DepService:brew:exit: ${code}`);          
         this.emit({ 
-          type: 'brew-running-exit',
+          type: packager + '-running-exit',
           data: {
             serviceName: this.serviceName,
             prereq,
@@ -212,7 +217,7 @@ export default class DepService {
         });
       });        
     } else {
-      console.error('DepService:brew:no valid process');
+      console.error('DepService:' + packager + ':no valid process');
       return { status: 'error' }
     }
     return { status: 'ok' }
@@ -274,65 +279,64 @@ export default class DepService {
                 }
               )              
               if (prereqCheckProcess) {
-                prereqCheckProcess.on('spawn', async () => {})
-                prereqCheckProcess.stdout.on('data', (data: string) => {
-                  console.log(`DepService:init:prereq:stdout: ${data}`);
-                  const version: string = Buffer.from(data).toString().trim();
-                  this.emit({ 
-                    type: 'service-prereq-check-stdout',
-                    data: {
-                      serviceName: this.serviceName,
-                      prereq: prereqName,
-                      version,
-                      expectedVersion: prereq.expected_version,
-                      url: prereq.url,
-                      brew: prereq.brew,
-                    }
-                  });
-                  if (version === prereq.expected_version) {
-                    console.log('DepService:pass++')
-                    this.passedPrereqs++; 
-                  } else {
-                    console.log('DepService:fail++')
+                await new Promise((resolveS, rejectS) => {
+                  prereqCheckProcess.on('spawn', async () => {})
+                  prereqCheckProcess.stdout.on('data', (data: string) => {
+                    console.log(`DepService:init:prereq:stdout: ${data}`);
+                    const version: string = Buffer.from(data).toString().trim();
+                    this.emit({ 
+                      type: 'service-prereq-check-stdout',
+                      data: {
+                        serviceName: this.serviceName,
+                        prereq: prereqName,
+                        version,
+                        expectedVersion: prereq.expected_version,
+                        url: prereq.url,
+                        brew: prereq.brew,
+                        winget: prereq.winget
+                      }
+                    });
+                    if (version.startsWith(prereq.expected_version)) {
+                      console.log('DepService:pass++')
+                      this.passedPrereqs++; 
+                    } else {
+                      console.log('DepService:fail++')
+                      this.failedPrereqs++;
+                    }                    
+                  })            
+                  prereqCheckProcess.stderr.on("data", (data: string) => {
+                    console.error(`DepService:init:prereq:stderr: ${data}`);              
+                    this.emit({ 
+                      type: 'service-prereq-check-stderr',
+                      data: {
+                        serviceName: this.serviceName,
+                        prereq: prereqName,
+                        text: Buffer.from(data).toString(),
+                        expectedVersion: prereq.expected_version,
+                        url: prereq.url,
+                        brew: prereq.brew,
+                        winget: prereq.winget
+                      }
+                    });
                     this.failedPrereqs++;
-                  }
-                  if ((this.passedPrereqs+this.failedPrereqs) === this.validPrereqs) {
-                    resolve();
-                  }
-                })            
-                prereqCheckProcess.stderr.on("data", (data: string) => {
-                  console.error(`DepService:init:prereq:stderr: ${data}`);              
-                  this.emit({ 
-                    type: 'service-prereq-check-stderr',
-                    data: {
-                      serviceName: this.serviceName,
-                      prereq: prereqName,
-                      text: Buffer.from(data).toString(),
-                      expectedVersion: prereq.expected_version,
-                      url: prereq.url,
-                      brew: prereq.brew,
-                    }
+                    console.log('DepService:fail++')                    
                   });
-                  this.failedPrereqs++;
-                  console.log('DepService:fail++')
-                  if ((this.passedPrereqs+this.failedPrereqs) === this.validPrereqs) {
-                    resolve();
-                  }
+                  prereqCheckProcess.on('exit', (code: number | null) => {
+                    console.log(`DepService:init:prereq:service:${this.serviceName} exit:${code} passed:${this.passedPrereqs}`);
+                    this.emit({ 
+                      type: 'service-prereq-check-exit',
+                      data: {
+                        serviceName: this.serviceName,
+                        prereq: prereqName,
+                        exitCode: code ? code.toString() : '0'
+                      }
+                    });
+                    resolveS(true);
+                  });        
                 });
-                prereqCheckProcess.on('exit', (code: number | null) => {
-                  console.log(`DepService:init:prereq:service:${this.serviceName} exit:${code} passed:${this.passedPrereqs}`);
-                  this.emit({ 
-                    type: 'service-prereq-check-exit',
-                    data: {
-                      serviceName: this.serviceName,
-                      prereq: prereqName,
-                      exitCode: code ? code.toString() : '0'
-                    }
-                  });
-                  if ((this.passedPrereqs+this.failedPrereqs) === this.validPrereqs) {
-                    resolve();                    
-                  }                  
-                });        
+                if ((this.passedPrereqs+this.failedPrereqs) === this.validPrereqs) {
+                  resolve();
+                }
               } else {
                 console.error('No valid process for prerequisite', prereq.executable, prereq.args);  
                 this.failedPrereqs++;
