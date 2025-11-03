@@ -192,7 +192,7 @@ async function createWindow(): Promise<BrowserWindow> {
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: size.width/2.1,
+    width: size.width/2,
     height: size.height,
     minWidth: 400, // Optional: Set a minimum width
     minHeight: 300, // Optional: Set a minimum height
