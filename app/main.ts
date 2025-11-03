@@ -204,6 +204,7 @@ async function createWindow(): Promise<BrowserWindow> {
       allowRunningInsecureContent: serve,
       contextIsolation: false,
       webSecurity: !serve,
+// TODO: Uncomment for final prod release this will disable dev tools      
 //      devTools: runType === 2
     },
   });

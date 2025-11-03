@@ -113,4 +113,11 @@ export interface IHistory {
   assessment: number
 }
 
-
+export interface IExternalChat {
+  name: string;
+  apiKey: string,
+  model: string,
+  temperature: number,
+  maxTokens: number,
+  maxRetries: number
+}
