@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PrivacyService } from './privacy-service';
+import { SettingsService } from './settings-service';
 
-describe('PrivacyService', () => {
-  let service: PrivacyService;
+describe('SettingsService', () => {
+  let service: SettingsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(PrivacyService);
+    service = TestBed.inject(SettingsService);
   });
 
   it('should be created', () => {

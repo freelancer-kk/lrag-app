@@ -52,12 +52,11 @@
         },
         "SLIDE2": {
           "PARA1": "LRag Use Cases",
-          "PARA2": "*Choose various privacy settings under Privacy*",
-          "PARA3": "*General Chat - Choose a model under Models then Chat with that model*",
-          "PARA4": "*Analyse a doc - Choose a document under Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
-          "PARA5": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
-          "PARA6": "The larger model, the more accurate the answers will be. Under Models you may select other models",
-          "PARA7": "Consult our forums and support pages for help and tips"
+          "PARA2": "*General Chat - Choose a model under Models then Chat with that model*",
+          "PARA3": "*Analyse a doc - Choose a document under Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
+          "PARA4": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
+          "PARA5": "The larger model, the more accurate the answers will be. Under Models you may select other models",
+          "PARA6": "Consult our forums and support pages for help and tips"
         },
         "SLIDE3": {
           "PARA1": "Component Download/Upgrade",
@@ -104,8 +103,24 @@
       "BOOTSTRAP": "Startup",
       "BOOTSTRAP_DESC": "Über LRag"
     },
-    "PRIVACY": {
-      "TITLE": "Privatsphäre"
+    "SETTINGS": {
+      "TITLE": "Einstellungen",
+      "LICENSE_NAME": "Lizenzinhaber",
+      "LICENSE_KEY": "Lizenzschlüssel",
+      "LICENSE_DETAILS": "Lizenzdetails",
+      "GO_PRO": {
+        "TITLE": "Upgrade To Pro (coming soon)",
+        "LINE1": "Priority access to our support ticketing system run by expert agents",
+        "LINE2": "Notification of software updates",
+        "LINE3": "Access to more sophisticated models",
+        "LINE4": "Access to imaging, video and audio AI generation software (coming later)"
+      },
+      "GO_PROPLUS": {
+        "TITLE": "Upgrade To Pro Plus (coming later)",
+        "LINE1": "Connect to external provides such as Anthropic, Gemini, Groq and OpenAI",
+        "LINE2": "MCP Tool calling for agentic integrations",
+        "LINE3": "SLA support turnaround"
+      }
     },
     "DETAIL": {
       "TITLE": "Modelle",
@@ -205,7 +220,7 @@
       "RATING_THANKS": "Vielen Dank für Ihre Bewertung"
     },
     "HELP": {
-      "TITLE": "Faq",
+      "TITLE": "Uber",
       "WHAT_IS_LRAG_TITLE": "Was ist LRag?",
       "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) ist eine 100% ige lokale Lösung, die auf Ihrem PC läuft und es Ihnen ermöglicht, KI -Einblicke in Ihre privaten Dokumente zu genießen. ",
       "ACCURACY_TITLE": "Wie gut ist LRag?",

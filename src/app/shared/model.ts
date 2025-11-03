@@ -121,3 +121,8 @@ export interface IExternalChat {
   maxTokens: number,
   maxRetries: number
 }
+
+export interface ISettings {
+  licenseKey: string;
+  licenseHolderName: string;  
+}

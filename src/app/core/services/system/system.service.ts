@@ -47,7 +47,7 @@ export class SystemService {
   numCtx: number = 2048;
   separator: string = ';';
   useSemantic: boolean = false;
-  localVector: boolean = true;
+  localVector: boolean = false;
   collection: string = 'general';
   collections: any[] = [];
   selectedCollections = new FormControl(null);

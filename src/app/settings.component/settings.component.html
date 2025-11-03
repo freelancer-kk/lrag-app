@@ -1,0 +1,41 @@
+<mat-card class="settings-card" appearance="outlined">
+  <mat-card-content>  
+    <div class="onerow">
+      {{ 'PAGES.SETTINGS.LICENSE_NAME' | translate }}:
+      <span class="spacer"></span>
+      {{ settingsService.licSettings.licenseHolderName }}
+    </div>
+    <div class="onerow">
+      {{ 'PAGES.SETTINGS.LICENSE_KEY' | translate }}:
+      <span class="spacer"></span>
+      {{ settingsService.licSettings.licenseKey }}
+    </div>
+    <div class="onerow">
+      {{ 'PAGES.SETTINGS.LICENSE_DETAILS' | translate }}:
+      <span class="spacer"></span>
+      <nxt-json-view #licenseDetails [data]="settingsService.licenseDetails" [levelOpen]="2"></nxt-json-view>
+    </div>  
+  </mat-card-content>
+</mat-card>
+<br/>
+<mat-card class="settings-card" appearance="outlined">
+  <mat-card-content>
+    <div class="onerow">
+      {{ 'PAGES.SETTINGS.GO_PRO.TITLE' | translate }}
+    </div>
+    <ul>
+      <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE1' | translate }}</li>
+      <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE2' | translate }}</li>
+      <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE3' | translate }}</li>
+      <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE4' | translate }}</li>
+    </ul>
+    <div class="onerow">
+      {{ 'PAGES.SETTINGS.GO_PROPLUS.TITLE' | translate }}      
+    </div>
+    <ul>
+      <li>{{ 'PAGES.SETTINGS.GO_PROPLUS.LINE1' | translate }}</li>
+      <li>{{ 'PAGES.SETTINGS.GO_PROPLUS.LINE2' | translate }}</li>
+      <li>{{ 'PAGES.SETTINGS.GO_PROPLUS.LINE3' | translate }}</li>
+    </ul>
+  </mat-card-content>
+</mat-card>

@@ -54,10 +54,7 @@ bootstrapApplication(AppComponent, {
         if (systemService.useSemantic === undefined) {
           systemService.useSemantic = false;
         }
-        systemService.localVector = chunkSettingsStr ? JSON.parse(chunkSettingsStr).localVector : true;
-        if (systemService.localVector === undefined) {
-          systemService.localVector = true;
-        }
+        systemService.localVector = false;        
         systemService.collection = chunkSettingsStr ? JSON.parse(chunkSettingsStr).collection : 'general';
         if (systemService.collection === undefined) {
           systemService.collection = "general";          

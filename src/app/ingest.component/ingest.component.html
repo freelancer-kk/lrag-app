@@ -70,11 +70,13 @@
           {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
         </button>
       </div>
+      <!--
       <div class="onerow">
         <mat-slide-toggle [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" [checked]="systemService.localVector" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
         {{ 'PAGES.INGEST.USE_LOCAL_VECTOR' | translate }}
         </mat-slide-toggle>  
       </div>
+      -->
       <div class="onerow">
         <mat-slide-toggle [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_SEMANTIC_TIP' | translate" [(ngModel)]="systemService.useSemantic">
         {{ 'PAGES.INGEST.USE_SEMANTIC' | translate }}

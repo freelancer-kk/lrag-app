@@ -20,7 +20,11 @@ const mergeKeys: string[] = [
   "MANAGE_EXTERNAL",
   "GHOSTSCRIPT_VERSION",
   "RERANKER_VERSION",
-  "WATCHER_VERSION"
+  "WATCHER_VERSION",
+  "TICKET_URL",
+  "FORUM_URL",
+  "REGISTRATION_URL",
+  "KB_URL",
 ];
 
 export default class DockerEnv {

@@ -13,10 +13,6 @@ export const routes: Routes = [
     component: HomeComponent
   },
   {
-    path: 'privacy',
-    loadComponent: () => import('./privacy.component/privacy.component').then(m => m.PrivacyComponent)
-  },
-  {
     path: 'detail',
     loadComponent: () => import('./detail/detail.component').then(m => m.DetailComponent)
   },
@@ -32,6 +28,11 @@ export const routes: Routes = [
     path: 'help',
     loadComponent: () => import('./help.component/help.component').then(m => m.HelpComponent)
   },
+  {
+    path: 'settings',
+    loadComponent: () => import('./settings.component/settings.component').then(m => m.SettingsComponent)
+  },
+  
   {
     path: '**',
     component: PageNotFoundComponent
