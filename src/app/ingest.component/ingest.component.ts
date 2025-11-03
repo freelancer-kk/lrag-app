@@ -221,6 +221,8 @@ export class IngestComponent implements OnInit {
   }
 
   dropped = async (files: NgxFileDropEntry[]) => {
+    // TODO: take care when uploading the same file again IT SHOULD NOT BE IGNORED AS IS THE CASE
+
     const totalLength: number = files.length + this.systemService.ragFiles.length;
     console.log('TL:', totalLength);
     if (totalLength <= this.systemService.MAX_FILES) {

@@ -106,6 +106,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
         console.log('Ignoring WATCHER service:', watcher_version, watcher_win_dl, watcher_mac_dl);
       }
       ocrProcessor = new OCRProcessor(watcherService, dockerEnv);
+      await ocrProcessor.start();
       langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'), ocrProcessor);
       langchainService.register(win?.webContents);
     

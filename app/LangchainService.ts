@@ -58,7 +58,8 @@ export default class LangchainService {
     
     this.semanticChunking = new SemanticChunking(baseUrl, model);
 
-    this.ocrProcessor = ocrProcessor;
+    this.ocrProcessor = ocrProcessor;          
+          
     this.uuid = uuidv4();
 
     console.log('LangchainService initialized');        
@@ -318,8 +319,6 @@ export default class LangchainService {
         if (fn.endsWith('pdf') || fn.endsWith('PDF')) {
           // file has not been loaded mark it for OCR processing
           console.log('OCR:REQUEST:put:', path.join(doc_path, fn));
-          
-          await this.ocrProcessor.connect();
           
           this.ocrProcessor.put(
             path.join(doc_path, fn),
