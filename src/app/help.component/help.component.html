@@ -3,40 +3,31 @@
     {{ 'PAGES.HELP.WHAT_IS_LRAG_TITLE' | translate }}
   </h3>
   <p>{{ 'PAGES.HELP.WHAT_IS_LRAG' | translate }}</p>
-  <h3>
-    {{ 'PAGES.HELP.ACCURACY_TITLE' | translate }}
-  </h3>
-  <p>
-    {{ 'PAGES.HELP.ACCURACY' | translate }}
-  </p>
-  <h3>
-    {{ 'PAGES.HELP.INGEST_TITLE' | translate }}
-  </h3>
-  <p>
-    {{ 'PAGES.HELP.INGEST' | translate }}
-  </p>
-  <h3>
-    {{ 'PAGES.HELP.DATA_SECURITY_TITLE' | translate }}
-  </h3>
-  <p>
-    {{ 'PAGES.HELP.DATA_SECURITY' | translate }}
-  </p>
-  <h3>
-    {{ 'PAGES.HELP.HOW_FAST_TITLE' | translate }}
-  </h3>
-  <p>
-    {{ 'PAGES.HELP.HOW_FAST' | translate }}
-  </p>
-  <h3>
-    {{ 'PAGES.HELP.GPU_TITLE' | translate }}
-  </h3>
-  <p>
-    {{ 'PAGES.HELP.GPU' | translate }}
-  </p>
-  <h3>
-    {{ 'PAGES.HELP.EMAIL_SUPPORT_TITLE' | translate }}
-  </h3>
-  <p>
-    {{ 'PAGES.HELP.EMAIL_SUPPORT' | translate }}
-  </p>
+  <p>&copy; Copyright K.N.Khaleque 2025 All rights reserved</p>
+  <h3>{{ 'PAGES.HELP.USEFUL_LINKS' | translate }}</h3>
+  <ul>
+    <li>
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.kb_link)">
+        {{ 'PAGES.HELP.KB_LINK' | translate }}
+      </a>
+    </li>
+    <br/>
+    <li>
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.forum_link)">
+        {{ 'PAGES.HELP.FORUM_LINK' | translate }}
+      </a>
+    </li>
+    <br/>
+    <li>
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.support_link)">
+        {{ 'PAGES.HELP.SUPPORT_LINK' | translate }}
+      </a>
+    </li>
+    <br/>
+    <li>
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.register_link)">
+        {{ 'PAGES.HELP.REGISTER_LINK' | translate }}
+      </a>
+    </li>
+  </ul>
 </div>

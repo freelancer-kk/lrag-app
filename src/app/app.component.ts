@@ -568,6 +568,11 @@ export class AppComponent implements OnInit {
       this.systemService.appVersionChange = true;
       localStorage.setItem('LRAG_VERSION', readVersion);
     }
+    this.systemService.kb_link = await this.commonService.getEnvValue('KB_URL');
+    this.systemService.forum_link = await this.commonService.getEnvValue('FORUM_URL');
+    this.systemService.support_link = await this.commonService.getEnvValue('TICKET_URL');
+    this.systemService.register_link = await this.commonService.getEnvValue('REGISTRATION_URL');
+    
     setTimeout(() => {
       this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);  
       this.rerankerService.startIfNecessary();

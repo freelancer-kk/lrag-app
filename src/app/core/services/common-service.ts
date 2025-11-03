@@ -73,12 +73,16 @@ export class CommonService {
     });
   }
 
-  openExternal = (url: string, data: any = {}): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      this.bridgeService.openExternal(6, url, data, async () => {
-        resolve();      
-      });
-    })    
+  openExternal = (url: string | undefined, data: any = {}): Promise<void> => {
+    if (url) {
+      return new Promise((resolve, reject) => {
+        this.bridgeService.openExternal(6, url, data, async () => {
+          resolve();      
+        });
+      })    
+    } else {
+      return Promise.resolve();
+    }
   }
 
   quitApp = (): Promise<void> => {

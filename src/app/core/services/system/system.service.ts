@@ -64,6 +64,11 @@ export class SystemService {
 
   showGetOllama: boolean = false;
   servicesDownloading: boolean = false;
+
+  kb_link: string | undefined;
+  forum_link: string | undefined;
+  support_link: string | undefined;
+  register_link: string | undefined;
   
   constructor(
     private bridgeService: BridgeService,
