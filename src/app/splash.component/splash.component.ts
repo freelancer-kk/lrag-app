@@ -62,13 +62,19 @@ export class SplashComponent implements OnInit {
       if (this.systemService.startShow() === true) {
         if (this.systemService.appVersionChange) {
           console.log('splash:starting:slide0');
-          this.restartAnimation(0);      
+          setTimeout(() => {
+            this.restartAnimation(0);      
+          }, 1000);
         } else if (this.systemService.servicesDownloading) {
           console.log('splash:starting:slide2');
-          this.restartAnimation(2);      
+          setTimeout(() => {
+            this.restartAnimation(2);
+          }, 1000);
         } else if (this.slideIndex !== 1) {
           console.log('splash:starting:slide1');
-          this.restartAnimation(1);
+          setTimeout(() => {
+            this.restartAnimation(1);
+          }, 1000);
         }
       }
     });
@@ -145,7 +151,7 @@ export class SplashComponent implements OnInit {
 
   // Start the animation
   startAnimation = async (slideNumber: number, para: number): Promise<void> => {
-    // console.log('startAnimation:', slideNumber, para);    
+    // console.log('splash:startAnimation:', slideNumber, para);    
     const slideName: string = this.slides[slideNumber].name;
     const slideParagraphs: any[] = this.slides[slideNumber].paragraphs;
     if (para < slideParagraphs.length) {

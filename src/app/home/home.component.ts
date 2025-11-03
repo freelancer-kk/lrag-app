@@ -9,7 +9,7 @@ import { SystemService } from '../core/services/system/system.service';
 import { TranslateService } from '@ngx-translate/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatExpansionModule} from '@angular/material/expansion';
+import {MatExpansionModule, MatExpansionPanel} from '@angular/material/expansion';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('gpu', {static: true}) gpu!: JsonViewComponent;
   @ViewChild('mem', {static: true}) mem!: JsonViewComponent;
   @ViewChild('disks', {static: true}) disks!: JsonViewComponent;
+  @ViewChild('splash', {static: true}) splash!: MatExpansionPanel;
   private translate = inject(TranslateService);
 
   EStatus: typeof EStatus = EStatus;
@@ -93,7 +94,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     })
   }
 
-  async ngOnInit() {}
+  async ngOnInit() {
+    if (this.systemService.appVersionChange || this.systemService.servicesDownloading) {
+      this.splash.expanded = true;
+      await this.startShow(undefined);
+    }    
+  }
+
   ngOnDestroy(): void {
     this.endShow(undefined);
   }

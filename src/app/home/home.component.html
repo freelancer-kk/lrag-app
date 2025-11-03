@@ -1,7 +1,7 @@
 <mat-card class="home-card" appearance="outlined">
   <mat-card-content>
     <mat-accordion>
-      <mat-expansion-panel (afterExpand)="startShow($event)" (afterCollapse)="endShow($event)" [expanded]="systemService.appVersionChange || systemService.servicesDownloading">
+      <mat-expansion-panel #splash (afterExpand)="startShow($event)" (afterCollapse)="endShow($event)">
         <mat-expansion-panel-header>
           <mat-panel-title></mat-panel-title>
           <mat-panel-description>
