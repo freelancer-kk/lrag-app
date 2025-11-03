@@ -262,8 +262,8 @@ export class InsightsComponent implements OnInit {
   }
 
   rate = async (ev: any, index: number, rating: number) => {
-    console.log('rate');
-    this.systemService.history[index].assessment = rating;
+    console.log('rate:', index);
+    this.systemService.history[index-1].assessment = rating;
     this.systemService.saveMainHistory();
     this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.RATING_THANKS'), 'OK', {
       duration: 2500
