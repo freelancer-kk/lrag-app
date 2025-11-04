@@ -161,19 +161,23 @@ export class OllamaService {
   startServicesIfNecessary = async (mecb: () => void = () => {}) => {    
     // Check if ollama is running
     console.log('startServicesIfNecessary:ollama');
-    // const { isReady } = await this.commandOllama('isReady');
-    // console.log('ollama check RUNNING:', isReady, this.manageOllamaExternally);
-    // if (isReady === true) {
     if (this.manageOllamaExternally === true) {
-      this.setOllamaCheckTimer();
-      console.log('SHOWING OLLAMA MANUAL WARNING:', this.manageOllamaExternally);
-      mecb();
-    } else {
-      console.log('ollama:calling start!');
-      await this.start();
-      // this.status.update(EStatus.running);
-      this.setOllamaCheckTimer();
+      const { isReady } = await this.commandOllama('isReady');
+      console.log('ollama check RUNNING:', isReady, this.manageOllamaExternally);
+      if (isReady === false) {    
+        this.setOllamaCheckTimer();
+        console.log('SHOWING OLLAMA MANUAL WARNING:', this.manageOllamaExternally);
+        mecb();
+      }
     }
+  }
+
+  startOnTimer = async (mecb: () => void = () => {}) => {
+    console.log('ollama:calling start!');
+    await this.start();
+    // this.status.update(EStatus.running);
+    this.setOllamaCheckTimer();
+    mecb();
   }
   
   pull = (model: string): Promise<any> => {

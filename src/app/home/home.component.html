@@ -89,14 +89,15 @@
               Brew {{ watcherService.brewStatus.getS() }}
             </div>
           }
-          @if ( watcherService.ghostscriptStatus.get() === EStatus.upgrade ||
-                watcherService.ghostscriptStatus.get() === EStatus.installed_brew || 
+          @if ( (watcherService.ghostscriptStatus.get() === EStatus.upgrade_brew && watcherService.brewStatus.get() === EStatus.installed) ||
+                (watcherService.ghostscriptStatus.get() === EStatus.installed_brew && watcherService.brewStatus.get() === EStatus.installed) ||
+                watcherService.ghostscriptStatus.get() === EStatus.upgrade ||
                 watcherService.ghostscriptStatus.get() === EStatus.not_installed) {
             <button matButton="filled" (click)="watcherService.installUpgradeGS($event)">
               Ghostscript {{ watcherService.ghostscriptStatus.getS() }}
             </button>
-          } @else if (watcherService.ghostscriptStatus.get() === EStatus.upgrading_brew || 
-                      watcherService.ghostscriptStatus.get() === EStatus.installing_brew ||
+          } @else if ((watcherService.ghostscriptStatus.get() === EStatus.upgrading_brew && watcherService.brewStatus.get() === EStatus.installed) || 
+                      (watcherService.ghostscriptStatus.get() === EStatus.installing_brew && watcherService.brewStatus.get() === EStatus.installed)  ||
                       watcherService.ghostscriptStatus.get() === EStatus.upgrading ||
                       watcherService.ghostscriptStatus.get() === EStatus.installing) {
             <div [class]="watcherService.brewStatus.getC()">

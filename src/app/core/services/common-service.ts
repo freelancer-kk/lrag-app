@@ -91,7 +91,16 @@ export class CommonService {
         resolve();
       });
     })
-  }  
+  }
+
+  extractNumericalVersionNumberFromString = (version: string): number => {
+    const versionStr: string[] | null = version.match(/\d+(\.\d+)+/g);
+    if (versionStr) {
+      return Number.parseInt(versionStr[0].replace(/\./g,''))
+    } else {
+      return 0;
+    }
+  }
 }
 
 const EStatusMap: { [key in EStatus]: string } = {

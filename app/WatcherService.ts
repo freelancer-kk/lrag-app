@@ -124,7 +124,7 @@ export default class WatcherService {
               '--version'
             ],
             executable: 'tesseract.exe',
-            expected_version: 'tesseract'
+            expected_version: '0'
          }
         },{
          name: 'ghostscript',

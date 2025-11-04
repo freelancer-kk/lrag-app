@@ -247,6 +247,15 @@ export default class DepService {
     });
   }
 
+  extractNumericalVersionNumberFromString = (version: string): number => {
+    const versionStr: string[] | null = version.match(/\d+(\.\d+)+/g);
+    if (versionStr) {
+      return Number.parseInt(versionStr[0].replace(/\./g,''))
+    } else {
+      return 0;
+    }
+  }
+
   checkPrerequisites = async (): Promise<void> => {
     // Check prerequisite e.g ghostscript is installed if not shell link to download for windows and run installer
     // MAC OS shell link to download homebrew and run brew install ghostscript
@@ -266,7 +275,8 @@ export default class DepService {
           try {            
             console.log('DepService:init:prereq:checkVersion', prereq.executable, prereq.args);
             this.emit({ type: 'service-prereq-check-start', data: { serviceName: this.serviceName, command: prereq.executable, args: prereq.args } });
-          
+            const prereqVer: number = this.extractNumericalVersionNumberFromString(prereq.expected_version);                     
+                      
             await new Promise((resolveS, rejectS) => {
 
               try {                 
@@ -308,21 +318,21 @@ export default class DepService {
                       data = Buffer.from(chunk).toString().trim();
                     }
                     if (data && data.length > 0) {
-                      console.log(`DepService:init:prereq:stdout: ${data}`);
-                      const version: string = data;
+                      const version: number = this.extractNumericalVersionNumberFromString(data);
+                      console.log(`DepService:init:prereq:stdout: ${data} - found version ${version}`); 
                       this.emit({ 
                         type: 'service-prereq-check-stdout',
                         data: {
                           serviceName: this.serviceName,
                           prereq: prereqName,
                           version,
-                          expectedVersion: prereq.expected_version,
+                          expectedVersion: prereqVer,
                           url: prereq.url,
                           brew: prereq.brew,
                           winget: prereq.winget
                         }
                       });
-                      if (version.startsWith(prereq.expected_version)) {
+                      if (version >= prereqVer) {
                         console.log('DepService:pass++')
                         this.passedPrereqs++; 
                       } else {
@@ -339,7 +349,7 @@ export default class DepService {
                         serviceName: this.serviceName,
                         prereq: prereqName,
                         text: Buffer.from(data).toString(),
-                        expectedVersion: prereq.expected_version,
+                        expectedVersion: prereqVer,
                         url: prereq.url,
                         brew: prereq.brew,
                         winget: prereq.winget

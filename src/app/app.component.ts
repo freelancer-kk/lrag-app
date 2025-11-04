@@ -249,7 +249,21 @@ export class AppComponent implements OnInit {
                 if (winget) {
                   this.watcherService.winget = winget;
                 }
-                if (!version.startsWith(expectedVersion)) {
+                if (Number.parseInt(version) >= Number.parseInt(expectedVersion)) {
+                  switch (prereq) {
+                    case 'homebrew': {
+                      this.watcherService.brewStatus.update(brew ? EStatus.installed : EStatus.installed)
+                    }
+                    break;
+                    case 'tesseract': {
+                      this.watcherService.wingetStatus.update(EStatus.installed)
+                    }
+                    break;
+                    default: {
+                      this.watcherService.ghostscriptStatus.update(brew ? EStatus.installed : EStatus.installed)
+                    }
+                  }                                    
+                } else {
                   switch (prereq) {
                     case 'homebrew': {
                       this.watcherService.brewStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade)
@@ -262,20 +276,6 @@ export class AppComponent implements OnInit {
                     break;
                     default: {
                       this.watcherService.ghostscriptStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade)
-                    }
-                  }                  
-                } else {
-                  switch (prereq) {
-                    case 'homebrew': {
-                      this.watcherService.brewStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed)
-                    }
-                    break;
-                    case 'tesseract': {
-                      this.watcherService.wingetStatus.update(EStatus.installed)
-                    }
-                    break;
-                    default: {
-                      this.watcherService.ghostscriptStatus.update(brew ? EStatus.installed_brew : EStatus.installed)
                     }
                   }                  
                 }
@@ -375,7 +375,7 @@ export class AppComponent implements OnInit {
               if (data.serviceName === 'ollama') {
                 this.ollamaService.status.update(EStatus.downloaded);
                 if (data.checksPassed) {
-                  this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
+                  this.ollamaService.startOnTimer(this.toastOllamaNotRunning);
                 }
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.downloaded);
@@ -666,13 +666,9 @@ export class AppComponent implements OnInit {
     this.systemService.support_link = await this.commonService.getEnvValue('TICKET_URL');
     this.systemService.register_link = await this.commonService.getEnvValue('REGISTRATION_URL');
     
-    /*
     setTimeout(() => {
       this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);  
-      this.rerankerService.startIfNecessary();
-      this.watcherService.startIfNecessary();
     }, 400)   
-    */
   }
 
   rotate = (event: any) => {
