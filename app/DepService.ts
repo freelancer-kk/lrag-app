@@ -1,5 +1,5 @@
 import { isMac } from './SystemInfo';
-import { ChildProcessByStdio, spawn, spawnSync } from 'child_process';
+import { ChildProcessByStdio, spawn } from 'child_process';
 import * as path from 'path';
 import Stream from 'stream';
 import * as fs from 'fs';

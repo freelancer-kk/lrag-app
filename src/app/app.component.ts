@@ -645,7 +645,9 @@ export class AppComponent implements OnInit {
     localStorage.setItem('theme', JSON.stringify(this.systemService.dark));
   }
 
-  async ngOnInit() {    
+  async ngOnInit() {
+    const gpuAccelStr: string = await this.commonService.getEnvValue('GPU_ACCELERATION')
+    this.ollamaService.gpuAcceleration = gpuAccelStr === 'true' ? true : false;
     this.systemService.osType = await this.systemService.getOSType();
     if (this.systemService.osType && (this.systemService.osType.isMac === true)) { 
       this.ollamaService.manageOllamaExternally = true; 

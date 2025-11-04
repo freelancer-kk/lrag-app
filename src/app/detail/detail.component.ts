@@ -96,7 +96,7 @@ export class DetailComponent implements OnInit {
       console.log(`Dialog result: ${result}`);
       if (result === true) {            
         this.ollamaService.gpuAcceleration = event.checked;
-        localStorage.setItem('gpu-accel', JSON.stringify(this.ollamaService.gpuAcceleration));
+        await this.commonService.setEnvValue('GPU_ACCELERATION', this.ollamaService.gpuAcceleration ? 'rrue' : 'false')
         // Remove and restart ollama
         this.systemService.gpuChangeStatus.update(EStatus.running);
         await this.ollamaService.commandOllama('gpuAccel', {

@@ -177,7 +177,9 @@ export class OllamaService {
     await this.start();
     // this.status.update(EStatus.running);
     this.setOllamaCheckTimer();
-    mecb();
+    if (this.manageOllamaExternally === true) {
+      mecb();
+    }
   }
   
   pull = (model: string): Promise<any> => {

@@ -10,8 +10,7 @@ export default class OllamaService {
   serviceInstanceNoGPU: DepService | undefined;
   ollama: Ollama | undefined;
   webContents: Electron.WebContents | undefined;
-  managedExternally = true;
-  
+  gpuAcceleration = true;
   isIPEX: boolean = false;
   
   constructor(
@@ -26,8 +25,10 @@ export default class OllamaService {
     userTempPath: string,
     appDataPath: string,
     gpuBrands: string[],
+    gpuAcceleration: boolean,
     versionCB: () => void,
   ) {
+    this.gpuAcceleration = gpuAcceleration;
     let execDir: string = path.join(appDataPath, 'ollama');
     let ollamaExecutable: string = "ollama.exe";
     let ollamaArgs: string[] = ['serve'];
@@ -162,24 +163,25 @@ export default class OllamaService {
           break;        
           case "gpuAccel": {
             const { gpuAcceleration } = params;
-            this.emit( { type: 'ollama-gpu-accel-started', data: { status: 'ok' } })
+            this.emit({ type: 'ollama-gpu-accel-started', data: { status: 'ok' } })
+            this.gpuAcceleration = gpuAcceleration;
+            await this.stop();
             if (gpuAcceleration) {
-              if (this.serviceInstanceNoGPU) {
-                await this.serviceInstanceNoGPU.stop();
-              }
-              await this.serviceInstance.install();
-            } else {
-              await this.serviceInstance.stop();
-              if (this.serviceInstanceNoGPU) {
-                await this.serviceInstanceNoGPU.install();
-              }
+              await this.serviceInstance.install();              
+            } else {              
+              await this.serviceInstanceNoGPU?.install();              
             }
+            await this.startIfInstalled();
             this.emit( { type: 'ollama-gpu-accel-done', data: { status: 'ok' } })  
             response = { status: 'ok', data: 'gpu-accel-change' };
           }
           break;        
           default: {
-            response = await this.serviceInstance.handleCommand(event, arg);
+            if (this.gpuAcceleration) {
+              response = await this.serviceInstance.handleCommand(event, arg);
+            } else {
+              response = await this.serviceInstanceNoGPU?.handleCommand(event, arg);
+            }
           } 
         }
       } catch (e) {
@@ -195,20 +197,20 @@ export default class OllamaService {
     }) 
   }
 
-  install = (): Promise<boolean> => {
-    return this.serviceInstance.install();
+  install = (): Promise<boolean> | undefined => {
+    return this.gpuAcceleration ? this.serviceInstance.install() : this.serviceInstanceNoGPU?.install();
   }
 
   startIfInstalled = () => {
-    this.serviceInstance.startIfInstalled();
+    this.gpuAcceleration ? this.serviceInstance.startIfInstalled() : this.serviceInstanceNoGPU?.startIfInstalled()
   }
 
-  stop = (): Promise<any> => {
-    return this.serviceInstance.stop();
+  stop = (): Promise<any> | undefined => {
+    return this.gpuAcceleration ? this.serviceInstance.stop() : this.serviceInstanceNoGPU?.stop()
   }
 
-  isReady = (): boolean => {
-    return this.serviceInstance.isReady
+  isReady = (): boolean | undefined => {
+    return this.gpuAcceleration ? this.serviceInstance.isReady : this.serviceInstanceNoGPU?.isReady
   }
 
   emit = (args: any) => {
@@ -328,7 +330,7 @@ export default class OllamaService {
   }
 
   abort = (): void => {
-    if (this.ollama && !this.managedExternally) {
+    if (this.ollama) {
       this.ollama.abort();
     }    
   }  

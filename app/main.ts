@@ -64,6 +64,8 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
     lragFiles = new LRagFiles(docPath, dataPath);
     lragFiles.register();
 
+    const gpuAccelerationStr: string | undefined = await dockerEnv.getKeyValue('GPU_ACCELERATION');
+    const gpuAcceleration: boolean = gpuAccelerationStr && gpuAccelerationStr === "true" ? true : false;
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
     const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');
@@ -127,6 +129,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
           userTempPath,
           appDataPath,
           graphics.controllers.map(v => v.vendor),
+          gpuAcceleration,
           async () => {
             await dockerEnv.kvFile?.set('OLLAMA_VERSION', toolsDLS.OLLAMA_VERSION);
             await dockerEnv.kvFile?.set('IPEX_VERSION', toolsDLS.IPEX_VERSION);    

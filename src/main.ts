@@ -40,8 +40,6 @@ bootstrapApplication(AppComponent, {
         const theme: string | null = localStorage.getItem('theme');        
         systemService.dark = theme ? JSON.parse(theme) : 'dark';        
         console.log('theme:', systemService.dark);
-        const gpuAccelStr: string | null = localStorage.getItem('gpu-accel');
-        ollamaService.gpuAcceleration= gpuAccelStr ? JSON.parse(gpuAccelStr) : 'true';        
         const manageOllamaExternally: string | null = localStorage.getItem('manage-ollama-externally');
         ollamaService.manageOllamaExternally = manageOllamaExternally ? JSON.parse(manageOllamaExternally) : 'false';
         console.log('managedExternally:', ollamaService.manageOllamaExternally);

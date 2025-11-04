@@ -25,6 +25,7 @@ const mergeKeys: string[] = [
   "FORUM_URL",
   "REGISTRATION_URL",
   "KB_URL",
+  "GPU_ACCELERATION"
 ];
 
 export default class DockerEnv {
