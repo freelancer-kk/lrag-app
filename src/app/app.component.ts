@@ -366,12 +366,29 @@ export class AppComponent implements OnInit {
           case 'service-extract-download-done': {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {
+                this.ollamaService.status.update(EStatus.downloaded);
                 this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.downloaded);
                 this.rerankerService.startIfNecessary();                
               }  else if (data.serviceName === 'watcher') {
                 this.watcherService.status.update(EStatus.downloaded);
+                this.watcherService.startIfNecessary();                
+              }
+            })
+          }
+          break;
+          case 'service-installed-updated-done': {
+            this.ngZone.run(() => {
+              console.log('service:installed:starting:', data.serviceName);
+              if (data.serviceName === 'ollama') {
+                this.ollamaService.status.update(EStatus.installed);
+                this.ollamaService.startServicesIfNecessary();
+              } else if (data.serviceName === 'reranker') {
+                this.rerankerService.status.update(EStatus.installed);
+                this.rerankerService.startIfNecessary();                
+              }  else if (data.serviceName === 'watcher') {
+                this.watcherService.status.update(EStatus.installed);
                 this.watcherService.startIfNecessary();                
               }
             })
@@ -635,11 +652,13 @@ export class AppComponent implements OnInit {
     this.systemService.support_link = await this.commonService.getEnvValue('TICKET_URL');
     this.systemService.register_link = await this.commonService.getEnvValue('REGISTRATION_URL');
     
+    /*
     setTimeout(() => {
       this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);  
       this.rerankerService.startIfNecessary();
       this.watcherService.startIfNecessary();
     }, 400)   
+    */
   }
 
   rotate = (event: any) => {

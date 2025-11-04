@@ -422,7 +422,7 @@ export default class DepService {
   install = async (): Promise<boolean> => {
     if (this.availableVersion != this.installedVersion) {
       console.log('DepService:extractAndDownload:new version', this.availableVersion);
-      fs.rmSync(this.installPath, { force: true });
+      fs.rmSync(this.installPath, { force: true, recursive: true });
     }
 
     if (!fs.existsSync(this.installPath)) {
@@ -456,68 +456,43 @@ export default class DepService {
           });                
           
           zip.extractAllToAsync(this.installPath, true, true);
-          // fs.createReadStream(tempZipFile)
-          // .pipe(unzipper.Extract({ path: this.installPath }))
-          // .on("close", () => {
-            // If Mac need to chmod +x the executable
-            // Terminal prevented from modify apps, need to set some kind of option
-            /*
-            if (isMac) {
-              const command: string = path.join(this.execDir, this.executable);
-              console.log('DepService:chmod +x', command);
-              const chmodProcess = spawn(
-                'chmod',
-                [
-                  '+x',
-                  '"' + command + '"'
-                ],        
-                {
-                  shell: true,
-                  cwd: '.',
-                  stdio: [ 'ignore', 'pipe', 'pipe' ],
-                  windowsHide: true,
-                }
-              )
-              if (chmodProcess) {
-                chmodProcess.on('spawn', async () => {
-                  console.log('DepService:chmod:spawned')          
-                })
-                chmodProcess.stdout.on('data', (data: string) => {
-                  console.log(`DepService:chmod:stdout: ${data}`);
-                  
-                }) 
-                chmodProcess.stderr.on("data", (data: string) => {
-                  console.error(`DepService:chmod:stderr: ${data}`);                    
-                });
-              } else {
-                console.log('DepService:chmod process not created correctly!')
-              }
-            }
-            */
-            this.emit({ 
-              type: 'service-extract-download-done',
-              data: { 
-                serviceName: this.serviceName,
-                version: this.availableVersion,
-                from: dlpath,
-                to: this.installPath
-              }
-            });                
             numberOfExtracts--;
             if (numberOfExtracts === 0) {
               this.isExtracting = false;
               this.installed = true;
-              console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully");
+              this.emit({ 
+                type: 'service-extract-download-done',
+                data: { 
+                  serviceName: this.serviceName,
+                  version: this.availableVersion,
+                  from: dlpath,
+                  to: this.installPath
+                }
+              });            
+              console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully", this.serviceName);
               this.versionCB();
-            }
-          // });          
+            }          
         })        
       }
     } else {
-      console.log('DepService:extractAndDownload:already downloaded and extracted!');
+      console.log('DepService:extractAndDownload:already downloaded and extracted!', this.serviceName);      
       this.installed = true;
     }
     return true;
+  }
+
+  startIfInstalled = () => {
+    if (this.installed) {
+      console.log('sending:start:event:', this.serviceName)
+      this.emit({ 
+        type: 'service-installed-updated-done',
+        data: { 
+          serviceName: this.serviceName,
+          version: this.availableVersion,
+          to: this.installPath
+        }
+      });
+    }
   }
 
   checkReady = async (): Promise<boolean> => {

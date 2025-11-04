@@ -47,7 +47,10 @@ export class WatcherService {
     }
   }
 
-  startIfNecessary = () => {
+  startIfNecessary = async () => {
+    await this.start();
+    this.checkIfReady();   
+    /*     
     let cnt: number = 0;
     const tt = setInterval(async () => {
       const { installed } = await this.commonService.commandService(
@@ -68,6 +71,7 @@ export class WatcherService {
         }
       }
     }, 2000);
+    */
   }
 
   checkIfReady = () => {

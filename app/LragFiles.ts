@@ -10,9 +10,13 @@ export default class LRagFiles {
     console.log('LRagFiles:constructor:')
     if (docPath) {
       this.docPath = docPath;
-      fs.mkdirSync(this.docPath, { recursive: true });
+      if (!fs.existsSync(this.docPath)) {
+        fs.mkdirSync(this.docPath, { recursive: true });
+      }
       try {
-        fs.mkdirSync(path.join(this.docPath, 'general'));
+        if (!fs.existsSync(path.join(this.docPath, 'general'))) {
+          fs.mkdirSync(path.join(this.docPath, 'general'));
+        }
       } catch (ce) {
         console.error(ce);
       }
@@ -96,7 +100,11 @@ export default class LRagFiles {
           case "mkdir": {
             console.log('LRagFiles:', callbackId, command, fullPath);
             try {
-              response = fs.mkdirSync(fullPath);
+              if (!fs.existsSync(fullPath)) {
+                response = fs.mkdirSync(fullPath, { recursive: true });
+              } else {
+                response = { fullPath };
+              }
             } catch (e) {
               console.error(e);
             }

@@ -261,7 +261,7 @@ try {
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {            
-    setTimeout(() => {
+    setTimeout(async () => {
       calcAssetsFolderPath();
 
       if (isLinux) {
@@ -282,9 +282,17 @@ try {
       }
       
       tray.setToolTip('LRag - Local Document AI Insights!');    
-      createWindow();            
+      const browserWin = await createWindow();
+      browserWin.once("ready-to-show", () => {
+        browserWin.webContents.once("did-finish-load", () => {
+          console.log('starting services if already installed:');      
+          ollamaService.startIfInstalled();
+          rerankerService.startIfInstalled();
+          watcherService.startIfInstalled(); 
+        })
+      })      
     }, 400)    
-  });  
+  }); 
 
   app.on("before-quit", async (e) => {
     console.log("before-quit: abort any transactions ollama may be doing");

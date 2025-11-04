@@ -33,17 +33,27 @@ export default class WatcherService {
     let urls: string[] = [];
     
     this.rootDir = dataRootPath;
-    fs.mkdirSync(this.rootDir, { recursive: true });
+    if (!fs.existsSync(this.rootDir)) {
+      fs.mkdirSync(this.rootDir, { recursive: true });
+    }
               
     const inputDir = path.join(dataRootPath, 'input');
     const outputDir = path.join(dataRootPath, 'output');
     const processedDir = path.join(dataRootPath, 'processed');
     const errorDir = path.join(dataRootPath, 'error');
 
-    fs.mkdirSync(inputDir, { recursive: true });
-    fs.mkdirSync(outputDir, { recursive: true });
-    fs.mkdirSync(processedDir, { recursive: true });
-    fs.mkdirSync(errorDir, { recursive: true });
+    if (!fs.existsSync(inputDir)) {
+      fs.mkdirSync(inputDir, { recursive: true });
+    }
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    if (!fs.existsSync(processedDir)) {
+      fs.mkdirSync(processedDir, { recursive: true });
+    }
+    if (!fs.existsSync(errorDir)) {
+      fs.mkdirSync(errorDir, { recursive: true });
+    }
     
     const watcherEnv: any = {
       ...process.env,
@@ -174,6 +184,10 @@ export default class WatcherService {
   
   install = (): Promise<boolean> => {
     return this.serviceInstance.install();
+  }
+
+  startIfInstalled = () => {
+    this.serviceInstance.startIfInstalled();
   }
 
   stop = (): Promise<any> => {

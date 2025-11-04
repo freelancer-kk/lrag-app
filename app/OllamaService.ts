@@ -199,6 +199,10 @@ export default class OllamaService {
     return this.serviceInstance.install();
   }
 
+  startIfInstalled = () => {
+    this.serviceInstance.startIfInstalled();
+  }
+
   stop = (): Promise<any> => {
     return this.serviceInstance.stop();
   }

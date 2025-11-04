@@ -150,7 +150,7 @@ export class OllamaService {
     }, 10000);
   }  
 
-  startServicesIfNecessary = async (mecb: () => void) => {    
+  startServicesIfNecessary = async (mecb: () => void = () => {}) => {    
     // Check if ollama is running
     console.log('startServicesIfNecessary:');
     const { isReady } = await this.commandOllama('isReady');
@@ -158,23 +158,26 @@ export class OllamaService {
     if (isReady === true) {
       if (this.manageOllamaExternally === true) {
         this.setOllamaCheckTimer();
+      } else {
+        this.status.update(EStatus.running);
       }
-      this.status.update(EStatus.running);      
     } else {
       if (this.manageOllamaExternally === true) {        
         console.log('SHOWING OLLAMA MANUAL WARNING:', this.manageOllamaExternally);
         mecb();        
       } else {
-        const response = await this.start();
+        await this.start();
+        this.status.update(EStatus.running);
+        this.setOllamaCheckTimer();
+        /*
         if (response && response.status === 'error' && response.error === 'extraction') {
           this.status.update(EStatus.extracting);
           console.log('waiting for extraction to complete, then start...');
         } else {
-          // this.status.update(EStatus.running);
-          this.setOllamaCheckTimer(async () => {
-            const response = await this.start();          
-          });
+          this.status.update(EStatus.running);
+          this.setOllamaCheckTimer();
         }
+      */
       }
     }
   }

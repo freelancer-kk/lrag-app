@@ -26,7 +26,9 @@ export default class ReRankerService {
     let args: string[] = [];
     let urls: string[] = [];
 
-    fs.mkdirSync(dataRootPath, { recursive: true });
+    if (!fs.existsSync(dataRootPath)) {
+      fs.mkdirSync(dataRootPath, { recursive: true });
+    }
     
     if (isWindows) {
       urls = [default_dl];
@@ -101,6 +103,10 @@ export default class ReRankerService {
   
   install = (): Promise<boolean> => {
     return this.serviceInstance.install();
+  }
+
+  startIfInstalled = () => {
+    this.serviceInstance.startIfInstalled();
   }
 
   stop = (): Promise<any> => {
