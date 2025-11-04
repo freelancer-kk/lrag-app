@@ -193,7 +193,7 @@ export class AppComponent implements OnInit {
         switch(type) {
           case 'after-link-opened': {
             if (data.serviceName === 'watcher') {
-              this.forceExit('RESTART_INSTALL')
+              this.forceExit('RESTART_INSTALL', true)
             }
           }
           break;
@@ -207,7 +207,7 @@ export class AppComponent implements OnInit {
                     this.watcherService.ghostscriptStatus.update(EStatus.installed)
 
                     // Application needs to be restarted
-                    this.forceExit('RESTART')
+                    this.forceExit('RESTART', true)
                 } else {
                   prereq === 'homebrew' ?
                     this.watcherService.brewStatus.update(EStatus.error) :
@@ -223,7 +223,7 @@ export class AppComponent implements OnInit {
                 if (exitCode === '0') {
                     this.watcherService.wingetStatus.update(EStatus.installed)                    
                     // Application needs to be restarted
-                    this.forceExit('RESTART')
+                    this.forceExit('RESTART', true)
                 } else {
                     this.watcherService.wingetStatus.update(EStatus.error)
                 }
@@ -251,7 +251,8 @@ export class AppComponent implements OnInit {
                     }
                     break;
                     case 'tesseract': {
-                      this.watcherService.wingetStatus.update(EStatus.upgrade_winget)
+                      this.watcherService.wingetStatus.update(EStatus.upgrade_winget);
+                      this.watcherService.clearTT();
                     }
                     break;
                     default: {
@@ -297,7 +298,8 @@ export class AppComponent implements OnInit {
                     }
                     break;
                     case 'tesseract': {
-                      this.watcherService.wingetStatus.update(EStatus.installed_winget)
+                      this.watcherService.wingetStatus.update(EStatus.installed_winget);
+                      this.watcherService.clearTT();
                     }
                     break;
                     default: {
@@ -367,13 +369,19 @@ export class AppComponent implements OnInit {
             this.ngZone.run(() => {
               if (data.serviceName === 'ollama') {
                 this.ollamaService.status.update(EStatus.downloaded);
-                this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
+                if (data.checksPassed) {
+                  this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
+                }
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.downloaded);
-                this.rerankerService.startIfNecessary();                
-              }  else if (data.serviceName === 'watcher') {
+                if (data.checksPassed) {                
+                  this.rerankerService.startIfNecessary();
+                }                
+              } else if (data.serviceName === 'watcher') {                
                 this.watcherService.status.update(EStatus.downloaded);
-                this.watcherService.startIfNecessary();                
+                if (data.checksPassed) {                
+                  this.watcherService.startIfNecessary();
+                }
               }
             })
           }
@@ -522,7 +530,7 @@ export class AppComponent implements OnInit {
                   this.mediaService.docStatus.push({
                     name: data.source,
                     status: 0,
-                    text: 'indexed'
+                    text: 'embedded'
                   });
                   console.log('doc statuses:', this.mediaService.docStatus);
                 }
@@ -732,8 +740,8 @@ export class AppComponent implements OnInit {
     });
   }
 
-  forceExit = async (lang_token_id: string = 'GPU_CHANGE_RESTART') => {
-    console.log('forcing exit!');
+  forceExit = async (lang_token_id: string = 'GPU_CHANGE_RESTART', notrestart = false) => {
+    console.log('forcing exit!', notrestart);
     const dialogRef = this.dialog.open(
       AlertComponent, {
         data: {
@@ -743,8 +751,10 @@ export class AppComponent implements OnInit {
           }
         }
       });
-    dialogRef.afterClosed().subscribe(async () => {
-      await this.commonService.quitApp();      
-    });
+    if (!notrestart) {
+      dialogRef.afterClosed().subscribe(async () => {
+        await this.commonService.quitApp();      
+      });
+    }
   } 
 }

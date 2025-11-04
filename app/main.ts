@@ -193,6 +193,7 @@ async function createWindow(): Promise<BrowserWindow> {
   win = new BrowserWindow({
     x: 0,
     y: 0,
+    show: false,
     width: size.width/2,
     height: size.height,
     minWidth: 400, // Optional: Set a minimum width
@@ -284,12 +285,12 @@ try {
       tray.setToolTip('LRag - Local Document AI Insights!');    
       const browserWin = await createWindow();
       browserWin.once("ready-to-show", () => {
-        browserWin.webContents.once("did-finish-load", () => {
-          console.log('starting services if already installed:');      
-          ollamaService.startIfInstalled();
-          rerankerService.startIfInstalled();
-          watcherService.startIfInstalled(); 
-        })
+        console.log('main:ready-to-show');
+        console.log('main:starting services if already installed:');      
+        ollamaService.startIfInstalled();
+        rerankerService.startIfInstalled();
+        watcherService.startIfInstalled(); 
+        browserWin.show();
       })      
     }, 400)    
   }); 

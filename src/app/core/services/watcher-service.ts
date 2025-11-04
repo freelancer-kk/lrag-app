@@ -16,6 +16,7 @@ export class WatcherService {
   brew: string = '';
   winget: string = '';
   depNotInstalledTimer: any;
+  tt: any;
 
   constructor(
     private commonService: CommonService
@@ -44,6 +45,13 @@ export class WatcherService {
     if (this.depNotInstalledTimer) {
       clearTimeout(this.depNotInstalledTimer);
       this.depNotInstalledTimer = undefined;
+    }
+  }
+
+  clearTT = () => {
+    if (this.tt) {
+      clearInterval(this.tt);
+      this.tt = undefined;
     }
   }
 
@@ -76,15 +84,15 @@ export class WatcherService {
 
   checkIfReady = () => {
     let cnt: number = 0;
-    const tt = setInterval(async () => {
+    this.tt = setInterval(async () => {
       if ((await this.isReady()) === true) {
-        clearInterval(tt);
+        clearInterval(this.tt);
         this.status.update(EStatus.running);
         await this.findProcess();        
       } else {
         cnt++
         if (cnt>50) {
-          clearInterval(tt);
+          clearInterval(this.tt);
           this.status.update(EStatus.dead);
         }
       }

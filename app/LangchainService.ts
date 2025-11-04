@@ -382,7 +382,7 @@ export default class LangchainService {
           this.emit( { type: 'langchain-run-complete', data: { chunks: chunks.length } });
           return { status: 'completed', documents: chunks.length };
         } else {
-          this.emit( { type: 'langchain-run-warning', data: { message: 'nothing indexed' } });
+          this.emit( { type: 'langchain-run-warning', data: { message: 'nothing embedded' } });
           return { status: 'warning', message: 'nothing to process' };
         }
       /*
@@ -393,7 +393,7 @@ export default class LangchainService {
       */
       } else {
         await this.setStatusForLoadedDocs(docs);
-         this.emit( { type: 'langchain-run-warning', data: { message: 'nothing indexed' } });
+         this.emit( { type: 'langchain-run-warning', data: { message: 'nothing embedded' } });
         return { status: 'warning', message: 'pending ocr tasks' };
       }
     }).catch((err) => {

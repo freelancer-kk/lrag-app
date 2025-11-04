@@ -43,7 +43,7 @@ export class OllamaService {
   ) {}
 
   findProcess = async () => {
-    const response: any = await this.commonService.findProcess(this.serviceName);
+    const response: any = await this.commonService.findProcess(this.serviceName, 688);
     console.log('findProcess:', response);
     this.servicePID = response.servicePID;
   }
@@ -96,6 +96,8 @@ export class OllamaService {
           gpuAccel: this.gpuAcceleration
         }
       );
+    } else {
+      console.log('ollama:service:start not called, already running:', this.servicePID);
     }
   }
 
@@ -134,51 +136,43 @@ export class OllamaService {
     // console.log('getAvailableLLMs:', this.availableModels);
   }
 
-  setOllamaCheckTimer = (cb = () => {}) => {
+  checkIsReady = async () => {
+    const { isReady } = await this.commonService.commandService(93, this.serviceName, 'isReady');
+    if (!isReady) {
+      console.log('setOllamaCheckTimer:failed:set status not_running')
+      this.status.update(EStatus.not_running);            
+    } else {
+      this.status.update(EStatus.running);
+      if (this.serviceTimer) {
+        clearInterval(this.serviceTimer);
+      }      
+    }
+  }
+
+  setOllamaCheckTimer = () => {
     if (this.serviceTimer) {
       clearInterval(this.serviceTimer);
     }
     this.serviceTimer = setInterval(async () => {
-      await cb();
-      const { isReady } = await this.commonService.commandService(93, this.serviceName, 'isReady');
-      if (!isReady) {
-        clearInterval(this.serviceTimer);
-        this.status.update(EStatus.not_running);            
-      } else {
-        this.status.update(EStatus.running);
-      }
+      await this.checkIsReady();
     }, 10000);
   }  
 
   startServicesIfNecessary = async (mecb: () => void = () => {}) => {    
     // Check if ollama is running
-    console.log('startServicesIfNecessary:');
-    const { isReady } = await this.commandOllama('isReady');
-    console.log('ollama check RUNNING:', isReady, this.manageOllamaExternally);
-    if (isReady === true) {
-      if (this.manageOllamaExternally === true) {
-        this.setOllamaCheckTimer();
-      } else {
-        this.status.update(EStatus.running);
-      }
+    console.log('startServicesIfNecessary:ollama');
+    // const { isReady } = await this.commandOllama('isReady');
+    // console.log('ollama check RUNNING:', isReady, this.manageOllamaExternally);
+    // if (isReady === true) {
+    if (this.manageOllamaExternally === true) {
+      this.setOllamaCheckTimer();
+      console.log('SHOWING OLLAMA MANUAL WARNING:', this.manageOllamaExternally);
+      mecb();
     } else {
-      if (this.manageOllamaExternally === true) {        
-        console.log('SHOWING OLLAMA MANUAL WARNING:', this.manageOllamaExternally);
-        mecb();        
-      } else {
-        await this.start();
-        this.status.update(EStatus.running);
-        this.setOllamaCheckTimer();
-        /*
-        if (response && response.status === 'error' && response.error === 'extraction') {
-          this.status.update(EStatus.extracting);
-          console.log('waiting for extraction to complete, then start...');
-        } else {
-          this.status.update(EStatus.running);
-          this.setOllamaCheckTimer();
-        }
-      */
-      }
+      console.log('ollama:calling start!');
+      await this.start();
+      // this.status.update(EStatus.running);
+      this.setOllamaCheckTimer();
     }
   }
   

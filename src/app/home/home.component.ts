@@ -95,10 +95,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    if (this.systemService.appVersionChange || this.systemService.servicesDownloading) {
-      this.splash.expanded = true;
-      await this.startShow(undefined);
-    }    
+    setTimeout(async () => {
+      if (this.systemService.appVersionChange || this.systemService.servicesDownloading) {
+        this.splash.expanded = true;
+        await this.startShow(undefined);
+      }
+    }, 5000)
   }
 
   ngOnDestroy(): void {

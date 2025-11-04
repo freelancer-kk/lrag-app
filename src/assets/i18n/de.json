@@ -13,8 +13,8 @@
     "GPU": "Grafik",
     "MEM": "Erinnerung"
   },
-  "RESTART": "Die Anwendung muss neu gestartet werden",
-  "RESTART_INSTALL": "Die Anwendung wird beendet. Bitte starten Sie sie nach der Installation der Abhängigkeiten neu",
+  "RESTART": "Application should be restarted for changes to take effect",
+  "RESTART_INSTALL": "Please restart after installation of dependencies in order for changes to take effect",
   "GPU_ACCEL": "GPU -Beschleunigung",
   "GPU_ACCEL_TIP": "Diese Funktion funktioniert normalerweise, wenn Sie Probleme haben, insbesondere mit Intel integrierten GPUs, diese ausschalten",
   "GPU_ARE_YOU_SURE": "Umschalten der GPU -Beschleunigungseinstellung, sind Sie sicher?",

@@ -119,13 +119,13 @@ export class MediaService {
             const fIdx: number = this.docStatus.findIndex(f => f.name === name);
             if (fIdx > -1) {
               this.docStatus[fIdx].status = response === true ? 0 : 1;
-              this.docStatus[fIdx].text = response === true ? 'indexed' : 'Not indexed';
+              this.docStatus[fIdx].text = response === true ? 'embedded' : 'Not embedded';
               console.log('getFiles:status:', this.docStatus[fIdx]);
             } else {
               this.docStatus.push({
                 name,
                 status: response === true ? 0 : 1,
-                text: response === true ? 'indexed' : 'Not indexed'
+                text: response === true ? 'embedded' : 'Not embedded'
               });
               console.log('getFiles:status:new:', this.docStatus[this.docStatus.length - 1]);
             }
