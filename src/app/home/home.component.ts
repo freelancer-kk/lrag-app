@@ -91,6 +91,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.disks.expandTo(2);
       }
       */
+     if (this.systemService.startShow() === false) {
+      this.splash.expanded = false;
+     }
     })
   }
 

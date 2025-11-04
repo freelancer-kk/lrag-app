@@ -596,7 +596,8 @@ export class AppComponent implements OnInit {
       }
       if (this.overallStatus === EStatus.running_healthy) {
         this.systemService.servicesDownloading = false;
-        this.systemService.showGetOllama = false;        
+        this.systemService.showGetOllama = false;
+        this.systemService.startShow.update(() => false);
         if (ollamaService.servicePID === -1) {
           this.ollamaService.findProcess();
         }
