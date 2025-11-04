@@ -396,7 +396,7 @@ export class AppComponent implements OnInit {
               console.log('service:installed:starting:', data.serviceName);
               if (data.serviceName === 'ollama') {
                 this.ollamaService.status.update(EStatus.installed);
-                this.ollamaService.startServicesIfNecessary();
+                this.ollamaService.startOnTimer();
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.installed);
                 this.rerankerService.startIfNecessary();                
