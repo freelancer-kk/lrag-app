@@ -113,7 +113,8 @@ export class WatcherService {
     this.commonService.openExternal(
       this.url,
       {
-        serviceName: 'watcher'
+        serviceName: 'watcher',
+        installType: 'brew'
       }
     );
   }
@@ -136,9 +137,10 @@ export class WatcherService {
       console.log('gs:install/upgrade:brew:', response); 
     } else {
       this.commonService.openExternal(
-        this.url,
-        {
-          serviceName: 'watcher'
+        this.url,        
+        {          
+          serviceName: 'watcher',
+          installType: 'ghostscript'
         }
       );
       console.log('gs:install/upgrade:url'); 

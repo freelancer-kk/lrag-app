@@ -193,6 +193,11 @@ export class AppComponent implements OnInit {
         switch(type) {
           case 'after-link-opened': {
             if (data.serviceName === 'watcher') {
+              if (data.installType === 'ghostscript') {
+                this.watcherService.ghostscriptStatus.update(EStatus.installed)
+              } else {
+                this.watcherService.brewStatus.update(EStatus.installed)
+              }
               this.forceExit('RESTART_INSTALL', true)
             }
           }
@@ -221,7 +226,7 @@ export class AppComponent implements OnInit {
               if (data.serviceName === 'watcher') {
                 const { exitCode } = data;
                 if (exitCode === '0') {
-                    this.watcherService.wingetStatus.update(EStatus.installed)                    
+                    this.watcherService.wingetStatus.update(EStatus.installed)
                     // Application needs to be restarted
                     this.forceExit('RESTART', true)
                 } else {
