@@ -15,7 +15,7 @@
         <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
         <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
           @for (entry of ollamaService.models; track $index) {
-            <mat-option [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
+            <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -24,7 +24,7 @@
         <mat-label>{{ 'PAGES.DETAIL.EMBEDDINGS_MODEL_SELECT' | translate }}</mat-label>
         <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.embeddings_model" (selectionChange)="modelChange($event, 1)">
           @for (entry of ollamaService.embedding_models; track $index) {
-            <mat-option [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
+            <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -92,7 +92,7 @@
         @for (entry of ollamaService.availableModels; track $index) {
           <tr mat-row>
             <td class="centercol" mat-col>
-              <button matButton (click)="openModelDetails($event, entry.name)">
+              <button [matTooltip]="entry.description" matButton (click)="openModelDetails($event, entry.name)">
                 {{ entry.name }}
               </button>
             </td>

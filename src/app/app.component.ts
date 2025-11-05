@@ -669,7 +669,15 @@ export class AppComponent implements OnInit {
     this.systemService.register_link = await this.commonService.getEnvValue('REGISTRATION_URL');
     
     setTimeout(() => {
-      this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);  
+      this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
+      /*
+      * Comment out since only necessary for reload
+      */
+      /*
+      this.ollamaService.startOnTimer();
+      this.watcherService.startIfNecessary();
+      this.rerankerService.startIfNecessary();
+      */ 
     }, 400)   
   }
 

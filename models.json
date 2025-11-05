@@ -3,60 +3,42 @@
     "value": "gemma3:1b",
     "viewValue": "gemma3:1b (<1GB)",
     "thinking": false,
-    "memory": 1
+    "memory": 1,
+    "description": "The current, most capable model that runs on a single GPU"
   },
   {
     "value": "granite3-dense:2b",
     "viewValue": "granite3-dense:2b (<2GB)",
     "thinking": true,
-    "memory": 2
+    "memory": 2,
+    "description": "The IBM Granite 2B and 8B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
   },
   {
     "value": "nemotron-mini:4b",
     "viewValue": "nemotron-mini:4b (<3GB)",
     "thinking": true,
-    "memory": 3
+    "memory": 3,
+    "description": "A commercial-friendly small language model by NVIDIA optimized for roleplay, RAG QA, and function calling"
   },
   {
     "value": "llama3-chatqa:8b",
     "viewValue": "llama3-chatqa:8b (<5GB)",
     "thinking": true,
-    "memory": 5
-  },
-  {
-    "value": "llama3.1:8b",
-    "viewValue": "llama3.1:8b (<5GB)",
-    "thinking": true,
-    "memory": 5
-  },
-  {
-    "value": "mistral:7b",
-    "viewValue": "mistral:7b (<5GB)",
-    "thinking": true,
-    "memory": 5
+    "memory": 5,
+    "description": "A model from NVIDIA based on Llama 3 that excels at conversational question answering (QA) and retrieval-augmented generation (RAG)"
   },
   {
     "value": "gemma3:12b",
     "viewValue": "gemma3:12b (<9GB)",
     "thinking": true,
-    "memory": 8
+    "memory": 8,
+    "description": "The current, most capable model that runs on a single GPU"
   },
   {
     "value": "deepseek-r1:14b",
     "viewValue": "deepseek-r1:14b (<12GB)",
     "thinking": true,
-    "memory": 9
-  },
-  {
-    "value": "alibayram/medgemma",
-    "viewValue": "medgemma:4b (<4GB)",
-    "thinking": true,
-    "memory": 4
-  },
-  {
-    "value": "martain7r/finance-llama-8b:q4_k_m",
-    "viewValue": "martain7r/finance-llama-8b (<9GB)",
-    "thinking": true,
-    "memory": 12
+    "memory": 9,
+    "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
   }
 ]
