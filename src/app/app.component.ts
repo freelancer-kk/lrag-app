@@ -448,6 +448,8 @@ export class AppComponent implements OnInit {
           break;
           case 'ollama-gpu-accel-done': {
             this.ngZone.run(() => {
+              this.systemService.gpuChangeStatus.update(EStatus.not_running);
+              this.systemService.modelStatus.update(EStatus.not_running);
               this.forceExit();
             })
           }
