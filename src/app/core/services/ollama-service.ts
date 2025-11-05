@@ -57,6 +57,7 @@ export class OllamaService {
   }
 
   setGpuAcceleration = async () => {
+    this.status.update(EStatus.not_running);      
     await this.commonService.setEnvValue('GPU_ACCELERATION', this.gpuAcceleration ? 'true' : 'false')
     await this.commandOllama('gpuAccel', {
       gpuAcceleration: this.gpuAcceleration
