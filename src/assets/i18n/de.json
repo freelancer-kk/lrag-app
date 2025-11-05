@@ -18,7 +18,7 @@
   "GPU_ACCEL": "GPU -Beschleunigung",
   "GPU_ACCEL_TIP": "Diese Funktion funktioniert normalerweise, wenn Sie Probleme haben, insbesondere mit Intel integrierten GPUs, diese ausschalten",
   "GPU_ARE_YOU_SURE": "Umschalten der GPU -Beschleunigungseinstellung, sind Sie sicher?",
-  "GPU_CHANGE_RESTART": "GPU -Beschleunigungseinstellung vollständig. ",
+  "GPU_CHANGE_RESTART": "GPU-Beschleunigungseinstellung abgeschlossen. Die Anwendung wird beendet. Bitte starten Sie neu. Am besten starten Sie Ihren PC neu, nachdem Sie diese Einstellung geändert haben",
   "RATING_TOO_LOW": "Ihre PC -LAG -Bewertung ist sehr niedrig. ",
   "APP": {
     "TITLE": "LRag",

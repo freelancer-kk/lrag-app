@@ -18,7 +18,7 @@
   "GPU_ACCEL": "GPU Acceleration",
   "GPU_ACCEL_TIP": "This feature usually works, if you experience issues particularly with intel integrated GPUs, switch it off",
   "GPU_ARE_YOU_SURE": "Toggle GPU Acceleration setting, are you sure?",
-  "GPU_CHANGE_RESTART": "GPU acceleration setting complete. The application will exit, please restart",
+  "GPU_CHANGE_RESTART": "GPU acceleration setting complete. The application will exit, please restart. It is best to restart your PC after changing this setting",
   "RATING_TOO_LOW": "You PC LRag rating is very low. LRag will run extremely slowly on your PC and may experience difficultly completing certain tasks",
   "APP": {
     "TITLE": "LRag",

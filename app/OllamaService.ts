@@ -37,7 +37,7 @@ export default class OllamaService {
     if (isWindows) {
       if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia'))) {
         console.log('ollama choice: nvidia: win');
-        urls = [default_dl];        
+        urls = [default_dl];
       } else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd')) || gpuBrands.find(f => f.toLowerCase().startsWith('advanced'))) {
         console.log('ollama choice: amd: win');
         urls = [default_dl, rocm_dl];        
@@ -86,12 +86,12 @@ export default class OllamaService {
     )
 
     if (this.isIPEX) {
-      // Not relevant for MAC only WIN IPEX
+      // Not relevant for MAC only WIN IPEX INTEL
       this.serviceInstanceNoGPU = new DepService(
         "ollamaNoGPU",
         "ollama",
         "ollama.exe",      
-        execDir,
+        path.join(appDataPath, 'ollamaNoGPU'),
         ["serve"],
         appDataPath,
         userTempPath,
@@ -100,10 +100,10 @@ export default class OllamaService {
           this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
           try {
             const response: ListResponse  = await this.ollama.ps();
-            // console.log('ollamaService:readyCheck:', response)
-            return Array.isArray(response);
+            // console.log('ollamaService:NoGPU:readyCheck:', response)
+            return Array.isArray(response.models);
           } catch (e) {
-            console.error('ollamaService:readyCheck:error:', e);
+            console.error('ollamaService:NoGPU:readyCheck:error:', e);
           }
           return false
         },
@@ -117,6 +117,79 @@ export default class OllamaService {
     }
   }
 
+  handleCommand = async (event: any, arg: any) => {
+    const { callbackId, command, params }= arg;
+    console.log('ollama:', callbackId, command, params)
+    let response: any = {}
+    try {
+      switch (command) {
+        case "generate": {
+          response = await this.generate(params as GenerateRequest);
+        }
+        break;
+        case "chat": {
+          response = await this.chat(params as ChatRequest);
+        }
+        break;
+        case "pull": {
+          response = await this.pull(params as PullRequest);          
+        }
+        break;
+        case "rm": {
+          response = await this.rm(params as DeleteRequest);          
+        }
+        break;
+        case "list": {
+          response = await this.list();
+        }
+        break;
+        case "show": {
+          response = await this.show(params as ShowRequest);
+        }
+        break;
+        case "ps": {
+          response = await this.ps();
+        }
+        break;        
+        case "abort": {
+          this.abort();
+        }
+        break;        
+        case "gpuAccel": {
+          const { gpuAcceleration } = params;
+          this.emit({ type: 'ollama-gpu-accel-started', data: { status: 'ok' } })
+          this.gpuAcceleration = gpuAcceleration;
+          await this.stop();
+          if (gpuAcceleration) {
+            await this.serviceInstance.install();              
+          } else {              
+            await this.serviceInstanceNoGPU?.install();              
+          }
+          await this.startIfInstalled();
+          this.emit( { type: 'ollama-gpu-accel-done', data: { status: 'ok' } })  
+          response = { status: 'ok', data: 'gpu-accel-change' };
+        }
+        break;        
+        default: {
+          if (this.gpuAcceleration) {
+            response = await this.serviceInstance.handleCommand(event, arg);
+          } else {
+            response = await this.serviceInstanceNoGPU?.handleCommand(event, arg);
+          }
+        } 
+      }
+    } catch (e) {
+      console.error(e);
+      response.error = e;
+    }
+    response.command = command;
+    response.params = params;
+    event.reply('reply', {
+      callbackId,
+      response: JSON.stringify(response)
+    })
+  }
+
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
     this.serviceInstance.register(this.webContents);
@@ -124,77 +197,11 @@ export default class OllamaService {
       this.serviceInstanceNoGPU.register(this.webContents);
     }
     ipcMain.on('service-ollama', async (event: any, arg: any) => {
-      const { callbackId, command, params }= arg;
-      console.log('ollama:', callbackId, command, params)
-      let response: any = {}
-      try {
-        switch (command) {
-          case "generate": {
-            response = await this.generate(params as GenerateRequest);
-          }
-          break;
-          case "chat": {
-            response = await this.chat(params as ChatRequest);
-          }
-          break;
-          case "pull": {
-            response = await this.pull(params as PullRequest);          
-          }
-          break;
-          case "rm": {
-            response = await this.rm(params as DeleteRequest);          
-          }
-          break;
-          case "list": {
-            response = await this.list();
-          }
-          break;
-          case "show": {
-            response = await this.show(params as ShowRequest);
-          }
-          break;
-          case "ps": {
-            response = await this.ps();
-          }
-          break;        
-          case "abort": {
-            this.abort();
-          }
-          break;        
-          case "gpuAccel": {
-            const { gpuAcceleration } = params;
-            this.emit({ type: 'ollama-gpu-accel-started', data: { status: 'ok' } })
-            this.gpuAcceleration = gpuAcceleration;
-            await this.stop();
-            if (gpuAcceleration) {
-              await this.serviceInstance.install();              
-            } else {              
-              await this.serviceInstanceNoGPU?.install();              
-            }
-            await this.startIfInstalled();
-            this.emit( { type: 'ollama-gpu-accel-done', data: { status: 'ok' } })  
-            response = { status: 'ok', data: 'gpu-accel-change' };
-          }
-          break;        
-          default: {
-            if (this.gpuAcceleration) {
-              response = await this.serviceInstance.handleCommand(event, arg);
-            } else {
-              response = await this.serviceInstanceNoGPU?.handleCommand(event, arg);
-            }
-          } 
-        }
-      } catch (e) {
-        console.error(e);
-        response.error = e;
-      }
-      response.command = command;
-      response.params = params;
-      event.reply('reply', {
-        callbackId,
-        response: JSON.stringify(response)
-      })
-    }) 
+      this.handleCommand(event, arg);
+    });
+    ipcMain.on('service-ollamaNoGPU', async (event: any, arg: any) => {
+      this.handleCommand(event, arg);
+    });
   }
 
   install = (): Promise<boolean> | undefined => {

@@ -42,6 +42,27 @@ export class OllamaService {
     private commonService: CommonService
   ) {}
 
+  getGpuAcceleration = async () => {
+    const gpuAccelStr: string = await this.commonService.getEnvValue('GPU_ACCELERATION');    
+    this.gpuAcceleration = gpuAccelStr.toLocaleLowerCase() === 'true' ? true : false;
+    this.serviceName = 'ollama' + (this.gpuAcceleration ? '' : 'NoGPU');
+    console.log('Ollama: getGPUAccel: Service Name:', this.serviceName);
+  }
+
+  getManagedExternally = async () => {
+    const manageExternalStr: string = await this.commonService.getEnvValue('MANAGE_EXTERNAL');    
+    this.manageOllamaExternally = manageExternalStr.toLocaleLowerCase() === 'true' ? true : false;
+    console.log('Ollama: Manage External: Service Name:', this.serviceName);
+  }
+
+  setGpuAcceleration = async () => {
+    await this.commonService.setEnvValue('GPU_ACCELERATION', this.gpuAcceleration ? 'true' : 'false')
+    await this.commandOllama('gpuAccel', {
+      gpuAcceleration: this.gpuAcceleration
+    });
+    this.serviceName = 'ollama' + (this.gpuAcceleration ? '' : 'NoGPU');
+  }
+
   findProcess = async () => {
     const response: any = await this.commonService.findProcess(this.serviceName, 688);
     console.log('findProcess:', response);
@@ -86,6 +107,7 @@ export class OllamaService {
   }
 
   start = async (): Promise<any> => {
+    console.log('ollama:service:start Ollama:', this.serviceName);
     await this.findProcess();
     if (this.servicePID === -1) {
       return this.commonService.commandService(

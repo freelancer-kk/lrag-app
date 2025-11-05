@@ -34,16 +34,13 @@ bootstrapApplication(AppComponent, {
       SharedModule
     ),
     provideAppInitializer(async () => {
-      const initializerFn = async (systemService: SystemService, commonService: CommonService, ollamaService: OllamaService) => {
+      const initializerFn = async (systemService: SystemService, commonService: CommonService) => {
         console.log('app initializer:start');        
         await systemService.init();
         const theme: string | null = localStorage.getItem('theme');        
         systemService.dark = theme ? JSON.parse(theme) : 'dark';        
         console.log('theme:', systemService.dark);
-        const manageOllamaExternally: string | null = localStorage.getItem('manage-ollama-externally');
-        ollamaService.manageOllamaExternally = manageOllamaExternally ? JSON.parse(manageOllamaExternally) : 'false';
-        console.log('managedExternally:', ollamaService.manageOllamaExternally);
-
+      
         const chunkSettingsStr: string | null = localStorage.getItem('chunk-settings');
         console.log(chunkSettingsStr);
         systemService.chunkSize = chunkSettingsStr ? JSON.parse(chunkSettingsStr).chunkSize : 512;
@@ -75,7 +72,7 @@ bootstrapApplication(AppComponent, {
           systemService.history = JSON.parse(historyStr);
         }
       };
-      await initializerFn(inject(SystemService),inject(CommonService),inject(OllamaService));
+      await initializerFn(inject(SystemService),inject(CommonService));
     }),
     provideNgxSkeletonLoader({
       theme: {

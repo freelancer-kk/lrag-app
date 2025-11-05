@@ -2,7 +2,7 @@
 <h1 class="title">
   {{ 'PAGES.DETAIL.MAIN_TITLE' | translate }}
 </h1>
-@if (systemService.brand === 'Intel' || systemService.brand === 'Amd') {
+@if (systemService.brand === 'Nvidia' || systemService.brand === 'Intel' || systemService.brand === 'Amd') {
   <span class="spacer"></span>
   <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="ollamaService.gpuAcceleration" (change)="switchGPUAccel($event)">
     {{ 'GPU_ACCEL' | translate }}

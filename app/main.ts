@@ -65,7 +65,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
     lragFiles.register();
 
     const gpuAccelerationStr: string | undefined = await dockerEnv.getKeyValue('GPU_ACCELERATION');
-    const gpuAcceleration: boolean = gpuAccelerationStr && gpuAccelerationStr === "true" ? true : false;
+    const gpuAcceleration: boolean = gpuAccelerationStr && gpuAccelerationStr.toLowerCase() === "true" ? true : false;
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
     const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');
@@ -138,7 +138,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
         );
         ollamaService.register(win?.webContents);
         const managed_externally: string | undefined = dockerEnv.getKeyValue('MANAGE_EXTERNAL');
-        if ((isWindows === true || isLinux === true) && (managed_externally === 'false')) {
+        if ((isWindows === true || isLinux === true) && (managed_externally?.toLowerCase() === 'false')) {
           await ollamaService.install();
         }        
       }

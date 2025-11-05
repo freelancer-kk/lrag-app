@@ -317,7 +317,7 @@ export class AppComponent implements OnInit {
           break;
           case 'service-download-complete': {
             this.ngZone.run(() => {
-              if (data.serviceName === 'ollama') {
+              if (data.serviceName === 'ollama' || data.serviceName === 'ollamaNoGPU') {
                 this.ollamaService.status.update(EStatus.extracting);
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.extracting);
@@ -330,7 +330,7 @@ export class AppComponent implements OnInit {
           case 'service-download-part': {
             this.ngZone.run(() => {
               this.systemService.servicesDownloading = true;
-              if (data.serviceName === 'ollama') {
+              if (data.serviceName === 'ollama' || data.serviceName === 'ollamaNoGPU') {
                 this.ollamaService.status.update(EStatus.downloading, { percentage: data.percentage });                
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.downloading, { percentage: data.percentage });                
@@ -342,7 +342,7 @@ export class AppComponent implements OnInit {
           break;
           case 'service-extract-download-starting': {
             this.ngZone.run(async () => {
-              if (data.serviceName === 'ollama') {
+              if (data.serviceName === 'ollama' || data.serviceName === 'ollamaNoGPU') {
                 this._snackBar.open(
                   await this.commonService.get('APP.OLLAMA_DOWNLOADING'),
                   await this.commonService.get('OK'), {
@@ -360,7 +360,7 @@ export class AppComponent implements OnInit {
           break;
           case 'service-extract-extract-starting': {
             this.ngZone.run(async () => {
-              if (data.serviceName === 'ollama') {
+              if (data.serviceName === 'ollama' || data.serviceName === 'ollamaNoGPU') {
                 this.ollamaService.status.update(EStatus.extracting);
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.extracting);
@@ -372,7 +372,7 @@ export class AppComponent implements OnInit {
           break;
           case 'service-extract-download-done': {
             this.ngZone.run(() => {
-              if (data.serviceName === 'ollama') {
+              if (data.serviceName === 'ollama' || data.serviceName === 'ollamaNoGPU') {
                 this.ollamaService.status.update(EStatus.downloaded);
                 if (data.checksPassed) {
                   this.ollamaService.startOnTimer(this.toastOllamaNotRunning);
@@ -394,7 +394,7 @@ export class AppComponent implements OnInit {
           case 'service-installed-updated-done': {
             this.ngZone.run(() => {
               console.log('service:installed:starting:', data.serviceName);
-              if (data.serviceName === 'ollama') {
+              if (data.serviceName === 'ollama' || data.serviceName === 'ollamaNoGPU') {
                 this.ollamaService.status.update(EStatus.installed);
                 this.ollamaService.startOnTimer();
               } else if (data.serviceName === 'reranker') {
@@ -413,7 +413,7 @@ export class AppComponent implements OnInit {
           break;
           case 'service-ready-state': {
             this.ngZone.run(() => {
-              if (data.serviceName === 'ollama' && (data.ready === true)) {
+              if ((data.serviceName === 'ollama' || data.serviceName === 'ollamaNoGPU') && (data.ready === true)) {
                 this.ollamaService.status.update(EStatus.running);
               } else if (data.serviceName === 'reranker' && (data.ready === true)) {
                 this.rerankerService.status.update(EStatus.running);
@@ -646,9 +646,9 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const gpuAccelStr: string = await this.commonService.getEnvValue('GPU_ACCELERATION')
-    this.ollamaService.gpuAcceleration = gpuAccelStr === 'true' ? true : false;
+    await this.ollamaService.getGpuAcceleration();    
     this.systemService.osType = await this.systemService.getOSType();
+    await this.ollamaService.getManagedExternally();
     if (this.systemService.osType && (this.systemService.osType.isMac === true)) { 
       this.ollamaService.manageOllamaExternally = true; 
     };
