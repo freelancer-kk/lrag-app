@@ -13,8 +13,8 @@
     "GPU": "Graphics",
     "MEM": "Memory"
   },
-  "RESTART": "Application should be restarted for changes to take effect",
-  "RESTART_INSTALL": "Please restart after installation of dependencies in order for changes to take effect",
+  "RESTART": "Application should be restarted",
+  "RESTART_INSTALL": "Please restart after installation of dependencies",
   "GPU_ACCEL": "GPU Acceleration",
   "GPU_ACCEL_TIP": "This feature usually works, if you experience issues particularly with intel integrated GPUs, switch it off",
   "GPU_ARE_YOU_SURE": "Toggle GPU Acceleration setting, are you sure?",
@@ -113,7 +113,7 @@
           "LINE1": "Priority access to our support ticketing system run by expert agents",
           "LINE2": "Notification of software updates",
           "LINE3": "Access to specialised, sophisticated, domain specific models e.g focussing on Law, Finance etc.",
-          "LINE4": "Access to imaging, video and audio AI generation software (coming later)"
+          "LINE4": "Access to multi modal models, images, video etc. (coming later)"
         },
         "GO_PROPLUS": {
           "TITLE": "Upgrade To Pro Plus (coming later)",

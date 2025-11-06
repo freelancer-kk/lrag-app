@@ -13,8 +13,8 @@
     "GPU": "Grafik",
     "MEM": "Erinnerung"
   },
-  "RESTART": "Application should be restarted for changes to take effect",
-  "RESTART_INSTALL": "Please restart after installation of dependencies in order for changes to take effect",
+  "RESTART": "Application should be restarted",
+  "RESTART_INSTALL": "Please restart after installation of dependencies",
   "GPU_ACCEL": "GPU -Beschleunigung",
   "GPU_ACCEL_TIP": "Diese Funktion funktioniert normalerweise, wenn Sie Probleme haben, insbesondere mit Intel integrierten GPUs, diese ausschalten",
   "GPU_ARE_YOU_SURE": "Umschalten der GPU -Beschleunigungseinstellung, sind Sie sicher?",
@@ -113,7 +113,7 @@
         "LINE1": "Priority access to our support ticketing system run by expert agents",
         "LINE2": "Notification of software updates",
         "LINE3": "Access to specialised, sophisticated, domain specific models e.g focussing on Law, Finance etc.",
-        "LINE4": "Access to imaging, video and audio AI generation software (coming later)"
+        "LINE4": "Access to multi modal models, images, video etc. (coming later)"
       },
       "GO_PROPLUS": {
         "TITLE": "Upgrade To Pro Plus (coming later)",
