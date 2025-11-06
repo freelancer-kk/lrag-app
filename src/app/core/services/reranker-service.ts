@@ -33,31 +33,27 @@ export class RerankerService {
     }
   }
 
-  startIfNecessary = async () => {
-    await this.start();
-    this.checkIfReady();        
-    /*
-    let cnt: number = 0;
-    const tt = setInterval(async () => {
-      const { installed } = await this.commonService.commandService(
-        91,
-        this.serviceName,
-        'installed',
-        {}
-      );
-      if (installed === true) {
-        clearInterval(tt);
-        await this.start();
-        this.checkIfReady();        
-      } else {
-        cnt++
-        if (cnt>50) {
-          clearInterval(tt);
-          this.status.update(EStatus.dead);
-        }
+  stop = (): Promise<any> => {
+    this.status.update(EStatus.destroy);
+    return this.commonService.commandService(
+      291,
+      this.serviceName,
+      'stop',
+      {
+        mode: 1
       }
-    }, 2000);
-    */
+    );
+  }
+
+  restart = async (ev: any) => {
+    await this.stop();
+    // await this.startIfNecessary();
+  }
+
+  startIfNecessary = async () => {
+    this.status.update(EStatus.starting);
+    await this.start();
+    this.checkIfReady();   
   }
 
   checkIfReady = () => {
@@ -92,8 +88,6 @@ export class RerankerService {
   isReady = async (): Promise<boolean> => {
     const { isReady } = await this.commonService.commandService(91, this.serviceName, 'isReady');
     if (!isReady) {
-      this.status.update(EStatus.not_running);            
-    } else {
       this.status.update(EStatus.running);
     }
     return isReady;

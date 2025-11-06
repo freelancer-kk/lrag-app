@@ -108,7 +108,12 @@
             <div [class]="watcherService.ghostscriptStatus.getC()">
               Ghostscript {{ watcherService.ghostscriptStatus.getS() }}
             </div>
-          }         
+          } 
+          @if (watcherService.status.get() === EStatus.running) {                    
+            <button matButton [matTooltip]="'PAGES.HOME.RESTART_SERVICE' | translate" matButton (click)="watcherService.restart($event)">
+              <mat-icon class="success">restore</mat-icon>
+            </button>
+          }
           <div [class]="watcherService.status.getC()">  
             @if (watcherService.status.get() === EStatus.downloading) {
               <mat-spinner diameter="30"></mat-spinner>

@@ -100,8 +100,7 @@ export default class OCRProcessor {
                   console.log('OCR File retrieved:');
                   this.emit( { type: 'ocr-processor-complete', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, getResponse: 'ok' } });
                   this.watcherService.delete(fe.outputfile);
-                }
-                  
+                }                  
                 if (this.watcherService.exists(fe.errorfile)) {
                   // Error get the error doc
                   console.log('OCR:COMPLETED with error:', fe.errorfile)

@@ -29,15 +29,20 @@ export class WatcherService {
     this.servicePID = response.servicePID;
   }
 
-  start = async (): Promise<any> => {
+  start = async (): Promise<boolean> => {
     await this.findProcess();
     if (this.servicePID === -1) {
-      return this.commonService.commandService(
+      await this.commonService.commandService(
         92,
         this.serviceName,
         'start',
         {}
       );
+      return true;
+    } else {
+      // Already running therefore no check
+      this.status.update(EStatus.running);
+      return false;
     }
   }
 
@@ -56,30 +61,27 @@ export class WatcherService {
   }
 
   startIfNecessary = async () => {
-    await this.start();
-    this.checkIfReady();   
-    /*     
-    let cnt: number = 0;
-    const tt = setInterval(async () => {
-      const { installed } = await this.commonService.commandService(
-        92,
-        this.serviceName,
-        'installed',
-        {}
-      );
-      if (installed === true) {
-        clearInterval(tt);
-        await this.start();
-        this.checkIfReady();        
-      } else {
-        cnt++
-        if (cnt>50) {
-          clearInterval(tt);
-          this.status.update(EStatus.dead);
-        }
+    this.status.update(EStatus.starting);
+    if (await this.start()) {
+      this.checkIfReady();   
+    }
+  }
+
+  stop = (): Promise<any> => {
+    this.status.update(EStatus.destroy);
+    return this.commonService.commandService(
+      292,
+      this.serviceName,
+      'stop',
+      {
+        mode: 1
       }
-    }, 2000);
-    */
+    );
+  }
+
+  restart = async (ev: any) => {
+    await this.stop();
+    // await this.startIfNecessary();
   }
 
   checkIfReady = () => {
@@ -102,8 +104,6 @@ export class WatcherService {
   isReady = async (): Promise<boolean> => {
     const { isReady } = await this.commonService.commandService(92, this.serviceName, 'isReady');
     if (!isReady) {
-      this.status.update(EStatus.not_running);            
-    } else {
       this.status.update(EStatus.running);
     }
     return isReady;

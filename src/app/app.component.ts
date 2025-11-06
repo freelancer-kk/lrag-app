@@ -436,7 +436,17 @@ export class AppComponent implements OnInit {
           }
           break;
           case 'service-stop': {
-
+            const { serviceName, mode } = data;
+            console.log('service-stop:', serviceName, mode);
+            this.ngZone.run(() => {
+              if (serviceName === 'watcher' && mode === 1) {
+                this.watcherService.status.update(EStatus.dead);
+                this.watcherService.startIfNecessary();
+              } else if (serviceName === 'reranker' && mode === 1) {
+                this.rerankerService.status.update(EStatus.dead);
+                this.rerankerService.startIfNecessary();
+              }
+            });
           }
           break;
           case 'ollama-gpu-accel-started': {

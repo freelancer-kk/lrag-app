@@ -123,7 +123,7 @@ export default class DepService {
         }
         break;
         case "stop": {
-          response = this.stop();
+          response = this.stop(true, params.mode);
         }
         break;        
         case "pause": {
@@ -688,7 +688,7 @@ export default class DepService {
     } 
   }
 
-  stop = async (all: boolean = false): Promise<any> => {
+  stop = async (all: boolean = false, mode: number = 0): Promise<any> => {
     if (this.servicePID && this.servicePID.length > 0) {
       if (all) {
         for await (const pid of this.servicePID) {
@@ -707,7 +707,8 @@ export default class DepService {
         type: 'service-stop',
         data: {
           serviceName: this.serviceName,
-          version: this.availableVersion          
+          version: this.availableVersion,
+          mode      
         }
       });
     }

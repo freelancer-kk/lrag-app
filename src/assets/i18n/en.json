@@ -101,7 +101,8 @@
         "RESTORE_SETTINGS": "Restoring settings and question from this run!",
         "RESTORE_TIP": "You may wish to restore the settings and question for a query you ran in the past. This will restore advanced embedding, insight and model settings",
         "BOOTSTRAP": "Startup",
-        "BOOTSTRAP_DESC": "About LRag"
+        "BOOTSTRAP_DESC": "About LRag",
+        "RESTART_SERVICE": "Restart service if necessary"
       },
       "SETTINGS": {
         "TITLE": "Settings",
