@@ -67,6 +67,23 @@ export class WatcherService {
     }
   }
 
+  restartWhenGone = () => {
+    let cnt: number = 0;
+    const tt = setInterval(async () => {
+      await this.findProcess();
+      if (this.servicePID === -1) {
+        clearInterval(tt);        
+        this.startIfNecessary();
+      } else {
+        cnt++
+        if (cnt>50) {
+          clearInterval(tt);
+          this.status.update(EStatus.dead);
+        }
+      }
+    }, 2000);    
+  }
+
   stop = (): Promise<any> => {
     this.status.update(EStatus.destroy);
     return this.commonService.commandService(
@@ -80,8 +97,7 @@ export class WatcherService {
   }
 
   restart = async (ev: any) => {
-    await this.stop();
-    // await this.startIfNecessary();
+    await this.stop();    
   }
 
   checkIfReady = () => {

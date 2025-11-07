@@ -439,12 +439,10 @@ export class AppComponent implements OnInit {
             const { serviceName, mode } = data;
             console.log('service-stop:', serviceName, mode);
             this.ngZone.run(() => {
-              if (serviceName === 'watcher' && mode === 1) {
-                this.watcherService.status.update(EStatus.dead);
-                this.watcherService.startIfNecessary();
-              } else if (serviceName === 'reranker' && mode === 1) {
-                this.rerankerService.status.update(EStatus.dead);
-                this.rerankerService.startIfNecessary();
+              if (serviceName === 'watcher' && mode === 1) {                
+                this.watcherService.restartWhenGone();
+              } else if (serviceName === 'reranker' && mode === 1) {                
+                this.rerankerService.restartWhenGone();
               }
             });
           }
