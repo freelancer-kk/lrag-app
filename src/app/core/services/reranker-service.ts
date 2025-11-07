@@ -103,9 +103,6 @@ export class RerankerService {
 
   isReady = async (): Promise<boolean> => {
     const { isReady } = await this.commonService.commandService(91, this.serviceName, 'isReady');
-    if (!isReady) {
-      this.status.update(EStatus.running);
-    }
     return isReady;
   }
 }

@@ -58,6 +58,18 @@
             }            
           </div>            
         </div>
+        @if ( watcherService.wingetStatus.get() === EStatus.installed_winget || 
+              watcherService.wingetStatus.get() === EStatus.upgrade_winget ||
+              watcherService.brewStatus.get() === EStatus.not_installed || 
+              watcherService.brewStatus.get() === EStatus.upgrade ||
+              (watcherService.ghostscriptStatus.get() === EStatus.upgrade_brew && watcherService.brewStatus.get() === EStatus.installed) ||
+              (watcherService.ghostscriptStatus.get() === EStatus.installed_brew && watcherService.brewStatus.get() === EStatus.installed) ||
+              watcherService.ghostscriptStatus.get() === EStatus.upgrade ||
+              watcherService.ghostscriptStatus.get() === EStatus.not_installed) {
+        <div class="installhint">
+          {{ 'PAGES.HOME.CLICK_TO_INSTALL' | translate }}
+        </div>
+        }
         <div class="onerow">
           {{ 'PAGES.HOME.WATCHER' | translate }}
           &nbsp;<span class="small">({{ watcherService.servicePID }})</span>

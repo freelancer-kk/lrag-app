@@ -41,7 +41,6 @@ export class WatcherService {
       return true;
     } else {
       // Already running therefore no check
-      this.status.update(EStatus.running);
       return false;
     }
   }
@@ -118,10 +117,7 @@ export class WatcherService {
   }
 
   isReady = async (): Promise<boolean> => {
-    const { isReady } = await this.commonService.commandService(92, this.serviceName, 'isReady');
-    if (!isReady) {
-      this.status.update(EStatus.running);
-    }
+    const { isReady } = await this.commonService.commandService(592, this.serviceName, 'isReady');
     return isReady;
   }
 
