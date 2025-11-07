@@ -119,7 +119,7 @@
       "GO_PROPLUS": {
         "TITLE": "Upgrade To Pro Plus (coming later)",
         "LINE1": "Connect to external provides such as Anthropic, Gemini, Groq and OpenAI",
-        "LINE2": "MCP Tool calling for agentic integrations",
+        "LINE2": "MCP and Agent integrations",
         "LINE3": "SLA support turnaround"
       }
     },
