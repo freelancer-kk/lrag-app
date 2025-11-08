@@ -70,6 +70,9 @@ export default class WatcherService {
         'OCR_USE_POLLING': 'True',
         'OCR_POLL_NEW_FILE_SECONDS': 5,
         'OCR_RETRIES_LOADING_FILE': 50,
+      },
+      ...{
+        PATH: process.env.PATH + ':/opt/homebrew/bin'
       }
     };
 
