@@ -61,7 +61,8 @@
         "SLIDE3": {
           "PARA1": "Component Download/Upgrade",
           "PARA2": "Please wait whilst downloading and extracting extras...",
-          "PARA3": "The download may take some time depending on your PC and Internet Connection."
+          "PARA3": "You may see buttons to manually install dependencies, please follow the instructions.",
+          "PARA4": "The download may take some time depending on your PC and Internet Connection."
         }
     },
     "HOME": {
