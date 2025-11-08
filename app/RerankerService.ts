@@ -5,6 +5,7 @@ import { Document } from "@langchain/core/documents";
 import { isMac, isWindows } from './SystemInfo';
 import DepService from './DepService';
 import * as fs from 'fs';
+import log from 'electron-log/main';
 
 export default class ReRankerService {
   serviceInstance: DepService;
@@ -55,10 +56,10 @@ export default class ReRankerService {
               method: 'GET'
             }
           )).text();
-          console.log('rerank:service:ready', text);
+          log.info('rerank:service:ready', text);
           return true;
         } catch (e) {
-          console.error('rerank:not:ready');
+          log.error('rerank:not:ready');
         }
         return false
       },
@@ -76,7 +77,7 @@ export default class ReRankerService {
     this.serviceInstance.register(this.webContents);
     ipcMain.on('service-reranker', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
-      console.log('reranker:', callbackId, command, params)
+      log.info('reranker:', callbackId, command, params)
       let response: any = {}
       try {
         switch (command) {
@@ -89,7 +90,7 @@ export default class ReRankerService {
           } 
         }
       } catch (e) {
-        console.error(e);
+        log.error(e);
         response.error = e;
       }
       response.command = command;
@@ -129,7 +130,7 @@ export default class ReRankerService {
         }),
       }
 
-      // console.log('rerankerService:rerank:', body);
+      // log.info('rerankerService:rerank:', body);
 
       const data: any = await (await fetch(
         'http://localhost:2021/rerank',
@@ -145,13 +146,13 @@ export default class ReRankerService {
       const ret_docs: Document[] = []
       for await (const md of data.metadata) {
         const fIdx: number = docs.findIndex((d, i) => (i + '-' + d.metadata.source) === md.source);
-        // console.log('RERANKING:', docs[fIdx].pageContent.substring(0, 20));      
+        // log.info('RERANKING:', docs[fIdx].pageContent.substring(0, 20));      
         
         ret_docs.push(docs[fIdx]);
       }
       return ret_docs;
     } catch (e) {
-      console.error(e);    
+      log.error(e);    
     }    
   }
 }

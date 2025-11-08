@@ -1,13 +1,14 @@
 import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import log from 'electron-log/main';
 
 export default class LRagFiles {
   docPath: string;
   dataPath: string;
   
   constructor(docPath: string | undefined, dataPath: string | undefined) {
-    console.log('LRagFiles:constructor:')
+    log.info('LRagFiles:constructor:')
     if (docPath) {
       this.docPath = docPath;
       if (!fs.existsSync(this.docPath)) {
@@ -18,13 +19,13 @@ export default class LRagFiles {
           fs.mkdirSync(path.join(this.docPath, 'general'));
         }
       } catch (ce) {
-        console.error(ce);
+        log.error(ce);
       }
     } else {
       this.docPath = '';
     }
     this.dataPath = dataPath ? dataPath: '';
-    console.log('LRagFiles:', this.docPath, this.dataPath);
+    log.info('LRagFiles:', this.docPath, this.dataPath);
   }
 
   ls = (path: string, params: any): string[] => {    
@@ -41,7 +42,7 @@ export default class LRagFiles {
         let response: any = {}
         switch (command) {
           case "start": {
-            console.log('LRagFiles:', callbackId, command);
+            log.info('LRagFiles:', callbackId, command);
             if (fs.existsSync(fullPath)) {
               fs.unlinkSync(fullPath);
             }
@@ -51,8 +52,8 @@ export default class LRagFiles {
           }
           break;
           case "end": {
-            console.log('LRagFiles:', callbackId, command);
-            console.log('written:', fullPath);
+            log.info('LRagFiles:', callbackId, command);
+            log.info('written:', fullPath);
             response = {
               fullPath
             }
@@ -89,7 +90,7 @@ export default class LRagFiles {
           }
           break;
           case "ls": {
-            console.log('LRagFiles:', callbackId, command, fullPath);
+            log.info('LRagFiles:', callbackId, command, fullPath);
             response = this.ls(fullPath, params).map(f => path.join(fullPath, f));
           }
           break;
@@ -98,7 +99,7 @@ export default class LRagFiles {
           }
           break;
           case "mkdir": {
-            console.log('LRagFiles:', callbackId, command, fullPath);
+            log.info('LRagFiles:', callbackId, command, fullPath);
             try {
               if (!fs.existsSync(fullPath)) {
                 response = fs.mkdirSync(fullPath, { recursive: true });
@@ -106,12 +107,12 @@ export default class LRagFiles {
                 response = { fullPath };
               }
             } catch (e) {
-              console.error(e);
+              log.error(e);
             }
           }
           break;
           case "rm": {
-            console.log('LRagFiles:', callbackId, command, params.name);
+            log.info('LRagFiles:', callbackId, command, params.name);
             try {
               fs.rmSync(params.name, {
                 recursive: true,
@@ -129,7 +130,7 @@ export default class LRagFiles {
           }
           break;
           case "cleanData": {
-            console.log('LRagFiles:clean:removing:', callbackId, this.dataPath);
+            log.info('LRagFiles:clean:removing:', callbackId, this.dataPath);
             try {
               fs.rmSync(this.dataPath, {
                 recursive: true,

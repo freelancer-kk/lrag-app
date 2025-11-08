@@ -6,6 +6,7 @@ import * as fs from 'fs';
 import find, { ProcessInfo } from "find-process";
 import AdmZip from 'adm-zip';
 import kill from 'tree-kill';
+import log from 'electron-log/main';
 
 export interface IPrereq {
   name: string,
@@ -99,7 +100,7 @@ export default class DepService {
 
   handleCommand = async (event: any, arg: any): Promise<any> => {
     const { callbackId, command, params }= arg;
-    console.log('DepService:register:', this.serviceName,':', callbackId, command, params)
+    log.info('DepService:register:', this.serviceName,':', callbackId, command, params)
     let response: any = {}
     try {
       switch (command) {
@@ -160,7 +161,7 @@ export default class DepService {
         } 
       }
     } catch (e) {
-      console.error(e);
+      log.error(e);
       response.error = e;
     }
     response.command = command;
@@ -170,7 +171,7 @@ export default class DepService {
 
   emit = (args: any) => {
     // const ev: any = JSON.parse(args);
-    // console.log('event:', ev);
+    // log.info('event:', ev);
     this.webContents?.send('event', {
       response: args
     })                
@@ -191,7 +192,7 @@ export default class DepService {
     if (pkgProcess) {
       pkgProcess.on('spawn', async () => {})
       pkgProcess.stdout.on('data', (data: string) => {
-        console.log(`DepService:${packager}:stdout: ${data}`);
+        log.info(`DepService:${packager}:stdout: ${data}`);
         this.emit({ 
           type: packager + '-running-stdout',
           data: { 
@@ -204,7 +205,7 @@ export default class DepService {
         });
       })        
       pkgProcess.stderr.on("data", (data: string) => {
-        console.error(`DepService:${packager}:stderr: ${data}`);          
+        log.error(`DepService:${packager}:stderr: ${data}`);          
         this.emit({ 
           type: packager + '-running-stderr',
           data: { 
@@ -217,7 +218,7 @@ export default class DepService {
         });
       });
       pkgProcess.on('exit', (code: number | null) => {
-        console.error(`DepService:${packager}:exit: ${code}`);          
+        log.error(`DepService:${packager}:exit: ${code}`);          
         this.emit({ 
           type: packager + '-running-exit',
           data: {
@@ -230,19 +231,19 @@ export default class DepService {
         });
       });        
     } else {
-      console.error('DepService:' + packager + ':no valid process');
+      log.error('DepService:' + packager + ':no valid process');
       return { status: 'error' }
     }
     return { status: 'ok' }
   }
 
   findProcessPID = async (): Promise<any> => {
-    // console.log('findByProcessName:', this.executable);
+    // log.info('findByProcessName:', this.executable);
     const processes: ProcessInfo[] = await find('name', this.executable);
     if (processes.length === 0) {
-      console.error('Cannot find service process:', this.executable, processes);
+      log.error('Cannot find service process:', this.executable, processes);
     } else {
-      // console.log('findByProcessName:', this.executable, processes, processes[0].pid);
+      // log.info('findByProcessName:', this.executable, processes, processes[0].pid);
       this.servicePID = processes.map(v => v.pid);
       return { 
         servicePID: processes[0].pid
@@ -277,15 +278,15 @@ export default class DepService {
       isMac ? 
         this.prerequisites.filter(f => f.mac).length :
         this.prerequisites.filter(f => f.win).length;
-    console.log('Total prereqs:', this.serviceName, this.validPrereqs);
+    log.info('Total prereqs:', this.serviceName, this.validPrereqs);
     await new Promise(async (resolve, reject) => {
       for await (const prereq_entry of this.prerequisites) {
         const prereqName: string = prereq_entry.name;      
         const prereq: any = isMac ? prereq_entry.mac : prereq_entry.win;
-        console.log('checkPrerequisites:', prereqName, prereq);
+        log.info('checkPrerequisites:', prereqName, prereq);
         if (prereq) {
           try {            
-            console.log('DepService:init:prereq:checkVersion', prereq.executable, prereq.args);
+            log.info('DepService:init:prereq:checkVersion', prereq.executable, prereq.args);
             this.emit({ type: 'service-prereq-check-start', data: { serviceName: this.serviceName, command: prereq.executable, args: prereq.args } });
             const prereqVer: number = this.extractNumericalVersionNumberFromString(prereq.expected_version);                     
                       
@@ -304,10 +305,10 @@ export default class DepService {
                 )              
                 if (prereqCheckProcess) {                  
                   prereqCheckProcess.on('spawn', () => {
-                    console.log(`DepService:init:prereq:spawned: ${prereq.executable}`);                    
+                    log.info(`DepService:init:prereq:spawned: ${prereq.executable}`);                    
                   })
                   prereqCheckProcess.on('error', (err) => {
-                    console.error(`DepService:init:prereq:spawn:error: ${err}`);
+                    log.error(`DepService:init:prereq:spawn:error: ${err}`);
                     this.emit({ 
                       type: 'service-prereq-check-stderr',
                       data: {
@@ -322,7 +323,7 @@ export default class DepService {
                       }
                     });
                     this.failedPrereqs++;
-                    console.log('DepService:fail++')
+                    log.info('DepService:fail++')
                     resolveS(true);                                  
                   })
                   prereqCheckProcess.stdout.on('data', (chunk: any) => {
@@ -332,7 +333,7 @@ export default class DepService {
                     }
                     if (data && data.length > 0) {
                       const version: number = this.extractNumericalVersionNumberFromString(data);
-                      console.log(`DepService:init:prereq:stdout: ${data} - found version ${version}`); 
+                      log.info(`DepService:init:prereq:stdout: ${data} - found version ${version}`); 
                       this.emit({ 
                         type: 'service-prereq-check-stdout',
                         data: {
@@ -347,16 +348,16 @@ export default class DepService {
                         }
                       });
                       if (version >= prereqVer) {
-                        console.log('DepService:pass++')
+                        log.info('DepService:pass++')
                         this.passedPrereqs++; 
                       } else {
-                        console.log('DepService:fail++')
+                        log.info('DepService:fail++')
                         this.failedPrereqs++;
                       }
                     }                    
                   })            
                   prereqCheckProcess.stderr.on("data", (data: string) => {
-                    console.error(`DepService:init:prereq:stderr: ${data}`);              
+                    log.error(`DepService:init:prereq:stderr: ${data}`);              
                     this.emit({ 
                       type: 'service-prereq-check-stderr',
                       data: {
@@ -371,10 +372,10 @@ export default class DepService {
                       }
                     });
                     this.failedPrereqs++;
-                    console.log('DepService:fail++');             
+                    log.info('DepService:fail++');             
                   });
                   prereqCheckProcess.on('exit', (code: number | null) => {
-                    console.log(`DepService:init:prereq:service:${this.serviceName} exit:${code} passed:${this.passedPrereqs}`);
+                    log.info(`DepService:init:prereq:service:${this.serviceName} exit:${code} passed:${this.passedPrereqs}`);
                     this.emit({ 
                       type: 'service-prereq-check-exit',
                       data: {
@@ -386,15 +387,15 @@ export default class DepService {
                     resolveS(true);
                   });
                 } else {
-                  console.error('No valid process for prerequisite', prereq.executable, prereq.args);  
+                  log.error('No valid process for prerequisite', prereq.executable, prereq.args);  
                   this.failedPrereqs++;
-                  console.log('DepService:fail++')
+                  log.info('DepService:fail++')
                   resolveS(true);                    
                 }     
               } catch (pe) {
-                console.error(pe);
+                log.error(pe);
                 this.failedPrereqs++;
-                console.log('DepService:fail++')       
+                log.info('DepService:fail++')       
                 resolveS(true);
               }
 
@@ -407,7 +408,7 @@ export default class DepService {
         }
       }
     })
-    console.log('Prereqs result:', this.serviceName, this.validPrereqs, this.passedPrereqs, this.failedPrereqs);    
+    log.info('Prereqs result:', this.serviceName, this.validPrereqs, this.passedPrereqs, this.failedPrereqs);    
     this.checksPassed = this.validPrereqs === this.passedPrereqs;        
   }
 
@@ -416,14 +417,14 @@ export default class DepService {
   }
 
   download = async (url: string, targetFile: string, cb: () => void): Promise<void> => {
-    console.log('DepService:downloading:prepare:' , url, 'to', targetFile);
+    log.info('DepService:downloading:prepare:' , url, 'to', targetFile);
     
     const response: Response = await fetch(url);
     if (response.ok && response.body) {
       const reader = response.body.getReader();
       const hl: string | null = response.headers.get('content-length');
       const totalLength: number = parseInt(hl ? hl : '-1', 10);
-      console.log('DepService:downloading:start:length', totalLength);
+      log.info('DepService:downloading:start:length', totalLength);
       
       // Step 3: read the data
       let receivedLength: number = 0; // received that many bytes at the moment
@@ -440,7 +441,7 @@ export default class DepService {
             position += chunk.length;    
           }
           fs.writeFileSync(targetFile, chunksAll);
-          console.log("DepService:download:writing to file:", targetFile);            
+          log.info("DepService:download:writing to file:", targetFile);            
           this.emit({ type: 'service-download-complete', data: { serviceName: this.serviceName, url }});
           cb();      
           break;
@@ -448,7 +449,7 @@ export default class DepService {
           chunks.push(value);
           receivedLength += value.length;          
           const percentage: number = Math.floor(receivedLength / totalLength * 100);
-          // console.log(`received ${receivedLength} of ${totalLength} - ${percentage}`)          
+          // log.info(`received ${receivedLength} of ${totalLength} - ${percentage}`)          
           this.emit({ type: 'service-download-part', data: { serviceName: this.serviceName, percentage, url } });
         }        
       }
@@ -459,7 +460,7 @@ export default class DepService {
 
   install = async (): Promise<boolean> => {
     if (this.availableVersion != this.installedVersion) {
-      console.log('DepService:extractAndDownload:new version', this.availableVersion);
+      log.info('DepService:extractAndDownload:new version', this.availableVersion);
       fs.rmSync(this.installPath, { force: true, recursive: true });
     }
 
@@ -468,7 +469,7 @@ export default class DepService {
       this.isExtracting = true;
       let numberOfExtracts = this.urls.length;
       for await (const dlpath of this.urls) {        
-        console.log('DepService:extractAndDownload:start:', dlpath, '=>', this.installPath);         
+        log.info('DepService:extractAndDownload:start:', dlpath, '=>', this.installPath);         
         const tempZipFile: string = path.join(this.userTempPath, this.serviceName + i + '.zip');
         i++;
         this.emit({ 
@@ -495,7 +496,7 @@ export default class DepService {
           
           zip.extractAllToAsync(this.installPath, true, true, (error: Error | undefined) => {
             if (error) {
-              console.log('DepService:extractAndDownload:failed:', error);      
+              log.info('DepService:extractAndDownload:failed:', error);      
               this.installed = false;
             } else {
               numberOfExtracts--;
@@ -512,7 +513,7 @@ export default class DepService {
                     checksPassed: this.checksPassed,
                   }
                 });
-                console.log("DepService:extractAndDownload:All urls downloaded and unzipped successfully", this.serviceName);
+                log.info("DepService:extractAndDownload:All urls downloaded and unzipped successfully", this.serviceName);
                 this.versionCB();  
               }
             }
@@ -520,7 +521,7 @@ export default class DepService {
         })        
       }
     } else {
-      console.log('DepService:extractAndDownload:already downloaded and extracted!', this.serviceName);      
+      log.info('DepService:extractAndDownload:already downloaded and extracted!', this.serviceName);      
       this.installed = true;
     }
     return true;
@@ -528,7 +529,7 @@ export default class DepService {
 
   startIfInstalled = () => {
     if (this.installed) {
-      console.log('sending:start:event:', this.serviceName)
+      log.info('sending:start:event:', this.serviceName)
       this.emit({ 
         type: 'service-installed-updated-done',
         data: { 
@@ -538,7 +539,7 @@ export default class DepService {
         }
       });
     } else {
-      console.log('ignoring:start:not installed:', this.serviceName)
+      log.info('ignoring:start:not installed:', this.serviceName)
     }
   }
 
@@ -575,30 +576,30 @@ export default class DepService {
       const isReady: boolean = await this.checkReady();
       if (isReady === true) {
         clearInterval(tt);
-        console.error('DepService:poll:ready:true', this.serviceName);
+        log.error('DepService:poll:ready:true', this.serviceName);
       } else {
         cnt++
         if (cnt>10) {
           clearInterval(tt);
-          console.error('DepService:poll:ready:timeout!', this.serviceName)
+          log.error('DepService:poll:ready:timeout!', this.serviceName)
         }
       }
     }, 5000);    
   }
 
   start = async () => {
-    console.log('DepService:start:called:', this.execDir, this.executable, this.args, this.serviceName);
+    log.info('DepService:start:called:', this.execDir, this.executable, this.args, this.serviceName);
 
     try {
       if (this.prerequisites.length > 0) {
         await this.checkPrerequisites();
       } else {
-        console.log('No prerequisites:', this.prerequisites, this.serviceName);
+        log.info('No prerequisites:', this.prerequisites, this.serviceName);
       }
    
       if (this.prerequisites.length === 0 || this.passedPrereqs === this.validPrereqs) {
         const command: string = path.join(this.execDir, this.executable);
-        console.log('DepService:start:execFile:', command, this.args);
+        log.info('DepService:start:execFile:', command, this.args);
 
         this.emit({ 
           type: 'service-start',
@@ -627,7 +628,7 @@ export default class DepService {
               
             })
             this.spawnedProcess.on('error', (err) => {
-              console.error(`DepService:spawn:error: ${err}`);
+              log.error(`DepService:spawn:error: ${err}`);
               this.emit({ 
                 type: 'service-running-stderr',
                 data: { 
@@ -645,7 +646,7 @@ export default class DepService {
                 data = Buffer.from(chunk).toString().trim();
               }
               if (data && data.length > 0) {
-                console.log(`DepService:start:stdout: ${data}`);
+                log.info(`DepService:start:stdout: ${data}`);
                 this.stdoutCB(data);
                 this.emit({ 
                   type: 'service-running-stdout',
@@ -660,7 +661,7 @@ export default class DepService {
             })
             
             this.spawnedProcess.stderr.on("data", (data: string) => {
-              console.error(`DepService:start:stderr: ${data}`);          
+              log.error(`DepService:start:stderr: ${data}`);          
               this.emit({ 
                 type: 'service-running-stderr',
                 data: { 
@@ -672,7 +673,7 @@ export default class DepService {
               });
             });
             this.spawnedProcess.on('exit', (code: number | null) => {
-              console.error(`DepService:start:exit: ${code}`);          
+              log.error(`DepService:start:exit: ${code}`);          
               this.emit({ 
                 type: 'service-running-exit',
                 data: {
@@ -684,21 +685,21 @@ export default class DepService {
               });
             });        
           } else {
-            console.error('DepService:start:no valid process for', this.serviceName);
+            log.error('DepService:start:no valid process for', this.serviceName);
             return { status: 'error', error: 'process start failed!', serviceName: this.serviceName };
           }
           return { status: 'starting' };
         } catch (me) {
-          console.error(me);
+          log.error(me);
           return { status: 'error', error: 'process start failed!', serviceName: this.serviceName };
         }
       } else {
-        console.error('DepService:start:prerequisites check failed!', this.serviceName, this.passedPrereqs, this.validPrereqs);
+        log.error('DepService:start:prerequisites check failed!', this.serviceName, this.passedPrereqs, this.validPrereqs);
         this.checksPassed = false;
         return { status: 'error', error: 'prerequisites failed!', serviceName: this.serviceName };  
       }
     } catch (e) {
-      console.error('DepService:start:error:', e);
+      log.error('DepService:start:error:', e);
       return { status: 'error', error: e };
     } 
   }
@@ -707,15 +708,15 @@ export default class DepService {
     if (this.servicePID && this.servicePID.length > 0) {
       if (all) {
         for await (const pid of this.servicePID) {
-          console.log(`DepService:stop:sending terminate signal to ${this.serviceName} - ${pid}!`);
+          log.info(`DepService:stop:sending terminate signal to ${this.serviceName} - ${pid}!`);
           kill(pid, (error: any) => {
-            console.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${pid}`, error);
+            log.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${pid}`, error);
           });
         }
       } else {
-        console.log(`DepService:stop:sending terminate signal to ${this.serviceName} - ${this.servicePID}!`);
+        log.info(`DepService:stop:sending terminate signal to ${this.serviceName} - ${this.servicePID}!`);
         kill(this.servicePID[0], (error: any) => {
-          console.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${this.servicePID}`, error);
+          log.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${this.servicePID}`, error);
         });
       }
       this.emit({ 

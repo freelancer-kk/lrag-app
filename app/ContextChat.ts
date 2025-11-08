@@ -10,6 +10,7 @@ import DockerEnv from './DockerEnv'
 import { AIMessageChunk } from '@langchain/core/messages'
 import { concat } from "@langchain/core/utils/stream";
 import ReRankerService from './RerankerService'
+import log from 'electron-log/main';
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -39,7 +40,7 @@ export default class ContextChat {
     this.webContents = webContents;
     ipcMain.on('chat', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
-      console.log('chat:', callbackId, command, params)
+      log.info('chat:', callbackId, command, params)
       let response: any = {}
       switch (command) {
         case "question": {
@@ -64,7 +65,7 @@ export default class ContextChat {
     }
 
     try {
-      console.log('Ollama connection:ctx:', options.numCtx);
+      log.info('Ollama connection:ctx:', options.numCtx);
       this.ollamaLlm = new Ollama({
         baseUrl: options.baseUrl,
         model: options.model,
@@ -74,7 +75,7 @@ export default class ContextChat {
       let vectorStoreRetriever;
       let retrieverParams: any;
       if (options.mmr) {
-        console.log('getMMRAnswer:', options.filter, options.k);
+        log.info('getMMRAnswer:', options.filter, options.k);
         retrieverParams = {
           searchKwargs: {
             fetchK: options.k,
@@ -83,11 +84,11 @@ export default class ContextChat {
           k: (options.k / 2)
         };
         if (this.langchainService.vectorStoreType === EVectorStoreType.Memory) {
-          console.log('USING MEMORY VECTOR!');
+          log.info('USING MEMORY VECTOR!');
           retrieverParams.searchType = "mmr";
         }
       } else {
-        console.log('getSimilarityAnswer:', options.filter, options.k);
+        log.info('getSimilarityAnswer:', options.filter, options.k);
         retrieverParams = {
           filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
           k: options.k,
@@ -97,7 +98,7 @@ export default class ContextChat {
       vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever(retrieverParams);
         
       if (vectorStoreRetriever && this.langchainService.hasAddedDocs) {
-        console.log('INSIGHT: WITH DOC CONTEXT!')
+        log.info('INSIGHT: WITH DOC CONTEXT!')
 
         const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
           {contextPrompt}
@@ -125,7 +126,7 @@ export default class ContextChat {
         }          
         
         const combinedDocs: string = combineDocuments(docs);
-        console.log('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
+        log.info('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
 
         const questionTemplate = PromptTemplate.fromTemplate(`
             {prompt}
@@ -149,7 +150,7 @@ export default class ContextChat {
           callbacks: [
             {
               handleLLMEnd(output) {
-                // console.log('handleLLMEnd:', JSON.stringify(output, null, 2));
+                // log.info('handleLLMEnd:', JSON.stringify(output, null, 2));
                 ref.emit({ type: 'chat-chunk-metadata', data: output });
               },
             },
@@ -164,7 +165,7 @@ export default class ContextChat {
         }, {
           version: "v2"
         })) {
-          console.log(event);
+          log.info(event);
         }
           */
 
@@ -175,13 +176,13 @@ export default class ContextChat {
           } else {
             finalAnswer = new AIMessageChunk(chunk);
           }
-          // console.log('chat-chunk', chunk);
+          // log.info('chat-chunk', chunk);
           this.emit({ type: 'chat-chunk', data: chunk });
         }
-        console.log(finalAnswer?.usage_metadata)
+        log.info(finalAnswer?.usage_metadata)
         return finalAnswer?.content.toString();
       } else {
-        console.log('INSIGHT: NO DOC CONTEXT!')
+        log.info('INSIGHT: NO DOC CONTEXT!')
 
         const questionTemplate = PromptTemplate.fromTemplate(`
             question: {userQuestion}
@@ -206,14 +207,14 @@ export default class ContextChat {
           } else {
             finalAnswer = new AIMessageChunk(chunk);
           }
-          // console.log('chat-chunk', chunk);
+          // log.info('chat-chunk', chunk);
           this.emit({ type: 'chat-chunk', data: chunk });
         }
-        console.log(finalAnswer?.usage_metadata)
+        log.info(finalAnswer?.usage_metadata)
         return finalAnswer?.content.toString();
       }
     } catch (e: any) {
-      console.error(e);
+      log.error(e);
       return e;
     }  
   }

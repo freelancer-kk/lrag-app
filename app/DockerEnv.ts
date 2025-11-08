@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import { KeyValueFile, parseFile } from 'key-value-file'
+import log from 'electron-log/main';
 
 const mergeKeys: string[] = [
   "RERANK_SERVICE",
@@ -55,7 +56,7 @@ export default class DockerEnv {
     }
     this.sourceEnvPath = path.join(appConfigPath, '.env');
     // Read the .env and set dsp, ellm, llm
-    console.log('DockerEnv:constructor:read:', this.sourceEnvPath)
+    log.info('DockerEnv:constructor:read:', this.sourceEnvPath)
   }
 
   init = async () => {
@@ -82,7 +83,7 @@ export default class DockerEnv {
   register = () => {
     ipcMain.on('env', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
-      console.log('env:', callbackId, command, params)
+      log.info('env:', callbackId, command, params)
       let response: any = {}
       switch (command) {
         case "get": {
@@ -159,9 +160,9 @@ export default class DockerEnv {
         if (value) {
           const curVal: string | undefined = this.kvFile?.get(key);
           if (curVal) {
-            console.log('mergeEnvFile:cur:', key, curVal);          
+            log.info('mergeEnvFile:cur:', key, curVal);          
           } else {
-            console.log('mergeEnvFile:new:', key, value);
+            log.info('mergeEnvFile:new:', key, value);
             this.kvFile?.set(key, value);
           }
         }

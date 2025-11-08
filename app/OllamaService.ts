@@ -4,6 +4,7 @@ import * as path from 'path';
 import { Ollama, AbortableAsyncIterator, DeleteRequest, GenerateRequest, GenerateResponse, ListResponse, ProgressResponse, PullRequest, ShowRequest, ShowResponse, StatusResponse, ChatResponse, ChatRequest } from "ollama";
 import { isMac, isWindows } from './SystemInfo';
 import DepService from './DepService';
+import log from 'electron-log/main';
 
 export default class OllamaService {
   serviceInstance: DepService;
@@ -36,23 +37,23 @@ export default class OllamaService {
 
     if (isWindows) {
       if (gpuBrands.find(f => f.toLowerCase().startsWith('nvidia'))) {
-        console.log('ollama choice: nvidia: win');
+        log.info('ollama choice: nvidia: win');
         urls = [default_dl];
       } else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd')) || gpuBrands.find(f => f.toLowerCase().startsWith('advanced'))) {
-        console.log('ollama choice: amd: win');
+        log.info('ollama choice: amd: win');
         urls = [default_dl, rocm_dl];        
       } else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
-        console.log('ollama choice: ipex: win');
+        log.info('ollama choice: ipex: win');
         urls = [ipex_dl];
         ollamaArgs = [];
         ollamaExecutable = 'ollama-serve.bat';
         this.isIPEX = true;
       } else {
-        console.log('ollama choice: nogpu: win');
+        log.info('ollama choice: nogpu: win');
         urls = [default_dl];
       }
     } else if (isMac) {
-      console.log('ollama choice: darwin');
+      log.info('ollama choice: darwin');
       urls = [darwin_dl];      
       ollamaExecutable = 'ollama.app';      
     }
@@ -70,10 +71,10 @@ export default class OllamaService {
         this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
         try {
           const response: ListResponse  = await this.ollama.ps();
-          // console.log('ollamaService:readyCheck:', response);
+          // log.info('ollamaService:readyCheck:', response);
           return Array.isArray(response.models);
         } catch (e) {
-          console.error('ollamaService:not:ready', e);
+          log.error('ollamaService:not:ready', e);
         }
         return false
       },
@@ -100,10 +101,10 @@ export default class OllamaService {
           this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
           try {
             const response: ListResponse  = await this.ollama.ps();
-            // console.log('ollamaService:NoGPU:readyCheck:', response)
+            // log.info('ollamaService:NoGPU:readyCheck:', response)
             return Array.isArray(response.models);
           } catch (e) {
-            console.error('ollamaService:NoGPU:readyCheck:error:', e);
+            log.error('ollamaService:NoGPU:readyCheck:error:', e);
           }
           return false
         },
@@ -119,7 +120,7 @@ export default class OllamaService {
 
   handleCommand = async (event: any, arg: any) => {
     const { callbackId, command, params }= arg;
-    console.log('ollama:', callbackId, command, params)
+    log.info('ollama:', callbackId, command, params)
     let response: any = {}
     try {
       switch (command) {
@@ -179,7 +180,7 @@ export default class OllamaService {
         } 
       }
     } catch (e) {
-      console.error(e);
+      log.error(e);
       response.error = e;
     }
     response.command = command;
@@ -222,7 +223,7 @@ export default class OllamaService {
 
   emit = (args: any) => {
     // const ev: any = JSON.parse(args);
-    // console.log('event:', ev);
+    // log.info('event:', ev);
     this.webContents?.send('event', {
       response: args
     })                
@@ -235,7 +236,7 @@ export default class OllamaService {
         const result: AbortableAsyncIterator<GenerateResponse> = await this.ollama.generate(request);
         let response = '';
         for await (const part of result) {
-          console.log(part.response);
+          log.info(part.response);
           response += part.response;
         }
         this.emit( { type: 'ollama-generate-complete', data: { prompt: request.prompt, response } })
@@ -289,7 +290,7 @@ export default class OllamaService {
     if (this.ollama) {
       const stream: AbortableAsyncIterator<ProgressResponse> = await this.ollama.pull(request);
       let currentDigestDone: boolean = false;
-      console.log('pulling started model:', request.model);
+      log.info('pulling started model:', request.model);
       this.emit( { type: 'ollama-pull-start', data: { model: request.model, percent: 0 } })
       for await (const part of stream) {
         if (part.digest) {
@@ -297,7 +298,7 @@ export default class OllamaService {
           if (part.completed && part.total) {
             percent = Math.round((part.completed / part.total) * 100)
           }
-          // console.log(`${part.status} ${percent}%...`)
+          // log.info(`${part.status} ${percent}%...`)
           this.emit( { type: 'ollama-pull-progress', data: { model: request.model, percent } })
           if (percent === 100 && !currentDigestDone) {
             this.emit( { type: 'ollama-pull-complete', data: { model: request.model, percent } })
@@ -305,11 +306,11 @@ export default class OllamaService {
             currentDigestDone = false
           }
         } else {
-          console.log(part.status)
+          log.info(part.status)
           this.emit( { type: 'ollama-pull-part', data: { model: request.model, partStatus: part.status } })
         }        
       }
-      console.log('pulling done model:', request.model);
+      log.info('pulling done model:', request.model);
       this.emit( { type: 'ollama-pull-done', data: { model: request.model } })
       return {
         model: request.model,

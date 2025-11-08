@@ -20,6 +20,7 @@ import SemanticChunking, { LanguageTypes } from './SemanticChunking';
 import * as fs from 'fs';
 import OCRProcessor from './OCRProcessor';
 import { v4 as uuidv4 } from 'uuid';
+import log from 'electron-log/main';
 
 export enum EVectorStoreType {
   Memory = 0,
@@ -47,8 +48,8 @@ export default class LangchainService {
     mkdirSync(path.join(db_dir, 'hnsw'), { recursive: true });
     this.db_path = path.join(db_dir, 'hnsw');    
   
-    console.log('db_path:', this.db_path);
-    console.log('doc_path:', this.doc_path);
+    log.info('db_path:', this.db_path);
+    log.info('doc_path:', this.doc_path);
 
     this.embeddings = new OllamaEmbeddings({
         model,
@@ -62,7 +63,7 @@ export default class LangchainService {
           
     this.uuid = uuidv4();
 
-    console.log('LangchainService initialized');        
+    log.info('LangchainService initialized');        
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
@@ -71,7 +72,7 @@ export default class LangchainService {
     this.ocrProcessor.register(webContents);
     ipcMain.on('ingest', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
-      console.log('LangchainService:', callbackId, command, params)
+      log.info('LangchainService:', callbackId, command, params)
       let response: any = {}
       switch (command) {
         case "start": {
@@ -123,7 +124,7 @@ export default class LangchainService {
         );
         return similaritySearchResults.length > 0;
       } catch (e) {
-        console.error(e);
+        log.error(e);
         return false;
       }
     }
@@ -138,7 +139,7 @@ export default class LangchainService {
         this.hasAddedDocs = true;
         return true;
       } catch (e) {
-        console.error(e);
+        log.error(e);
         await this.resetVectorStore(vectorStoreType, collection);
         return false;
       }
@@ -153,7 +154,7 @@ export default class LangchainService {
         await (this.vectorStore as HNSWLib).save(path.join(this.db_path, collection));
         return true;
       } catch (e) {
-        console.error(e);
+        log.error(e);
         return false;
       }
     }
@@ -164,7 +165,7 @@ export default class LangchainService {
       try {
         await (this.vectorStore as HNSWLib).delete({ directory: path.join(this.db_path, collection) });
       } catch (e) {
-        console.error(e);
+        log.error(e);
       }
     }
   }
@@ -182,7 +183,7 @@ export default class LangchainService {
   }
 
   addDocuments = async (docs: Document[]): Promise<void> => {    
-    console.log('addDocuments:', docs.length);
+    log.info('addDocuments:', docs.length);
     let i: number = 1;
     this.emit( { type: 'langchain-run-add-chunk', data: { chunk: 0, total: docs.length  } });
     let docBatch: Document[] = [];
@@ -211,7 +212,7 @@ export default class LangchainService {
   }
 
   setStatusForLoadedDocs = async (docs: Document[]): Promise<void> => {    
-    console.log('set status:', docs.length);    
+    log.info('set status:', docs.length);    
     const added_doc_names: string[] = [];
     for await (const ld of docs) {
       if (added_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
@@ -256,9 +257,9 @@ export default class LangchainService {
         (acc: Document[], cur: Document) => (acc.findIndex(f => f.metadata.source === cur.metadata.source && f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur]),
         [],
       );
-      console.log('loaded:', uniqueDocs.length);
+      log.info('loaded:', uniqueDocs.length);
       for await (const doc of uniqueDocs) {
-        // console.log(doc.metadata.source, '=>', doc.pageContent);
+        // log.info(doc.metadata.source, '=>', doc.pageContent);
         this.emit( { type: 'langchain-run-doc', data: { id: doc.id, source: path.basename(doc.metadata.source), metadata: doc.metadata } });
       }
       return uniqueDocs;
@@ -267,7 +268,7 @@ export default class LangchainService {
 
   split = async (docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined, language: LanguageTypes | undefined = undefined ): Promise<Document[]> => {
     if (params && params.chunkSize && params.chunkOverlap && (params?.chunkSize > 0 || params?.chunkOverlap > 0)) {
-      console.log('splitting:docs:', params, language, docs.length);
+      log.info('splitting:docs:', params, language, docs.length);
       
       let splitter: RecursiveCharacterTextSplitter;
       if (language) {
@@ -277,7 +278,7 @@ export default class LangchainService {
       }
       const chunks: Document[] = await splitter.splitDocuments(docs);
       
-      console.log('chunks:', chunks.length);
+      log.info('chunks:', chunks.length);
       return chunks;
     } else {
       return docs;
@@ -286,7 +287,7 @@ export default class LangchainService {
 
   semanticSplit = async (model: string, docs: Document[], params: Partial<RecursiveCharacterTextSplitterParams> | undefined, language: LanguageTypes | undefined = undefined ): Promise<Document[]> => {
     if (params && params.chunkSize && params.chunkOverlap && (params?.chunkSize > 0 || params?.chunkOverlap > 0)) {
-      console.log('semantic:splitting:docs:', params, language, docs.length);
+      log.info('semantic:splitting:docs:', params, language, docs.length);
       
       let chunks: Document[] = [];
       let i = 1;
@@ -295,7 +296,7 @@ export default class LangchainService {
         i++;
       }
       
-      console.log('semantic:chunks:', chunks.length);
+      log.info('semantic:chunks:', chunks.length);
       return chunks;  
     } else {
       return docs;
@@ -305,8 +306,8 @@ export default class LangchainService {
   OCRDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
     let hasOCRTasks: boolean = false;
     const file_names: string[] = fs.readdirSync(doc_path);
-    // console.log('loaded_docs:', loaded_docs[0]);
-    // console.log('file_names:', file_names);
+    // log.info('loaded_docs:', loaded_docs[0]);
+    // log.info('file_names:', file_names);
     const loaded_doc_names: string[] = [];
     for await (const ld of loaded_docs) {
       if (loaded_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
@@ -318,7 +319,7 @@ export default class LangchainService {
       if (loaded_doc_names.findIndex(ldn => path.basename(ldn) === fn) === -1) {
         if (fn.endsWith('pdf') || fn.endsWith('PDF')) {
           // file has not been loaded mark it for OCR processing
-          console.log('OCR:REQUEST:put:', path.join(doc_path, fn));
+          log.info('OCR:REQUEST:put:', path.join(doc_path, fn));
           
           this.ocrProcessor.put(
             path.join(doc_path, fn),
@@ -326,7 +327,7 @@ export default class LangchainService {
           )
           hasOCRTasks = true;
         } else {
-          console.log('OCR ignoring non pdf:', fn);
+          log.info('OCR ignoring non pdf:', fn);
           this.emit( { type: 'langchain-run-ocr-ignore', data: { name: fn } });
         }
       }
@@ -339,7 +340,7 @@ export default class LangchainService {
     this.emit( { type: 'langchain-run-start', data: {} } );
     return this.load(params).then(async (docs: Document[]) => {
       this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
-      console.log('docs:length:', docs.length)
+      log.info('docs:length:', docs.length)
       let hasOCRTasks: boolean = false
       if (params.localVector === false) {
         // Check for OCR
@@ -350,7 +351,7 @@ export default class LangchainService {
             model: params.embeddings,
             baseUrl: this.baseUrl
         });
-        console.log('embeddings:', params.embeddings, this.baseUrl);
+        log.info('embeddings:', params.embeddings, this.baseUrl);
         await this.resetVectorStore(params.localVector, params.collection);          
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });
         let chunks: Document[] = [];
@@ -358,7 +359,7 @@ export default class LangchainService {
         let sd: string = '';
         if (docs[0]) {
           sd = docs[0].metadata.source;
-          console.log('first doc ends with:', sd);
+          log.info('first doc ends with:', sd);
         }
         if (sd.endsWith('md')) {
           chunks = await this.split(docs, params, 'markdown');
@@ -397,7 +398,7 @@ export default class LangchainService {
         return { status: 'warning', message: 'pending ocr tasks' };
       }
     }).catch((err) => {
-      console.error('load error:', err);
+      log.error('load error:', err);
       return { status: 'error', message: err };
     });    
   }

@@ -4,6 +4,7 @@ import * as fs from 'fs';
 
 import { isMac, isWindows } from './SystemInfo';
 import DepService from './DepService';
+import log from 'electron-log/main';
 
 export default class WatcherService {
   serviceInstance: DepService;
@@ -92,7 +93,7 @@ export default class WatcherService {
       ]
     }
 
-    // console.log('WatcherService:env:', watcherEnv);
+    // log.info('WatcherService:env:', watcherEnv);
 
     /*
     "/usr/bin/curl -L -o /tmp/homebrew.pkg https://github.com/Homebrew/brew/releases/download/4.6.19/Homebrew-4.6.19.pkg",
@@ -164,7 +165,7 @@ export default class WatcherService {
       versionCB,
       (text: string) => {
         if (text.startsWith('Polling ')) {
-          console.log('Watcher:service:isready!')
+          log.info('Watcher:service:isready!')
           this.isServiceReady = true;
         }
       },
@@ -177,7 +178,7 @@ export default class WatcherService {
     this.serviceInstance.register(this.webContents);
     ipcMain.on('service-watcher', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
-      console.log('watcher:', callbackId, command, params)
+      log.info('watcher:', callbackId, command, params)
       let response: any = {}
       try {
         switch (command) {
@@ -186,7 +187,7 @@ export default class WatcherService {
           } 
         }
       } catch (e) {
-        console.error(e);
+        log.error(e);
         response.error = e;
       }
       response.command = command;

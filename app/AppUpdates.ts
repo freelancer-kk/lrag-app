@@ -1,4 +1,5 @@
 import { app, dialog, shell } from 'electron';
+import log from 'electron-log/main';
 
 export default class AppUpdates {
   updateJsonFileURL: string = '';
@@ -11,7 +12,7 @@ export default class AppUpdates {
   }
 
   init = async () => {
-    console.log('AppUpdates:changes in:', this.updateJsonFileURL);
+    log.info('AppUpdates:changes in:', this.updateJsonFileURL);
     setInterval(async () => {              
       await this.check();
     }, 60000);
@@ -32,7 +33,7 @@ export default class AppUpdates {
       let upgrade: any | undefined = undefined;
       for await (const entry of entries) {
         const version = entry.version.replace(/\./g,'');
-        console.log('comparing:', version, '-', currentVersion);
+        log.info('comparing:', version, '-', currentVersion);
         if (Number(version) > Number(currentVersion)) {
           upgrade = {
             version: entry.version,
@@ -44,12 +45,12 @@ export default class AppUpdates {
       if (upgrade) {
         if (!this.askForDownloads.includes(upgrade.version)) {
           this.askForDownloads.push(upgrade.version);
-          console.log('found new version:', upgrade.version);
+          log.info('found new version:', upgrade.version);
           this.askUpgrade(upgrade.version, upgrade.comment, upgrade.url);
         }
       }
     } catch (e) {
-      console.error(e);      
+      log.error(e);      
     }
   }
         

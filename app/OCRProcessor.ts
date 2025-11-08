@@ -3,6 +3,7 @@ import DockerEnv from './DockerEnv';
 import * as fs from 'fs';
 import * as path from 'path';
 import WatcherService from './WatcherService';
+import log from 'electron-log/main';
 
 export enum EOCRStatus {
   REQUESTED = 0,
@@ -28,14 +29,14 @@ export default class OCRProcessor {
     this.docOkfile = path.join(this.docRootPath, 'okfile');
     fs.writeFileSync(this.docOkfile, 'ok');
                   
-    console.log('OCRProcessor:local:', this.docRootPath);
+    log.info('OCRProcessor:local:', this.docRootPath);
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
     ipcMain.on('ocr-process', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
-      console.log('OCRService:', callbackId, command, params)
+      log.info('OCRService:', callbackId, command, params)
       let response: any = {}
       switch (command) {
         case "start": {}
@@ -55,7 +56,7 @@ export default class OCRProcessor {
   }
 
   start = () => {
-    console.log('connected:ls:', this.watcherService.list('input'));
+    log.info('connected:ls:', this.watcherService.list('input'));
     this.emit( { type: 'ocr-processor-opened', data: {} } );  
     if (this.jobTimer) {
       clearInterval(this.jobTimer);
@@ -76,7 +77,7 @@ export default class OCRProcessor {
           fe.timestamp = Date.now();
           this.emit( { type: 'ocr-processor-putted', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, putResponse: 'ok' } });
           const targetOkFile: string = fe.remotefile + '.ok';
-          console.log('putRes:writing ok file', targetOkFile);              
+          log.info('putRes:writing ok file', targetOkFile);              
           this.watcherService.put(
             this.docOkfile,
             targetOkFile
@@ -84,26 +85,26 @@ export default class OCRProcessor {
         } else {
           // Check for timeout on the processing
           for (const fe of this.filesToProcess) {
-            // console.log('OCR:check:', fe);
+            // log.info('OCR:check:', fe);
             if (fe.status === EOCRStatus.UPLOADED) {
               if (Date.now() > (fe.timestamp + MAX_PROC_TIME)) {
                 // OCR Processing taken too long must be errored
                 // Remove the uploaded file
-                console.log('OCR:toolong:removed:', fe.remotefile);
+                log.info('OCR:toolong:removed:', fe.remotefile);
                 this.watcherService.delete(fe.remotefile);
                 this.processError(fe);                  
               } else {
                 if (this.watcherService.exists(fe.outputfile)) {
-                  console.log('COMPLETED:success:', fe.outputfile)
+                  log.info('COMPLETED:success:', fe.outputfile)
                   this.watcherService.get(fe.outputfile, fe.localfile);
                   fe.status = EOCRStatus.PROCESSED;
-                  console.log('OCR File retrieved:');
+                  log.info('OCR File retrieved:');
                   this.emit( { type: 'ocr-processor-complete', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, getResponse: 'ok' } });
                   this.watcherService.delete(fe.outputfile);
                 }                  
                 if (this.watcherService.exists(fe.errorfile)) {
                   // Error get the error doc
-                  console.log('OCR:COMPLETED with error:', fe.errorfile)
+                  log.info('OCR:COMPLETED with error:', fe.errorfile)
                   this.watcherService.delete(fe.errorfile);
                   this.processError(fe);
                 }        
@@ -112,7 +113,7 @@ export default class OCRProcessor {
               const fIdx: number = this.filesToProcess.findIndex(f => f.remotefile === fe.remotefile);
               this.filesToProcess.splice(fIdx, 1);
             } else {
-              console.log('Waiting for status change:', fe)
+              log.info('Waiting for status change:', fe)
             }
           }                
         }        
@@ -136,7 +137,7 @@ export default class OCRProcessor {
         timestamp: Date.now(),
       });
     } else {
-      console.log('OCRProcessor:put:already exists:', this.filesToProcess.find(f => f.localfile === localfile))
+      log.info('OCRProcessor:put:already exists:', this.filesToProcess.find(f => f.localfile === localfile))
     }
   }
 }

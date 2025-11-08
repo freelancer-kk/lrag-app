@@ -2,6 +2,7 @@ import { app, ipcMain, shell } from 'electron';
 import { cpu, graphics, mem, Systeminformation } from 'systeminformation';
 import * as nodeDiskInfo from 'node-disk-info';
 import { platform } from 'os';
+import log from 'electron-log/main';
 
 export const isMac: boolean = platform() === "darwin";
 export const isWindows: boolean = platform() === "win32";
@@ -27,7 +28,7 @@ export default class SystemInfo {
     this.webContents = webContents;
     ipcMain.on('system', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
-      console.log('system:', callbackId, command, params)
+      log.info('system:', callbackId, command, params)
       let response: any = {}
       switch (command) {
         case "mem": {

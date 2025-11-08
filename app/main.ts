@@ -1,6 +1,7 @@
 import { app, BrowserWindow, nativeImage, screen, Tray } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import log from 'electron-log/main';
 
 import DockerEnv from './DockerEnv';
 import SystemInfo, { isLinux, isMac, isWindows } from './SystemInfo';
@@ -38,6 +39,8 @@ let appUpdates: AppUpdates;
 let watcherService: WatcherService;
 let ocrProcessor: OCRProcessor;
 
+log.initialize();
+
 let configPath: string = path.join(__dirname, '..');
 
 const args = process.argv.slice(1), serve = args.some(val => val === '--serve');
@@ -54,13 +57,13 @@ if (serve) {
     configPath = path.join(userDataPath, 'config')
   }
 }
-console.log('APP:RUN:MODE', runType);
+log.info('APP:RUN:MODE', runType);
 
 const setDocPathsCB = async (docPath: string | undefined, dataPath: string | undefined) => {
   systemInfo = new SystemInfo();
   systemInfo.register(win?.webContents);
   await systemInfo.getGraphics().then(async (graphics: Systeminformation.GraphicsData) => {
-    console.log('graphics:', graphics.controllers.map(v => v.vendor));
+    log.info('graphics:', graphics.controllers.map(v => v.vendor));
     lragFiles = new LRagFiles(docPath, dataPath);
     lragFiles.register();
 
@@ -83,7 +86,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
       const watcher_win_dl = toolsDLS.WATCHER_WIN_DOWNLOAD_LINK;
       const watcher_mac_dl = toolsDLS.WATCHER_MAC_DOWNLOAD_LINK;
       if (ghostscript_version && watcher_version && watcher_win_dl && watcher_mac_dl) {
-        console.log('Initialising watcher service:', watcher_version, toolsDLS.WATCHER_VERSION, watcher_win_dl, watcher_mac_dl);
+        log.info('Initialising watcher service:', watcher_version, toolsDLS.WATCHER_VERSION, watcher_win_dl, watcher_mac_dl);
         watcherService = new WatcherService(
           watcher_version,
           toolsDLS.WATCHER_VERSION,
@@ -107,7 +110,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
         watcherService.register(win?.webContents);
         await watcherService.install();
       } else {
-        console.log('Ignoring WATCHER service:', watcher_version, watcher_win_dl, watcher_mac_dl);
+        log.info('Ignoring WATCHER service:', watcher_version, watcher_win_dl, watcher_mac_dl);
       }
       ocrProcessor = new OCRProcessor(watcherService, dockerEnv);
       await ocrProcessor.start();
@@ -148,7 +151,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
       const reranker_win_dl = toolsDLS.RERANKER_WIN_DOWNLOAD_LINK;
       const reranker_mac_dl = toolsDLS.RERANKER_MAC_DOWNLOAD_LINK;
       if (reranker_version && reranker_win_dl && reranker_mac_dl) {
-        console.log('Initialising reranker service:', reranker_version, toolsDLS.RERANKER_VERSION, reranker_win_dl, reranker_mac_dl);
+        log.info('Initialising reranker service:', reranker_version, toolsDLS.RERANKER_VERSION, reranker_win_dl, reranker_mac_dl);
         rerankerService = new ReRankerService(
           reranker_version,
           toolsDLS.RERANKER_VERSION,
@@ -165,7 +168,7 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
         rerankerService.register(win?.webContents);
         await rerankerService.install();
       } else {
-        console.log('Ignoring RERANKER service:', reranker_version, reranker_win_dl, reranker_mac_dl);
+        log.info('Ignoring RERANKER service:', reranker_version, reranker_win_dl, reranker_mac_dl);
       }
     }
     contextChat = new ContextChat(langchainService, ollamaService, rerankerService, dockerEnv);
@@ -254,7 +257,7 @@ async function createWindow(): Promise<BrowserWindow> {
     // Dereference the window object, usually you would store window
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    console.log('Electron on closed')
+    log.info('Electron on closed')
     win = null;    
   });
 
@@ -290,8 +293,8 @@ try {
       tray.setToolTip('LRag - Local Document AI Insights!');    
       const browserWin = await createWindow();
       browserWin.once("ready-to-show", () => {
-        console.log('main:ready-to-show');
-        console.log('main:starting services if already installed:');      
+        log.info('main:ready-to-show');
+        log.info('main:starting services if already installed:');      
         ollamaService.startIfInstalled();
         rerankerService.startIfInstalled();
         watcherService.startIfInstalled(); 
@@ -301,7 +304,7 @@ try {
   }); 
 
   app.on("before-quit", async (e) => {
-    console.log("before-quit: abort any transactions ollama may be doing");
+    log.info("before-quit: abort any transactions ollama may be doing");
     ollamaService.abort();
     await ollamaService.stop();
     await rerankerService.stop();
@@ -310,7 +313,7 @@ try {
 
   /*
   process.on("SIGINT", () => {
-    console.log("Detected SIGINT/SIGTERM");
+    log.info("Detected SIGINT/SIGTERM");
     if (ollamaService) {
       ollamaService.stop();
     }
@@ -323,7 +326,7 @@ try {
     // On OS X it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') {
-      console.log('Electron on window-all-closed')
+      log.info('Electron on window-all-closed')
       app.quit();
     }
   });

@@ -30,6 +30,7 @@
     "csv-parse": "6.1.0",
     "d3-array": "3.2.4",
     "d3-dsv": "2.0.0",
+    "electron-log": "^5.4.3",
     "events": "3.3.0",
     "find-process": "2.0.0",
     "generic-pool": "^3.9.0",

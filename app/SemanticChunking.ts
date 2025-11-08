@@ -4,6 +4,7 @@ import { quantile } from "d3-array";
 import { RecursiveCharacterTextSplitter, RecursiveCharacterTextSplitterParams } from "langchain/text_splitter";
 import { OllamaEmbeddings } from "@langchain/ollama";
 import { Document } from "@langchain/core/documents";
+import log from 'electron-log/main';
 
 interface SentenceObject {
   sentence: string;
@@ -39,7 +40,7 @@ export default class SemanticChunking {
    * @example
    * const text = "Hello world. This is a test text.";
    * const sentences = splitToSentences(text);
-   * console.log(sentences); // Output: ["Hello world.", "This is a test text."]
+   * log.info(sentences); // Output: ["Hello world.", "This is a test text."]
    */
   splitToSentencesUsingNLP = (textCorpus: string): string[] => {
     const tokenizer = new natural.SentenceTokenizer([]);
@@ -75,7 +76,7 @@ export default class SemanticChunking {
    * @example
    * const sentences = ["Sentence one.", "Sentence two.", "Sentence three."];
    * const structuredSentences = structureSentences(sentences, 1);
-   * console.log(structuredSentences);
+   * log.info(structuredSentences);
    * // Output: [
    * //   { sentence: 'Sentence one.', index: 0, combined_sentence: 'Sentence one. Sentence two.' },
    * //   { sentence: 'Sentence two.', index: 1, combined_sentence: 'Sentence one. Sentence two. Sentence three.' },
@@ -134,8 +135,8 @@ export default class SemanticChunking {
    *   // other SentenceObject items...
    * ];
    * generateAndAttachEmbeddings(sentencesArray)
-   *   .then(result => console.log(result))
-   *   .catch(error => console.error('Error generating embeddings:', error));
+   *   .then(result => log.info(result))
+   *   .catch(error => log.error('Error generating embeddings:', error));
    */
   generateAndAttachEmbeddings = async (
     sentencesArray: SentenceObject[]
@@ -193,7 +194,7 @@ export default class SemanticChunking {
    * const vectorA = [1, 2, 3];
    * const vectorB = [4, 5, 6];
    * const similarity = cosineSimilarity(vectorA, vectorB);
-   * console.log(similarity); // Output: similarity score as a number
+   * log.info(similarity); // Output: similarity score as a number
    */
   cosineSimilarity = (vecA: number[], vecB: number[]): number => {
     const dotProduct = math.dot(vecA, vecB) as number;
@@ -285,7 +286,7 @@ export default class SemanticChunking {
    * ];
    * const shiftIndices = [2, 5]; // Semantic shifts occur after the sentences at indices 2 and 5
    * const semanticChunks = groupSentencesIntoChunks(sentencesWithEmbeddings, shiftIndices);
-   * console.log(semanticChunks); // Output: Array of concatenated sentence groups
+   * log.info(semanticChunks); // Output: Array of concatenated sentence groups
    */
   groupSentencesIntoChunks = (
     sentenceObjectArray: SentenceObject[],
@@ -351,11 +352,11 @@ export default class SemanticChunking {
         significantShiftIndices
       );
 
-      console.log(`Total Chunks Processed : ${semanticChunks.length}`);
+      log.info(`Total Chunks Processed : ${semanticChunks.length}`);
 
       // Step 7: Log each semantic chunk with a clear separator.
       semanticChunks.forEach((chunk, index) => {
-        // console.log(`Chunk #${index + 1}:`, chunk.length);
+        // log.info(`Chunk #${index + 1}:`, chunk.length);
         this.emit( { type: 'langchain-run-split-chunk', data: { chunk: chunkNum, total: totalChunks  } });
         const newDoc = new Document({
           metadata: doc.metadata,
@@ -366,7 +367,7 @@ export default class SemanticChunking {
       });
       return returnDocs;
     } catch (error) {
-      console.error("An error occurred in the main function:", error);
+      log.error("An error occurred in the main function:", error);
       return [];
     }
   }
