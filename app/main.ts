@@ -94,6 +94,8 @@ const setDocPathsCB = async (docPath: string | undefined, dataPath: string | und
           toolsDLS.HOMEBREW_MAC_DOWNLOAD_LINK,         
           toolsDLS.HOMEBREW_MAC_VERSION,
           toolsDLS.GHOSTSCRIPT_MAC_DOWNLOAD_LINK,
+          toolsDLS.TESSERACT_WIN_VERSION,
+          toolsDLS.TESSERACT_WIN_DOWNLOAD_LINK,
           path.join(userDataPath, 'watcher'),
           userTempPath,
           appDataPath,

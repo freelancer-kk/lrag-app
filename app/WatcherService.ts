@@ -21,6 +21,8 @@ export default class WatcherService {
     homebrew_mac_download_link: string,
     homebrew_mac_available_version: string,
     ghostscript_mac_download_link: string,
+    tesseract_win_version: string,
+    tesseract_win_download_link: string,
     dataRootPath: string,
     userTempPath: string,
     appDataPath: string,
@@ -130,13 +132,14 @@ export default class WatcherService {
         },{
          name: 'tesseract',
          win: {
-            winget: '--silent --disable-interactivity --accept-source-agreements -e --id UB-Mannheim.TesseractOCR',
+            url: tesseract_win_download_link,
+            // winget: '--silent --disable-interactivity --accept-source-agreements -e --id UB-Mannheim.TesseractOCR',
             cwd: '\\Program Files\\Tesseract-OCR',
             args: [
               '--version'
             ],
             executable: 'tesseract.exe',
-            expected_version: '0'
+            expected_version: tesseract_win_version
          }
         },{
          name: 'ghostscript',
@@ -148,7 +151,8 @@ export default class WatcherService {
             expected_version: ghostscript_available_version
          },
          mac: {
-            brew: 'ghostscript tesseract-lang',    
+            // brew: 'ghostscript tesseract-lang',    
+            url: ghostscript_mac_download_link,
             cwd: '.',
             args: ['--version'],
             executable: '/opt/homebrew/bin/gs',
