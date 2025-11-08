@@ -64,6 +64,8 @@ export class WatcherService {
     this.status.update(EStatus.starting);
     if (await this.start()) {
       this.checkIfReady();   
+    } else {
+      await this.restart(undefined);
     }
   }
 
