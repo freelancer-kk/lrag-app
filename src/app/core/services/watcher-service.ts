@@ -15,6 +15,7 @@ export class WatcherService {
   url: string = '';
   brew: string = '';
   winget: string = '';
+  shellCommands: string[] = [];
   depNotInstalledTimer: any;
   tt: any;
 
@@ -121,14 +122,39 @@ export class WatcherService {
     return isReady;
   }
 
+  runShellCommand = (commandIdx: number): Promise<boolean> => {
+    if (commandIdx > this.shellCommands.length) {
+      return Promise.resolve(false);
+    } else {
+      return this.commonService.commandService(
+        692, 
+        this.serviceName,
+        'shell',
+        {
+          args: this.shellCommands[commandIdx].split(' '),
+          commandIdx,
+        }
+      ).then(() => {
+        return true;
+      })
+    }
+  }
+
   installUpgradeBrew = async (ev: any) => {
-    this.commonService.openExternal(
-      this.url,
-      {
-        serviceName: 'watcher',
-        installType: 'brew'
-      }
-    );
+    if (this.shellCommands.length > 0) {
+      console.log('install/upgrade:brew:', this.shellCommands);    
+      this.brewStatus.update(EStatus.installing);
+      const response: any = await this.runShellCommand(0);
+      console.log('shell:install/upgrade:brew:', response);
+    } else {
+      this.commonService.openExternal(
+        this.url,
+        {
+          serviceName: 'watcher',
+          installType: 'brew'
+        }
+      );
+    }
   }
 
   installUpgradeGS = async (ev: any) => {

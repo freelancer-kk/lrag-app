@@ -202,6 +202,24 @@ export class AppComponent implements OnInit {
             }
           }
           break;
+          case 'shell-running-exit':
+            this.ngZone.run(async () => {
+              if (data.serviceName === 'watcher') {
+                const { prereq, exitCode, commandIdx } = data;
+                if (exitCode === '0') {
+                  const nextCommand: number = Number.parseInt(commandIdx) + 1;
+                  if (!(await this.watcherService.runShellCommand(nextCommand))) {
+                    // Application needs to be restarted
+                    this.forceExit('RESTART', true);
+                  }
+                } else {
+                  // prereq === 'homebrew' ?
+                    this.watcherService.brewStatus.update(EStatus.error)
+                  //  this.watcherService.ghostscriptStatus.update(EStatus.error)
+                }
+              } 
+            })
+          break;
           case 'brew-running-exit':
             this.ngZone.run(() => {
               if (data.serviceName === 'watcher') {
@@ -237,9 +255,12 @@ export class AppComponent implements OnInit {
           break;
           case 'service-prereq-check-stdout':
             this.ngZone.run(() => {
-              const { serviceName, prereq, url, brew, winget, version, expectedVersion } = data;            
+              const { serviceName, prereq, url, brew, winget, version, expectedVersion, shellCommands } = data;            
+              console.log('service-prereq-check-std:', data);                
               if (serviceName === 'watcher') {
-                console.log('service-prereq-check-std:', data);
+                if (shellCommands) {
+                  this.watcherService.shellCommands = shellCommands;
+                }
                 if (url) {
                   this.watcherService.url = url;             
                 }
@@ -284,9 +305,12 @@ export class AppComponent implements OnInit {
           break;
           case 'service-prereq-check-stderr':
             this.ngZone.run(() => {
-              const { serviceName, prereq, url, brew, winget } = data;
+              const { serviceName, prereq, url, brew, winget, shellCommands } = data;
               console.log('service-prereq-check-err:', data);
               if (serviceName === 'watcher') {
+                if (shellCommands) {
+                  this.watcherService.shellCommands = shellCommands;
+                }
                 if (url) {
                   this.watcherService.url = url;
                 }
@@ -297,6 +321,8 @@ export class AppComponent implements OnInit {
                   this.watcherService.winget = winget;
                 }
                 this.watcherService.depNotInstalledTimer = setTimeout(() => {
+                  this.watcherService.clearTT();
+                  this.watcherService.clearTimer();
                   switch (prereq) {
                     case 'homebrew': {
                       this.watcherService.brewStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed)
@@ -304,7 +330,6 @@ export class AppComponent implements OnInit {
                     break;
                     case 'tesseract': {
                       this.watcherService.wingetStatus.update(EStatus.installed_winget);
-                      this.watcherService.clearTT();
                     }
                     break;
                     default: {

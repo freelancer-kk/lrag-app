@@ -12,14 +12,16 @@ export interface IPrereq {
   win?: {
     url?: string;
     winget?: string;
+    shellCommands?: string[];
     cwd: string;
     executable: string;
     args: string[];
     expected_version: string;
   },
   mac?: {
-    url?: string;
-    brew?: string;    
+    url?: string;    
+    brew?: string;
+    shellCommands?: string[];    
     cwd: string;
     executable: string;
     args: string[];
@@ -138,6 +140,13 @@ export default class DepService {
           response = await this.findProcessPID();
         }
         break;
+        case "shell": {
+          const theExec: string = params.args[0];
+          const theExecArgs: string[] = params.args;
+          theExecArgs.splice(0,1);
+          response = await this.packager(theExec, 'shell', params.prereq, theExecArgs, params.commandIdx);
+        }
+        break;
         case "brew": {
           response = await this.packager('/opt/homebrew/bin/brew', 'brew', params.prereq, params.args);
         }
@@ -167,7 +176,7 @@ export default class DepService {
     })                
   }
 
-  packager = async (packager_path: string, packager: string, prereq: string, args: string[]): Promise<any> => {
+  packager = async (packager_path: string, packager: string, prereq: string, args: string[], commandIdx = -1): Promise<any> => {
     const pkgProcess = spawn(
       packager_path,
       args,        
@@ -190,6 +199,7 @@ export default class DepService {
             prereq,
             args,
             text: Buffer.from(data).toString(),
+            commandIdx,
           }
         });
       })        
@@ -202,18 +212,20 @@ export default class DepService {
             prereq,
             args,
             text: Buffer.from(data).toString(),
+            commandIdx,
           }
         });
       });
       pkgProcess.on('exit', (code: number | null) => {
-        console.error(`DepService:brew:exit: ${code}`);          
+        console.error(`DepService:${packager}:exit: ${code}`);          
         this.emit({ 
           type: packager + '-running-exit',
           data: {
             serviceName: this.serviceName,
             prereq,
             args,
-            exitCode: code ? code.toString() : '0'
+            exitCode: code ? code.toString() : '0',
+            commandIdx
           }
         });
       });        
@@ -305,7 +317,8 @@ export default class DepService {
                         expectedVersion: prereq.expected_version,
                         url: prereq.url,
                         brew: prereq.brew,
-                        winget: prereq.winget
+                        winget: prereq.winget,
+                        shellCommands: prereq.shellCommands
                       }
                     });
                     this.failedPrereqs++;
@@ -329,7 +342,8 @@ export default class DepService {
                           expectedVersion: prereqVer,
                           url: prereq.url,
                           brew: prereq.brew,
-                          winget: prereq.winget
+                          winget: prereq.winget,
+                          shellCommands: prereq.shellCommands
                         }
                       });
                       if (version >= prereqVer) {
@@ -352,7 +366,8 @@ export default class DepService {
                         expectedVersion: prereqVer,
                         url: prereq.url,
                         brew: prereq.brew,
-                        winget: prereq.winget
+                        winget: prereq.winget,
+                        shellCommands: prereq.shellCommands
                       }
                     });
                     this.failedPrereqs++;

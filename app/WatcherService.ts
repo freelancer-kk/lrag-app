@@ -92,6 +92,11 @@ export default class WatcherService {
 
     // console.log('WatcherService:env:', watcherEnv);
 
+    /*
+    "/usr/bin/curl -L -o /tmp/homebrew.pkg https://github.com/Homebrew/brew/releases/download/4.6.19/Homebrew-4.6.19.pkg",
+    "/usr/sbin/installer -pkg /tmp/homebrew.pkg -target /",
+    "/bin/rm -f /tmp/homebrew.pkg"
+    */
     this.serviceInstance = new DepService(
       "watcher",
       "watcher",
@@ -108,6 +113,13 @@ export default class WatcherService {
          name: 'homebrew',
          mac: {
             url: homebrew_mac_download_link,
+            /*
+            shellCommands: [
+              "/usr/bin/curl -fsSL -o /tmp/install.sh https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh",
+              "/tmp/install.sh",
+              "/bin/rm -f /tmp/install.sh"
+            ],
+            */     
             cwd: '.',
             args: [
               '--version'
