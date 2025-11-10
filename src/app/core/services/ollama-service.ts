@@ -112,6 +112,7 @@ export class OllamaService {
     console.log('ollama:service:start Ollama:', this.serviceName);
     await this.findProcess();
     if (this.servicePID === -1) {
+      this.status.update(EStatus.starting);
       return this.commonService.commandService(
         93,
         this.serviceName,
