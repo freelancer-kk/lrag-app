@@ -40,30 +40,30 @@
   "PAGES": {
     "SPLASH": {
       "SLIDE1": {
-          "PARA1": "Welcome to LRag",
-          "PARA2": "A 100% Private document AI analyser that runs your PC",
-          "PARA3": "*Benefit from complete privacy, query your documents directly on your PC*",
-          "PARA4": "*No reliance to online providers to protect your data*",
-          "PARA5": "*No fees for local usage on your PC*",
-          "PARA6": "If you have a windows PC, as part of the setup, LRag needs to download the model process Ollama, please wait for this to complete ...",
-          "PARA7": "The download may take some time depending on your Internet Connection.",
-          "PARA8": "If you have a Mac PC, you will need to download and install Ollama. Please click the 'Get Ollama' button above ...",
-          "PARA9": "Swipe the slide to learn more about LRag ..."
-        },
-        "SLIDE2": {
-          "PARA1": "LRag Use Cases",
-          "PARA2": "*General Chat - Choose a model under Models then Chat with that model*",
-          "PARA3": "*Analyse a doc - Choose a document under Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
-          "PARA4": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
-          "PARA5": "The larger model, the more accurate the answers will be. Under Models you may select other models",
-          "PARA6": "Consult our forums and support pages for help and tips"
-        },
-        "SLIDE3": {
-          "PARA1": "Component Download/Upgrade",
-          "PARA2": "Please wait whilst downloading and extracting extras...",
-          "PARA3": "You may see buttons to manually install dependencies, please follow the instructions.",
-          "PARA4": "The download may take some time depending on your PC and Internet Connection."
-        }
+        "PARA1": "Willkommen bei LRag",
+        "PARA2": "Eine 100 % lokale KI-Lösung, die Ihren PC betreibt",
+        "PARA3": "*Profitieren Sie von absoluter Privatsphäre, chatten Sie mit Ihren Dokumenten direkt auf Ihrem PC*",
+        "PARA4": "*Keine Abhängigkeit von Online-Anbietern*",
+        "PARA5": "*Keine Gebühren für die lokale Nutzung auf Ihrem PC*",
+        "PARA6": "LRag muss zum ersten Mal mehrere Komponenten herunterladen. Bitte warten Sie, bis der Vorgang abgeschlossen ist...",
+        "PARA7": "Der Download kann je nach Internetverbindung einige Zeit dauern.",
+        "PARA8": "Wenn Sie einen Mac-PC haben, müssen Sie Ollama separat herunterladen und installieren. Bitte klicken Sie oben auf die Schaltfläche „Ollama herunterladen“...",
+        "PARA9": "Wischen Sie über die Folie, um mehr über LRag zu erfahren..."
+      },
+      "SLIDE2": {
+        "PARA1": "LRag-Anwendungsfälle",
+        "PARA2": "*Allgemeiner Chat – Wählen Sie unter „Modelle“ ein Modell aus und klicken Sie dann auf „Mit diesem Modell chatten“.*",
+        "PARA3": "*Analysieren Sie ein Dokument – ​​Wählen Sie unter Einbetten ein Dokument aus, z. B. einen Vertrag, ein Versicherungsdokument usw., und betten Sie es dann ein. Anschließend können Sie über dieses Dokument chatten*",
+        "PARA4": "*Transaktionen analysieren – Wählen Sie unter Einbetten eine CSV-Datei aus, z. B. einen CSV-Dump Ihrer Kontoauszüge, und betten Sie diese dann ein. Anschließend können Sie über diese Transaktionen chatten*",
+        "PARA5": "Je größer das Modell, desto genauer sollten die Antworten sein. Unter Modelle können Sie weitere Modelle auswählen",
+        "PARA6": "Konsultieren Sie unsere Foren und Supportseiten für Hilfe und Tipps"
+      },
+      "SLIDE3": {
+        "PARA1": "Komponenten-Download/Upgrade",
+        "PARA2": "Bitte warten Sie, während Extras heruntergeladen und extrahiert werden...",
+        "PARA3": "You may see buttons to manually install dependencies, please follow the instructions.",
+        "PARA4": "The download may take some time depending on your PC and Internet Connection."
+      }
     },
     "HOME": {
       "TITLE": "Heim",
@@ -112,17 +112,17 @@
       "LICENSE_KEY": "Lizenzschlüssel",
       "LICENSE_DETAILS": "Lizenzdetails",
       "GO_PRO": {
-        "TITLE": "Upgrade To Pro (coming soon)",
-        "LINE1": "Priority access to our support ticketing system run by expert agents",
-        "LINE2": "Notification of software updates",
-        "LINE3": "Access to specialised, sophisticated, domain specific models e.g focussing on Law, Finance etc.",
-        "LINE4": "Access to multi modal models, images, video etc. (coming later)"
+        "TITLE": "Upgrade auf Pro (demnächst verfügbar)",
+        "LINE1": "Vorrangiger Zugang zu unserem Support-Ticketsystem, das von erfahrenen Mitarbeitern betreut wird",
+        "LINE2": "Benachrichtigung über Software-Updates",
+        "LINE3": "Zugang zu spezialisierten, hochentwickelten, domänenspezifischen Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw.",
+        "LINE4": "Zugang zu multimodalen Modellen, Bildern, Videos usw. (folgt später)"
       },
       "GO_PROPLUS": {
-        "TITLE": "Upgrade To Pro Plus (coming later)",
-        "LINE1": "Connect to external provides such as Anthropic, Gemini, Groq and OpenAI",
-        "LINE2": "MCP and Agent integrations",
-        "LINE3": "SLA support turnaround"
+        "TITLE": "Upgrade auf Pro Plus (erscheint später)",
+        "LINE1": "Verbinden Sie sich mit externen Anbietern wie Anthropic, Gemini, Groq und OpenAI",
+        "LINE2": "MCP- und Agentenintegrationen",
+        "LINE3": "SLA-Support-Bearbeitungszeit"
       }
     },
     "DETAIL": {
@@ -229,7 +229,7 @@
       "USEFUL_LINKS": "Useful Links",
       "KB_LINK": "Knowledge Base",
       "FORUM_LINK": "Forum",
-      "SUPPORT_LINK": "Raise a ticket (PRO & PRO+ only)",
+      "SUPPORT_LINK": "Ticket erstellen (nur PRO & PRO+)",
       "REGISTER_LINK": "Newsletter",
       "ACCURACY_TITLE": "Wie gut ist LRag?",
       "ACCURACY": "LRag verwendet den Inhalt der Eingabeaufforderung und Dokumente als Kontext für das entsprechende Modell. Es ist in der Genauigkeit begrenzt, insbesondere wenn Sie Fragen und Dokumente in verschiedenen Bereichen mischen, z. B. Fragen zu Konten und dann sofort Fragen zu Gesundheitsfragen beim Mischen der Dokumente. Der beste Ansatz besteht darin, zuerst Dokumente aufzunehmen, Ihre Fragen zu stellen und diese Dokumente zu entfernen und Ihre Gesundheitsdokumente hinzuzufügen und dann Fragen zur Gesundheit zu stellen. Dadurch kann der Modellkontext zwischen Domänen zurückgesetzt werden",
