@@ -95,7 +95,7 @@
     </mat-expansion-panel>        
   </mat-accordion>  
   <div class="onerow">
-    <mat-form-field>
+    <mat-form-field class="half-width">
       <mat-label>{{ 'PAGES.INGEST.COLLECTION_NAME' | translate }}</mat-label>
       <input matInput specialIsAlphaNumeric [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running" matInput type="text" [(ngModel)]="collection" [maxLength]="80" [minlength]="8" (focus)="showErrors = true" (blur)="newCollection($event)">
       @if (this.collection.length < 8 && showErrors) {

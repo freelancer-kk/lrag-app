@@ -11,7 +11,7 @@
 </mat-toolbar>
   <mat-toolbar>
     <mat-toolbar-row>
-      <mat-form-field>
+      <mat-form-field class="half-width">
         <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
         <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
           @for (entry of ollamaService.models; track $index) {
@@ -20,7 +20,7 @@
         </mat-select>
       </mat-form-field>
       &nbsp;
-      <mat-form-field>
+      <mat-form-field class="half-width">
         <mat-label>{{ 'PAGES.DETAIL.EMBEDDINGS_MODEL_SELECT' | translate }}</mat-label>
         <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.embeddings_model" (selectionChange)="modelChange($event, 1)">
           @for (entry of ollamaService.embedding_models; track $index) {
