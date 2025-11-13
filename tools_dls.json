@@ -12,7 +12,7 @@
   "HOMEBREW_MAC_VERSION": "4.6.19",
   "HOMEBREW_MAC_DOWNLOAD_LINK": "https://smartdater.biz/lrag/mac-os-install-homebrew/",
   "GHOSTSCRIPT_MAC_DOWNLOAD_LINK": "https://smartdater.biz/lrag/mac-installation-or-upgrade-of-ghostscript/",
-  "WATCHER_VERSION": "1.0.0",
+  "WATCHER_VERSION": "1.0.1",
   "WATCHER_WIN_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=852517c9649592c0",
   "WATCHER_MAC_DOWNLOAD_LINK": "https://mxcsfg3rqluuvsmu.myfritz.net:45195/nas/filelink.lua?id=916bbce1c84258a7",
   "RERANKER_VERSION": "1.0.0",
