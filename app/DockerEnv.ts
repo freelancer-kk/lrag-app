@@ -5,28 +5,28 @@ import { KeyValueFile, parseFile } from 'key-value-file'
 import log from 'electron-log/main';
 
 const mergeKeys: string[] = [
-  "RERANK_SERVICE",
-  "REMOTE_LLM_SERVICE",
-  "OCR_SFTP_HOST",
-  "OCR_SFTP_PORT",
-  "OCR_USER",
-  "OCR_PASSWD",
-  "UPDATE_INFO_FILE",
-  "MODELS_FILE",
-  "LIBRARY_PREFIX",
   "VERSION",
-  "TOOLS_DLS_FILE",
+  "MANAGE_EXTERNAL",
+  "GPU_ACCELERATION",
   "OLLAMA_VERSION",
   "IPEX_VERSION",
-  "MANAGE_EXTERNAL",
   "GHOSTSCRIPT_VERSION",
   "RERANKER_VERSION",
-  "WATCHER_VERSION",
+  "WATCHER_VERSION"
+];
+
+const overwriteKeys: string[] = [
+  "TOOLS_DLS_FILE",
+  "RERANK_SERVICE",
+  "REMOTE_LLM_SERVICE",
+  "UPDATE_INFO_FILE",
+  "MODELS_FILE",
+  "EMBEDDED_MODELS_FILE",
+  "LIBRARY_PREFIX",
   "TICKET_URL",
   "FORUM_URL",
   "REGISTRATION_URL",
-  "KB_URL",
-  "GPU_ACCELERATION"
+  "KB_URL"  
 ];
 
 export default class DockerEnv {
@@ -67,6 +67,7 @@ export default class DockerEnv {
       this.llm = kv.get('LLM_MODEL_NAME')?.toString();
       this.kvFile = kv;
       await this.mergeEnvFile();
+      await this.overwriteEnvFile();
       await this.docPathsCB(this.dsp, dp);
     }).catch(async (reason: any) => {
       this.dsp = path.join(this.userHomePath, 'lrag').replace(new RegExp('\\\\','g'), '\\\\');
@@ -165,6 +166,21 @@ export default class DockerEnv {
             log.info('mergeEnvFile:new:', key, value);
             this.kvFile?.set(key, value);
           }
+        }
+      }    
+      await this.kvFile?.writeFile();
+      resolve(true);
+    })    
+  }
+
+  overwriteEnvFile = async (): Promise<boolean> => {
+    return new Promise(async (resolve) => {
+      const envTemplateKv: KeyValueFile = await parseFile(path.join(this.assetsFolderPath, 'template.env'));
+      for await (const key of overwriteKeys) {
+        const value: string | undefined = await envTemplateKv.get(key)
+        if (value) {
+          log.info('overwriteEnvFile:new:', key, value);
+          this.kvFile?.set(key, value);        
         }
       }    
       await this.kvFile?.writeFile();

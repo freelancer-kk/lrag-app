@@ -112,11 +112,11 @@
       "LICENSE_KEY": "Lizenzschlüssel",
       "LICENSE_DETAILS": "Lizenzdetails",
       "GO_PRO": {
-        "TITLE": "Upgrade auf Pro (demnächst verfügbar)",
+        "TITLE": "Upgrade auf Pro",
         "LINE1": "Vorrangiger Zugang zu unserem Support-Ticketsystem, das von erfahrenen Mitarbeitern betreut wird",
         "LINE2": "Benachrichtigung über Software-Updates",
-        "LINE3": "Zugang zu spezialisierten, hochentwickelten, domänenspezifischen Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw.",
-        "LINE4": "Zugang zu multimodalen Modellen, Bildern, Videos usw. (folgt später)"
+        "LINE3": "Zugang zu spezialisierten, anspruchsvollen, domänenspezifischen Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw. (in Kürze erhältlich)",
+        "LINE4": "Zugriff auf multimodale Modelle, Bilder, Videos usw. (kommt später)"
       },
       "GO_PROPLUS": {
         "TITLE": "Upgrade auf Pro Plus (erscheint später)",
@@ -228,7 +228,7 @@
       "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is a 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",        
       "USEFUL_LINKS": "Useful Links",
       "KB_LINK": "Knowledge Base",
-      "FORUM_LINK": "Forum",
+      "FORUM_LINK": "Öffentliches Forum",
       "SUPPORT_LINK": "Ticket erstellen (nur PRO & PRO+)",
       "REGISTER_LINK": "Newsletter",
       "ACCURACY_TITLE": "Wie gut ist LRag?",
