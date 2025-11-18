@@ -367,8 +367,9 @@ export class IngestComponent implements OnInit {
     this.systemService.collection = this.systemService.selectedCollections.value ? this.commonService.basename(this.systemService.selectedCollections.value) : 'general';
     console.log('change to collection:', this.systemService.collection)
     await this.systemService.saveChunkSettings();
-    this.mediaService.loadedIndex = false;
+    this.mediaService.loadedIndex = false;    
     this.systemService.ragFiles = await this.mediaService.ls(true);    
+    this.ollamaService.useDocContext = this.systemService.hasEmbedded();
   }
 
   collectionRemove = async (ev: any) => {
