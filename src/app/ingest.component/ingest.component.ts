@@ -353,6 +353,7 @@ export class IngestComponent implements OnInit {
           this.systemService.selectedCollections.setValue(selectedCollection);
           this.systemService.collection = this.collection;          
           this.systemService.ragFiles = await this.mediaService.ls(true);
+          this.ollamaService.useDocContext = this.systemService.hasEmbedded();
           console.log('ragFiles:', this.systemService.ragFiles);
         } else {
           console.log('collection already exists!:', this.collection)
@@ -394,6 +395,7 @@ export class IngestComponent implements OnInit {
           const generalCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
           this.systemService.selectedCollections.setValue(generalCollection);
           this.systemService.ragFiles = await this.mediaService.ls(true);
+          this.ollamaService.useDocContext = this.systemService.hasEmbedded();
           await this.systemService.saveChunkSettings();
         }
       });
