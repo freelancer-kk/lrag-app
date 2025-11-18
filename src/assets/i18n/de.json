@@ -35,7 +35,8 @@
     "GET_OLLAMA": "Holen Sie sich Ollama",
     "GET_OLLAMA_TIP": "Sie können Ollama aus dem offiziellen Repository herunterladen und installieren. ",
     "OLLAMA_DOWNLOADING": "LRag muss den Modellprozessor Ollama herunterladen. Dies dauert einige Zeit je nach PC und Internetgeschwindigkeit",
-    "WAITING_FOR_OLLAMA_START": "Bitte rennen Sie Ollama"
+    "WAITING_FOR_OLLAMA_START": "Bitte rennen Sie Ollama",
+    "EXIT_AFTER_ACTIVATION": "LRag aktiviert. Die Anwendung wird beendet und muss neu gestartet werden"
   },
   "PAGES": {
     "SPLASH": {
@@ -110,10 +111,19 @@
       "TITLE": "Einstellungen",
       "LICENSE_NAME": "Lizenzinhaber",
       "LICENSE_KEY": "Lizenzschlüssel",
+      "LICENSE_TYPE": "Lizenztyp",
       "LICENSE_DETAILS": "Lizenzdetails",
+      "LICENSE_STATUS": "Status",
+      "PURCHASE": "Kaufen",
+      "OR": "oder",
+      "LICENSE_EMAIL_MESSAGE": "Nach der Zahlung, wird der Lizenzschlüssel per E-Mail verschickt",
+      "UPGRADE_PRO_3": "3 Monaten",
+      "UPGRADE_PRO_6": "6 Monaten",
+      "UPGRADE_PRO_12": "12 Monaten",
+      "ACTIVATE_PRO": "Aktivieren",
       "GO_PRO": {
         "TITLE": "Upgrade auf Pro",
-        "LINE1": "Vorrangiger Zugang zu unserem Support-Ticketsystem, das von erfahrenen Mitarbeitern betreut wird",
+        "LINE1": "Zugang zu unserem Support-Ticketsystem, das von erfahrenen Mitarbeitern betreut wird",
         "LINE2": "Benachrichtigung über Software-Updates",
         "LINE3": "Zugang zu spezialisierten, anspruchsvollen, domänenspezifischen Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw. (in Kürze erhältlich)",
         "LINE4": "Zugriff auf multimodale Modelle, Bilder, Videos usw. (kommt später)"

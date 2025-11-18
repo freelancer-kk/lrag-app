@@ -126,7 +126,46 @@ export interface IExternalChat {
   maxRetries: number
 }
 
-export interface ISettings {
-  licenseKey: string;
-  licenseHolderName: string;  
+export enum ELicenseType {
+  FREE = 0,
+  PRO = 1,
+  PROPLUS = 2
 }
+
+export enum ELicenseStatus {
+  ENTERING = 0,
+  ENTERED,
+  ACTIVATED,
+  REVOKED,
+  EXPIRED,
+  NOT_ACTIVATED
+}
+export interface ILicenseDetails {
+  success: boolean;
+  license: {
+    id: number;
+    user_id: number;
+    email: string;
+    license_key: string;
+    product_type: string;
+    duration_months: number;
+    stripe_payment_id: string;
+    status: string;
+    created_at: number;
+    expires_at: number;
+    last_checked: number;
+    activations: number;
+    machine_ids: string[];
+  }
+}
+
+export interface ILicense {
+  machineId: string,
+  licenseKey: string,
+  licenseType: ELicenseType,
+  licenseChecked: boolean,
+  licenseStatus: ELicenseStatus,
+  licenseDetails: ILicenseDetails
+}
+
+

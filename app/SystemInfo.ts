@@ -3,6 +3,7 @@ import { cpu, graphics, mem, Systeminformation } from 'systeminformation';
 import * as nodeDiskInfo from 'node-disk-info';
 import { platform } from 'os';
 import log from 'electron-log/main';
+import { machineIdSync } from 'node-machine-id';
 
 export const isMac: boolean = platform() === "darwin";
 export const isWindows: boolean = platform() === "win32";
@@ -11,7 +12,13 @@ export const isLinux: boolean = platform() === "linux";
 export default class SystemInfo {
   webContents: Electron.WebContents | undefined;
   private graphics: Systeminformation.GraphicsData | undefined;
-  constructor() {}
+  tools: any;
+  id: string;
+
+  constructor(tools: any) {
+    this.tools = tools;
+    this.id = machineIdSync(true);
+  }
 
   getGraphics = async (): Promise<Systeminformation.GraphicsData> => {
     this.graphics = await graphics();
@@ -36,7 +43,10 @@ export default class SystemInfo {
         }
         break;
         case "cpu": {
-          response = await cpu();
+          response = {
+            ...{ machineId: this.id },
+            ...(await cpu())
+          };
         }
         break;
         case "disks": {
@@ -47,8 +57,16 @@ export default class SystemInfo {
           response = this.getOsTypes();
         }
         break;
+        case "id": {
+          response = this.id;
+        }
+        break;
         case "open": {
-          await shell.openExternal(params.url);
+          if (params.url === 'TOOL') {
+            await shell.openExternal(this.tools[params.var]);
+          } else {
+            await shell.openExternal(params.url);
+          }
           this.emit({ 
             type: 'after-link-opened',
             data: params

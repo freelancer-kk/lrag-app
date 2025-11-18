@@ -169,7 +169,7 @@ export class SystemService {
   getCpu = (): Promise<any> => {
     return new Promise((resolve, reject) => {
       this.bridgeService.getCpu(1, async (data: any) => {
-        const { brand, speed, cores } = data;
+        const { machineId, brand, speed, cores } = data;
         if (cores < 16) {
           this.power = this.power / 1.5;
         }
@@ -177,6 +177,7 @@ export class SystemService {
           this.power = this.power * 1.5;
         }
         resolve({
+          "machineId": machineId,
           "name": await this.commonService.get("SYSTEM.CPU"),
           "brand": brand,
           "speed": speed,

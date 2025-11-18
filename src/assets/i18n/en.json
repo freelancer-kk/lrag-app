@@ -35,7 +35,8 @@
     "GET_OLLAMA": "Get Ollama",
     "GET_OLLAMA_TIP": "You can download and install Ollama from the official repository. On a Mac this is mandatory in order to use LRag",
     "OLLAMA_DOWNLOADING": "LRag needs to download the Model Processor Ollama. This will take some time depending on your PC and Internet speed",
-    "WAITING_FOR_OLLAMA_START": "Please run Ollama"
+    "WAITING_FOR_OLLAMA_START": "Please run Ollama",
+    "EXIT_AFTER_ACTIVATION": "LRag activated. The application will exit and must be restarted"
   },
   "PAGES": { 
       "SPLASH": {
@@ -110,10 +111,19 @@
         "TITLE": "Settings",
         "LICENSE_NAME": "License Holder",
         "LICENSE_KEY": "License Key",
+        "LICENSE_TYPE": "License Type",
         "LICENSE_DETAILS": "License Details",
+        "LICENSE_STATUS": "Status",
+        "PURCHASE": "Purchase",
+        "OR": "or",
+        "LICENSE_EMAIL_MESSAGE": "After payment, license key will be emailed",
+        "UPGRADE_PRO_3": "3 Months",
+        "UPGRADE_PRO_6": "6 Months",
+        "UPGRADE_PRO_12": "12 Months",
+        "ACTIVATE_PRO": "Activate",
         "GO_PRO": {
           "TITLE": "Upgrade To Pro",
-          "LINE1": "Priority access to our support ticketing system run by expert agents",
+          "LINE1": "Access to our support ticketing system run by expert agents",
           "LINE2": "Notification of software updates",
           "LINE3": "Access to specialised, sophisticated, domain specific models e.g focussing on Law, Finance etc. (coming soon)",
           "LINE4": "Access to multi modal models, images, video etc. (coming later)"

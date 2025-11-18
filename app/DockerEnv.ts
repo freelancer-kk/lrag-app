@@ -26,7 +26,9 @@ const overwriteKeys: string[] = [
   "TICKET_URL",
   "FORUM_URL",
   "REGISTRATION_URL",
-  "KB_URL"  
+  "KB_URL",
+  "LICENSE_GET_URL",
+  "LICENSE_ACTIVATE_URL"
 ];
 
 export default class DockerEnv {
@@ -41,9 +43,9 @@ export default class DockerEnv {
   llm: string | undefined;
   sourceEnvPath: string;
   kvFile: KeyValueFile | undefined;
-  docPathsCB: (docPath: string | undefined, dataPath: string | undefined) => void;
+  docPathsCB: (licenseKey: string | undefined, docPath: string | undefined, dataPath: string | undefined) => void;
 
-  constructor(appConfigPath: string, assetsFolderPath: string, userHomePath: string, userDataPath: string, userTempPath: string, sep: string, docPathsCB: (docPath: string | undefined, dataPath: string | undefined) => void) {    
+  constructor(appConfigPath: string, assetsFolderPath: string, userHomePath: string, userDataPath: string, userTempPath: string, sep: string, docPathsCB: (licenseKey: string | undefined, docPath: string | undefined, dataPath: string | undefined) => void) {    
     this.appConfigPath = appConfigPath;
     this.assetsFolderPath = assetsFolderPath;
     this.userHomePath = userHomePath;
@@ -68,7 +70,7 @@ export default class DockerEnv {
       this.kvFile = kv;
       await this.mergeEnvFile();
       await this.overwriteEnvFile();
-      await this.docPathsCB(this.dsp, dp);
+      await this.docPathsCB(kv.get('LICENSE_KEY')?.toString(), this.dsp, dp);
     }).catch(async (reason: any) => {
       this.dsp = path.join(this.userHomePath, 'lrag').replace(new RegExp('\\\\','g'), '\\\\');
       this.ellm = "embeddinggemma:300m";
@@ -77,7 +79,7 @@ export default class DockerEnv {
       this.kvFile = await parseFile(this.sourceEnvPath);
       const dp: string | undefined = this.kvFile.get('ROOT_DATA_PATH')?.toString();
       this.dsp = this.kvFile.get('DOC_SOURCE_PATH')?.toString();      
-      await this.docPathsCB(this.dsp, dp);
+      await this.docPathsCB(this.kvFile.get('LICENSE_KEY')?.toString(), this.dsp, dp);
     });
   }
 
@@ -138,7 +140,7 @@ export default class DockerEnv {
   getKeyValue = (key: string): string | undefined => {
     return this.kvFile ? this.kvFile.get(key)?.toString().replace(/\r$/,'') : undefined;
   }
-  
+
   generateEnvFile = (): Promise<string> => {
     let envTemplate: string = fs.readFileSync(path.join(this.assetsFolderPath, 'template.env'), 'utf8');
     envTemplate = envTemplate.replace(new RegExp('#DOC_ROOT_PATH#','g'), this.dsp ? this.dsp : '');

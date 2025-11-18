@@ -13,6 +13,7 @@ export class BridgeService {
   cb: (ev: any, result: any) => void = () => {};
   chatcb: (ev: any, result: any) => void = () => {};
   ocrcb: (ev: any, result: any) => void = () => {};
+  liccb: (ev: any, result: any) => void = () => {};
   
   constructor(
     private electronService: ElectronService,    
@@ -60,6 +61,10 @@ export class BridgeService {
         // console.log('bridge:event', result.response);
         this.ocrcb(_event, result.response);        
       }) 
+      this.electronService.ipcRenderer.on('license-event', (_event: any, result: any) => {
+        // console.log('bridge:event', result.response);
+        this.liccb(_event, result.response);        
+      }) 
     }
   }
 
@@ -73,6 +78,10 @@ export class BridgeService {
 
   ocrCallback = (cb: (ev: any, result: any) => void) => {
     this.ocrcb = cb;
+  }
+
+  licCallback = (cb: (ev: any, result: any) => void) => {
+    this.liccb = cb;
   }
 
   callNode = (
@@ -306,6 +315,16 @@ export class BridgeService {
     }
   }
 
+  license = (callbackId: number, command: string, options: any, cb: (response: any) => void) => {
+    if (this.isElectronRendered) {
+      this.callNode('license', callbackId, cb, command, options, undefined); 
+    } else {
+      cb({
+          "response": "ok"
+      })
+    }
+  }
+
   removeListeners = () => {
     if (this.isElectronRendered) {
       this.electronService.ipcRenderer.removeAllListeners('reply')
@@ -313,6 +332,7 @@ export class BridgeService {
       this.electronService.ipcRenderer.removeAllListeners('event')
       this.electronService.ipcRenderer.removeAllListeners('chat')
       this.electronService.ipcRenderer.removeAllListeners('ocr-event')
+      this.electronService.ipcRenderer.removeAllListeners('license-event')
     }
   }
 }

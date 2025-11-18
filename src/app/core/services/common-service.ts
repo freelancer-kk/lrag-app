@@ -73,6 +73,15 @@ export class CommonService {
     });
   }
 
+  licenseService = (id = 8967, command: string, options: any = {}): Promise<any> => {
+    return new Promise((resolve, reject) => { 
+      this.bridgeService.license(id, command, options, async (data: any) => {
+        console.log('license service response:', command, options, data);
+        resolve(data);
+      });
+    });
+  }
+
   openExternal = (url: string | undefined, data: any = {}): Promise<void> => {
     if (url) {
       return new Promise((resolve, reject) => {

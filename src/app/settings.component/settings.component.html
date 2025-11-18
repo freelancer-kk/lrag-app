@@ -1,20 +1,46 @@
-<mat-card class="settings-card" appearance="outlined">
-  <mat-card-content>  
+<mat-card class="settings-card" appearance="outlined">  
+  <mat-card-content>
+    <div class="onerow">
+      {{ 'PAGES.SETTINGS.LICENSE_TYPE' | translate }}:
+      <span class="spacer"></span>
+      {{ ELT[settingsService.license.licenseType] }}
+    </div>
+    <div class="onerow">
+      <mat-form-field class="half-width">
+        <mat-label>{{ 'PAGES.SETTINGS.LICENSE_KEY' | translate }}</mat-label>      
+        <input matInput 
+          [disabled]="settingsService.license.licenseStatus === ELS.ACTIVATED && settingsService.license.licenseType !== ELT.FREE"
+          matInput type="text"
+          placeholder="XXXX-XXXX-XXXX-XXXX"
+          [(ngModel)]="settingsService.license.licenseKey"
+          [maxLength]="19"
+          (focus)="settingsService.license.licenseStatus = ELS.ENTERING"
+          (blur)="settingsService.license.licenseStatus = !settingsService.license.licenseKey || (settingsService.license.licenseKey.length === 0 && settingsService.license.licenseType === ELT.FREE) ? ELS.ACTIVATED : settingsService.license.licenseKey && settingsService.license.licenseKey.length === 19 ? ELS.ENTERED : ELS.ENTERING">
+      </mat-form-field>
+      <span class="spacer"></span>
+      @if (activating) {
+        <mat-spinner></mat-spinner>
+      }
+      <button 
+        [disabled]="activating || (settingsService.license.licenseStatus !== ELS.ENTERED && settingsService.license.licenseStatus !== ELS.NOT_ACTIVATED)" matButton="filled" (click)="activatePro($event)">
+        {{ 'PAGES.SETTINGS.ACTIVATE_PRO' | translate }}
+      </button>
+    </div>
+    <div class="onerow">
+      {{ 'PAGES.SETTINGS.LICENSE_STATUS' | translate }}:
+      <span class="spacer"></span>
+      {{ ELS[settingsService.license.licenseStatus] }}
+    </div>    
     <div class="onerow">
       {{ 'PAGES.SETTINGS.LICENSE_NAME' | translate }}:
       <span class="spacer"></span>
-      {{ settingsService.licSettings.licenseHolderName }}
-    </div>
-    <div class="onerow">
-      {{ 'PAGES.SETTINGS.LICENSE_KEY' | translate }}:
-      <span class="spacer"></span>
-      {{ settingsService.licSettings.licenseKey }}
-    </div>
+      {{ settingsService.license.licenseDetails.license.email }}
+    </div>    
     <div class="onerow">
       {{ 'PAGES.SETTINGS.LICENSE_DETAILS' | translate }}:
       <span class="spacer"></span>
-      <nxt-json-view #licenseDetails [data]="settingsService.licenseDetails" [levelOpen]="2"></nxt-json-view>
-    </div>  
+      <nxt-json-view #licenseDetails [data]="settingsService.license.licenseDetails"></nxt-json-view>
+    </div>    
   </mat-card-content>
 </mat-card>
 <br/>
@@ -29,6 +55,25 @@
       <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE3' | translate }}</li>
       <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE4' | translate }}</li>
     </ul>
+    <div class="onerow">
+      {{ 'PAGES.SETTINGS.PURCHASE' | translate }}
+      &nbsp;<button matButton="filled" (click)="upgradePro($event, 3)">
+        {{ 'PAGES.SETTINGS.UPGRADE_PRO_3' | translate }}
+      </button>&nbsp;
+      {{ 'PAGES.SETTINGS.OR' | translate }}
+      &nbsp;<button matButton="filled" (click)="upgradePro($event, 6)">
+        {{ 'PAGES.SETTINGS.UPGRADE_PRO_6' | translate }}
+      </button>&nbsp;
+      {{ 'PAGES.SETTINGS.OR' | translate }}
+      &nbsp;<button matButton="filled" (click)="upgradePro($event, 12)">
+        {{ 'PAGES.SETTINGS.UPGRADE_PRO_12' | translate }}
+      </button>&nbsp;-&nbsp;{{ 'PAGES.SETTINGS.LICENSE_EMAIL_MESSAGE' | translate }}      
+    </div>
+  </mat-card-content>
+</mat-card>
+<br/>
+<mat-card class="settings-card" appearance="outlined">
+  <mat-card-content>    
     <div class="onerow">
       {{ 'PAGES.SETTINGS.GO_PROPLUS.TITLE' | translate }}      
     </div>
