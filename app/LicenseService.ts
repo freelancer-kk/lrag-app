@@ -110,8 +110,9 @@ export default class LicenseService {
           this.licenseStatus = this.licenseDetails?.license.status === 'active' ? ELicenseStatus.ACTIVATED :
               this.licenseDetails?.license.status === 'revoked' ? ELicenseStatus.REVOKED :
               ELicenseStatus.EXPIRED;
-
-          this.licenseStatus = this.licenseDetails?.license.machine_ids.includes(this.machineId) ? ELicenseStatus.ACTIVATED : ELicenseStatus.NOT_ACTIVATED;
+          if (this.licenseStatus === ELicenseStatus.ACTIVATED && !this.licenseDetails?.license.machine_ids.includes(this.machineId)) {
+            this.licenseStatus = ELicenseStatus.NOT_ACTIVATED;
+          }
           this.licenseChecked = true;
         }
       } catch (le) {
