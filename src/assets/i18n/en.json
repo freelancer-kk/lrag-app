@@ -216,6 +216,7 @@
       "INSIGHT": {
         "TITLE": "Chat",
         "MAIN_TITLE": "Document Chat",
+        "CHAT_TITLE": "Chat",
         "INSIGHT_STATUS": "Chat status",
         "RESET_CONTEXT_TIP": "Improve results by grouping similar documents to specific collections. i.e Financial statements under finance, property documents under property etc.",
         "RESET_ARE_YOU_SURE": "Resetting the context will flush the model service, reload and rerun the model, this may take a minute",
@@ -237,7 +238,9 @@
         "FILTER_REQUIRED": "Your use case is CSV with potentially a high transaction volume, you must specify a filter under options"        ,
         "COPY_CONTENT": "Copied content to clipboard",
         "RATE": "Good answer?",
-        "RATING_THANKS": "Thanks for your rating"
+        "RATING_THANKS": "Thanks for your rating",
+        "DOC_CONTEXT_TIP": "Use the document context as part of the chat, you must first embedded documents",
+        "DOC_CONTEXT": "Doc Context"
       },
       "HELP": {
         "TITLE": "About",

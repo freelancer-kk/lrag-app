@@ -216,6 +216,7 @@
     "INSIGHT": {
       "TITLE": "Chatten",
       "MAIN_TITLE": "Dokumenten-Chat",
+      "CHAT_TITLE": "Chat",
       "INSIGHT_STATUS": "Chat status",
       "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie ähnliche Dokumente in bestimmten Sammlungen gruppieren. d.h. Jahresabschlüsse unter Finanzen, Immobiliendokumente unter Immobilien usw.",
       "RESET_ARE_YOU_SURE": "Durch das Zurücksetzen des Kontexts wird der Modelldienst gespült, das Modell neu laden und erneut ausgeladen. Dies kann eine Minute dauern",
@@ -237,7 +238,9 @@
       "FILTER_REQUIRED": "Ihr Anwendungsfall ist CSV mit potenziell hohem Transaktionsvolumen. Sie müssen unter Optionen einen Filter angeben",
       "COPY_CONTENT": "Inhalt in die Zwischenablage kopiert",
       "RATE": "Gute Antwort?",
-      "RATING_THANKS": "Vielen Dank für Ihre Bewertung"
+      "RATING_THANKS": "Vielen Dank für Ihre Bewertung",
+      "DOC_CONTEXT_TIP": "Um den Dokumentkontext als Teil des Chats zu verwenden, müssen Sie zunächst Dokumente einbetten",
+      "DOC_CONTEXT": "Dokumentkontext"
     },
     "HELP": {
       "TITLE": "Uber",

@@ -4,7 +4,7 @@ import OllamaService from "./OllamaService"
 import { ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
 import { StringOutputParser } from "@langchain/core/output_parsers"
 import { Document } from "@langchain/core/documents";
-import { Ollama } from "@langchain/ollama";
+import { Ollama, OllamaInput } from "@langchain/ollama";
 import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
 import DockerEnv from './DockerEnv'
 import { AIMessageChunk } from '@langchain/core/messages'
@@ -65,13 +65,14 @@ export default class ContextChat {
     }
 
     try {
-      log.info('Ollama connection:ctx:', options.numCtx);
-      this.ollamaLlm = new Ollama({
+      const ollamaOptions: OllamaInput = {
         baseUrl: options.baseUrl,
         model: options.model,
         numCtx: options.numCtx ? options.numCtx : undefined,
         headers: this.ollamaService.headers
-      });
+      };
+      log.info('Ollama connection:options:', ollamaOptions);
+      this.ollamaLlm = new Ollama(ollamaOptions);
 
       let vectorStoreRetriever;
       let retrieverParams: any;
@@ -98,7 +99,7 @@ export default class ContextChat {
 
       vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever(retrieverParams);
         
-      if (vectorStoreRetriever && this.langchainService.hasAddedDocs) {
+      if (vectorStoreRetriever && this.langchainService.hasAddedDocs && options.useDocContext) {
         log.info('INSIGHT: WITH DOC CONTEXT!')
 
         const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`

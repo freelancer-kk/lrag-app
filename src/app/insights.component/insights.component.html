@@ -1,6 +1,6 @@
 <mat-toolbar>
   <h1 class="title">
-    {{ 'PAGES.INSIGHT.MAIN_TITLE' | translate }}
+    {{ (ollamaService.useDocContext ? 'PAGES.INSIGHT.MAIN_TITLE' : 'PAGES.INSIGHT.CHAT_TITLE') | translate }}
   </h1>
   <span class="spacer"></span>
   <span class="small">{{ modelUsage }}</span>
@@ -15,13 +15,20 @@
       {{ systemService.insightStatus.getS() }}      
     </div>
   }
+    <mat-slide-toggle 
+      [disabled]="!systemService.hasEmbedded()" 
+      [(ngModel)]="ollamaService.useDocContext" 
+      [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" 
+    >
+      {{ 'PAGES.INSIGHT.DOC_CONTEXT' | translate }}
+    </mat-slide-toggle>    
   @if (systemService.chatHistory.length>0) {                  
     <button [disabled]="insightStatus === EStatus.thinking" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="clearHistory()">
       <mat-icon>playlist_remove</mat-icon>
     </button>          
   }  
 </mat-toolbar>
-@if (settingsService.isActivePro()) {
+@if (settingsService.isActivePro() && ollamaService.useDocContext) {
 @if (overallStatus === EStatus.running_healthy && insightStatus !== EStatus.thinking) {
   <div class="onerow">
     <mat-form-field class="full-width">
@@ -75,55 +82,47 @@
     </div>
   </mat-expansion-panel>        
 </mat-accordion>  
-}
-  @if (systemService.ragFiles.length === 0) {
-    <mat-toolbar>
-      <h1 class="title">
-        {{ 'APP.DOCS_EMPTY' | translate }}
-      </h1>    
-    </mat-toolbar>
-  } @else {
-    @if (overallStatus === EStatus.running_healthy) {
-      <mat-form-field class="full-width">
-        <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
-        <textarea [disabled]="insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.question">{{ systemService.question }}</textarea>
-        @if (systemService.question && systemService.question.length>0 && insightStatus !== EStatus.thinking) {
-          <button matSuffix matIconButton aria-label="Clear" (click)="askQuestion()">
-            <mat-icon>arrow_circle_right</mat-icon>
-          </button>            
-        }
-      </mat-form-field>                      
-      <div #chatDiv id="chatDiv" class="full-width-height">
-        <table mat-table class="full-width">
-          @for (entry of systemService.chatHistory; track $index) {
-            <tr mat-row>
-              @if (entry.who === 0) {
-                  <mat-icon matListItemIcon class="user">face</mat-icon>
-                  <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
-                  <mat-icon class="copyUser" (click)="copyContent($event, entry.content)">content_copy</mat-icon>
-              }          
-              @if (entry.who === 1) {
-                  <mat-icon class="copyAss" (click)="copyContent($event, entry.content)">content_copy</mat-icon>
-                  <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
-                  <small>{{ 'PAGES.INSIGHT.RATE' | translate }}&nbsp;
-                  <mat-icon class="smallIcon" (click)="rate($event, $index, 1)">thumb_up</mat-icon>&nbsp;
-                  <mat-icon class="smallIcon" (click)="rate($event, $index, -1)">thumb_down</mat-icon>
-                  </small>
-                  <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
-              }              
-            </tr>            
-          }
-          @if (streaming) {            
-            <tr mat-row>
-                <p>{{ streamedResponse }}</p>
-                <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
-            </tr>            
-          }                   
-        </table>
-      </div>
-    } @else {
-      <div class="noaccess">
-        <ngx-skeleton-loader count="30" [animation]="systemService.dark ? 'progress-dark': 'progress'" appearance="line" [theme]="{height: '20px', background: 'kahki'}" />
-      </div>
+}  
+@if (overallStatus === EStatus.running_healthy) {
+  <mat-form-field class="full-width">
+    <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
+    <textarea [disabled]="insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.question">{{ systemService.question }}</textarea>
+    @if (systemService.question && systemService.question.length>0 && insightStatus !== EStatus.thinking) {
+      <button matSuffix matIconButton aria-label="Clear" (click)="askQuestion()">
+        <mat-icon>arrow_circle_right</mat-icon>
+      </button>            
     }
-  }
+  </mat-form-field>                      
+  <div #chatDiv id="chatDiv" class="full-width-height">
+    <table mat-table class="full-width">
+      @for (entry of systemService.chatHistory; track $index) {
+        <tr mat-row>
+          @if (entry.who === 0) {
+              <mat-icon matListItemIcon class="user">face</mat-icon>
+              <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
+              <mat-icon class="copyUser" (click)="copyContent($event, entry.content)">content_copy</mat-icon>
+          }          
+          @if (entry.who === 1) {
+              <mat-icon class="copyAss" (click)="copyContent($event, entry.content)">content_copy</mat-icon>
+              <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
+              <small>{{ 'PAGES.INSIGHT.RATE' | translate }}&nbsp;
+              <mat-icon class="smallIcon" (click)="rate($event, $index, 1)">thumb_up</mat-icon>&nbsp;
+              <mat-icon class="smallIcon" (click)="rate($event, $index, -1)">thumb_down</mat-icon>
+              </small>
+              <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
+          }              
+        </tr>            
+      }
+      @if (streaming) {            
+        <tr mat-row>
+            <p>{{ streamedResponse }}</p>
+            <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
+        </tr>            
+      }                   
+    </table>
+  </div>
+} @else {
+  <div class="noaccess">
+    <ngx-skeleton-loader count="30" [animation]="systemService.dark ? 'progress-dark': 'progress'" appearance="line" [theme]="{height: '20px', background: 'kahki'}" />
+  </div>
+}

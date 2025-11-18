@@ -27,6 +27,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import { CommonService } from '../core/services/common-service';
 import { OllamaService } from '../core/services/ollama-service';
 import { SettingsService } from '../core/services/settings-service';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-insights.component',
@@ -50,6 +51,7 @@ import { SettingsService } from '../core/services/settings-service';
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
+    MatSlideToggleModule
   ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'
@@ -141,7 +143,8 @@ export class InsightsComponent implements OnInit {
       this.systemService.question = '';            
 
       const options: any = {
-        baseUrl: "http://localhost:11434",
+        baseUrl: this.ollamaService.isCloud() ? "https://ollama.com": "http://localhost:11434",
+        useDocContext: this.ollamaService.useDocContext,
         question,
         model: this.ollamaService.selectedModel,
         prompt: await this.commonService.get('PAGES.INSIGHT.PROMPT'),
@@ -200,7 +203,7 @@ export class InsightsComponent implements OnInit {
               collection: this.systemService.collection
             },
             insight: {
-              model: this.ollamaService.selectedModel,
+              model: this.ollamaService.selectedModel,                            
               k: this.systemService.k,
               filter: this.systemService.filter,
               numCtx: this.systemService.numCtx,

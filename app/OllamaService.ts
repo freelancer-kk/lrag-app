@@ -35,7 +35,7 @@ export default class OllamaService {
     this.ollama_api_key = ollama_api_key;
     if (ollama_api_key) {
       this.headers = {
-        'Authorization': 'Bearer ' + this.ollama_api_key
+        Authorization: 'Bearer ' + this.ollama_api_key
       }
     }
     this.gpuAcceleration = gpuAcceleration;

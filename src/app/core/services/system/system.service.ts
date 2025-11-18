@@ -173,6 +173,12 @@ export class SystemService {
       });
     })
   }
+
+  hasEmbedded = (): boolean => {
+    return this.ragFiles.reduce(
+      ((acc: boolean, cur: any) => acc || cur.text === 'embedded')
+      , false);
+  }
   
   getCpu = (): Promise<any> => {
     return new Promise((resolve, reject) => {

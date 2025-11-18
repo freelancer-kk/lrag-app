@@ -158,6 +158,8 @@ export class IngestComponent implements OnInit {
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(EStatus.not_running);
         this.systemService.ragFiles = await this.mediaService.ls();
+        this.ollamaService.useDocContext = true;
+        this.systemService.chatHistory = [];
         const snackBarRef = this._snackBar.open(await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
           duration: 10000
         });

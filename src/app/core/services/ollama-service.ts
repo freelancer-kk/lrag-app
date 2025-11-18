@@ -12,6 +12,7 @@ export class OllamaService {
   servicePID: number = -1;
   apiKey: string = '';
   cloudSelected: boolean = false;
+  useDocContext: boolean = false;
   
   availableModels: any[] = [];
   models: any[] = [
@@ -94,6 +95,10 @@ export class OllamaService {
     } else {
       return false;
     }
+  }
+
+  isCloud = (): boolean => {
+    return this.models.find(m => m.value === this.selectedModel).cloud;    
   }
 
   commandOllama = (command: string, options: any = {}): Promise<any> => {

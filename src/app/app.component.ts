@@ -735,10 +735,12 @@ export class AppComponent implements OnInit {
 
   pullModelsIfNecessary = async () => {
     try {
+      await this.ollamaService.getAvailableLLMs();      
+      console.log('available models:', this.ollamaService.availableModels);
       if (this.ollamaService.selectedModel === '') {
         await this.commonService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
-          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1) {
-            console.log('environment model llm:', value);
+          console.log('environment check model llm:', value);
+          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1) {            
             this.ollamaService.selectedModel = value;
             this.ollamaService.downloadedLLM = value;
           } else {
@@ -749,10 +751,10 @@ export class AppComponent implements OnInit {
       }
       if (this.ollamaService.embeddings_model === '') {
         await this.commonService.getEnvValue('EMBEDDINGS_MODEL_NAME').then((value: string) => {
+          console.log('environment check embed llm:', value);
           if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1) {
-            console.log('environment embed llm:', value);
             this.ollamaService.embeddings_model = value;
-            this.ollamaService.downloadedLLM = value;
+            this.ollamaService.downloadedEmbeddedLLM = value;
           } else {
             this.ollamaService.embeddings_model = this.ollamaService.embedding_models[0].value;
             this.ollamaService.downloadedEmbeddedLLM = this.ollamaService.embedding_models[0].value;
@@ -760,7 +762,6 @@ export class AppComponent implements OnInit {
         })
       }
       console.log('pullModelsIfNecessary:getAvailableLLMs()');
-      await this.ollamaService.getAvailableLLMs();
       const responseE: any = await this.ollamaService.pull(this.ollamaService.embedding_models[0].value);
       if (responseE !== 'pulled') {
         this.systemService.modelStatus.update(EStatus.downloading);      
