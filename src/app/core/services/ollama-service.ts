@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CommonService, LStatus } from './common-service';
 import { EStatus } from '../../shared/model';
+import { SettingsService } from './settings-service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,39 +9,30 @@ import { EStatus } from '../../shared/model';
 export class OllamaService { 
   serviceName: string = 'ollama';
   status: LStatus = new LStatus(EStatus.not_running);
-  servicePID: number = -1;  
+  servicePID: number = -1;
+  apiKey: string = '';
+  cloudSelected: boolean = false;
   
   availableModels: any[] = [];
   models: any[] = [
-    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, memory: 1, description: ''},    
-    {value: 'granite3-dense:2b', viewValue: 'granite3-dense:2b (<2GB)', thinking: true, memory: 2, description: ''},
-    {value: 'nemotron-mini:4b', viewValue: 'nemotron-mini:4b (<3GB)', thinking: true, memory: 3, description: ''},
-    {value: 'llama3-chatqa:8b', viewValue: 'llama3-chatqa:8b (<5GB)', thinking: true, memory: 5, description: ''},
-    {value: 'gemma3:12b', viewValue: 'gemma3:12b (<9GB)', thinking: true, memory: 8, description: ''},
-    {value: 'deepseek-r1:14b', viewValue: 'deepseek-r1:14b (<12GB)', thinking: true, memory: 9, description: ''}    
+    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, cloud: false, memory: 1, description: ''},    
   ];
-  embedding_models: any[] = [
-    {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, memory: 1, description: 'EmbeddingGemma is a 300M parameter embedding model from Google'},
-    {value: 'nomic-embed-text:v1.5', viewValue: 'nomic-embed-text:v1.5 (<1GB)', thinking: false, memory: 1, description: 'A high-performing open embedding model with a large token context window'}
-    /*
-    {value: 'mxbai-embed-large:335m', viewValue: 'mxbai-embed-large:335m (<1GB)', thinking: false, memory: 1, description: ''},
-    {value: 'bge-m3:567m', viewValue: 'bge-m3:567m (<1GB)', thinking: false, memory: 1, description: ''},
-    {value: 'all-minilm:22m', viewValue: 'all-minilm:22m (<1GB)', thinking: false, memory: 1, description: ''},
-    {value: 'bge-large:335m', viewValue: 'bge-large:335m (<1GB)', thinking: false, memory: 1, description: ''},
-    {value: 'qwen3-embedding:0.6b', viewValue: 'qwen3-embedding:0.6b (<1GB)', thinking: false, memory: 1, description: ''}
-    */
+  embedding_models: any[] = [    
+    {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, cloud: false, memory: 1, description: 'EmbeddingGemma is a 300M parameter embedding model from Google'},    
   ]
   modelsDownloaded: boolean = false;
   manageOllamaExternally: boolean = false;
   selectedModel: string = ''
   embeddings_model: string = '';
   downloadedLLM: string = '';
+  downloadedEmbeddedLLM: string = '';
   
   gpuAcceleration: boolean = true;  
   serviceTimer: any;
     
   constructor(
-    private commonService: CommonService
+    private commonService: CommonService,
+    private settingsService: SettingsService
   ) {}
 
   getGpuAcceleration = async () => {
@@ -73,7 +65,7 @@ export class OllamaService {
 
   fetchModelList = async () => {
     if (!this.modelsDownloaded) {
-      let url: string = await this.commonService.getEnvValue('MODELS_FILE', 82)
+      let url: string = await this.commonService.getEnvValue('MODELS_FILE' + (this.settingsService.isActivePro() ? '_PRO' : ''), 82)
       console.log('init:model file url:', url)            
       this.modelsDownloaded = true;
       this.models = await (await fetch(
@@ -83,7 +75,7 @@ export class OllamaService {
         }
       )).json();
 
-      url = await this.commonService.getEnvValue('EMBEDDED_MODELS_FILE', 83)
+      url = await this.commonService.getEnvValue('EMBEDDED_MODELS_FILE' + (this.settingsService.isActivePro() ? '_PRO' : ''), 83)
       console.log('init:embedded file url:', url)
       this.embedding_models = await (await fetch(
         url,
@@ -157,6 +149,7 @@ export class OllamaService {
           name: model.name,
           size: Math.floor(model.size / 1024 / 1000),
           usage: model.usage,
+          cloud: model.cloud,          
           description: mm ? mm.description : em ? em.description : ''
         }
       });
@@ -216,5 +209,13 @@ export class OllamaService {
       return this.commandOllama('pull', { model, stream: true});
     }
     return Promise.resolve('pulled');
+  }
+
+  delete = (index: number): Promise<any> => {
+    const model: string = this.availableModels[index].name;
+    console.log('delete:', model);
+    return this.commandOllama('rm', { model }).then(() => {
+      this.availableModels.splice(index, 1);
+    })    
   }
 }

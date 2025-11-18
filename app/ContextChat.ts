@@ -69,7 +69,8 @@ export default class ContextChat {
       this.ollamaLlm = new Ollama({
         baseUrl: options.baseUrl,
         model: options.model,
-        numCtx: options.numCtx ? options.numCtx : undefined
+        numCtx: options.numCtx ? options.numCtx : undefined,
+        headers: this.ollamaService.headers
       });
 
       let vectorStoreRetriever;

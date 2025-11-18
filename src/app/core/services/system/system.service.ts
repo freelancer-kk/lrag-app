@@ -8,6 +8,7 @@ import { OllamaService } from '../ollama-service';
 import { CommonService, LStatus } from '../common-service';
 import { RerankerService } from '../reranker-service';
 import { WatcherService } from '../watcher-service';
+import { SettingsService } from '../settings-service';
 
 
 @Injectable({
@@ -69,10 +70,12 @@ export class SystemService {
   forum_link: string | undefined;
   support_link: string | undefined;
   register_link: string | undefined;
+  firstTime: boolean = true;
   
   constructor(
     private bridgeService: BridgeService,
     private connectionService: ConnectionService,
+    private settingsService: SettingsService,
     private commonService: CommonService,
     private ollamaService: OllamaService,
     private rerankerService: RerankerService,
@@ -91,8 +94,13 @@ export class SystemService {
           this.currentState = newState;
 
           if (this.currentState.hasNetworkConnection) {
-            this.status = 'online';
-            this.ollamaService.fetchModelList();
+            this.status = 'online';            
+            if (this.firstTime) {
+              this.firstTime = false;
+              this.settingsService.getLicense().then(() => {
+                this.ollamaService.fetchModelList();  
+              })            
+            }
           } else {
             this.status = 'offline';
           }

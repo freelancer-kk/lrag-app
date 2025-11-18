@@ -26,6 +26,7 @@ import { MatSelectModule } from '@angular/material/select';
 import {Clipboard} from '@angular/cdk/clipboard';
 import { CommonService } from '../core/services/common-service';
 import { OllamaService } from '../core/services/ollama-service';
+import { SettingsService } from '../core/services/settings-service';
 
 @Component({
   selector: 'app-insights.component',
@@ -70,6 +71,7 @@ export class InsightsComponent implements OnInit {
     public systemService: SystemService,
     public commonService: CommonService,
     public ollamaService: OllamaService,
+    public settingsService: SettingsService,
     private sanitizer: DomSanitizer,
     private mediaService: MediaService,
     private ngZone: NgZone,
@@ -220,7 +222,7 @@ export class InsightsComponent implements OnInit {
             }
           }, 2000);    
         } else {
-          this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.LLM_ERROR'), 'OK');        
+          this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.LLM_ERROR') + ' -> ' + JSON.stringify(answer), 'OK');        
         }
       } finally {
         this.systemService.insightStatus.update(EStatus.not_running);

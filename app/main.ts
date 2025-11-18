@@ -128,8 +128,12 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     const ipex_dl = toolsDLS.IPEX_DOWNLOAD_LINK;
     const rocm_dl = toolsDLS.ROCM_DOWNLOAD_LINK;
     const default_dl = toolsDLS.DEFAULT_DOWNLOAD_LINK;
+
+    const ollama_api_key: string | undefined = await dockerEnv.getKeyValue('OLLAMA_API_KEY');
+
     if (darwin_dl && ipex_dl && rocm_dl && default_dl) {
       ollamaService = new OllamaService(
+        ollama_api_key,
         ollama_version ? ollama_version : '',
         toolsDLS.OLLAMA_VERSION,
         ipex_version ? ipex_version : '',

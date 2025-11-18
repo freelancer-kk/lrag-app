@@ -48,9 +48,7 @@ export class SettingsComponent implements OnInit {
     private commonService: CommonService
   ) {}
 
-  ngOnInit(): void {
-    this.settingsService.getLicense();
-  }
+  ngOnInit(): void {}
 
   upgradePro = async (ev: any, months: number) => {
     console.log('upgradePro:', months);

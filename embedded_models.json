@@ -3,14 +3,8 @@
     "value": "embeddinggemma:300m",
     "viewValue": "embeddinggemma:300m (<1GB)",
     "thinking": false,
+    "cloud": false,
     "memory": 1,
     "description": "embeddingGemma is a 300M parameter embedding model from Google"
-  },
-  {
-    "value": "nomic-embed-text:v1.5",
-    "viewValue": "nomic-embed-text:v1.5 (<1GB)",
-    "thinking": false,
-    "memory": 1,
-    "description": "A high-performing open embedding model with a large token context window"
   }
 ]

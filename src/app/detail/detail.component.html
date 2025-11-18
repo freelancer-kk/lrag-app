@@ -47,7 +47,35 @@
       }
     </mat-toolbar-row>    
   </mat-toolbar>
+  @if (settingsService.isActivePro()) {
   <mat-accordion>
+  <mat-expansion-panel [expanded]="ollamaService.cloudSelected">
+    <mat-expansion-panel-header>
+    <mat-panel-title>{{ 'PAGES.DETAIL.CLOUD' | translate }}</mat-panel-title>
+    <mat-panel-description>        
+    </mat-panel-description>
+  </mat-expansion-panel-header> 
+    <div class="onerow">
+      <mat-form-field class="half-width">
+        <mat-label>{{ 'PAGES.DETAIL.API_KEY' | translate }}</mat-label>      
+        <input matInput 
+          [disabled]="overallStatus !== EStatus.running_healthy" 
+          type="text" 
+          [(ngModel)]="ollamaService.apiKey"          
+          [maxLength]="100" 
+        >
+      </mat-form-field>
+      <span class="spacer"></span>
+      <button
+        [disabled]="ollamaService.apiKey.length > 50" matButton="filled" (click)="getKey($event)">
+        {{ 'PAGES.DETAIL.GET_OLLAMA_KEY' | translate }}
+      </button>&nbsp;
+      <button
+        [disabled]="ollamaService.apiKey.length < 50" matButton="filled" (click)="activate($event)">
+        {{ 'PAGES.DETAIL.ACTIVATE' | translate }}
+      </button>
+    </div>  
+  </mat-expansion-panel>
   <mat-expansion-panel expanded="false">
     <mat-expansion-panel-header>
     <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
@@ -67,7 +95,8 @@
       </mat-form-field>                        
     </div>
   </mat-expansion-panel>        
-  </mat-accordion>    
+  </mat-accordion>
+  }    
   @if (showModelList) {
     <div class="vertscroll">
       <table mat-table class="model_table">
@@ -87,7 +116,12 @@
           </td>
           <td class="underline" mat-col>
             {{ 'PAGES.DETAIL.MODEL_SIZE' | translate }}
-          </td>          
+          </td>
+          @if (settingsService.isActivePro()) {      
+          <td class="underline" mat-col>
+            {{ 'PAGES.DETAIL.MODEL_CLOUD' | translate }}
+          </td>
+          }
         </tr>      
         @for (entry of ollamaService.availableModels; track $index) {
           <tr mat-row>
@@ -120,7 +154,14 @@
             </td>
             <td mat-col>
               {{ entry.size ? entry.size : '-' }}&nbsp;MB
-            </td>            
+            </td>
+            @if (settingsService.isActivePro()) {
+            <td mat-col>
+              <mat-icon [matTooltip]="'PAGES.DETAIL.LOCAL_OR_CLOUD_TIP' | translate">
+              {{ entry.cloud ? 'cloud' : 'cloud_download'  }}
+              </mat-icon>
+            </td>
+            }
           </tr>          
         }         
       </table>    

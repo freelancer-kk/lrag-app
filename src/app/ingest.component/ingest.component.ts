@@ -28,6 +28,7 @@ import { SpecialCharacterDirective } from '../directives/specialCharacterDirecti
 import { CommonService } from '../core/services/common-service';
 import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
+import { SettingsService } from '../core/services/settings-service';
 
 @Component({
   selector: 'app-ingest.component',
@@ -79,6 +80,7 @@ export class IngestComponent implements OnInit {
   constructor(
     public systemService: SystemService,
     public commonService: CommonService,
+    public settingsService: SettingsService,
     public ollamaService: OllamaService,
     public mediaService: MediaService,
     private router: Router,

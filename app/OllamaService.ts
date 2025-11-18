@@ -9,12 +9,15 @@ import log from 'electron-log/main';
 export default class OllamaService {
   serviceInstance: DepService;
   serviceInstanceNoGPU: DepService | undefined;
+  ollama_api_key: string | undefined;
   ollama: Ollama | undefined;
   webContents: Electron.WebContents | undefined;
   gpuAcceleration = true;
   isIPEX: boolean = false;
+  headers: any;
   
   constructor(
+    ollama_api_key: string | undefined,
     installedVersion: string,
     availableVersion: string,
     installedIPEXVersion: string,
@@ -29,6 +32,12 @@ export default class OllamaService {
     gpuAcceleration: boolean,
     versionCB: () => void,
   ) {
+    this.ollama_api_key = ollama_api_key;
+    if (ollama_api_key) {
+      this.headers = {
+        'Authorization': 'Bearer ' + this.ollama_api_key
+      }
+    }
     this.gpuAcceleration = gpuAcceleration;
     let execDir: string = path.join(appDataPath, 'ollama');
     let ollamaExecutable: string = "ollama.exe";
@@ -68,7 +77,10 @@ export default class OllamaService {
       userTempPath,
       urls,
       async (): Promise<boolean> => {
-        this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
+        this.ollama = new Ollama({
+          host: 'http://127.0.0.1:11434',
+          headers: this.headers,
+        });
         try {
           const response: ListResponse  = await this.ollama.ps();
           // log.info('ollamaService:readyCheck:', response);
@@ -98,7 +110,10 @@ export default class OllamaService {
         userTempPath,
         [default_dl],
         async (): Promise<boolean> => {
-          this.ollama = new Ollama({ host: 'http://127.0.0.1:11434' });
+          this.ollama = new Ollama({
+            host: 'http://127.0.0.1:11434',
+            headers: this.headers,
+          });
           try {
             const response: ListResponse  = await this.ollama.ps();
             // log.info('ollamaService:NoGPU:readyCheck:', response)

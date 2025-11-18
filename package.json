@@ -86,7 +86,7 @@
     "node-machine-id": "1.1.12",
     "nxt-json-view": "^20.0.0",
     "officeparser": "4.2.0",
-    "ollama": "0.5.18",
+    "ollama": "^0.6.3",
     "patch-package": "8.0.0",
     "path-browserify": "1.0.1",
     "pdf-parse": "1.1.1",

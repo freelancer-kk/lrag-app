@@ -63,5 +63,9 @@ export class SettingsService {
         licenseKey
       }
     );
-  }  
+  }
+
+  isActivePro = (): boolean => {
+    return this.license.licenseType === ELicenseType.PRO && this.license.licenseChecked && this.license.licenseStatus === ELicenseStatus.ACTIVATED;
+  }
 }

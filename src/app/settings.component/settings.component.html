@@ -21,7 +21,7 @@
       @if (activating) {
         <mat-spinner></mat-spinner>
       }
-      <button 
+      <button
         [disabled]="activating || (settingsService.license.licenseStatus !== ELS.ENTERED && settingsService.license.licenseStatus !== ELS.NOT_ACTIVATED)" matButton="filled" (click)="activatePro($event)">
         {{ 'PAGES.SETTINGS.ACTIVATE_PRO' | translate }}
       </button>

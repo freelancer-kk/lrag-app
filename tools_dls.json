@@ -1,5 +1,5 @@
 {
-  "OLLAMA_VERSION": "0.12.9", 
+  "OLLAMA_VERSION": "0.12.11", 
   "DARWIN_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.12.9/Ollama-darwin.zip",
   "ROCM_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.12.9/ollama-windows-amd64-rocm.zip",
   "DEFAULT_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.12.9/ollama-windows-amd64.zip",

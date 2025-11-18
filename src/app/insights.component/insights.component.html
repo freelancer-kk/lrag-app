@@ -21,6 +21,7 @@
     </button>          
   }  
 </mat-toolbar>
+@if (settingsService.isActivePro()) {
 @if (overallStatus === EStatus.running_healthy && insightStatus !== EStatus.thinking) {
   <div class="onerow">
     <mat-form-field class="full-width">
@@ -74,7 +75,7 @@
     </div>
   </mat-expansion-panel>        
 </mat-accordion>  
-
+}
   @if (systemService.ragFiles.length === 0) {
     <mat-toolbar>
       <h1 class="title">

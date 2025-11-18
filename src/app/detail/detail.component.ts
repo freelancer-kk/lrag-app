@@ -19,6 +19,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { CommonService } from '../core/services/common-service';
 import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
+import { SettingsService } from '../core/services/settings-service';
 
 @Component({
     selector: 'app-detail',
@@ -48,6 +49,7 @@ export class DetailComponent implements OnInit {
   showModelList: boolean = true;
   wt: any;
   libPrefix: string | undefined;
+  keyURL: string | undefined;
   overallStatus: EStatus | undefined;
 
   EStatus: typeof EStatus = EStatus;
@@ -55,7 +57,8 @@ export class DetailComponent implements OnInit {
   constructor(
     public commonService: CommonService,
     public systemService: SystemService,
-    public ollamaService: OllamaService
+    public ollamaService: OllamaService,
+    public settingsService: SettingsService,
   ) {    
     effect(() => {
         this.overallStatus = this.systemService.mainStatus.get();
@@ -64,6 +67,7 @@ export class DetailComponent implements OnInit {
 
   async ngOnInit() {
     this.libPrefix = await this.commonService.getEnvValue('LIBRARY_PREFIX');
+    this.keyURL = await this.commonService.getEnvValue('OLLAMA_KEYS_URL');
   }  
 
   showDownloadImageWarning = (message: string = '') => {
@@ -116,8 +120,7 @@ export class DetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (result) => {
       console.log(`Dialog result: ${result}`);
       if (result === true) {
-        this.ollamaService.commandOllama('rm', { model: this.ollamaService.availableModels[index].name });
-        this.ollamaService.availableModels.splice(index, 1);
+        this.ollamaService.delete(index);        
       }
     });
   }
@@ -147,37 +150,83 @@ export class DetailComponent implements OnInit {
     // Check if model has been already downloaded
     const fIdx: number = this.ollamaService.availableModels.findIndex(f => f.name === (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model));
     if (fIdx === -1) {
-      const dialogRef = this.dialog.open(
-        AlertComponent, {
-          data: {
-            type: 0,
-            params: {
-              model: (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model)
+      let cont: boolean = true;     
+       
+      if (mtype === 0 && this.ollamaService.models.find(f => f.value === this.ollamaService.selectedModel).cloud) {        
+        if (this.ollamaService.apiKey.length < 50) {
+          this.ollamaService.cloudSelected = true;
+          cont = false;
+        }      
+      }
+      if (cont) {
+        const dialogRef = this.dialog.open(
+          AlertComponent, {
+            data: {
+              type: 0,
+              params: {
+                model: (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model)
+              }
             }
-          }
-        });
-      dialogRef.afterClosed().subscribe(async (result) => {
-        console.log(`Dialog result: ${result}`);
-        if (result === true) {
-          await this.ollamaService.commandOllama('pull', { model: (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model), stream: true });
-          await this.writeModelToEnv();
-          this.ollamaService.downloadedLLM = (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model);
-        } else {
-          console.log('reverting:', this.ollamaService.downloadedLLM);
-          if (mtype === 0) {
-            this.ollamaService.selectedModel = this.ollamaService.downloadedLLM;
+          });
+        dialogRef.afterClosed().subscribe(async (result) => {
+          console.log(`Dialog result: ${result}`);
+          if (result === true) {
+            await this.ollamaService.commandOllama('pull', { model: (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model), stream: true });
+            await this.writeModelToEnv();
+            this.ollamaService.downloadedLLM = (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model);
           } else {
-            this.ollamaService.embeddings_model = this.ollamaService.downloadedLLM;
-          }
+            console.log('reverting:', this.ollamaService.downloadedLLM);
+            if (mtype === 0) {
+              this.ollamaService.selectedModel = this.ollamaService.downloadedLLM;
+            } else {
+              this.ollamaService.embeddings_model = this.ollamaService.downloadedEmbeddedLLM;
+            }
+          }        
+        });
+      } else {
+        if (mtype === 0) {
+          setTimeout(() => {
+            this.ollamaService.selectedModel = this.ollamaService.downloadedLLM;
+          }, 500);
+        } else {
+          this.ollamaService.embeddings_model = this.ollamaService.downloadedEmbeddedLLM;
         }
-      });
+      }
     } else {
       await this.writeModelToEnv();      
-      this.ollamaService.downloadedLLM = (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model);
+      if (mtype === 0) {
+        this.ollamaService.downloadedLLM = this.ollamaService.selectedModel;
+      } else {
+        this.ollamaService.downloadedEmbeddedLLM = this.ollamaService.embeddings_model;
+      }
     }    
   }
   
   openModelDetails = (ev: any, model: string) => {
     this.commonService.openExternal(this.libPrefix + model);
+  }
+
+  activate = async (ev: any) => {
+    if (this.ollamaService.apiKey) {
+      await this.commonService.setEnvValue('OLLAMA_API_KEY', this.ollamaService.apiKey);
+      
+      const dialogRef = this.dialog.open(
+        AlertComponent, {
+          data: {
+            type: 2,
+            params: {
+              message: await this.commonService.get('PAGES.DETAIL.EXIT_AFTER_ACTIVATION')
+            }
+          }
+        });
+      dialogRef.afterClosed().subscribe(async (result) => {
+        console.log(`Dialog result: ${result}`);              
+        await this.commonService.quitApp();              
+      });        
+    }
+  }  
+
+  getKey = (ev: any) => {
+    this.commonService.openExternal(this.keyURL);
   }
 }

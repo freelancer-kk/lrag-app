@@ -124,8 +124,8 @@
       "GO_PRO": {
         "TITLE": "Upgrade auf Pro",
         "LINE1": "Zugang zu unserem Support-Ticketsystem, das von erfahrenen Mitarbeitern betreut wird",
-        "LINE2": "Benachrichtigung über Software-Updates",
-        "LINE3": "Zugang zu spezialisierten, anspruchsvollen, domänenspezifischen Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw. (in Kürze erhältlich)",
+        "LINE2": "Zugriff auf mehrere Sammlungen, erweiterte Optionen zum Einbetten, semantisches Chunking und Prompt-Tuning",
+        "LINE3": "Zugang zu spezialisierten, anspruchsvollen, domänenspezifischen und Cloud Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw. (in Kürze erhältlich)",
         "LINE4": "Zugriff auf multimodale Modelle, Bilder, Videos usw. (kommt später)"
       },
       "GO_PROPLUS": {
@@ -146,13 +146,20 @@
       "MODEL_NAME": "Modellname",
       "MODEL_SIZE": "Rohmodellgröße",
       "MODEL_USAGE": "Verwendung",
+      "MODEL_CLOUD": "Standort des Modells",
+      "LOCAL_OR_CLOUD_TIP": "LRag lädt Modelle auf Ihren PC herunter, sofern Sie kein Cloud-Modell ausgewählt haben. Erfordert einen Ollama-API-Schlüssel",
       "DOWNLOAD_MSG": "Das Herunterladen eines Modells verwendet Ihr Internet und kann einige Zeit in Anspruch nehmen und den entsprechenden lokalen Speicherplatz benötigen.",
       "DELETE_ARE_YOU_SURE": "Sind Sie sicher, dass Sie dieses Modell entfernen möchten?",
       "RAG_PROMPT": "Optimieren Sie die RAG-Eingabeaufforderung",
       "USER_PROMPT": "Passen Sie die USER-Eingabeaufforderung an",
       "RAG_PROMPT_TIP": "Optimieren Sie optional die RAG-Eingabeaufforderung, die für die Neuformulierung Ihrer Frage verantwortlich ist, um eine bessere Verarbeitung zu ermöglichen. Passen Sie dies nur bei Bedarf an",
       "USER_PROMPT_TIP": "Optimieren Sie optional die USER-Eingabeaufforderung, die für die Verarbeitung Ihrer Frage nach dem Abruf der zugehörigen Dokumentdaten verantwortlich ist",
-      "REFRESH_LLM_TIP": "Laden Sie Updates für zuvor heruntergeladene Modelle herunter"
+      "REFRESH_LLM_TIP": "Laden Sie Updates für zuvor heruntergeladene Modelle herunter",
+      "CLOUD": "Cloud-Optionen",
+      "API_KEY": "Ollama-API-Schlüssel",
+      "ACTIVATE": "Aktivieren",
+      "EXIT_AFTER_ACTIVATION": "Ollama-API-Schlüsselsatz. Die Anwendung wird beendet und muss neu gestartet werden",
+      "GET_OLLAMA_KEY": "Schlüssel Holen"
     },
     "INGEST": {
       "TITLE": "Einbetten",
@@ -235,7 +242,7 @@
     "HELP": {
       "TITLE": "Uber",
       "WHAT_IS_LRAG_TITLE": "Uber LRag",
-      "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is a 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",        
+      "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is a 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",
       "USEFUL_LINKS": "Useful Links",
       "KB_LINK": "Knowledge Base",
       "FORUM_LINK": "Öffentliches Forum",

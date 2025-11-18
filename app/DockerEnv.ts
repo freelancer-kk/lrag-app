@@ -22,13 +22,16 @@ const overwriteKeys: string[] = [
   "UPDATE_INFO_FILE",
   "MODELS_FILE",
   "EMBEDDED_MODELS_FILE",
+  "MODELS_FILE_PRO",
+  "EMBEDDED_MODELS_FILE_PRO",
   "LIBRARY_PREFIX",
   "TICKET_URL",
   "FORUM_URL",
   "REGISTRATION_URL",
   "KB_URL",
   "LICENSE_GET_URL",
-  "LICENSE_ACTIVATE_URL"
+  "LICENSE_ACTIVATE_URL",
+  "OLLAMA_KEYS_URL"
 ];
 
 export default class DockerEnv {

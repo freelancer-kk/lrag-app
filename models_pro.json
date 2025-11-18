@@ -16,6 +16,14 @@
     "description": "The IBM Granite 2B and 8B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
   },
   {
+    "value": "nemotron-mini:4b",
+    "viewValue": "nemotron-mini:4b (<3GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 3,
+    "description": "A commercial-friendly small language model by NVIDIA optimized for roleplay, RAG QA, and function calling"
+  },
+  {
     "value": "llama3-chatqa:8b",
     "viewValue": "llama3-chatqa:8b (<5GB)",
     "thinking": true,
@@ -24,11 +32,27 @@
     "description": "A model from NVIDIA based on Llama 3 that excels at conversational question answering (QA) and retrieval-augmented generation (RAG)"
   },
   {
+    "value": "gemma3:12b",
+    "viewValue": "gemma3:12b (<9GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 8,
+    "description": "The current, most capable model that runs on a single GPU"
+  },
+  {
     "value": "deepseek-r1:14b",
     "viewValue": "deepseek-r1:14b (<12GB)",
     "thinking": true,
     "cloud": false,
     "memory": 9,
     "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+  },
+  {
+    "value": "kimi-k2-thinking:cloud",
+    "viewValue": "kimi-k2-thinking:cloud (~)",
+    "thinking": true,
+    "cloud": true,
+    "memory": 16,
+    "description": "Kimi K2 Thinking, Moonshot AI's best open-source thinking model"
   }
 ]

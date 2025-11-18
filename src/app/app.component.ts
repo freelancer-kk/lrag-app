@@ -681,6 +681,11 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+    const apiKey: string = await this.commonService.getEnvValue('OLLAMA_API_KEY');
+    if (apiKey && apiKey.length > 50) {
+      console.log('APIKEY:', apiKey);
+      this.ollamaService.apiKey = apiKey;
+    }
     await this.ollamaService.getGpuAcceleration();    
     this.systemService.osType = await this.systemService.getOSType();
     await this.ollamaService.getManagedExternally();
@@ -708,9 +713,11 @@ export class AppComponent implements OnInit {
       /*
       * Comment out since only necessary for reload
       */
+     /*
       this.ollamaService.startOnTimer();
       this.watcherService.startIfNecessary();
-      this.rerankerService.startIfNecessary();      
+      this.rerankerService.startIfNecessary();           
+      */
     }, 400)   
   }
 
@@ -730,16 +737,26 @@ export class AppComponent implements OnInit {
     try {
       if (this.ollamaService.selectedModel === '') {
         await this.commonService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
-          console.log('environment model llm:', value);
-          this.ollamaService.selectedModel = value;
-          this.ollamaService.downloadedLLM = value;          
+          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1) {
+            console.log('environment model llm:', value);
+            this.ollamaService.selectedModel = value;
+            this.ollamaService.downloadedLLM = value;
+          } else {
+            this.ollamaService.selectedModel = this.ollamaService.models[0].value;
+            this.ollamaService.downloadedLLM = this.ollamaService.models[0].value;
+          }
         })
       }
       if (this.ollamaService.embeddings_model === '') {
         await this.commonService.getEnvValue('EMBEDDINGS_MODEL_NAME').then((value: string) => {
-          console.log('environment embed llm:', value);
-          this.ollamaService.embeddings_model = value;
-          this.ollamaService.downloadedLLM = value;          
+          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1) {
+            console.log('environment embed llm:', value);
+            this.ollamaService.embeddings_model = value;
+            this.ollamaService.downloadedLLM = value;
+          } else {
+            this.ollamaService.embeddings_model = this.ollamaService.embedding_models[0].value;
+            this.ollamaService.downloadedEmbeddedLLM = this.ollamaService.embedding_models[0].value;
+          }
         })
       }
       console.log('pullModelsIfNecessary:getAvailableLLMs()');

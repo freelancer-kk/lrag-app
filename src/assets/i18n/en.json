@@ -124,8 +124,8 @@
         "GO_PRO": {
           "TITLE": "Upgrade To Pro",
           "LINE1": "Access to our support ticketing system run by expert agents",
-          "LINE2": "Notification of software updates",
-          "LINE3": "Access to specialised, sophisticated, domain specific models e.g focussing on Law, Finance etc. (coming soon)",
+          "LINE2": "Access to multiple collections, advanced options for embedding, semantic chunking and prompt tuning",
+          "LINE3": "Access to specialised, sophisticated, domain specific and cloud models e.g focussing on Law, Finance etc. (coming soon)",
           "LINE4": "Access to multi modal models, images, video etc. (coming later)"
         },
         "GO_PROPLUS": {
@@ -146,13 +146,20 @@
         "MODEL_NAME": "Model Name",
         "MODEL_SIZE": "Raw Model Size",
         "MODEL_USAGE": "Usage",
+        "MODEL_CLOUD": "Model Location",
+        "LOCAL_OR_CLOUD_TIP": "LRag downloads models to your PC unless you have selected a cloud model. Requires an Ollama API Key",
         "DOWNLOAD_MSG": "Downloading a model uses your internet and may take some time and requires the corresponding local disk space.",
         "DELETE_ARE_YOU_SURE": "Are you sure you want to remove this model?",
         "RAG_PROMPT": "Tune the RAG prompt",
         "USER_PROMPT": "Tune the USER prompt",
         "RAG_PROMPT_TIP": "Optionally tune the RAG prompt that is responsible for reformulating your question for better processing. Only adjust this if necessary",
         "USER_PROMPT_TIP": "Optionally tune the USER prompt that is responsible for processing your question after retrieval of the related document data",
-        "REFRESH_LLM_TIP": "Download updates for previously downloaded models"
+        "REFRESH_LLM_TIP": "Download updates for previously downloaded models",
+        "CLOUD": "Cloud Options",
+        "API_KEY": "Ollama API Key",
+        "ACTIVATE": "Activate",
+        "EXIT_AFTER_ACTIVATION": "Ollama API key set. The application will exit and must be restarted",
+        "GET_OLLAMA_KEY": "Get Key"
       },
       "INGEST": {
         "TITLE": "Embedding",
