@@ -157,7 +157,7 @@
       "REFRESH_LLM_TIP": "Laden Sie Updates für zuvor heruntergeladene Modelle herunter",
       "CLOUD": "Cloud-Optionen",
       "API_KEY": "Ollama-API-Schlüssel",
-      "ACTIVATE": "Aktivieren",
+      "ACTIVATE": "Bestätigen",
       "EXIT_AFTER_ACTIVATION": "Ollama-API-Schlüsselsatz. Die Anwendung wird beendet und muss neu gestartet werden",
       "GET_OLLAMA_KEY": "Schlüssel Holen"
     },
