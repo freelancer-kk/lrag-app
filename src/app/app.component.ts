@@ -740,7 +740,7 @@ export class AppComponent implements OnInit {
       if (this.ollamaService.selectedModel === '') {
         await this.commonService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
           console.log('environment check model llm:', value);
-          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1) {            
+          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1 && this.ollamaService.models.findIndex(f => f.value === value) > -1) { 
             this.ollamaService.selectedModel = value;
             this.ollamaService.downloadedLLM = value;
           } else {
