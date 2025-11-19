@@ -30,5 +30,13 @@
     "cloud": false,
     "memory": 9,
     "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+  },
+  {
+    "value": "deepseek-r1:32b",
+    "viewValue": "deepseek-r1:32b (<22GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 32,
+    "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
   }
 ]
