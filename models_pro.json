@@ -84,7 +84,7 @@
     "viewValue": "kimi-k2-thinking:cloud (~)",
     "thinking": true,
     "cloud": true,
-    "memory": 16,
+    "memory": 4,
     "description": "Kimi K2 Thinking, Moonshot AI's best open-source thinking model"
   },
   {
@@ -92,7 +92,7 @@
     "viewValue": "deepseek-v3.1:671b-cloud (~)",
     "thinking": true,
     "cloud": true,
-    "memory": 16,
+    "memory": 4,
     "description": "DeepSeek-V3.1-Terminus is a hybrid model that supports both thinking mode and non-thinking mode"
   }
 ]
