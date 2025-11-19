@@ -44,8 +44,32 @@
     "viewValue": "deepseek-r1:14b (<12GB)",
     "thinking": true,
     "cloud": false,
-    "memory": 9,
+    "memory": 10,
     "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+  },
+  {
+    "value": "medllama2:7b",
+    "viewValue": "medllama2:7b (<10GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 9,
+    "description": "Fine-tuned Llama 2 model to answer medical questions based on an open source medical dataset"
+  },
+  {
+    "value": "martain7r/finance-llama-8b:fp16",
+    "viewValue": "finance-llama-8b:fp16 (<18GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 18,
+    "description": "Finance-Llama-8B is a fine-tuned Llama 3.1 8B model trained on 500k examples for tasks like QA, reasoning, sentiment, and NER. It supports multi-turn dialogue and is ideal for financial assistants"
+  },
+  {
+    "value": "initium/law_model:Q8_0",
+    "viewValue": "law_model:Q8_0 (9GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 9,
+    "description": "Large instructional language model suitable for the legal field"
   },
   {
     "value": "kimi-k2-thinking:cloud",
@@ -54,5 +78,13 @@
     "cloud": true,
     "memory": 16,
     "description": "Kimi K2 Thinking, Moonshot AI's best open-source thinking model"
+  },
+  {
+    "value": "deepseek-v3.1:671b-cloud",
+    "viewValue": "deepseek-v3.1:671b-cloud (~)",
+    "thinking": true,
+    "cloud": true,
+    "memory": 16,
+    "description": "DeepSeek-V3.1-Terminus is a hybrid model that supports both thinking mode and non-thinking mode"
   }
 ]

@@ -716,8 +716,8 @@ export class AppComponent implements OnInit {
      /*
       this.ollamaService.startOnTimer();
       this.watcherService.startIfNecessary();
-      this.rerankerService.startIfNecessary();           
-      */
+      this.rerankerService.startIfNecessary();   
+      */  
     }, 400)   
   }
 

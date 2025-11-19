@@ -149,12 +149,12 @@ export class OllamaService {
     if (value && value.models) {
       this.availableModels = value.models.map((model: any) => {
         const mm: any = this.models.find(f => f.value === model.name);
-        const em: any = this.embedding_models.find(f => f.value === model.name);
+        const em: any = this.embedding_models.find(f => f.value === model.name);        
         return {
           name: model.name,
           size: Math.floor(model.size / 1024 / 1000),
           usage: model.usage,
-          cloud: model.cloud,          
+          cloud: mm ? mm.cloud : false,
           description: mm ? mm.description : em ? em.description : ''
         }
       });
