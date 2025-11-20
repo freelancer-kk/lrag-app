@@ -1,3 +1,4 @@
+  <mat-dialog-content>
   <mat-toolbar>
     <mat-toolbar-row>
       <h1 class="title" [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate">
@@ -137,10 +138,10 @@
     }  
   </div>
 
-  <div class="vertscroll">
+  <div class="filelistscroll">
   <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">
     @for (entry of systemService.ragFiles; track $index) {
-      <mat-grid-tile class="gridtile" colspan="1" rowspan="1">
+      <mat-grid-tile colspan="1" rowspan="1">
         <mat-list-item>
           @if (entry.status === 0) {
             <mat-icon matListItemIcon class="success">checkmark</mat-icon>
@@ -160,3 +161,8 @@
     }         
   </mat-grid-list>
   </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button matButton [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
+    <button matButton mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+  </mat-dialog-actions>

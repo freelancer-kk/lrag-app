@@ -18,7 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { Router, RouterLink } from '@angular/router';
 import { MatSliderModule } from '@angular/material/slider';
@@ -29,6 +29,11 @@ import { CommonService } from '../core/services/common-service';
 import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
 import { SettingsService } from '../core/services/settings-service';
+
+export interface IngestDialogData {
+  params: any;
+}
+
 
 @Component({
   selector: 'app-ingest.component',
@@ -53,7 +58,8 @@ import { SettingsService } from '../core/services/settings-service';
     MatSliderModule,
     MatExpansionModule,
     MatSlideToggle,
-    SpecialCharacterDirective
+    SpecialCharacterDirective,
+    MatDialogModule
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
@@ -61,10 +67,12 @@ import { SettingsService } from '../core/services/settings-service';
 export class IngestComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
+  readonly data = inject<IngestDialogData>(MAT_DIALOG_DATA);
+  
   fileProgress: number = 0;
   isUploading: boolean = false;
   breakpoint: number = 4;
-  startIngestTimer: any;
+  startIngestTimer: any;  
 
   selectedAll: boolean = false;
   isOpened: boolean = false;
@@ -158,7 +166,6 @@ export class IngestComponent implements OnInit {
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(EStatus.not_running);
         this.systemService.ragFiles = await this.mediaService.ls();
-        this.ollamaService.useDocContext = true;
         this.systemService.chatHistory = [];
         const snackBarRef = this._snackBar.open(await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
           duration: 10000
@@ -352,8 +359,7 @@ export class IngestComponent implements OnInit {
           console.log('selectedCollection:', this.collection, selectedCollection);
           this.systemService.selectedCollections.setValue(selectedCollection);
           this.systemService.collection = this.collection;          
-          this.systemService.ragFiles = await this.mediaService.ls(true);
-          this.ollamaService.useDocContext = this.systemService.hasEmbedded();
+          this.systemService.ragFiles = await this.mediaService.ls(true);          
           console.log('ragFiles:', this.systemService.ragFiles);
         } else {
           console.log('collection already exists!:', this.collection)
@@ -369,8 +375,7 @@ export class IngestComponent implements OnInit {
     console.log('change to collection:', this.systemService.collection)
     await this.systemService.saveChunkSettings();
     this.mediaService.loadedIndex = false;    
-    this.systemService.ragFiles = await this.mediaService.ls(true);    
-    this.ollamaService.useDocContext = this.systemService.hasEmbedded();
+    this.systemService.ragFiles = await this.mediaService.ls(true);        
   }
 
   collectionRemove = async (ev: any) => {
@@ -394,8 +399,7 @@ export class IngestComponent implements OnInit {
           this.systemService.collection = "general";
           const generalCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
           this.systemService.selectedCollections.setValue(generalCollection);
-          this.systemService.ragFiles = await this.mediaService.ls(true);
-          this.ollamaService.useDocContext = this.systemService.hasEmbedded();
+          this.systemService.ragFiles = await this.mediaService.ls(true);          
           await this.systemService.saveChunkSettings();
         }
       });

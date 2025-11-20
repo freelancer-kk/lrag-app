@@ -54,8 +54,8 @@
         "SLIDE2": {
           "PARA1": "LRag Use Cases",
           "PARA2": "*General Chat - Choose a model under Models then Chat with that model*",
-          "PARA3": "*Analyse a doc - Choose a document under Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
-          "PARA4": "*Analyse transactions - Choose a csv file under Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
+          "PARA3": "*Analyse a doc - Choose a document under Chat/Embedding e.g A contract, an insurance doc etc... then embed it. You can then Chat about that document*",
+          "PARA4": "*Analyse transactions - Choose a csv file under Chat/Embedding e.g A csv dump of your bank statements, then embed it. You can then Chat about those transactions*",
           "PARA5": "The larger model, the more accurate the responses should be. Under Models you may select other models",
           "PARA6": "Consult our forums and support pages for help and tips"
         },
@@ -218,7 +218,7 @@
         "MAIN_TITLE": "Document Chat",
         "CHAT_TITLE": "Chat",
         "INSIGHT_STATUS": "Chat status",
-        "RESET_CONTEXT_TIP": "Improve results by limiting documents. i.e Do not mix financial and medical documents. Using a single document is often best. You will have to remove previously embedded documents",
+        "RESET_CONTEXT_TIP": "Improve results by limiting documents. i.e Do not mix document types, e.g. financial and medical. Using a single document is often best. You will have to remove previously embedded documents",
         "RESET_ARE_YOU_SURE": "Resetting the context will flush the model service, reload and rerun the model, this may take a minute",
         "CONTEXTUAL_PROMPT": "Given the chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.",
         "PROMPT": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use a maximum of three sentences and keep the answer concise.",
@@ -239,8 +239,9 @@
         "COPY_CONTENT": "Copied content to clipboard",
         "RATE": "Good answer?",
         "RATING_THANKS": "Thanks for your rating",
-        "DOC_CONTEXT_TIP": "Use the document context as part of the chat, you must first embedded documents",
-        "DOC_CONTEXT": "Include Docs"
+        "DOC_CONTEXT_TIP": "Add documents as part of the chat, so you can questions about your private documents",
+        "DOC_CONTEXT": "Include Docs",
+        "FILES": "Documents"
       },
       "HELP": {
         "TITLE": "About",

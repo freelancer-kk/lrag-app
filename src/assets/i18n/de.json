@@ -54,8 +54,8 @@
       "SLIDE2": {
         "PARA1": "LRag-Anwendungsfälle",
         "PARA2": "*Allgemeiner Chat – Wählen Sie unter „Modelle“ ein Modell aus und klicken Sie dann auf „Mit diesem Modell chatten“.*",
-        "PARA3": "*Analysieren Sie ein Dokument – ​​Wählen Sie unter Einbetten ein Dokument aus, z. B. einen Vertrag, ein Versicherungsdokument usw., und betten Sie es dann ein. Anschließend können Sie über dieses Dokument chatten*",
-        "PARA4": "*Transaktionen analysieren – Wählen Sie unter Einbetten eine CSV-Datei aus, z. B. einen CSV-Dump Ihrer Kontoauszüge, und betten Sie diese dann ein. Anschließend können Sie über diese Transaktionen chatten*",
+        "PARA3": "*Analysieren Sie ein Dokument – ​​Wählen Sie unter Chat/Einbetten ein Dokument aus, z. B. einen Vertrag, ein Versicherungsdokument usw., und betten Sie es dann ein. Anschließend können Sie über dieses Dokument chatten*",
+        "PARA4": "*Transaktionen analysieren – Wählen Sie unter Chat/Einbetten eine CSV-Datei aus, z. B. einen CSV-Dump Ihrer Kontoauszüge, und betten Sie diese dann ein. Anschließend können Sie über diese Transaktionen chatten*",
         "PARA5": "Je größer das Modell, desto genauer sollten die Antworten sein. Unter Modelle können Sie weitere Modelle auswählen",
         "PARA6": "Konsultieren Sie unsere Foren und Supportseiten für Hilfe und Tipps"
       },
@@ -218,7 +218,7 @@
       "MAIN_TITLE": "Dokumenten-Chat",
       "CHAT_TITLE": "Chat",
       "INSIGHT_STATUS": "Chat status",
-      "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie Dokumente einschränken. d. h. Finanzdokumente und medizinische Dokumente dürfen nicht vermischt werden. Oft ist es am besten, ein einzelnes Dokument zu verwenden. Sie müssen zuvor eingebettete Dokumente entfernen",
+      "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie Dokumente einschränken. d.h. Dokumenttypen nicht mischen, z.B. finanziell und medizinisch. Oft ist es am besten, ein einzelnes Dokument zu verwenden. Sie müssen zuvor eingebettete Dokumente entfernen",
       "RESET_ARE_YOU_SURE": "Durch das Zurücksetzen des Kontexts wird der Modelldienst gespült, das Modell neu laden und erneut ausgeladen. Dies kann eine Minute dauern",
       "CONTEXTUAL_PROMPT": "Angesichts eines Chat -Historie und der neuesten Benutzerfrage, die den Kontext im Chat -Verlauf verweisen könnte, formulieren Sie eine eigenständige Frage, die ohne den Chat -History verstanden werden kann. ",
       "PROMPT": "Sie sind Assistent für Fragen zu Fragen. ",
@@ -239,8 +239,9 @@
       "COPY_CONTENT": "Inhalt in die Zwischenablage kopiert",
       "RATE": "Gute Antwort?",
       "RATING_THANKS": "Vielen Dank für Ihre Bewertung",
-      "DOC_CONTEXT_TIP": "Um den Dokumentkontext als Teil des Chats zu verwenden, müssen Sie zunächst Dokumente einbetten",
-      "DOC_CONTEXT": "Dokumenten Nutzen"
+      "DOC_CONTEXT_TIP": "Fügen Sie Dokumente im Rahmen des Chats hinzu, damit Sie Fragen zu Ihren privaten Dokumenten stellen können",
+      "DOC_CONTEXT": "Dokumenten Nutzen",
+      "FILES": "Unterlagen"
     },
     "HELP": {
       "TITLE": "Uber",

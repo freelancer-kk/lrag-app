@@ -28,6 +28,7 @@ import { CommonService } from '../core/services/common-service';
 import { OllamaService } from '../core/services/ollama-service';
 import { SettingsService } from '../core/services/settings-service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { IngestComponent } from '../ingest.component/ingest.component';
 
 @Component({
   selector: 'app-insights.component',
@@ -65,6 +66,8 @@ export class InsightsComponent implements OnInit {
   generationInfo: IGenInfo | undefined;
   overallStatus: EStatus | undefined;
   insightStatus: EStatus | undefined;
+  isOpen = false;
+  breakpoint: number = 4;
 
   EStatus: typeof EStatus = EStatus;
   
@@ -110,6 +113,10 @@ export class InsightsComponent implements OnInit {
     })
   }  
 
+  onResize = (event: any) => {
+    this.breakpoint = Math.floor(event.target.innerWidth / 300);
+  }
+  
   async ngOnInit() {
     this.check();
     // this.askQuestion('How are you today?');
@@ -300,5 +307,29 @@ export class InsightsComponent implements OnInit {
     await this.systemService.saveChunkSettings();
     this.mediaService.loadedIndex = false;    
     this.systemService.ragFiles = await this.mediaService.ls(true);    
+  }
+
+  addDocuments = async (ev: any) => {
+    this.isOpen = true;
+    const dialogRef = this.dialog.open(
+      IngestComponent, {        
+//        ariaModal: true,
+        maxWidth: '95vw',
+        maxHeight: '95vh',
+        width: '100%',
+        height: '70%',        
+        position: { top: '100px' },
+        panelClass: 'full-screen-modal',
+        hasBackdrop: false,
+        data: {}
+    });
+    dialogRef.afterClosed().subscribe(async (result: boolean) => {
+      this.isOpen = false;
+      this.ollamaService.useDocContext = this.systemService.hasEmbedded();
+      console.log(`Ingest result: ${result}`);
+      if (!result) {
+        this.ollamaService.useDocContext = false;
+      }
+    });    
   }
 }

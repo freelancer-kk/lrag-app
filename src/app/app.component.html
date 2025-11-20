@@ -41,12 +41,14 @@
         }
 				<mat-icon matListItemIcon>home</mat-icon>
 			</a>
+      <!--
       <a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'ingest'">
         @if (isExpanded) {
           <span>{{ 'PAGES.INGEST.TITLE' | translate }}</span>        
         }
 				<mat-icon matListItemIcon>model_training</mat-icon>
       </a>
+      -->
 			<a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'insights'">
         @if (isExpanded) {
           <span>{{ 'PAGES.INSIGHT.TITLE' | translate }}</span>        

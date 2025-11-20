@@ -15,13 +15,18 @@
       {{ systemService.insightStatus.getS() }}      
     </div>
   }
+  <!--
     <mat-slide-toggle 
       [disabled]="!systemService.hasEmbedded()" 
       [(ngModel)]="ollamaService.useDocContext" 
       [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" 
     >
       {{ 'PAGES.INSIGHT.DOC_CONTEXT' | translate }}
-    </mat-slide-toggle>    
+    </mat-slide-toggle>
+  -->
+    <button [disabled]="isOpen" [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" matIconButton (click)="addDocuments($event)">
+      <mat-icon>note_add</mat-icon>
+    </button>
   @if (systemService.chatHistory.length>0) {                  
     <button [disabled]="insightStatus === EStatus.thinking" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="clearHistory()">
       <mat-icon>playlist_remove</mat-icon>
@@ -29,6 +34,7 @@
   }  
 </mat-toolbar>
 @if (settingsService.isActivePro() && ollamaService.useDocContext) {
+  <!--
 @if (overallStatus === EStatus.running_healthy && insightStatus !== EStatus.thinking) {
   <div class="onerow">
     <mat-form-field class="full-width">
@@ -43,13 +49,44 @@
     </mat-form-field>          
   </div>
 }
+  -->
 <mat-accordion>
+  @if (ollamaService.useDocContext) {
+    <mat-expansion-panel [expanded]="false">
+      <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'PAGES.INSIGHT.FILES' | translate }}</mat-panel-title>
+      <mat-panel-description>        
+      </mat-panel-description>
+      </mat-expansion-panel-header> 
+      <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">
+        @for (entry of systemService.ragFiles; track $index) {
+          <mat-grid-tile colspan="1" rowspan="1">
+            <mat-list-item>
+              @if (entry.status === 0) {
+                <mat-icon matListItemIcon class="success">checkmark</mat-icon>
+              } @else if (entry.status === 1) {
+                <mat-icon matListItemIcon class="danger">close</mat-icon>
+              } @else {
+                <mat-spinner diameter="20"></mat-spinner>
+              }
+              <div matListItemTitle>
+                {{ commonService.basename(entry.name) }}
+              </div>
+              <div matListItemLine [class]="entry.status === 0 ? 'success' : entry.status === 1 ? 'danger' : 'warning'">
+                {{ entry.text }}
+              </div>
+            </mat-list-item>
+          </mat-grid-tile>      
+        }         
+      </mat-grid-list>
+    </mat-expansion-panel>
+  }
   <mat-expansion-panel [expanded]="systemService.filter">
     <mat-expansion-panel-header>
     <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
     <mat-panel-description>        
     </mat-panel-description>
-  </mat-expansion-panel-header> 
+    </mat-expansion-panel-header> 
     <div class="onerow">
       <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
       <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="8" max="2048" step="1" showTickMarks discrete>
@@ -120,7 +157,7 @@
         </tr>            
       }                   
     </table>
-  </div>
+  </div>  
 } @else {
   <div class="noaccess">
     <ngx-skeleton-loader count="30" [animation]="systemService.dark ? 'progress-dark': 'progress'" appearance="line" [theme]="{height: '20px', background: 'kahki'}" />

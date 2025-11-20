@@ -26,3 +26,9 @@ body {
   background: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
 }
+
+.full-screen-modal mat-dialog-container {
+  border-radius: 10px !important;  
+  border: 5px lightgreen solid !important;
+  border-style: solid !important;
+}
