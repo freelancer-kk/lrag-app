@@ -358,7 +358,7 @@ export class IngestComponent implements OnInit {
   anyDocsNotEmbedded = (): boolean => {  
     if (this.mediaService.docStatus && this.afterLastFinish && (this.mediaService.docStatus.length > 0)) {
       return this.mediaService.docStatus.reduce(
-        ((acc: boolean, cur: any) => acc && cur.text !== 'embedded'),
+        ((acc: boolean, cur: any) => acc && cur.status < 2 && cur.text !== 'embedded'),
         true
       );      
     } else {
