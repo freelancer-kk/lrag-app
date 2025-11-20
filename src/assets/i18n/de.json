@@ -218,7 +218,7 @@
       "MAIN_TITLE": "Dokumenten-Chat",
       "CHAT_TITLE": "Chat",
       "INSIGHT_STATUS": "Chat status",
-      "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie ähnliche Dokumente in bestimmten Sammlungen gruppieren. d.h. Jahresabschlüsse unter Finanzen, Immobiliendokumente unter Immobilien usw.",
+      "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie Dokumente einschränken. d. h. Finanzdokumente und medizinische Dokumente dürfen nicht vermischt werden. Oft ist es am besten, ein einzelnes Dokument zu verwenden. Sie müssen zuvor eingebettete Dokumente entfernen",
       "RESET_ARE_YOU_SURE": "Durch das Zurücksetzen des Kontexts wird der Modelldienst gespült, das Modell neu laden und erneut ausgeladen. Dies kann eine Minute dauern",
       "CONTEXTUAL_PROMPT": "Angesichts eines Chat -Historie und der neuesten Benutzerfrage, die den Kontext im Chat -Verlauf verweisen könnte, formulieren Sie eine eigenständige Frage, die ohne den Chat -History verstanden werden kann. ",
       "PROMPT": "Sie sind Assistent für Fragen zu Fragen. ",
@@ -240,7 +240,7 @@
       "RATE": "Gute Antwort?",
       "RATING_THANKS": "Vielen Dank für Ihre Bewertung",
       "DOC_CONTEXT_TIP": "Um den Dokumentkontext als Teil des Chats zu verwenden, müssen Sie zunächst Dokumente einbetten",
-      "DOC_CONTEXT": "Dokumentkontext"
+      "DOC_CONTEXT": "Dokumenten Nutzen"
     },
     "HELP": {
       "TITLE": "Uber",

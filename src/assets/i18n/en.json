@@ -218,7 +218,7 @@
         "MAIN_TITLE": "Document Chat",
         "CHAT_TITLE": "Chat",
         "INSIGHT_STATUS": "Chat status",
-        "RESET_CONTEXT_TIP": "Improve results by grouping similar documents to specific collections. i.e Financial statements under finance, property documents under property etc.",
+        "RESET_CONTEXT_TIP": "Improve results by limiting documents. i.e Do not mix financial and medical documents. Using a single document is often best. You will have to remove previously embedded documents",
         "RESET_ARE_YOU_SURE": "Resetting the context will flush the model service, reload and rerun the model, this may take a minute",
         "CONTEXTUAL_PROMPT": "Given the chat history and the latest user question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.",
         "PROMPT": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use a maximum of three sentences and keep the answer concise.",
@@ -240,7 +240,7 @@
         "RATE": "Good answer?",
         "RATING_THANKS": "Thanks for your rating",
         "DOC_CONTEXT_TIP": "Use the document context as part of the chat, you must first embedded documents",
-        "DOC_CONTEXT": "Doc Context"
+        "DOC_CONTEXT": "Include Docs"
       },
       "HELP": {
         "TITLE": "About",
