@@ -80,7 +80,7 @@ export class WatcherService {
         cnt++
         if (cnt>50) {
           clearInterval(tt);
-          this.status.update(EStatus.dead);
+          this.status.update(EStatus.dead);          
         }
       }
     }, 2000);    
