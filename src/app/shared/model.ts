@@ -94,6 +94,7 @@ export interface IHistory {
   when: Date,
   question: string,
   answer: string,
+  docContext: boolean,
   ingest: {
     embeddings_model: string
     chunkSize: number,

@@ -196,6 +196,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   restore = async (ev: any, index: number) => {
     console.log('restoring:', this.systemService.history[index].ingest, this.systemService.history[index].insight);
     this.systemService.chunkSize = this.systemService.history[index].ingest.chunkSize;
+    this.ollamaService.useDocContext = this.systemService.history[index].docContext;
     if (this.systemService.collections.length === 0) {
       this.systemService.collections = await this.mediaService.getCollections();
     }

@@ -200,6 +200,7 @@ export class InsightsComponent implements OnInit {
             a_expanded: false,
             question,
             answer,
+            docContext: this.ollamaService.useDocContext,
             ingest: {
               embeddings_model: this.ollamaService.embeddings_model,
               chunkSize: this.systemService.chunkSize,
