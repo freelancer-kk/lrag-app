@@ -1,6 +1,9 @@
 <mat-toolbar>
 <h1 class="title">
   {{ 'PAGES.DETAIL.MAIN_TITLE' | translate }}
+  <sub>
+    {{ 'PAGES.DETAIL.MODEL_ACCURACY' | translate }}  
+  </sub>
 </h1>
 @if (systemService.brand === 'Nvidia' || systemService.brand === 'Intel' || systemService.brand === 'Amd') {
   <span class="spacer"></span>
@@ -11,23 +14,14 @@
 </mat-toolbar>
   <mat-toolbar>
     <mat-toolbar-row>
-      <mat-form-field class="half-width">
+      <mat-form-field class="full-width">
         <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
         <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
           @for (entry of ollamaService.models; track $index) {
             <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
           }
         </mat-select>
-      </mat-form-field>
-      &nbsp;
-      <mat-form-field class="half-width">
-        <mat-label>{{ 'PAGES.DETAIL.EMBEDDINGS_MODEL_SELECT' | translate }}</mat-label>
-        <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.embeddings_model" (selectionChange)="modelChange($event, 1)">
-          @for (entry of ollamaService.embedding_models; track $index) {
-            <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      </mat-form-field>      
       <span class="spacer"></span>
       @if (ollamaService.status.get() === EStatus.running) {
         @if (systemService.modelStatus.get() !== EStatus.running) {
@@ -49,6 +43,23 @@
   </mat-toolbar>
   @if (settingsService.isActivePro()) {
   <mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+    <mat-panel-title>{{ 'PAGES.DETAIL.EMBEDDED_MODEL' | translate }}</mat-panel-title>
+    <mat-panel-description>        
+    </mat-panel-description>
+  </mat-expansion-panel-header> 
+    <div class="onerow">
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'PAGES.DETAIL.EMBEDDINGS_MODEL_SELECT' | translate }}</mat-label>
+        <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.embeddings_model" (selectionChange)="modelChange($event, 1)">
+          @for (entry of ollamaService.embedding_models; track $index) {
+            <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>  
+  </mat-expansion-panel>
   <mat-expansion-panel [expanded]="ollamaService.cloudSelected">
     <mat-expansion-panel-header>
     <mat-panel-title>{{ 'PAGES.DETAIL.CLOUD' | translate }}</mat-panel-title>

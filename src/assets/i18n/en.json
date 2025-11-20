@@ -159,7 +159,9 @@
         "API_KEY": "Ollama API Key",
         "ACTIVATE": "Confirm",
         "EXIT_AFTER_ACTIVATION": "Ollama API key set. The application will exit and must be restarted",
-        "GET_OLLAMA_KEY": "Get Key"
+        "GET_OLLAMA_KEY": "Get Key",
+        "EMBEDDED_MODEL": "Embeddings Model",
+        "MODEL_ACCURACY": "Larger models offer better accuracy"
       },
       "INGEST": {
         "TITLE": "Embedding",

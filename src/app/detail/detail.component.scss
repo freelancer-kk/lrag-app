@@ -1,1 +1,12 @@
 @import '../../assets/gstyle.css';
+
+
+
+h1 sub {
+    /* Adjust font size relative to the main title's font size */
+    font-size: 0.5em; /* Example: 50% of the parent h1's font size */
+    
+    position: relative;
+    top: 1.0em;
+    margin-left: -150px;
+}
