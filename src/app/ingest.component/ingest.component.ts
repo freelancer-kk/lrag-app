@@ -161,23 +161,33 @@ export class IngestComponent implements OnInit {
       this.afterLastFinish = false;
       setTimeout(() => {
         this.afterLastFinish = true;
-      }, 10000);
+      }, 2000);
       await this.mediaService.saveIndex();
       if ((result && result.status === 'completed')) {
         this.systemService.ingestStatus.update(EStatus.not_running);
         this.systemService.ragFiles = await this.mediaService.ls();
         this.systemService.chatHistory = [];
-        const snackBarRef = this._snackBar.open(await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
-          duration: 10000
+        const snackBarRef = this._snackBar.open(
+          await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
+          duration: 10000,
+          panelClass: ['ingest-snackbar-positioning']
         });
         snackBarRef.onAction().subscribe(() => {
+          /*
           if (this.mediaService.noOfValidFiles()) {
             this.router.navigate(['insights']);
           }
+            */
         });      
       } else {
         this.systemService.ingestStatus.update(EStatus.warning);
-        const snackBarRef1 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.commonService.get('PAGES.INGEST.EXITED')), 'OK' );
+        const snackBarRef1 = this._snackBar.open(
+          await this.commonService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.commonService.get('PAGES.INGEST.EXITED')), 
+          'OK',
+          {
+            panelClass: ['ingest-snackbar-positioning']
+          }
+        );
         this.systemService.ragFiles = await this.mediaService.ls();
         snackBarRef1.onAction().subscribe(() => {
           this.systemService.ingestStatus.update(EStatus.not_running);
@@ -186,7 +196,8 @@ export class IngestComponent implements OnInit {
     }).catch(async (e) => {
       console.error('ingest error:', e);      
       this.systemService.ingestStatus.update(EStatus.error);
-      const snackBarRef2 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK' );
+      const snackBarRef2 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK',
+      { panelClass: ['ingest-snackbar-positioning'] });
       this.systemService.ragFiles = await this.mediaService.ls();
       snackBarRef2.onAction().subscribe(() => {
         this.systemService.ingestStatus.update(EStatus.not_running);
@@ -220,7 +231,7 @@ export class IngestComponent implements OnInit {
         this.startIngestTimer = setTimeout(async () => {   
           this.systemService.ragFiles = await this.mediaService.ls(true);
           this.startIngestion();  
-        }, 2500)        
+        }, 2000)        
       }
     }
   }
@@ -261,11 +272,17 @@ export class IngestComponent implements OnInit {
         } else {
           const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
           console.log(droppedFile.relativePath, fileEntry);
-          this._snackBar.open(await this.commonService.get('PAGES.INGEST.DIR_NOT_SUPPORTED'), 'OK');
+          this._snackBar.open(await this.commonService.get('PAGES.INGEST.DIR_NOT_SUPPORTED'), 'OK',
+          {
+            panelClass: ['ingest-snackbar-positioning']
+          });
         }
       }
     } else {
-      this._snackBar.open(await this.commonService.get('PAGES.INGEST.TOO_MANY_FILES') + this.systemService.MAX_FILES, 'OK');
+      this._snackBar.open(await this.commonService.get('PAGES.INGEST.TOO_MANY_FILES') + this.systemService.MAX_FILES, 'OK',
+        {
+          panelClass: ['ingest-snackbar-positioning']
+        });
     }
     
   }
@@ -331,6 +348,17 @@ export class IngestComponent implements OnInit {
     if (this.mediaService.docStatus && this.afterLastFinish) {
       return this.mediaService.docStatus.reduce(
         ((acc: boolean, cur: any) => acc && cur.status < 2),
+        true
+      );      
+    } else {
+      return false;
+    }
+  }
+
+  anyDocsNotEmbedded = (): boolean => {  
+    if (this.mediaService.docStatus && this.afterLastFinish && (this.mediaService.docStatus.length > 0)) {
+      return this.mediaService.docStatus.reduce(
+        ((acc: boolean, cur: any) => acc && cur.text !== 'embedded'),
         true
       );      
     } else {

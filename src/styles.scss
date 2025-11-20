@@ -32,3 +32,12 @@ body {
   border: 5px lightgreen solid !important;
   border-style: solid !important;
 }
+
+.ingest-snackbar-positioning {
+  /* Change position from static (default) to fixed or absolute */
+  position: fixed; /* or absolute, depending on your needs */
+  top: 120px;       /* Desired distance from the top */
+  right: 100px;     /* Desired distance from the right */
+  /* Remove default margins if necessary */
+  margin: 0 !important;
+}

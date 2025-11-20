@@ -16,7 +16,7 @@
           {{ systemService.ingestStatus.getS() }}
         </div>
       } @else {
-        @if (overallStatus === EStatus.running_healthy && docsHealthy()) {
+        @if (overallStatus === EStatus.running_healthy && anyDocsNotEmbedded()) {
           <button matButton="filled" (click)="startIngestion()">
             {{ 'PAGES.INGEST.INDEX' | translate }}
           </button>
@@ -163,6 +163,6 @@
   </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button matButton [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
-    <button matButton mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+    <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
+    <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
   </mat-dialog-actions>
