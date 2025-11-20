@@ -11,6 +11,7 @@ import { AIMessageChunk } from '@langchain/core/messages'
 import { concat } from "@langchain/core/utils/stream";
 import ReRankerService from './RerankerService'
 import log from 'electron-log/main';
+import * as path from 'path';
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -59,9 +60,9 @@ export default class ContextChat {
     return doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1;
   }
 
-  getAnswer = async (options: any): Promise<string | undefined> => {
+  getAnswer = async (options: any): Promise<any> => {
     if (!this.ollamaService.isReady() || !this.ollamaService.ollama || !this.rerankerService.isReady()) {
-      return 'Services not ready ' + this.ollamaService.isReady() + ':' + (this.ollamaService.ollama !== undefined) + ':' + this.rerankerService.isReady();
+      return Promise.resolve({ error: 'Services not ready ' + this.ollamaService.isReady() + ':' + (this.ollamaService.ollama !== undefined) + ':' + this.rerankerService.isReady() });
     }
 
     try {
@@ -96,6 +97,7 @@ export default class ContextChat {
           k: options.k,
         };
       }
+      const docSources: string[] = [];
 
       vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever(retrieverParams);
         
@@ -125,7 +127,14 @@ export default class ContextChat {
           if (reranked_docs && reranked_docs.length > 0) {
             docs = reranked_docs;
           }
-        }          
+        }
+
+        for await (const doc of docs) {
+          const name: string = path.basename(doc.metadata.source);
+          if (!docSources.includes(name)) {
+            docSources.push(name);
+          }
+        }
         
         const combinedDocs: string = combineDocuments(docs);
         log.info('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
@@ -182,7 +191,10 @@ export default class ContextChat {
           this.emit({ type: 'chat-chunk', data: chunk });
         }
         log.info(finalAnswer?.usage_metadata)
-        return finalAnswer?.content.toString();
+        return {
+          answer: finalAnswer?.content.toString(),
+          docSources
+        }
       } else {
         log.info('INSIGHT: NO DOC CONTEXT!')
 
@@ -213,11 +225,16 @@ export default class ContextChat {
           this.emit({ type: 'chat-chunk', data: chunk });
         }
         log.info(finalAnswer?.usage_metadata)
-        return finalAnswer?.content.toString();
+        return {
+          answer: finalAnswer?.content.toString(),
+          docSources
+        }
       }
     } catch (e: any) {
       log.error(e);
-      return e;
+      return {
+        error: e
+      }
     }  
   }
 }

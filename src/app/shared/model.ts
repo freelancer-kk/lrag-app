@@ -69,7 +69,8 @@ export interface IUser {
 
 export interface IChat {
   who: EWho,
-  content: string
+  content: string,
+  docSources: string[]
 }
 
 export interface IGenInfo {

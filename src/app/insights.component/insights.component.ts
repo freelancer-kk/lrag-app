@@ -176,23 +176,26 @@ export class InsightsComponent implements OnInit {
 
       this.systemService.chatHistory.push({
         who: EWho.User,
-        content: question
+        content: question,
+        docSources: [],
       });
       this.scrollToBottom();
       this.systemService.insightStatus.update(EStatus.thinking);
       this.streaming = true;
       this.streamedResponse = '';
-      const answer: string = await this.systemService.commandInsight('question', options);
+      const answerResponse: any = await this.systemService.commandInsight('question', options);
+      const { answer, error, docSources } = answerResponse;
       this.streamedResponse = '';
       this.streaming = false;
       this.systemService.insightStatus.update(EStatus.running);
-      // console.log('Answer:', answer);
+      console.log('answerResponse:', answerResponse);
       try {
-        if (typeof answer === 'string') {
+        if (!error) {
           console.log('PUSHING ANSWER:', answer);
           this.systemService.chatHistory.push({
             who: EWho.Assistant,
-            content: this.generationInfo ? this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count) : this.reformat(answer, 0, 0)
+            content: this.generationInfo ? this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count) : this.reformat(answer, 0, 0),
+            docSources
           });
           this.systemService.history.unshift({
             when: new Date(),
@@ -233,7 +236,7 @@ export class InsightsComponent implements OnInit {
             }
           }, 2000);    
         } else {
-          this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.LLM_ERROR') + ' -> ' + JSON.stringify(answer), 'OK');        
+          this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.LLM_ERROR') + ' -> ' + JSON.stringify(error), 'OK');        
         }
       } finally {
         this.systemService.insightStatus.update(EStatus.not_running);
