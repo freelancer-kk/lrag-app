@@ -170,6 +170,7 @@ export class AppComponent implements OnInit {
                   });               
                 }
                 this.systemService.ragFiles = await this.mediaService.ls();
+                this.systemService.ocrComplete.set(true);
               }                            
             })
           }

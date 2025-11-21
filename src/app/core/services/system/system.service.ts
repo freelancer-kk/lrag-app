@@ -22,6 +22,7 @@ export class SystemService {
   insightStatus: LStatus = new LStatus(EStatus.not_running);
   gpuChangeStatus: LStatus = new LStatus(EStatus.not_running);
   
+  ocrComplete = signal(false);
   power: number = 50;
   cpu: any;
   gpu: any;
@@ -34,7 +35,7 @@ export class SystemService {
   ollama_get_link: string = "https://ollama.com/download";
   appVersionChange: boolean = false;
 
-  MAX_FILES: number = 15;
+  MAX_FILES: number = 10;
   ragFiles: any[] = [];
   dark: boolean = true;
   docsEmpty: boolean = true;
@@ -98,7 +99,10 @@ export class SystemService {
             if (this.firstTime) {
               this.firstTime = false;
               this.settingsService.getLicense().then(() => {
-                this.ollamaService.fetchModelList();  
+                this.ollamaService.fetchModelList(); 
+                if (this.settingsService.isActivePro()) {
+                  this.MAX_FILES = 50;
+                }
               })            
             }
           } else {

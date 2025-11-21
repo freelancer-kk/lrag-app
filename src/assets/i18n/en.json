@@ -179,7 +179,7 @@
         "DOC_MODIFIED": "Modified",
         "TOO_MANY_FILES": "Maximum number of files reached for this version - ",
         "MAX_DOCS": "15",
-        "MAX_FILES_TEXT": "Maximum of 15 documents for this version of LRag",
+        "MAX_FILES_TEXT": "Maximum number of documents for this version of LRag",
         "DURATION_WARNING": "Embedding may take some minutes depending on the performance of your PC and size of your documents. Please wait until the process completes",
         "ERROR": "Error during embedding, please try again",
         "WARNING": "Warning during embedding",

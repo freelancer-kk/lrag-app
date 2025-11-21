@@ -82,6 +82,7 @@ export class IngestComponent implements OnInit {
 
   overallStatus: EStatus | undefined;
   ingestStatus: EStatus = EStatus.not_running;
+  ocrTimeout: any;
 
   EStatus: typeof EStatus = EStatus;
 
@@ -102,6 +103,20 @@ export class IngestComponent implements OnInit {
       } else {
         this.systemService.selectedCollections.enable();
         this.systemService.selectedDocuments.enable();
+      }
+      if (this.systemService.ocrComplete() === true) {
+        this.systemService.ocrComplete.set(false);
+        console.log('OCR complete signal received!');
+        if (this.ocrTimeout) {
+          clearTimeout(this.ocrTimeout);
+          this.ocrTimeout = null;
+        }
+        this.ocrTimeout = setTimeout(() => {
+          if (this.anyDocsNotEmbedded()) {
+            this.startIngestion();
+          }  
+        }, 2000)
+        
       }
     })
   }
@@ -127,87 +142,87 @@ export class IngestComponent implements OnInit {
   }
 
   startIngestion = async () => {
-    this.systemService.ingestStatus.update(EStatus.starting);
-    this.mediaService.docStatus = [];
-    this.systemService.saveChunkSettings();
+      this.systemService.ingestStatus.update(EStatus.starting);
+      this.mediaService.docStatus = [];
+      this.systemService.saveChunkSettings();
 
-    // Override chunk settings for CSV if they are defaulted
-    let ingestParams: any = {
-      chunkSize: this.systemService.chunkSize,
-      chunkOverlap: this.systemService.overlap,
-    }
-    if (await this.mediaService.areAllCSV()) {
-      console.log('overriding Chunk parameters!');
-      ingestParams = {
-        chunkSize: 0,
-        chunkOverlap: 0
+      // Override chunk settings for CSV if they are defaulted
+      let ingestParams: any = {
+        chunkSize: this.systemService.chunkSize,
+        chunkOverlap: this.systemService.overlap,
       }
-    }
-
-    this.systemService.commandIngest(
-      'start',
-      {        
-        ...ingestParams, 
-        ...{
-          separator: this.systemService.separator,
-          useSemantic: this.systemService.useSemantic,
-          localVector: this.systemService.localVector,
-          collection: this.systemService.collection,
-          embeddings: this.ollamaService.embeddings_model
+      if (await this.mediaService.areAllCSV()) {
+        console.log('overriding Chunk parameters!');
+        ingestParams = {
+          chunkSize: 0,
+          chunkOverlap: 0
         }
       }
-    ).then(async (result: any) => {
-      console.log('ingest result:', result);
-      this.afterLastFinish = false;
-      setTimeout(() => {
-        this.afterLastFinish = true;
-      }, 2000);
-      await this.mediaService.saveIndex();
-      if ((result && result.status === 'completed')) {
-        this.systemService.ingestStatus.update(EStatus.not_running);
-        this.systemService.ragFiles = await this.mediaService.ls();
-        this.systemService.chatHistory = [];
-        const snackBarRef = this._snackBar.open(
-          await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
-          duration: 10000,
-          panelClass: ['ingest-snackbar-positioning']
-        });
-        snackBarRef.onAction().subscribe(() => {
-          /*
-          if (this.mediaService.noOfValidFiles()) {
-            this.router.navigate(['insights']);
+
+      this.systemService.commandIngest(
+        'start',
+        {        
+          ...ingestParams, 
+          ...{
+            separator: this.systemService.separator,
+            useSemantic: this.systemService.useSemantic,
+            localVector: this.systemService.localVector,
+            collection: this.systemService.collection,
+            embeddings: this.ollamaService.embeddings_model
           }
-            */
-        });      
-      } else {
-        this.systemService.ingestStatus.update(EStatus.warning);
-        const snackBarRef1 = this._snackBar.open(
-          await this.commonService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.commonService.get('PAGES.INGEST.EXITED')), 
-          'OK',
-          {
-            panelClass: ['ingest-snackbar-positioning']
-          }
-        );
-        this.systemService.ragFiles = await this.mediaService.ls();
-        snackBarRef1.onAction().subscribe(() => {
+        }
+      ).then(async (result: any) => {
+        console.log('ingest result:', result);
+        this.afterLastFinish = false;
+        setTimeout(() => {
+          this.afterLastFinish = true;
+        }, 2000);
+        await this.mediaService.saveIndex();
+        if ((result && result.status === 'completed')) {
           this.systemService.ingestStatus.update(EStatus.not_running);
-        });              
-      }
-    }).catch(async (e) => {
-      console.error('ingest error:', e);      
-      this.systemService.ingestStatus.update(EStatus.error);
-      const snackBarRef2 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK',
-      { panelClass: ['ingest-snackbar-positioning'] });
-      this.systemService.ragFiles = await this.mediaService.ls();
-      snackBarRef2.onAction().subscribe(() => {
-        this.systemService.ingestStatus.update(EStatus.not_running);
-      });      
-    })    
+          this.systemService.ragFiles = await this.mediaService.ls();
+          this.systemService.chatHistory = [];
+          const snackBarRef = this._snackBar.open(
+            await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
+            duration: 10000,
+            panelClass: ['ingest-snackbar-positioning']
+          });
+          snackBarRef.onAction().subscribe(() => {
+            /*
+            if (this.mediaService.noOfValidFiles()) {
+              this.router.navigate(['insights']);
+            }
+              */
+          });      
+        } else {
+          this.systemService.ingestStatus.update(EStatus.warning);
+          const snackBarRef1 = this._snackBar.open(
+            await this.commonService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.commonService.get('PAGES.INGEST.EXITED')), 
+            'OK',
+            {
+              panelClass: ['ingest-snackbar-positioning']
+            }
+          );
+          this.systemService.ragFiles = await this.mediaService.ls();
+          snackBarRef1.onAction().subscribe(() => {
+            this.systemService.ingestStatus.update(EStatus.not_running);
+          });              
+        }
+      }).catch(async (e) => {
+        console.error('ingest error:', e);      
+        this.systemService.ingestStatus.update(EStatus.error);
+        const snackBarRef2 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK',
+        { panelClass: ['ingest-snackbar-positioning'] });
+        this.systemService.ragFiles = await this.mediaService.ls();
+        snackBarRef2.onAction().subscribe(() => {
+          this.systemService.ingestStatus.update(EStatus.not_running);
+        });      
+      })     
   }
 
   progress = async (file: File, data: string | ArrayBuffer | null) => {
     let fileSize = this.mediaService.getFileSize(file.size);
-    let fileSizeInWords = this.mediaService.getFileSizeUnit(file.size);
+    // let fileSizeInWords = this.mediaService.getFileSizeUnit(file.size);
     
     for (
       var f = 0;

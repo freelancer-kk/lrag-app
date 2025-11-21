@@ -16,11 +16,13 @@
           {{ systemService.ingestStatus.getS() }}
         </div>
       } @else {
+        <!--
         @if (overallStatus === EStatus.running_healthy && anyDocsNotEmbedded()) {
           <button matButton="filled" (click)="startIngestion()">
             {{ 'PAGES.INGEST.INDEX' | translate }}
           </button>
         }
+          -->
       }
     </mat-toolbar-row>  
   </mat-toolbar>
