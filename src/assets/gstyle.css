@@ -101,13 +101,6 @@
   color: yellow;
 }
 
-.filelistscroll {
-  overflow-y: scroll;
-  width: 100%;
-  max-height: 60%;  
-  min-height: 20%;
-}
-
 .gridtile {
   align-items: center;
   min-width: 100px;

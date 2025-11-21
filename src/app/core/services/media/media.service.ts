@@ -221,7 +221,7 @@ export class MediaService {
         } else {
           return { 
             name: v,
-            status: 2,
+            status: 3,
             text: unknown
           }
         }
