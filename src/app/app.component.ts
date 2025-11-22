@@ -271,7 +271,8 @@ export class AppComponent implements OnInit {
                 if (winget) {
                   this.watcherService.winget = winget;
                 }
-                if (Number.parseInt(version) >= Number.parseInt(expectedVersion)) {
+                // if (Number.parseInt(version) >= Number.parseInt(expectedVersion)) {
+                if (Number.parseInt(version)) {
                   switch (prereq) {
                     case 'homebrew': {
                       this.watcherService.brewStatus.update(brew ? EStatus.installed : EStatus.installed)
@@ -289,15 +290,18 @@ export class AppComponent implements OnInit {
                   switch (prereq) {
                     case 'homebrew': {
                       this.watcherService.brewStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade)
+                      this.watcherService.status.update(EStatus.not_running);
                     }
                     break;
                     case 'tesseract': {
                       this.watcherService.wingetStatus.update(EStatus.upgrade_winget);
                       this.watcherService.clearTT();
+                      this.watcherService.status.update(EStatus.not_running);
                     }
                     break;
                     default: {
                       this.watcherService.ghostscriptStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade)
+                      this.watcherService.status.update(EStatus.not_running);
                     }
                   }                  
                 }
@@ -714,7 +718,7 @@ export class AppComponent implements OnInit {
       /*
       * Comment out since only necessary for reload
       */
-      /*
+     /*
       this.ollamaService.startOnTimer();
       this.watcherService.startIfNecessary();
       this.rerankerService.startIfNecessary();

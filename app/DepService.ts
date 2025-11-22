@@ -347,7 +347,9 @@ export default class DepService {
                           shellCommands: prereq.shellCommands
                         }
                       });
-                      if (version >= prereqVer) {
+                      // Force version check to just presence for now
+                      // if (version >= prereqVer) {
+                      if (version) {
                         log.info('DepService:pass++')
                         this.passedPrereqs++; 
                       } else {

@@ -118,7 +118,7 @@ export default class OCRProcessor {
           }                
         }        
       }
-    }, 5000);     
+    }, 1000);     
   }
 
   processError = (fe: any) => {

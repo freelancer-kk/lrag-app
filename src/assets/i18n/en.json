@@ -105,7 +105,7 @@
         "BOOTSTRAP": "Startup",
         "BOOTSTRAP_DESC": "About LRag",
         "RESTART_SERVICE": "Restart service if necessary",
-        "CLICK_TO_INSTALL": "Click the button(s) below to install/upgrade dependencies"
+        "CLICK_TO_INSTALL": "Click below for info on how to install/upgrade dependencies"
       },
       "SETTINGS": {
         "TITLE": "Settings",

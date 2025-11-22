@@ -105,7 +105,7 @@
       "BOOTSTRAP": "Startup",
       "BOOTSTRAP_DESC": "Über LRag",
       "RESTART_SERVICE": "Starten Sie den Dienst ggf. neu",
-      "CLICK_TO_INSTALL": "Klicken Sie auf die Schaltfläche(n) unten, um Abhängigkeiten zu installieren oder updaten"
+      "CLICK_TO_INSTALL": "Klicken Sie unten, um Informationen zum Installieren/Aktualisieren von Abhängigkeiten zu erhalten"
     },
     "SETTINGS": {
       "TITLE": "Einstellungen",
