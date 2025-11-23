@@ -85,6 +85,7 @@ export class OllamaService {
         }
       )).json();
       console.log('models downloaded!');
+      this.getAvailableLLMs();
     }
   }
 
@@ -161,7 +162,7 @@ export class OllamaService {
         }
       });
     }
-    // console.log('getAvailableLLMs:', this.availableModels);
+    console.log('getAvailableLLMs:', this.availableModels);
   }
 
   filteredAvailableModels = (): any[] => {
