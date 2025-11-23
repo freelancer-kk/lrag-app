@@ -24,10 +24,10 @@
       {{ 'PAGES.INSIGHT.DOC_CONTEXT' | translate }}
     </mat-slide-toggle>
   -->
-  <button [disabled]="isDocsOpen || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" matIconButton (click)="addDocuments($event)">
+  <button [disabled]="isDocsOpen || insightStatus !== EStatus.running_healthy" [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" matIconButton (click)="addDocuments($event)">
     <mat-icon>note_add</mat-icon>
   </button>
-  <button [disabled]="isModelOpen || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_MANAGE_TIP' | translate" matIconButton (click)="manageModel($event)">
+  <button [disabled]="isModelOpen || insightStatus !== EStatus.running_healthy" [matTooltip]="'PAGES.INSIGHT.MODEL_MANAGE_TIP' | translate" matIconButton (click)="manageModel($event)">
     <mat-icon>psychology</mat-icon>
   </button>
   @if (systemService.chatHistory.length>0) {                  
