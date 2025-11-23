@@ -108,7 +108,7 @@
         "CLICK_TO_INSTALL": "Click below for info on how to install/upgrade dependencies"
       },
       "SETTINGS": {
-        "TITLE": "Settings",
+        "TITLE": "Upgrade",
         "LICENSE_NAME": "License Holder",
         "LICENSE_KEY": "License Key",
         "LICENSE_TYPE": "License Type",
@@ -245,7 +245,8 @@
         "DOC_CONTEXT": "Include Docs",
         "MODEL_MANAGE_TIP": "Manage the model used for chat, change model, tune prompts etc...",
         "MODEL": "Model",        
-        "FILES": "Documents"
+        "FILES": "Documents",
+        "MODEL_SETTINGS_TIP": "Adjust model settings such as context size, k size, filtering etc..."
       },
       "HELP": {
         "TITLE": "About",

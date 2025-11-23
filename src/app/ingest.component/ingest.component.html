@@ -30,7 +30,6 @@
       }
     </mat-toolbar-row>  
   </mat-toolbar>
-  <mat-dialog-content>
   @if (isUploading) {
     <div class="progress">
       <mat-progress-bar #progress mode="determinate" [value]="fileProgress"></mat-progress-bar>
@@ -145,6 +144,7 @@
     }  
   </div>
 
+  <mat-dialog-content>
   <div class="filelistscroll">
   <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">
     @for (entry of systemService.ragFiles; track $index) {

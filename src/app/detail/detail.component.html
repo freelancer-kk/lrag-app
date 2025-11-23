@@ -1,4 +1,4 @@
-<mat-toolbar>
+  <div class="onerow">
 <h1 class="title">
   {{ 'PAGES.DETAIL.MAIN_TITLE' | translate }}
   <sub>
@@ -11,9 +11,8 @@
     {{ 'GPU_ACCEL' | translate }}
   </mat-slide-toggle>
 }
-</mat-toolbar>
-<mat-toolbar>
-  <mat-toolbar-row>
+  </div>
+  <div class="onerow">
     <mat-form-field class="full-width">
       <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
       <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
@@ -39,9 +38,7 @@
       }
       -->   
     }
-  </mat-toolbar-row>    
-</mat-toolbar>
-<mat-dialog-content>
+  </div>
   @if (settingsService.isActivePro()) {
   <mat-accordion>
   <mat-expansion-panel>
@@ -108,7 +105,8 @@
     </div>
   </mat-expansion-panel>        
   </mat-accordion>
-  }    
+  }
+<mat-dialog-content>      
   @if (showModelList) {
     <div class="vertscroll">
       <table mat-table class="model_table">

@@ -245,7 +245,8 @@
       "DOC_CONTEXT": "Dokumenten Nutzen",
       "FILES": "Unterlagen",
       "MODEL_MANAGE_TIP": "Verwalten Sie das für den Chat verwendete Modell, ändern Sie das Modell, optimieren Sie Eingabeaufforderungen usw.",
-      "MODEL": "Modell"
+      "MODEL": "Modell",
+      "MODEL_SETTINGS_TIP": "Passen Sie Modelleinstellungen wie Kontextgröße, k-Größe, Filterung usw. an"
     },
     "HELP": {
       "TITLE": "Uber",

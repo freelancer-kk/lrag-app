@@ -30,6 +30,7 @@ import { SettingsService } from '../core/services/settings-service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { IngestComponent } from '../ingest.component/ingest.component';
 import { DetailComponent } from '../detail/detail.component';
+import { InsightOptionsComponent } from '../insight-options.component/insight-options.component';
 
 @Component({
   selector: 'app-insights.component',
@@ -69,6 +70,7 @@ export class InsightsComponent implements OnInit {
   insightStatus: EStatus | undefined;
   isDocsOpen = false;
   isModelOpen = false;
+  isSettingsOpen = false;
   breakpoint: number = 4;
 
   EStatus: typeof EStatus = EStatus;
@@ -354,6 +356,24 @@ export class InsightsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(async (result: boolean) => {
       this.isModelOpen = false;      
+    });    
+  }
+
+  openSettings = async (ev: any) => {
+    this.isSettingsOpen = true;
+    const dialogRef = this.dialog.open(
+      InsightOptionsComponent, {        
+        maxWidth: '95vw',
+        maxHeight: '95vh',
+        width: '100%',
+        height: '40%',        
+        position: { top: '100px' },
+        panelClass: 'full-screen-modal',
+        hasBackdrop: false,
+        data: {}
+    });
+    dialogRef.afterClosed().subscribe(async (result: boolean) => {
+      this.isSettingsOpen = false;      
     });    
   }
 }

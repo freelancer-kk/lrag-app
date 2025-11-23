@@ -1,3 +1,5 @@
+<div class="container">
+    <div class="top-div">
 <mat-toolbar>
   <h1 class="title">
     {{ (ollamaService.useDocContext ? 'PAGES.INSIGHT.MAIN_TITLE' : 'PAGES.INSIGHT.CHAT_TITLE') | translate }}
@@ -27,16 +29,22 @@
   <button [disabled]="isDocsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" matIconButton (click)="addDocuments($event)">
     <mat-icon>note_add</mat-icon>
   </button>
+  @if (settingsService.isActivePro() && ollamaService.useDocContext) {
+    <button [disabled]="isSettingsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_SETTINGS_TIP' | translate" matIconButton (click)="openSettings($event)">
+      <mat-icon>settings</mat-icon>
+    </button>
+  }
   <button [disabled]="isModelOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_MANAGE_TIP' | translate" matIconButton (click)="manageModel($event)">
     <mat-icon>psychology</mat-icon>
-  </button>
+  </button>  
   @if (systemService.chatHistory.length>0) {                  
     <button [disabled]="insightStatus === EStatus.thinking" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="clearHistory()">
       <mat-icon>playlist_remove</mat-icon>
     </button>          
   }  
 </mat-toolbar>
-<mat-accordion>
+<!--
+<mat-accordion>  
 @if (ollamaService.useDocContext) {  
     <mat-expansion-panel [expanded]="false">
       <mat-expansion-panel-header>
@@ -83,23 +91,9 @@
     </mat-form-field>    
   </mat-expansion-panel>  
 </mat-accordion>
+-->
+<!--
 @if (settingsService.isActivePro() && ollamaService.useDocContext) {
-  <!--
-@if (overallStatus === EStatus.running_healthy && insightStatus !== EStatus.thinking) {
-  <div class="onerow">
-    <mat-form-field class="full-width">
-      <mat-label>{{ 'PAGES.INGEST.COLLECTIONS' | translate }}</mat-label>
-      <mat-select [formControl]="systemService.selectedCollections" (selectionChange)="changeCollection($event)">
-        @for (entry of systemService.collections; track $index) {
-          <mat-option [value]="entry.value">
-            {{ entry.name }}
-          </mat-option>
-        }
-      </mat-select>    
-    </mat-form-field>          
-  </div>
-}
-  -->
 <mat-accordion>
   <mat-expansion-panel [expanded]="systemService.filter">
     <mat-expansion-panel-header>
@@ -139,7 +133,8 @@
     </div>
   </mat-expansion-panel>        
 </mat-accordion>  
-}  
+}
+-->
 @if (overallStatus === EStatus.running_healthy) {
   <mat-form-field class="full-width">
     <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
@@ -149,8 +144,12 @@
         <mat-icon>arrow_circle_right</mat-icon>
       </button>            
     }
-  </mat-form-field>                      
-  <div #chatDiv id="chatDiv" class="full-width-height">
+  </mat-form-field>
+}
+</div>     
+<div #chatDiv id="chatDiv" class="bottom-div">
+@if (overallStatus === EStatus.running_healthy) {
+  <div class="full-width-height">
     <table mat-table class="full-width">
       @for (entry of systemService.chatHistory; track $index) {
         <tr mat-row>
@@ -186,3 +185,5 @@
     <ngx-skeleton-loader count="15" [animation]="systemService.dark ? 'progress-dark': 'progress'" appearance="line" [theme]="{height: '20px', background: 'kahki'}" />
   </div>
 }
+  </div>
+</div>
