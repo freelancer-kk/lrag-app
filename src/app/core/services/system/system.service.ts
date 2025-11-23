@@ -23,6 +23,7 @@ export class SystemService {
   gpuChangeStatus: LStatus = new LStatus(EStatus.not_running);
   
   ocrComplete = signal(false);
+  hasOCR = signal(false);
   power: number = 50;
   cpu: any;
   gpu: any;

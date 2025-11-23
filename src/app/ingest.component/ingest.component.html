@@ -1,4 +1,8 @@
-  <mat-dialog-content>
+  @if (!docsHealthy()) {
+    <div class="spinner-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
   <mat-toolbar>
     <mat-toolbar-row>
       <h1 class="title" [matTooltip]="'PAGES.INSIGHT.RESET_CONTEXT_TIP' | translate">
@@ -26,6 +30,7 @@
       }
     </mat-toolbar-row>  
   </mat-toolbar>
+  <mat-dialog-content>
   @if (isUploading) {
     <div class="progress">
       <mat-progress-bar #progress mode="determinate" [value]="fileProgress"></mat-progress-bar>
@@ -165,6 +170,6 @@
   </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
+    <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy() && !hasOCR)" [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
     <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
   </mat-dialog-actions>

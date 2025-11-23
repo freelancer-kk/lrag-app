@@ -227,7 +227,9 @@ export default class WatcherService {
   }
 
   delete = (remotefile: string) => {
-    fs.rmSync(path.join(this.rootDir, remotefile));
+    setTimeout(() => {
+      fs.rmSync(path.join(this.rootDir, remotefile));
+    }, 2000);
   }
 
   exists = (remotefile: string): boolean => {

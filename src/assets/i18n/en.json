@@ -192,7 +192,7 @@
         "OCR_ERROR": "OCR conversion failed",
         "OCR_PREPARE": "OCR conversion preparing",
         "OCR_START": "OCR conversion starting",
-        "OCR_DONE": "OCR converstion done",
+        "OCR_DONE": "OCR conversion done",
         "UNKNOWN": "Not embedded",
         "INDEX": "Embed documents",
         "CHUNK_SIZE": "Chunk Size",

@@ -71,9 +71,7 @@ export class MediaService {
     return this.systemService.lragfiles('end', {
       collection: this.systemService.collection,
       name: file.name
-    }).then((value: any) => {
-      console.log(value);
-    })
+    });
   }
 
   uploadChunk = (file: File, chunk: Buffer): Promise<any> => {
@@ -106,33 +104,37 @@ export class MediaService {
       return this.systemService.lragfiles('ls', {
         collection: this.systemService.collection
       }).then(async (names: string[]) => {
-        console.log('getFiles:names:', names);
-        for await (const name of names) {          
-          const response: boolean = await this.systemService.commandIngest(
-            'indexed', 
-            { 
-              localVector: this.systemService.localVector,
-              source: name 
+        // console.log('getFiles:names:', names);
+        if (names && names.length > 0) {
+          for await (const name of names) {          
+            const response: boolean = await this.systemService.commandIngest(
+              'indexed', 
+              { 
+                localVector: this.systemService.localVector,
+                source: name 
+              }
+            );
+            if (this.docStatus) {
+              const fIdx: number = this.docStatus.findIndex(f => f.name === name);
+              if (fIdx > -1) {
+                this.docStatus[fIdx].status = response === true ? 0 : 1;
+                this.docStatus[fIdx].text = response === true ? 'embedded' : 'Not embedded';
+                // console.log('getFiles:status:', this.docStatus[fIdx]);
+              } else {
+                this.docStatus.push({
+                  name,
+                  status: response === true ? 0 : 1,
+                  text: response === true ? 'embedded' : 'Not embedded'
+                });
+                // console.log('getFiles:status:new:', this.docStatus[this.docStatus.length - 1]);
+              }
             }
-          );
-          if (this.docStatus) {
-            const fIdx: number = this.docStatus.findIndex(f => f.name === name);
-            if (fIdx > -1) {
-              this.docStatus[fIdx].status = response === true ? 0 : 1;
-              this.docStatus[fIdx].text = response === true ? 'embedded' : 'Not embedded';
-              console.log('getFiles:status:', this.docStatus[fIdx]);
-            } else {
-              this.docStatus.push({
-                name,
-                status: response === true ? 0 : 1,
-                text: response === true ? 'embedded' : 'Not embedded'
-              });
-              console.log('getFiles:status:new:', this.docStatus[this.docStatus.length - 1]);
-            }
-          }
-        }        
-        this.files = names;
-        return this.files;
+          }        
+          this.files = names;
+          return this.files;
+        } else {
+          return [];
+        }
       });
     } else {
       return Promise.resolve(this.files);
@@ -180,7 +182,7 @@ export class MediaService {
     return this.systemService.lragfiles('ls', {
       dirOnly: true
     }).then((paths: string[]) => {
-      console.log('getCollections:', paths);
+      // console.log('getCollections:', paths);
       if (paths) {
         return paths.map((value: string) => ({ 
           name: this.basename(value),

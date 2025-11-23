@@ -306,8 +306,6 @@ export default class LangchainService {
   OCRDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
     let hasOCRTasks: boolean = false;
     const file_names: string[] = fs.readdirSync(doc_path);
-    // log.info('loaded_docs:', loaded_docs[0]);
-    // log.info('file_names:', file_names);
     const loaded_doc_names: string[] = [];
     for await (const ld of loaded_docs) {
       if (loaded_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
@@ -324,15 +322,18 @@ export default class LangchainService {
           this.ocrProcessor.put(
             path.join(doc_path, fn),
             this.uuid + '-' + path.basename(fn)
-          )
-          hasOCRTasks = true;
+          )          
+          hasOCRTasks = true;          
         } else {
           log.info('OCR ignoring non pdf:', fn);
           this.emit( { type: 'langchain-run-ocr-ignore', data: { name: fn } });
         }
       }
     }
-    // await this.ocrProcessor.disconnect();
+    if (hasOCRTasks) {
+      this.emit( { type: 'langchain-run-has-ocr', data: {} });
+    }
+
     return hasOCRTasks;
   }
 
@@ -394,7 +395,7 @@ export default class LangchainService {
       */
       } else {
         await this.setStatusForLoadedDocs(docs);
-         this.emit( { type: 'langchain-run-warning', data: { message: 'nothing embedded' } });
+        this.emit( { type: 'langchain-run-warning', data: { message: 'nothing embedded' } });
         return { status: 'warning', message: 'pending ocr tasks' };
       }
     }).catch((err) => {

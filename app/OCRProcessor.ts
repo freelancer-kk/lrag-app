@@ -77,7 +77,7 @@ export default class OCRProcessor {
           fe.timestamp = Date.now();
           this.emit( { type: 'ocr-processor-putted', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, putResponse: 'ok' } });
           const targetOkFile: string = fe.remotefile + '.ok';
-          log.info('putRes:writing ok file', targetOkFile);              
+          log.debug('putRes:writing ok file', targetOkFile);              
           this.watcherService.put(
             this.docOkfile,
             targetOkFile
@@ -90,21 +90,21 @@ export default class OCRProcessor {
               if (Date.now() > (fe.timestamp + MAX_PROC_TIME)) {
                 // OCR Processing taken too long must be errored
                 // Remove the uploaded file
-                log.info('OCR:toolong:removed:', fe.remotefile);
+                log.debug('OCR:toolong:removed:', fe.remotefile);
                 this.watcherService.delete(fe.remotefile);
                 this.processError(fe);                  
               } else {
                 if (this.watcherService.exists(fe.outputfile)) {
-                  log.info('COMPLETED:success:', fe.outputfile)
+                  log.debug('COMPLETED:success:', fe.outputfile)
                   this.watcherService.get(fe.outputfile, fe.localfile);
                   fe.status = EOCRStatus.PROCESSED;
-                  log.info('OCR File retrieved:');
-                  this.emit( { type: 'ocr-processor-complete', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, getResponse: 'ok' } });
-                  this.watcherService.delete(fe.outputfile);
+                  log.debug('OCR File retrieved:');
+                  this.emit( { type: 'ocr-processor-complete', data: { localfile: fe.localfile, remotefile: fe.remotefile, status: fe.status, getResponse: 'ok' } });                  
+                  this.watcherService.delete(fe.outputfile);                  
                 }                  
                 if (this.watcherService.exists(fe.errorfile)) {
                   // Error get the error doc
-                  log.info('OCR:COMPLETED with error:', fe.errorfile)
+                  log.debug('OCR:COMPLETED with error:', fe.errorfile)
                   this.watcherService.delete(fe.errorfile);
                   this.processError(fe);
                 }        
@@ -112,13 +112,16 @@ export default class OCRProcessor {
             } else if (fe.status === EOCRStatus.ERROR || fe.status === EOCRStatus.PROCESSED) {
               const fIdx: number = this.filesToProcess.findIndex(f => f.remotefile === fe.remotefile);
               this.filesToProcess.splice(fIdx, 1);
+              if (this.filesToProcess.length === 0) {
+                this.emit( { type: 'ocr-processor-all-complete', data: {} });
+              } 
             } else {
-              log.info('Waiting for status change:', fe)
+              log.debug('Waiting for status change:', fe)
             }
           }                
         }        
       }
-    }, 1000);     
+    }, 500);     
   }
 
   processError = (fe: any) => {

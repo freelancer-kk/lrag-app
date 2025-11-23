@@ -169,9 +169,14 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_DONE')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
-                this.systemService.ocrComplete.set(true);
+                this.systemService.ragFiles = await this.mediaService.ls();                
               }                            
+            })
+          }
+          break;
+          case 'ocr-processor-all-complete': {
+            this.ngZone.run(async () => {
+                this.systemService.ocrComplete.set(true);              
             })
           }
           break;
@@ -538,6 +543,12 @@ export class AppComponent implements OnInit {
             })            
           }
           break;
+          case 'langchain-run-has-ocr': {
+            this.ngZone.run(() => {
+              this.systemService.hasOCR.set(true);
+            })            
+          }
+          break;
           case 'langchain-run-start': {
             this.ngZone.run(() => {
               this.systemService.ingestStatus.update(EStatus.running);
@@ -721,7 +732,7 @@ export class AppComponent implements OnInit {
      /*
       this.ollamaService.startOnTimer();
       this.watcherService.startIfNecessary();
-      this.rerankerService.startIfNecessary();
+      this.rerankerService.startIfNecessary();     
       */
     }, 400)   
   }

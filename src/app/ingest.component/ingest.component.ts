@@ -72,18 +72,20 @@ export class IngestComponent implements OnInit {
   fileProgress: number = 0;
   isUploading: boolean = false;
   breakpoint: number = 4;
-  startIngestTimer: any;  
-
+  
   selectedAll: boolean = false;
   isOpened: boolean = false;
   afterLastFinish: boolean = true;
   collection: string = '';
   showErrors: boolean = false;
+  totalUploaded: number = 0;
+  filesSize: number = 0;
+  loadedSize: number = 0;
+  hasOCR: boolean = false;
 
   overallStatus: EStatus | undefined;
   ingestStatus: EStatus = EStatus.not_running;
-  ocrTimeout: any;
-
+  
   EStatus: typeof EStatus = EStatus;
 
   constructor(
@@ -105,20 +107,20 @@ export class IngestComponent implements OnInit {
         this.systemService.selectedDocuments.enable();
       }
       if (this.systemService.ocrComplete() === true) {
-        this.systemService.ocrComplete.set(false);
-        console.log('OCR complete signal received!');
-        if (this.ocrTimeout) {
-          clearTimeout(this.ocrTimeout);
-          this.ocrTimeout = null;
-        }
-        this.ocrTimeout = setTimeout(() => {
-          if (this.anyDocsNotEmbedded()) {
-            this.startIngestion();
-          }  
-        }, 2000)
-        
+        this.systemService.ocrComplete.set(false);   
+        this.hasOCR = false;             
+        console.log('Starting ingestion after OCR complete!');
+        this.startIngestion();
+      }      
+      if (this.systemService.hasOCR() === true) {
+        console.log('OCR tasks detected, waiting for completion before ingestion!');
+        this.systemService.hasOCR.set(false);
+        this.hasOCR = true;
+        setTimeout(() => {
+          this.hasOCR = false;
+        }, 600000); // 10 minutes timeout
       }
-    })
+    });
   }
 
   async ngOnInit() {
@@ -142,6 +144,7 @@ export class IngestComponent implements OnInit {
   }
 
   startIngestion = async () => {
+      console.log('Starting ingestion!');            
       this.systemService.ingestStatus.update(EStatus.starting);
       this.mediaService.docStatus = [];
       this.systemService.saveChunkSettings();
@@ -194,7 +197,9 @@ export class IngestComponent implements OnInit {
             }
               */
           });      
-        } else {
+        } 
+        /*
+        else {
           this.systemService.ingestStatus.update(EStatus.warning);
           const snackBarRef1 = this._snackBar.open(
             await this.commonService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.commonService.get('PAGES.INGEST.EXITED')), 
@@ -208,6 +213,7 @@ export class IngestComponent implements OnInit {
             this.systemService.ingestStatus.update(EStatus.not_running);
           });              
         }
+        */
       }).catch(async (e) => {
         console.error('ingest error:', e);      
         this.systemService.ingestStatus.update(EStatus.error);
@@ -221,34 +227,12 @@ export class IngestComponent implements OnInit {
   }
 
   progress = async (file: File, data: string | ArrayBuffer | null) => {
-    let fileSize = this.mediaService.getFileSize(file.size);
-    // let fileSizeInWords = this.mediaService.getFileSizeUnit(file.size);
-    
-    for (
-      var f = 0;
-      f < fileSize + fileSize * 0.0001;
-      f += fileSize * 0.01
-    ) {
-      this.fileProgress = Math.round((f / fileSize) * 100);
-      // await this.fakeWaiter(Math.floor(Math.random() * 20) + 1);
-      if (data) {
-        // console.log(file.FileProgress, Buffer.from(data as ArrayBuffer).length);
-        await this.mediaService.uploadChunk(file, Buffer.from(data as ArrayBuffer));
-      }
-      if (this.fileProgress === 100) {
-        console.log('completed');
-        await this.mediaService.completedUpload(file);
-        this.isUploading = false;
-        this.systemService.ingestStatus.update(EStatus.uploaded);
-        if (this.startIngestTimer) {
-          clearTimeout(this.startIngestTimer);
-        }
-        this.startIngestTimer = setTimeout(async () => {   
-          this.systemService.ragFiles = await this.mediaService.ls(true);
-          this.startIngestion();  
-        }, 2000)        
-      }
-    }
+    if (data) {
+      this.loadedSize += this.mediaService.getFileSize((data as ArrayBuffer).byteLength);
+      this.fileProgress = Math.round((this.loadedSize / this.filesSize) * 100);
+      // await this.fakeWaiter(Math.floor(Math.random() * 4) + 10);    
+      await this.mediaService.uploadChunk(file, Buffer.from(data as ArrayBuffer));
+    }          
   }
 
   fakeWaiter = (ms: number) => {
@@ -261,21 +245,56 @@ export class IngestComponent implements OnInit {
     // TODO: take care when uploading the same file again IT SHOULD NOT BE IGNORED AS IS THE CASE
 
     const totalLength: number = files.length + this.systemService.ragFiles.length;
+    this.totalUploaded = 0;
+    this.fileProgress = 0;
     console.log('TL:', totalLength);
+    this.filesSize = 0;
+    this.loadedSize = 0;
+    
     if (totalLength <= this.systemService.MAX_FILES) {
-      for (const droppedFile of files) {
+      for await (const droppedFile of files) {
         if (droppedFile.fileEntry.isFile) {
-          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-          fileEntry.file(async (file: File) => {
-            console.log(droppedFile.relativePath, file);
-
+          const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;          
+          await fileEntry.file(async (file: File) => {          
+            this.filesSize += this.mediaService.getFileSize(file.size);
+        
             try {
+
               const reader: FileReader = new FileReader();          
-              reader.onload = (event: any) => {
+              reader.onloadstart = (event: any) => {
+                console.log('onloadstart:', file.name);                
                 this.isUploading = true;
                 this.systemService.ingestStatus.update(EStatus.uploading);
-                this.progress(file, reader.result);
+              };              
+              reader.onload = async (event: any) => {
+                console.log('onprogress:', file.name);
+                await this.progress(file, reader.result);
               };
+              reader.onloadend = async (event: any) => {
+                console.log('onloadend:', file.name);
+                this.totalUploaded += 1;
+                console.log('Total uploaded:', file.name, this.totalUploaded, files.length);
+                await this.mediaService.completedUpload(file);
+                if (this.totalUploaded === files.length) {
+                  console.log('starting ingestion after All files uploaded!');
+                  this.isUploading = false;
+                  this.systemService.ingestStatus.update(EStatus.uploaded);
+                  this.systemService.ragFiles = await this.mediaService.ls(true);
+                  this.startIngestion();
+                };
+              };
+              reader.onerror = (event: any) => {
+                console.error('onerror:', file.name, event);
+                this.isUploading = false;
+                this.systemService.ingestStatus.update(EStatus.error);
+              };
+              reader.onabort = (event: any) => {
+                console.warn('onabort:', file.name, event);
+                this.isUploading = false;
+                this.systemService.ingestStatus.update(EStatus.error);
+              };
+              
+              // Start reading the file which will trigger the onload event 
               await this.mediaService.startUpload(file);
               reader.readAsArrayBuffer(file); // read file as data url
             } finally {
@@ -365,14 +384,6 @@ export class IngestComponent implements OnInit {
         ((acc: boolean, cur: any) => acc && cur.status < 2),
         true
       );      
-    } else {
-      return false;
-    }
-  }
-
-  anyDocsNotEmbedded = (): boolean => {  
-    if (this.mediaService.docStatus && this.afterLastFinish && this.mediaService.docStatus.length > 0) {
-      return this.mediaService.docStatus.findIndex(f=> f.status < 2 && f.text !== 'embedded') > -1;
     } else {
       return false;
     }
