@@ -155,11 +155,17 @@ export class OllamaService {
           size: Math.floor(model.size / 1024 / 1000),
           usage: model.usage,
           cloud: mm ? mm.cloud : false,
-          description: mm ? mm.description : em ? em.description : ''
+          description: mm ? mm.description : em ? em.description : '',
+          viewValue: mm ? mm.viewValue : em ? em.viewValue : model.name,
+          modelType: mm ? 'llm' : em ? 'embedding' : 'unknown'
         }
       });
     }
     // console.log('getAvailableLLMs:', this.availableModels);
+  }
+
+  filteredAvailableModels = (): any[] => {
+    return this.availableModels.filter(v => (v.modelType === 'llm'));
   }
 
   checkIsReady = async () => {
@@ -222,5 +228,5 @@ export class OllamaService {
     return this.commandOllama('rm', { model }).then(() => {
       this.availableModels.splice(index, 1);
     })    
-  }
+  }  
 }

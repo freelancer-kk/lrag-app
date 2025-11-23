@@ -243,7 +243,9 @@
       "RATING_THANKS": "Vielen Dank für Ihre Bewertung",
       "DOC_CONTEXT_TIP": "Fügen Sie Dokumente im Rahmen des Chats hinzu, damit Sie Fragen zu Ihren privaten Dokumenten stellen können",
       "DOC_CONTEXT": "Dokumenten Nutzen",
-      "FILES": "Unterlagen"
+      "FILES": "Unterlagen",
+      "MODEL_MANAGE_TIP": "Verwalten Sie das für den Chat verwendete Modell, ändern Sie das Modell, optimieren Sie Eingabeaufforderungen usw.",
+      "MODEL": "Modell"
     },
     "HELP": {
       "TITLE": "Uber",

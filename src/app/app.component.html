@@ -55,12 +55,14 @@
         }
 				<mat-icon matListItemIcon>question_answer</mat-icon>
       </a>
+      <!--
       <a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'detail'">
         @if (isExpanded) {
           <span>{{ 'PAGES.DETAIL.TITLE' | translate }}</span>        
         }
 				<mat-icon matListItemIcon>psychology</mat-icon>
       </a>
+      -->
       <a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'settings'">
         @if (isExpanded) {
           <span>{{ 'PAGES.SETTINGS.TITLE' | translate }}</span>        

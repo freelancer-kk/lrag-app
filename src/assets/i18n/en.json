@@ -243,6 +243,8 @@
         "RATING_THANKS": "Thanks for your rating",
         "DOC_CONTEXT_TIP": "Add documents as part of the chat, so you can questions about your private documents",
         "DOC_CONTEXT": "Include Docs",
+        "MODEL_MANAGE_TIP": "Manage the model used for chat, change model, tune prompts etc...",
+        "MODEL": "Model",        
         "FILES": "Documents"
       },
       "HELP": {

@@ -29,6 +29,7 @@ import { OllamaService } from '../core/services/ollama-service';
 import { SettingsService } from '../core/services/settings-service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { IngestComponent } from '../ingest.component/ingest.component';
+import { DetailComponent } from '../detail/detail.component';
 
 @Component({
   selector: 'app-insights.component',
@@ -66,7 +67,8 @@ export class InsightsComponent implements OnInit {
   generationInfo: IGenInfo | undefined;
   overallStatus: EStatus | undefined;
   insightStatus: EStatus | undefined;
-  isOpen = false;
+  isDocsOpen = false;
+  isModelOpen = false;
   breakpoint: number = 4;
 
   EStatus: typeof EStatus = EStatus;
@@ -314,7 +316,7 @@ export class InsightsComponent implements OnInit {
   }
 
   addDocuments = async (ev: any) => {
-    this.isOpen = true;
+    this.isDocsOpen = true;
     const dialogRef = this.dialog.open(
       IngestComponent, {        
 //        ariaModal: true,
@@ -328,12 +330,30 @@ export class InsightsComponent implements OnInit {
         data: {}
     });
     dialogRef.afterClosed().subscribe(async (result: boolean) => {
-      this.isOpen = false;
+      this.isDocsOpen = false;
       this.ollamaService.useDocContext = this.systemService.hasEmbedded();
       console.log(`Ingest result: ${result}`);
       if (!result) {
         this.ollamaService.useDocContext = false;
       }
+    });    
+  }
+
+  manageModel = async (ev: any) => {
+    this.isModelOpen = true;
+    const dialogRef = this.dialog.open(
+      DetailComponent, {        
+        maxWidth: '95vw',
+        maxHeight: '95vh',
+        width: '100%',
+        height: '80%',        
+        position: { top: '100px' },
+        panelClass: 'full-screen-modal',
+        hasBackdrop: false,
+        data: {}
+    });
+    dialogRef.afterClosed().subscribe(async (result: boolean) => {
+      this.isModelOpen = false;      
     });    
   }
 }

@@ -12,35 +12,36 @@
   </mat-slide-toggle>
 }
 </mat-toolbar>
-  <mat-toolbar>
-    <mat-toolbar-row>
-      <mat-form-field class="full-width">
-        <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
-        <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
-          @for (entry of ollamaService.models; track $index) {
-            <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4) && !entry.cloud" [value]="entry.value">{{ entry.viewValue }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>      
-      <span class="spacer"></span>
-      @if (ollamaService.status.get() === EStatus.running) {
-        @if (systemService.modelStatus.get() !== EStatus.running) {
-          <div [class]="systemService.modelStatus.getC()">
-            <mat-spinner diameter="30"></mat-spinner>
-            {{ systemService.modelStatus.getS() }}
-          </div>
+<mat-toolbar>
+  <mat-toolbar-row>
+    <mat-form-field class="full-width">
+      <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
+      <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
+        @for (entry of ollamaService.models; track $index) {
+          <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4) && !entry.cloud" [value]="entry.value">{{ entry.viewValue }}</mat-option>
         }
-        <!--
-        } @else {
-          <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
-            <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus()) }}</mat-icon>
-            {{ systemService.modelStatus() }}
-          </div>
-        }
-        -->   
+      </mat-select>
+    </mat-form-field>      
+    <span class="spacer"></span>
+    @if (ollamaService.status.get() === EStatus.running) {
+      @if (systemService.modelStatus.get() !== EStatus.running) {
+        <div [class]="systemService.modelStatus.getC()">
+          <mat-spinner diameter="30"></mat-spinner>
+          {{ systemService.modelStatus.getS() }}
+        </div>
       }
-    </mat-toolbar-row>    
-  </mat-toolbar>
+      <!--
+      } @else {
+        <div [class]="systemService.getClassFromStatus(systemService.modelStatus())">
+          <mat-icon>{{ systemService.getIconFromStatus(systemService.modelStatus()) }}</mat-icon>
+          {{ systemService.modelStatus() }}
+        </div>
+      }
+      -->   
+    }
+  </mat-toolbar-row>    
+</mat-toolbar>
+<mat-dialog-content>
   @if (settingsService.isActivePro()) {
   <mat-accordion>
   <mat-expansion-panel>
@@ -178,3 +179,7 @@
       </table>    
     </div>
   }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button matButton [disabled]="overallStatus !== EStatus.running_healthy" [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
+</mat-dialog-actions>

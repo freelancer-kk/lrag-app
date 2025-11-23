@@ -10,7 +10,6 @@ import {MatChipsModule} from '@angular/material/chips';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { MatToolbar, MatToolbarModule } from "@angular/material/toolbar";
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -20,6 +19,11 @@ import { CommonService } from '../core/services/common-service';
 import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
 import { SettingsService } from '../core/services/settings-service';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+export interface ModelDialogData {
+  params: any;
+}
 
 @Component({
     selector: 'app-detail',
@@ -41,11 +45,14 @@ import { SettingsService } from '../core/services/settings-service';
       MatSlideToggleModule,
       MatTooltipModule,
       MatExpansionModule,
+      MatDialogModule
   ]
 })
 export class DetailComponent implements OnInit {
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
+  readonly data = inject<ModelDialogData>(MAT_DIALOG_DATA);
+
   showModelList: boolean = true;
   wt: any;
   libPrefix: string | undefined;

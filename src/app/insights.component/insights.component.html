@@ -24,17 +24,20 @@
       {{ 'PAGES.INSIGHT.DOC_CONTEXT' | translate }}
     </mat-slide-toggle>
   -->
-    <button [disabled]="isOpen || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" matIconButton (click)="addDocuments($event)">
-      <mat-icon>note_add</mat-icon>
-    </button>
+  <button [disabled]="isDocsOpen || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" matIconButton (click)="addDocuments($event)">
+    <mat-icon>note_add</mat-icon>
+  </button>
+  <button [disabled]="isModelOpen || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_MANAGE_TIP' | translate" matIconButton (click)="manageModel($event)">
+    <mat-icon>psychology</mat-icon>
+  </button>
   @if (systemService.chatHistory.length>0) {                  
     <button [disabled]="insightStatus === EStatus.thinking" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="clearHistory()">
       <mat-icon>playlist_remove</mat-icon>
     </button>          
   }  
 </mat-toolbar>
+<mat-accordion>
 @if (ollamaService.useDocContext) {  
-  <mat-accordion>
     <mat-expansion-panel [expanded]="false">
       <mat-expansion-panel-header>
       <mat-panel-title>{{ 'PAGES.INSIGHT.FILES' | translate }}</mat-panel-title>
@@ -62,9 +65,24 @@
           </mat-grid-tile>      
         }         
       </mat-grid-list>
-    </mat-expansion-panel>
-  </mat-accordion>
+    </mat-expansion-panel>  
 }
+<mat-expansion-panel [expanded]="false">
+  <mat-expansion-panel-header>
+    <mat-panel-title>{{ 'PAGES.INSIGHT.MODEL' | translate }}</mat-panel-title>
+    <mat-panel-description>        
+    </mat-panel-description>
+    </mat-expansion-panel-header>    
+      <mat-form-field class="full-width">
+      <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
+      <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel">
+        @for (entry of ollamaService.filteredAvailableModels(); track $index) {
+          <mat-option [matTooltip]="entry.description" [disabled]="(entry.size / 1000) > (systemService.totalMainMemory-4) && !entry.cloud" [value]="entry.name">{{ entry.viewValue }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>    
+  </mat-expansion-panel>  
+</mat-accordion>
 @if (settingsService.isActivePro() && ollamaService.useDocContext) {
   <!--
 @if (overallStatus === EStatus.running_healthy && insightStatus !== EStatus.thinking) {
