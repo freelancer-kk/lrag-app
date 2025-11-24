@@ -136,7 +136,7 @@ const EStatusMap: { [key in EStatus]: string } = {
   [EStatus.error]: 'Error',
   [EStatus.destroy]: 'Destroy',
   [EStatus.die]: 'Die',
-  [EStatus.running_unhealthy]: 'Running Unhealthy',
+  [EStatus.running_unhealthy]: 'Running Busy',
   [EStatus.exited]: 'Exited',
   [EStatus.pause]: 'Pause',
   [EStatus.paused]: 'Paused',
