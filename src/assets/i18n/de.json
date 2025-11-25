@@ -213,7 +213,8 @@
       "COLLECTION_NAME_TIP": "Fügen Sie eine neue Sammlung hinzu, indem Sie ihr einen Namen geben",
       "COLLECTION_NAME_ERROR": "Sammlungsname zu kurz, mindestens 8 Zeichen",
       "CREATE_ARE_YOU_SURE": "Sammlung erstellen",
-      "REMOVE_COLLECTION_ARE_YOU_SURE": "Sammlung entfernen"
+      "REMOVE_COLLECTION_ARE_YOU_SURE": "Sammlung entfernen",
+      "OCR_COMPLETE": "Endbearbeitung der OCR-Konvertierung"
     },
     "INSIGHT": {
       "TITLE": "Chatten",

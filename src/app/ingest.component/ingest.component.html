@@ -14,7 +14,7 @@
         </a>
       }
       <span class="spacer"></span>      
-      @if (ingestStatus === EStatus.running || ingestStatus === EStatus.splitting || ingestStatus === EStatus.loaded || ingestStatus === EStatus.indexing || ingestStatus === EStatus.saving || ingestStatus === EStatus.adding) {
+      @if (ingestStatus === EStatus.running || ingestStatus === EStatus.preparing || ingestStatus === EStatus.extracting || ingestStatus === EStatus.splitting || ingestStatus === EStatus.loaded || ingestStatus === EStatus.indexing || ingestStatus === EStatus.saving || ingestStatus === EStatus.adding) {
         <div [class]="systemService.ingestStatus.getC()">
           <mat-spinner diameter="30"></mat-spinner>
           {{ systemService.ingestStatus.getS() }}

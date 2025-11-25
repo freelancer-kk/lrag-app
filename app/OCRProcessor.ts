@@ -13,7 +13,7 @@ export enum EOCRStatus {
   ERROR
 }
 
-const MAX_PROC_TIME = 1000 * 720;
+export const MAX_PROC_TIME = 1000 * 720;
 
 export default class OCRProcessor {
   webContents: Electron.WebContents | undefined;

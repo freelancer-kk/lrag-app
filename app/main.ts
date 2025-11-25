@@ -15,6 +15,8 @@ import ReRankerService from './RerankerService';
 import OCRProcessor from './OCRProcessor';
 import WatcherService from './WatcherService';
 import LicenseService from './LicenseService';
+import OCRllmProcessor from './OCRllmProcessor';
+import { O } from 'ollama/dist/shared/ollama.1bfa89da';
 
 const userHomePath: string = app.getPath('home');
 // const assetsPakFolderPath: string = app.getPath('assets');
@@ -39,6 +41,7 @@ let favImage: Electron.NativeImage;
 let appUpdates: AppUpdates;
 let watcherService: WatcherService;
 let ocrProcessor: OCRProcessor;
+let ocrLlmProcessor: OCRllmProcessor;
 let licenseService: LicenseService;
 
 log.initialize();
@@ -121,9 +124,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     }
     ocrProcessor = new OCRProcessor(watcherService, dockerEnv);
     await ocrProcessor.start();
-    langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'), ocrProcessor);
-    langchainService.register(win?.webContents);
-  
+    
     const darwin_dl = toolsDLS.DARWIN_DOWNLOAD_LINK;
     const ipex_dl = toolsDLS.IPEX_DOWNLOAD_LINK;
     const rocm_dl = toolsDLS.ROCM_DOWNLOAD_LINK;
@@ -156,9 +157,15 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
       const managed_externally: string | undefined = dockerEnv.getKeyValue('MANAGE_EXTERNAL');
       if ((isWindows === true || isLinux === true) && (managed_externally?.toLowerCase() === 'false')) {
         await ollamaService.install();
-      }        
+      }      
     }
 
+    ocrLlmProcessor = new OCRllmProcessor(ollamaService, userTempPath);
+    ocrLlmProcessor.init();
+    await ocrLlmProcessor.start();
+    langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'), ocrProcessor, ocrLlmProcessor);
+    langchainService.register(win?.webContents);
+  
     const reranker_win_dl = toolsDLS.RERANKER_WIN_DOWNLOAD_LINK;
     const reranker_mac_dl = toolsDLS.RERANKER_MAC_DOWNLOAD_LINK;
     if (reranker_version && reranker_win_dl && reranker_mac_dl) {

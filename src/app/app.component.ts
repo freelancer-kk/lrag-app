@@ -185,6 +185,115 @@ export class AppComponent implements OnInit {
         console.error(e);
       }
     })
+
+    this.bridgeService.ocrllmCallback((ev: any, eventObj: any) => {
+      try {          
+        const { type, data } = eventObj;
+        console.log('type', type, 'data', data);        
+        switch(type) {
+          case 'ocr-llm-processor-error': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 1;
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_ERROR');
+                } else {
+                  this.mediaService.docStatus.push({
+                    name: data.localfile,
+                    status: 1,
+                    text: await this.commonService.get('PAGES.INGEST.OCR_ERROR')
+                  });               
+                }
+                this.systemService.ragFiles = await this.mediaService.ls();
+              }                            
+            })            
+          }
+          break;
+          case 'ocr-llm-processor-start': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 2;
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_START');
+                } else {
+                  console.log('ocr-processor-put:', data.localfile);
+                  this.mediaService.docStatus.push({
+                    name: data.localfile,
+                    status: 2,
+                    text: await this.commonService.get('PAGES.INGEST.OCR_START')
+                  });               
+                }
+                this.systemService.ragFiles = await this.mediaService.ls();
+              }                            
+            })
+          }
+          break;
+          case 'ocr-llm-pdf-to-image-progress': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(EStatus.extracting, { percentage: Math.floor(Number(data.counter * 100 / data.total)) })
+            });
+          }
+          break;
+          case 'ocr-llm-images-to-markdown-progress': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(EStatus.preparing, { percentage: Math.floor(Number(data.counter * 100 / data.total)) })
+            });
+          }
+          break;
+          case 'ocr-llm-processor-finish': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 2;
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_COMPLETE');
+                } else {
+                  this.mediaService.docStatus.push({
+                    name: data.localfile,
+                    status: 2,
+                    text: await this.commonService.get('PAGES.INGEST.OCR_COMPLETE')
+                  });               
+                }
+                this.systemService.ragFiles = await this.mediaService.ls();
+              }                            
+            })
+          }
+          break;
+          case 'ocr-llm-processor-complete': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                /*
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 0;
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_DONE');
+                } else {
+                */
+                this.mediaService.docStatus.push({
+                  name: data.mdlocalfile,
+                  status: 0,
+                  text: await this.commonService.get('PAGES.INGEST.OCR_DONE')
+                });               
+                // }
+                this.systemService.ragFiles = await this.mediaService.ls(true);                
+              }                            
+            })
+          }
+          break;
+          case 'ocr-llm-processor-all-complete': {
+            this.ngZone.run(async () => {
+              this.systemService.ocrComplete.set(true);              
+              this.systemService.ingestStatus.update(EStatus.not_running)
+            })
+          }
+          break;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })
     
     this.bridgeService.eventCallback((ev: any, eventObj: any) => {
       try {          
@@ -729,9 +838,11 @@ export class AppComponent implements OnInit {
       /*
       * Comment out since only necessary for reload
       */
+     /*
       this.ollamaService.startOnTimer();
       this.watcherService.startIfNecessary();
       this.rerankerService.startIfNecessary();          
+    */
     }, 400)   
   }
 
@@ -782,6 +893,10 @@ export class AppComponent implements OnInit {
       }
       const responseM: any = await this.ollamaService.pull(this.ollamaService.models[0].value);
       if (responseM !== 'pulled') {
+        this.systemService.modelStatus.update(EStatus.downloading);
+      }      
+      const responseO: any = await this.ollamaService.pull('deepseek-ocr');
+      if (responseO !== 'pulled') {
         this.systemService.modelStatus.update(EStatus.downloading);
       }      
       this.firstTime = false;
