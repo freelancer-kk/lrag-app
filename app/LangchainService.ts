@@ -141,10 +141,12 @@ export default class LangchainService {
       } catch (e) {
         log.error(e);
         await this.resetVectorStore(vectorStoreType, collection);
-        return false;
+        this.hasAddedDocs = true;
+        return true;
       }
     } else {
       await this.resetVectorStore(vectorStoreType, collection);
+      return false;
     }
   }
 

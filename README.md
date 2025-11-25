@@ -14,3 +14,6 @@ b26e8f39b51d47d592c5b24ff503bc83.Tsp1iHL-zqNww8S4ZCz0i2Tm
 
 ### Run deepseek OCR
 C:\Users\kabir\AppData\Roaming\ollama\ollama.exe run deepseek-ocr "C:\Users\kabir\OneDrive\Documents\lrag-sample-docs\Law\baubeschreibung.pdf\n<|grounding|>Convert the document to markdown."
+
+
+C:\Users\kabir\AppData\Roaming\ollama\ollama.exe run deepseek-ocr "C:\Users\kabir\OneDrive\Documents\lrag-sample-docs\Law\bb-02.jpg\n<|grounding|>Convert the document to markdown."

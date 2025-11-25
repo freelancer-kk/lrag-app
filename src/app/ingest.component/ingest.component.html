@@ -38,7 +38,7 @@
   }
   <div class="dropzone">
   <ngx-file-drop 
-    accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt,.json,*.xml,*.md"
+    accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt,.json,.xml,.md"
     dropZoneClassName="dropzone"
     (onFileDrop)="dropped($event)"
     [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running || systemService.ragFiles.length >= systemService.MAX_FILES"

@@ -134,7 +134,8 @@ export class IngestComponent implements OnInit {
     const selectedCollection: any = this.systemService.collections.find(f => f.name === this.systemService.collection).value
     console.log('selected:', selectedCollection);
     this.systemService.selectedCollections.setValue(selectedCollection);
-    this.systemService.ragFiles = await this.mediaService.ls();
+    this.systemService.ragFiles = await this.mediaService.ls(true);
+    console.log('ragFiles:', this.systemService.ragFiles);
   }
 
   resetDefaults = (ev: any) => {
