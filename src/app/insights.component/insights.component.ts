@@ -210,6 +210,7 @@ export class InsightsComponent implements OnInit {
             docContext: this.ollamaService.useDocContext,
             ingest: {
               embeddings_model: this.ollamaService.embeddings_model,
+              ocr_model: this.ollamaService.ocr_model,
               chunkSize: this.systemService.chunkSize,
               overlap: this.systemService.overlap,
               separator: this.systemService.separator,

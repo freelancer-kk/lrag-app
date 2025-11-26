@@ -15,7 +15,6 @@ enum EOCLlmStatus {
 }
 
 const BATCH_SIZE = 10;
-const prompt: string = '<|grounding|>Convert the document to markdown.';
 export default class OCRllmProcessor {
   webContents: Electron.WebContents | undefined;
   ollamaService: OllamaService;
@@ -23,6 +22,8 @@ export default class OCRllmProcessor {
   filesToProcess: any[] = [];
   jobTimer: any;
   doc_processor_path: string;
+  lastocrmodel: string = '';
+  prompt: string = 'Convert the document to markdown.';
   
   constructor(ollamaService: OllamaService, userTempPath: string) {
     this.ollamaService = ollamaService;
@@ -31,21 +32,24 @@ export default class OCRllmProcessor {
     log.info('doc_processor_path:', this.doc_processor_path);
   }
  
-  init = () => {
-    const ollamaOptions: OllamaInput = {
-        baseUrl: 'http://127.0.0.1:11434',
-        model: "deepseek-ocr",
-        headers: this.ollamaService.headers ? this.ollamaService.headers : undefined,
-        temperature: 0.0,
-        maxConcurrency: BATCH_SIZE,
-    };  
-    log.info('Ollama ocr llm connection:options:', ollamaOptions);
-    for (let i = 0; i < BATCH_SIZE; i++) {
-      log.info(`Initializing Ollama OCR LLM instance ${i + 1} of ${BATCH_SIZE}`);
-      this.ollamaOCRLlm.push(new Ollama(ollamaOptions));
-    }    
-  
-    log.info('Ollama ocr llm connection initialized');
+  init = (model: string, prompt: string) => {
+    this.prompt = prompt;
+    if (model !== this.lastocrmodel) {      
+      const ollamaOptions: OllamaInput = {
+          baseUrl: 'http://127.0.0.1:11434',
+          model,
+          headers: this.ollamaService.headers ? this.ollamaService.headers : undefined,
+          temperature: 0.0,
+          maxConcurrency: BATCH_SIZE,
+      };  
+      log.info('Ollama ocr llm connection:options:', ollamaOptions);
+      for (let i = 0; i < BATCH_SIZE; i++) {
+        log.info(`Initializing Ollama OCR LLM instance ${i + 1} of ${BATCH_SIZE}`);
+        this.ollamaOCRLlm.push(new Ollama(ollamaOptions));
+      }    
+    
+      log.info('Ollama ocr llm connection initialized');
+    }
   }
 
   register = (webContents: Electron.WebContents | undefined) => {
@@ -103,7 +107,7 @@ export default class OCRllmProcessor {
       try {
         log.info('Sending prompt to Ollama OCR LLM:', counter, total, batchIdx); 
         return this.ollamaOCRLlm[batchIdx].invoke(
-          prompt, {
+          this.prompt, {
             images: [image]
           },
         ).then((response: string) => {

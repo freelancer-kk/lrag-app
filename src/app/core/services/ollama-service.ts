@@ -21,12 +21,19 @@ export class OllamaService {
   embedding_models: any[] = [    
     {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, cloud: false, memory: 1, description: 'EmbeddingGemma is a 300M parameter embedding model from Google'},    
   ]
+  ocr_models: any[] = [
+    {value: 'qwen3-vl:4b', viewValue: 'qwen3-vl:4b (4GB)', thinking: false, cloud: false, memory: 4, description: 'Qwen-VL is a vision-language model by AI21 Labs that can understand and generate text based on image inputs.', prompt: 'Perform Optical Character Recognition (OCR) on the provided image and format all extracted text as a clear, structured Markdown document. Include tables as markdown tables, lists as markdown lists, etc.'},
+    {value: 'deepseek-ocr', viewValue: 'deepseek-ocr (8GB)', thinking: false, cloud: false, memory: 8, description: 'DeepSeek OCR is an advanced optical character recognition model designed to extract text from images with high accuracy.', prompt: '<|grounding|>Convert the document to markdown.'}
+  ];
+  
   modelsDownloaded: boolean = false;
   manageOllamaExternally: boolean = false;
   selectedModel: string = ''
   embeddings_model: string = '';
   downloadedLLM: string = '';
   downloadedEmbeddedLLM: string = '';
+  ocr_model: string = '';
+  downloadedOCRLLM: string = '';
   
   gpuAcceleration: boolean = true;  
   serviceTimer: any;

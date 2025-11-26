@@ -343,7 +343,9 @@ export default class LangchainService {
     return hasOCRTasks;
   }
 
-  OCRLlmDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
+  OCRLlmDocs = async (ocrmodel: string, ocrprompt: string, loaded_docs: Document[], doc_path: string): Promise<boolean> => {
+    this.ocrLLMProcessor.init(ocrmodel, ocrprompt);
+    
     let hasOCRTasks: boolean = false;
     const file_names: string[] = fs.readdirSync(doc_path);
     const loaded_doc_names: string[] = [];
@@ -385,7 +387,7 @@ export default class LangchainService {
       if (params.localVector === false) {
         // Check for OCR
         // hasOCRTasks = await this.OCRDocs(docs, this.doc_path);
-        hasOCRTasks = await this.OCRLlmDocs(docs, this.doc_path);
+        hasOCRTasks = await this.OCRLlmDocs(params.ocrmodel, params.ocrprompt, docs, this.doc_path);
       }
       if (!hasOCRTasks) {
         this.embeddings = new OllamaEmbeddings({

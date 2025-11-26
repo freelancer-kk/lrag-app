@@ -98,6 +98,7 @@ export interface IHistory {
   docContext: boolean,
   ingest: {
     embeddings_model: string
+    ocr_model: string,
     chunkSize: number,
     overlap: number,
     separator: string,

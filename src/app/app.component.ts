@@ -886,6 +886,18 @@ export class AppComponent implements OnInit {
           }
         })
       }
+      if (this.ollamaService.ocr_model === '') {
+        await this.commonService.getEnvValue('OCR_MODEL_NAME').then((value: string) => {
+          console.log('environment check ocr llm:', value);
+          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1) {
+            this.ollamaService.ocr_model = value;
+            this.ollamaService.downloadedOCRLLM = value;
+          } else {
+            this.ollamaService.ocr_model = this.ollamaService.ocr_models[0].value;
+            this.ollamaService.downloadedOCRLLM = this.ollamaService.ocr_models[0].value;
+          }
+        })
+      }
       console.log('pullModelsIfNecessary:getAvailableLLMs()');
       const responseE: any = await this.ollamaService.pull(this.ollamaService.embedding_models[0].value);
       if (responseE !== 'pulled') {
@@ -894,11 +906,11 @@ export class AppComponent implements OnInit {
       const responseM: any = await this.ollamaService.pull(this.ollamaService.models[0].value);
       if (responseM !== 'pulled') {
         this.systemService.modelStatus.update(EStatus.downloading);
-      }      
-      const responseO: any = await this.ollamaService.pull('deepseek-ocr');
+      }   
+      const responseO: any = await this.ollamaService.pull(this.ollamaService.ocr_models[0].value);
       if (responseO !== 'pulled') {
         this.systemService.modelStatus.update(EStatus.downloading);
-      }      
+      }            
       this.firstTime = false;
       this.systemService.modelStatus.update(EStatus.running);
       this.systemService.hasBasicSetup = true;     

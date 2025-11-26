@@ -51,13 +51,14 @@ export default class OllamaService {
       } else if (gpuBrands.find(f => f.toLowerCase().startsWith('amd')) || gpuBrands.find(f => f.toLowerCase().startsWith('advanced'))) {
         log.info('ollama choice: amd: win');
         urls = [default_dl, rocm_dl];        
-      } /* else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
+      } else if (gpuBrands.find(f => f.toLowerCase().startsWith('intel'))) {
         log.info('ollama choice: ipex: win');
-        urls = [ipex_dl];
-        ollamaArgs = [];
-        ollamaExecutable = 'ollama-serve.bat';
-        this.isIPEX = true;
-      } */ else {
+        urls = [default_dl];
+        // urls = [ipex_dl];
+        // ollamaArgs = [];
+        // ollamaExecutable = 'ollama-serve.bat';
+        this.isIPEX = false;
+      } else {
         log.info('ollama choice: nogpu: win');
         urls = [default_dl];
       }

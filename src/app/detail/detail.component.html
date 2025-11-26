@@ -57,6 +57,16 @@
         </mat-select>
       </mat-form-field>
     </div>  
+    <div class="onerow">
+      <mat-form-field class="full-width">
+        <mat-label>{{ 'PAGES.DETAIL.OCR_MODEL_SELECT' | translate }}</mat-label>
+        <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.ocr_model" (selectionChange)="modelChange($event, 2)">
+          @for (entry of ollamaService.ocr_models; track $index) {
+            <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>  
   </mat-expansion-panel>
   <mat-expansion-panel [expanded]="ollamaService.cloudSelected">
     <mat-expansion-panel-header>
@@ -154,9 +164,10 @@
                 systemService.modelStatus.get() === EStatus.running &&
                 !entry.name.startsWith('embedding') &&
                 !entry.name.startsWith('gemma3:1b') &&
-                !entry.name.startsWith('deepseek-ocr') &&
+                !entry.name.startsWith('qwen3-vl:4b') &&
                 entry.name !== ollamaService.selectedModel &&
-                entry.name !== ollamaService.embeddings_model
+                entry.name !== ollamaService.embeddings_model &&
+                entry.name !== ollamaService.ocr_model
               ) {
                 <button matButton (click)="removeModel($event, $index)">
                   <mat-icon class="danger">cancel</mat-icon>

@@ -162,7 +162,6 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     }
 
     ocrLlmProcessor = new OCRllmProcessor(ollamaService, userTempPath);
-    ocrLlmProcessor.init();
     await ocrLlmProcessor.start();
     langchainService = new LangchainService(
       docPath ? docPath : path.join(userDataPath, 'docs'),

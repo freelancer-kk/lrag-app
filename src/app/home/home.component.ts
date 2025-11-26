@@ -208,6 +208,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.ollamaService.availableModels.findIndex(f => f.name === this.systemService.history[index].ingest.embeddings_model) > -1) {
       this.ollamaService.embeddings_model = this.systemService.history[index].ingest.embeddings_model;
     }
+    if (this.ollamaService.availableModels.findIndex(f => f.name === this.systemService.history[index].ingest.ocr_model) > -1) {
+      this.ollamaService.ocr_model = this.systemService.history[index].ingest.ocr_model;
+    }
     this.systemService.localVector = this.systemService.history[index].ingest.localVector;
     this.systemService.overlap = this.systemService.history[index].ingest.overlap;
     this.systemService.useSemantic = this.systemService.history[index].ingest.useSemantic;

@@ -172,7 +172,9 @@ export class IngestComponent implements OnInit {
             useSemantic: this.systemService.useSemantic,
             localVector: this.systemService.localVector,
             collection: this.systemService.collection,
-            embeddings: this.ollamaService.embeddings_model
+            embeddings: this.ollamaService.embeddings_model,
+            ocrmodel: this.ollamaService.ocr_model,
+            ocrprompt: this.ollamaService.ocr_models.find(f => f.value === this.ollamaService.ocr_model).prompt
           }
         }
       ).then(async (result: any) => {
