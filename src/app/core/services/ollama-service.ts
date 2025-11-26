@@ -22,12 +22,8 @@ export class OllamaService {
     {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, cloud: false, memory: 1, description: 'EmbeddingGemma is a 300M parameter embedding model from Google'},    
   ]
   ocr_models: any[] = [
-    {value: 'qwen3-vl:4b', viewValue: 'qwen3-vl:4b (4GB)', thinking: false, cloud: false, memory: 4, description: 'Qwen-VL is a vision-language model by AI21 Labs that can understand and generate text based on image inputs.', prompt: 'Perform Optical Character Recognition (OCR) on the provided image and format all extracted text as a clear, structured Markdown document. Include tables as markdown tables, lists as markdown lists, etc.',
-        params: {
-          "temperature": 1,
-          "top_k": 20,
-          "top_p": 0.95
-        }
+    { value: 'benhaotang/Nanonets-OCR-s:q4_k_m', viewValue: 'Nanonets-OCR-s (<4GB>)', thinking: false, cloud: false, memory: 4, description: 'Nanonets OCR is a cloud-based optical character recognition model that provides accurate text extraction from images.', prompt: 'Perform Optical Character Recognition (OCR) on the provided image and format all extracted text as a clear, structured Markdown document. Include tables as markdown tables, lists as markdown lists, etc.',
+        params: {}
     },
     {value: 'deepseek-ocr', viewValue: 'deepseek-ocr (8GB)', thinking: false, cloud: false, memory: 8, description: 'DeepSeek OCR is an advanced optical character recognition model designed to extract text from images with high accuracy.', prompt: '<|grounding|>Convert the document to markdown.',
       params: {

@@ -14,7 +14,7 @@ enum EOCLlmStatus {
   ERROR
 }
 
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 5;
 export default class OCRllmProcessor {
   webContents: Electron.WebContents | undefined;
   ollamaService: OllamaService;
