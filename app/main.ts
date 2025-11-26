@@ -16,7 +16,6 @@ import OCRProcessor from './OCRProcessor';
 import WatcherService from './WatcherService';
 import LicenseService from './LicenseService';
 import OCRllmProcessor from './OCRllmProcessor';
-import { O } from 'ollama/dist/shared/ollama.1bfa89da';
 
 const userHomePath: string = app.getPath('home');
 // const assetsPakFolderPath: string = app.getPath('assets');
@@ -95,6 +94,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     
     const watcher_win_dl = toolsDLS.WATCHER_WIN_DOWNLOAD_LINK;
     const watcher_mac_dl = toolsDLS.WATCHER_MAC_DOWNLOAD_LINK;
+    /*
     if (ghostscript_version && watcher_version && watcher_win_dl && watcher_mac_dl) {
       log.info('Initialising watcher service:', watcher_version, toolsDLS.WATCHER_VERSION, watcher_win_dl, watcher_mac_dl);
       watcherService = new WatcherService(
@@ -124,6 +124,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     }
     ocrProcessor = new OCRProcessor(watcherService, dockerEnv);
     await ocrProcessor.start();
+    */    
     
     const darwin_dl = toolsDLS.DARWIN_DOWNLOAD_LINK;
     const ipex_dl = toolsDLS.IPEX_DOWNLOAD_LINK;
@@ -163,7 +164,12 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     ocrLlmProcessor = new OCRllmProcessor(ollamaService, userTempPath);
     ocrLlmProcessor.init();
     await ocrLlmProcessor.start();
-    langchainService = new LangchainService(docPath ? docPath : path.join(userDataPath, 'docs'), path.join(appDataPath, 'lrag-app', 'lrag'), ocrProcessor, ocrLlmProcessor);
+    langchainService = new LangchainService(
+      docPath ? docPath : path.join(userDataPath, 'docs'),
+      path.join(appDataPath, 'lrag-app', 'lrag'),
+      undefined, // ocrProcessor,
+      ocrLlmProcessor
+  );
     langchainService.register(win?.webContents);
   
     const reranker_win_dl = toolsDLS.RERANKER_WIN_DOWNLOAD_LINK;
@@ -315,7 +321,7 @@ try {
         log.info('main:starting services if already installed:');      
         ollamaService.startIfInstalled();
         rerankerService.startIfInstalled();
-        watcherService.startIfInstalled(); 
+        // watcherService.startIfInstalled(); 
         browserWin.show();
       })      
     }, 400)    
@@ -326,7 +332,7 @@ try {
     ollamaService.abort();
     await ollamaService.stop();
     await rerankerService.stop();
-    await watcherService.stop();
+    // await watcherService.stop();
   });
 
   /*

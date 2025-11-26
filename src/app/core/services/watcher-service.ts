@@ -7,7 +7,8 @@ import { EStatus } from '../../shared/model';
 })
 export class WatcherService {
   serviceName: string = 'watcher';
-  status: LStatus = new LStatus(EStatus.not_running);
+  // status: LStatus = new LStatus(EStatus.not_running);
+  status: LStatus = new LStatus(EStatus.running);
   servicePID: number = -1;
   brewStatus: LStatus = new LStatus(EStatus.unknown);
   wingetStatus: LStatus = new LStatus(EStatus.unknown);

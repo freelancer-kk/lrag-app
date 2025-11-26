@@ -6,8 +6,6 @@ import log from 'electron-log/main';
 import OllamaService from './OllamaService';
 import { Ollama, OllamaInput } from "@langchain/ollama";
 
-import { MAX_PROC_TIME } from './OCRProcessor';
-
 enum EOCLlmStatus {
   REQUESTED = 0,
   PROCESSING,
@@ -16,10 +14,12 @@ enum EOCLlmStatus {
   ERROR
 }
 
+const BATCH_SIZE = 10;
+const prompt: string = '<|grounding|>Convert the document to markdown.';
 export default class OCRllmProcessor {
   webContents: Electron.WebContents | undefined;
   ollamaService: OllamaService;
-  ollamaOCRLlm: Ollama | undefined;
+  ollamaOCRLlm: Ollama[] = [];
   filesToProcess: any[] = [];
   jobTimer: any;
   doc_processor_path: string;
@@ -36,10 +36,14 @@ export default class OCRllmProcessor {
         baseUrl: 'http://127.0.0.1:11434',
         model: "deepseek-ocr",
         headers: this.ollamaService.headers ? this.ollamaService.headers : undefined,
-        temperature: 0.0,        
-    };
+        temperature: 0.0,
+        maxConcurrency: BATCH_SIZE,
+    };  
     log.info('Ollama ocr llm connection:options:', ollamaOptions);
-    this.ollamaOCRLlm = new Ollama(ollamaOptions);
+    for (let i = 0; i < BATCH_SIZE; i++) {
+      log.info(`Initializing Ollama OCR LLM instance ${i + 1} of ${BATCH_SIZE}`);
+      this.ollamaOCRLlm.push(new Ollama(ollamaOptions));
+    }    
   
     log.info('Ollama ocr llm connection initialized');
   }
@@ -95,6 +99,32 @@ export default class OCRllmProcessor {
     }
   }
 
+  threadOllama = (counter: number, total: number, batchIdx: number, image: string): Promise<any> => {
+      try {
+        log.info('Sending prompt to Ollama OCR LLM:', counter, total, batchIdx); 
+        return this.ollamaOCRLlm[batchIdx].invoke(
+          prompt, {
+            images: [image]
+          },
+        ).then((response: string) => {
+          log.info('Received response from Ollama OCR LLM:', response.length);
+          this.emit({ type: 'ocr-llm-images-to-markdown-progress', data: {
+              path: image.length,
+              counter,
+              total
+            }
+          });
+          return {
+            batchIdx,
+            response
+          };
+        });
+      } catch (error) {
+        console.error(`Error processing image to md ${counter} with Ollama OCR LLM:`, error);
+        throw error;
+      }    
+  }
+
   imagesToMarkdown = async (imagePaths: string[]): Promise<string> => {
     if (!this.ollamaOCRLlm) {
       throw new Error('Ollama OCR LLM not initialized');
@@ -102,30 +132,27 @@ export default class OCRllmProcessor {
 
     let combinedMarkdown: string = '';
     let counter: number = 1;    
+    let images: string[] = [];
     for await (const imagePath of imagePaths) {
-      const imageData: string = fs.readFileSync(imagePath).toString('base64');    
-      const prompt: string = '<|grounding|>Convert the document to markdown.';      
-      log.info('Sending prompt to Ollama OCR LLM:', counter, imagePaths.length, prompt);
-      
       try {
-        const response = await this.ollamaOCRLlm.invoke(
-          prompt, {
-            images: [imageData]          
-          },
-        );
-        log.info('Received response from Ollama OCR LLM:', response.length);
-        this.emit({ type: 'ocr-llm-images-to-markdown-progress', data: {
-            path: imagePath,
-            counter,
-            total: imagePaths.length
+        const imageData: string = fs.readFileSync(imagePath).toString('base64');
+        images.push(imageData);
+        if (counter % BATCH_SIZE === 0 || counter === imagePaths.length) {
+          const promiseArray: Promise<string>[] = [];
+          let i = 0;
+          for await (const imageData of images) {
+            promiseArray.push(this.threadOllama(counter, imagePaths.length, i, imageData));
+            i++;
           }
-        });
-        combinedMarkdown += response + '\n\n';
+          const responses: any[] = await Promise.all(promiseArray);
+          responses.sort((a, b) => a.batchIdx - b.batchIdx);
+          combinedMarkdown += responses.map(f => f.response).join('\n\n');
+          images = [];          
+        }
       } catch (error) {
         console.error(`Error processing image to md ${imagePath} with Ollama OCR LLM:`, error);
         throw error;
       }
-
       counter++;
     }
     

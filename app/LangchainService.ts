@@ -39,12 +39,12 @@ export default class LangchainService {
   numOfDocs: number = 0;
   semanticChunking: SemanticChunking;
   vectorStoreType: EVectorStoreType | undefined;
-  ocrProcessor: OCRProcessor;
+  ocrProcessor: OCRProcessor | undefined;
   ocrLLMProcessor: OCRllmProcessor;
   uuid: string;
   baseUrl: string;
 
-  constructor(doc_path: string, db_dir: string, ocrProcessor: OCRProcessor, ocrLLMProcessor: OCRllmProcessor, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
+  constructor(doc_path: string, db_dir: string, ocrProcessor: OCRProcessor | undefined, ocrLLMProcessor: OCRllmProcessor, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
     this.root_doc_path = doc_path;
     mkdirSync(path.join(db_dir, 'hnsw'), { recursive: true });
@@ -72,7 +72,7 @@ export default class LangchainService {
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
     this.semanticChunking.register(webContents);
-    this.ocrProcessor.register(webContents);
+    // this.ocrProcessor?.register(webContents);
     this.ocrLLMProcessor.register(webContents);
     ipcMain.on('ingest', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
@@ -325,7 +325,7 @@ export default class LangchainService {
           // file has not been loaded mark it for OCR processing
           log.info('OCR:REQUEST:put:', path.join(doc_path, fn));
           
-          this.ocrProcessor.put(
+          this.ocrProcessor?.put(
             path.join(doc_path, fn),
             path.basename(fn)
           )          
