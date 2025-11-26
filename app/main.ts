@@ -89,12 +89,13 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
     const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');
+    /*
     const ghostscript_version: string | undefined = await dockerEnv.getKeyValue('GHOSTSCRIPT_VERSION');
     const watcher_version: string | undefined = await dockerEnv.getKeyValue('WATCHER_VERSION');
     
     const watcher_win_dl = toolsDLS.WATCHER_WIN_DOWNLOAD_LINK;
     const watcher_mac_dl = toolsDLS.WATCHER_MAC_DOWNLOAD_LINK;
-    /*
+    
     if (ghostscript_version && watcher_version && watcher_win_dl && watcher_mac_dl) {
       log.info('Initialising watcher service:', watcher_version, toolsDLS.WATCHER_VERSION, watcher_win_dl, watcher_mac_dl);
       watcherService = new WatcherService(

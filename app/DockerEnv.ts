@@ -80,7 +80,7 @@ export default class DockerEnv {
       this.dsp = path.join(this.userHomePath, 'lrag').replace(new RegExp('\\\\','g'), '\\\\');
       this.ellm = "embeddinggemma:300m";
       this.llm = "gemma3:1b";
-      this.ocrllm = "benhaotang/Nanonets-OCR-s:q4_k_m";
+      this.ocrllm = "benhaotang/Nanonets-OCR-s";
       this.generateEnvFile();
       this.kvFile = await parseFile(this.sourceEnvPath);
       const dp: string | undefined = this.kvFile.get('ROOT_DATA_PATH')?.toString();

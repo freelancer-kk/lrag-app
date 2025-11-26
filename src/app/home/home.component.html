@@ -58,6 +58,7 @@
             }            
           </div>            
         </div>
+        <!--
         @if ( watcherService.wingetStatus.get() === EStatus.installed_winget || 
               watcherService.wingetStatus.get() === EStatus.upgrade_winget ||
               watcherService.brewStatus.get() === EStatus.not_installed || 
@@ -141,6 +142,7 @@
             }            
           </div>            
         </div>
+        -->
         @if (ollamaService.status.get() === EStatus.running) {
           <div class="onerow">
             {{ 'PAGES.HOME.MODEL' | translate }}&nbsp;            
