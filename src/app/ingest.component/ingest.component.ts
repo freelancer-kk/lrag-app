@@ -163,6 +163,8 @@ export class IngestComponent implements OnInit {
         }
       }
 
+      const ocrentry: any = this.ollamaService.ocr_models.find(f => f.value === this.ollamaService.ocr_model);
+
       this.systemService.commandIngest(
         'start',
         {        
@@ -173,8 +175,11 @@ export class IngestComponent implements OnInit {
             localVector: this.systemService.localVector,
             collection: this.systemService.collection,
             embeddings: this.ollamaService.embeddings_model,
-            ocrmodel: this.ollamaService.ocr_model,
-            ocrprompt: this.ollamaService.ocr_models.find(f => f.value === this.ollamaService.ocr_model).prompt
+            ocr: { 
+              model: this.ollamaService.ocr_model,
+              prompt: ocrentry.prompt,
+              params: ocrentry.params
+            }
           }
         }
       ).then(async (result: any) => {

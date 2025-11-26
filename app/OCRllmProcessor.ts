@@ -14,7 +14,7 @@ enum EOCLlmStatus {
   ERROR
 }
 
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 2;
 export default class OCRllmProcessor {
   webContents: Electron.WebContents | undefined;
   ollamaService: OllamaService;
@@ -32,15 +32,17 @@ export default class OCRllmProcessor {
     log.info('doc_processor_path:', this.doc_processor_path);
   }
  
-  init = (model: string, prompt: string) => {
-    this.prompt = prompt;
-    if (model !== this.lastocrmodel) {      
+  init = (ocrobj: any) => {
+    this.prompt = ocrobj.prompt;
+    if (ocrobj.model !== this.lastocrmodel) {      
       const ollamaOptions: OllamaInput = {
-          baseUrl: 'http://127.0.0.1:11434',
-          model,
-          headers: this.ollamaService.headers ? this.ollamaService.headers : undefined,
-          temperature: 0.0,
-          maxConcurrency: BATCH_SIZE,
+          ...{
+            baseUrl: 'http://127.0.0.1:11434',
+            model: ocrobj.model,
+            headers: this.ollamaService.headers ? this.ollamaService.headers : undefined,
+            maxConcurrency: BATCH_SIZE,
+          },
+          ...ocrobj.params
       };  
       log.info('Ollama ocr llm connection:options:', ollamaOptions);
       for (let i = 0; i < BATCH_SIZE; i++) {
