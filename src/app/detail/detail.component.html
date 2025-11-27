@@ -56,17 +56,22 @@
           }
         </mat-select>
       </mat-form-field>
-    </div>  
-    <div class="onerow">
-      <mat-form-field class="full-width">
-        <mat-label>{{ 'PAGES.DETAIL.OCR_MODEL_SELECT' | translate }}</mat-label>
-        <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.ocr_model" (selectionChange)="modelChange($event, 2)">
-          @for (entry of ollamaService.ocr_models; track $index) {
-            <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>  
+    </div>
+    <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'PAGES.DETAIL.USE_WATCHER_TIP' | translate" [checked]="watcherService.useWatcher" (change)="switchWatcher($event)">
+      {{ 'PAGES.DETAIL.USE_WATCHER' | translate }}
+    </mat-slide-toggle>
+    @if (!watcherService.useWatcher) {
+      <div class="onerow">
+        <mat-form-field class="full-width">
+          <mat-label>{{ 'PAGES.DETAIL.OCR_MODEL_SELECT' | translate }}</mat-label>
+          <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.ocr_model" (selectionChange)="modelChange($event, 2)">
+            @for (entry of ollamaService.ocr_models; track $index) {
+              <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>  
+    }
   </mat-expansion-panel>
   <mat-expansion-panel [expanded]="ollamaService.cloudSelected">
     <mat-expansion-panel-header>

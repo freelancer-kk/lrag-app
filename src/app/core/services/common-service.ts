@@ -152,14 +152,14 @@ const EStatusMap: { [key in EStatus]: string } = {
   [EStatus.upgrading]: 'Upgrading',
   [EStatus.installed]: 'Installed',
   [EStatus.installing]: 'Installing',
-  [EStatus.upgrade_brew]: 'Upgrade via Brew',
-  [EStatus.installed_brew]: 'Install via Brew',
-  [EStatus.upgrading_brew]: 'Upgrading via Brew',
-  [EStatus.installing_brew]: 'Installing via Brew', 
-  [EStatus.upgrade_winget]: 'Upgrade via winget',
-  [EStatus.installed_winget]: 'Install via winget',
-  [EStatus.upgrading_winget]: 'Upgrading via winget',
-  [EStatus.installing_winget]: 'Installing via winget'
+  [EStatus.upgrade_brew]: 'Upgrade',
+  [EStatus.installed_brew]: 'Install',
+  [EStatus.upgrading_brew]: 'Upgrading',
+  [EStatus.installing_brew]: 'Installing', 
+  [EStatus.upgrade_winget]: 'Upgrade',
+  [EStatus.installed_winget]: 'Install',
+  [EStatus.upgrading_winget]: 'Upgrade',
+  [EStatus.installing_winget]: 'Installing'
 };
 
 export class LStatus {

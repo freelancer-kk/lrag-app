@@ -20,6 +20,7 @@ import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
 import { SettingsService } from '../core/services/settings-service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { WatcherService } from '../core/services/watcher-service';
 
 export interface ModelDialogData {
   params: any;
@@ -65,6 +66,7 @@ export class DetailComponent implements OnInit {
     public commonService: CommonService,
     public systemService: SystemService,
     public ollamaService: OllamaService,
+    public watcherService: WatcherService,
     public settingsService: SettingsService,
   ) {    
     effect(() => {
@@ -108,6 +110,39 @@ export class DetailComponent implements OnInit {
       if (result === true) {            
         this.ollamaService.gpuAcceleration = event.checked;
         await this.ollamaService.setGpuAcceleration();        
+      } else {
+        event.source.checked = !event.checked;
+      }
+    })
+  }
+
+  switchWatcher = async (event: any) => {    
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 1,
+          params: {
+            message: await this.commonService.get('WATCHER_ARE_YOU_SURE')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Dialog result: ${result}`);
+      if (result === true) {            
+        this.watcherService.useWatcher = event.checked;
+        await this.commonService.setEnvValue('USE_WATCHER', this.watcherService.useWatcher ? 'true' : 'false');
+          const dialogRef = this.dialog.open(
+            AlertComponent, {
+              data: {
+                type: 2,
+                params: {
+                  message: await this.commonService.get('WATCHER_CHANGE_DONE')
+                }
+              }
+            });          
+          dialogRef.afterClosed().subscribe(async () => {
+            await this.commonService.quitApp();      
+          });          
       } else {
         event.source.checked = !event.checked;
       }

@@ -12,7 +12,8 @@ const mergeKeys: string[] = [
   "IPEX_VERSION",
   "GHOSTSCRIPT_VERSION",
   "RERANKER_VERSION",
-  "WATCHER_VERSION"
+  "WATCHER_VERSION",
+  "USE_WATCHER"
 ];
 
 const overwriteKeys: string[] = [
@@ -80,7 +81,7 @@ export default class DockerEnv {
       this.dsp = path.join(this.userHomePath, 'lrag').replace(new RegExp('\\\\','g'), '\\\\');
       this.ellm = "embeddinggemma:300m";
       this.llm = "gemma3:1b";
-      this.ocrllm = "benhaotang/Nanonets-OCR-s";
+      this.ocrllm = "benhaotang/Nanonets-OCR-s:latest";
       this.generateEnvFile();
       this.kvFile = await parseFile(this.sourceEnvPath);
       const dp: string | undefined = this.kvFile.get('ROOT_DATA_PATH')?.toString();

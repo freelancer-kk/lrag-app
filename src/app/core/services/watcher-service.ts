@@ -7,18 +7,20 @@ import { EStatus } from '../../shared/model';
 })
 export class WatcherService {
   serviceName: string = 'watcher';
-  // status: LStatus = new LStatus(EStatus.not_running);
   status: LStatus = new LStatus(EStatus.running);
   servicePID: number = -1;
   brewStatus: LStatus = new LStatus(EStatus.unknown);
   wingetStatus: LStatus = new LStatus(EStatus.unknown);
   ghostscriptStatus: LStatus = new LStatus(EStatus.unknown);
-  url: string = '';
+  turl: string = '';
+  gurl: string = '';
+  burl: string = '';
   brew: string = '';
   winget: string = '';
   shellCommands: string[] = [];
   depNotInstalledTimer: any;
   tt: any;
+  useWatcher: boolean = false;
 
   constructor(
     private commonService: CommonService
@@ -151,7 +153,7 @@ export class WatcherService {
       console.log('shell:install/upgrade:brew:', response);
     } else {
       this.commonService.openExternal(
-        this.url,
+        this.burl,
         {
           serviceName: 'watcher',
           installType: 'brew'
@@ -161,6 +163,7 @@ export class WatcherService {
   }
 
   installUpgradeGS = async (ev: any) => {
+    /*
     if (this.ghostscriptStatus.get() === EStatus.upgrade_brew || this.ghostscriptStatus.get() === EStatus.installed_brew) {
       const command: string = this.ghostscriptStatus.get() === EStatus.upgrade_brew ? 'upgrade' : 'install'
       this.ghostscriptStatus.update(command === 'install' ? EStatus.installing_brew : EStatus.upgrading_brew);      
@@ -177,20 +180,29 @@ export class WatcherService {
       );
       console.log('gs:install/upgrade:brew:', response); 
     } else {
+    */
       this.commonService.openExternal(
-        this.url,        
+        this.gurl,        
         {          
           serviceName: 'watcher',
           installType: 'ghostscript'
         }
       );
       console.log('gs:install/upgrade:url'); 
-    }
+//    }
   }
 
   installUpgradeTesseract = async (ev: any) => {
-      const command: string = this.wingetStatus.get() === EStatus.upgrade_winget ? 'upgrade' : 'install'
-      this.wingetStatus.update(command === 'install' ? EStatus.installing_winget : EStatus.upgrading_winget); 
+      // const command: string = this.wingetStatus.get() === EStatus.upgrade_winget ? 'upgrade' : 'install'
+      // this.wingetStatus.update(command === 'install' ? EStatus.installing_winget : EStatus.upgrading_winget)
+      this.commonService.openExternal(
+        this.turl,        
+        {          
+          serviceName: 'watcher',
+          installType: 'tesseract'
+        }
+      );
+      /*
       const response: any = await this.commonService.commandService(
         92, 
         this.serviceName,
@@ -202,6 +214,7 @@ export class WatcherService {
           ]
         }
       );
-      console.log('tesseract:install/upgrade:winget:', response);     
+      */
+      console.log('tesseract:install/upgrade:winget:');     
   }
 }

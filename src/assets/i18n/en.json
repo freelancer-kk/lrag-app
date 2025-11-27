@@ -18,6 +18,8 @@
   "GPU_ACCEL": "GPU Acceleration",
   "GPU_ACCEL_TIP": "This feature usually works, if you experience issues particularly with intel integrated GPUs, switch it off",
   "GPU_ARE_YOU_SURE": "Toggle GPU Acceleration setting, are you sure?",
+  "WATCHER_ARE_YOU_SURE": "Toggle OCR setting, are you sure?",
+  "WATCHER_CHANGE_DONE": "OCR setting complete. application will exit, please restart",
   "GPU_CHANGE_RESTART": "GPU acceleration setting complete. The application will exit, please restart. It is best to restart your PC after changing this setting",
   "RATING_TOO_LOW": "You PC LRag rating is very low. LRag will run extremely slowly on your PC and may experience difficultly completing certain tasks",
   "APP": {
@@ -161,7 +163,10 @@
         "EXIT_AFTER_ACTIVATION": "Ollama API key set. The application will exit and must be restarted",
         "GET_OLLAMA_KEY": "Get Key",
         "EMBEDDED_MODEL": "Other Models",
-        "MODEL_ACCURACY": "Larger models offer better accuracy"
+        "MODEL_ACCURACY": "Larger models offer better accuracy",
+        "OCR_MODEL_SELECT": "OCR Model",
+        "USE_WATCHER": "Standard OCR",
+        "USE_WATCHER_TIP": "Use standard OCR processing for scanned documents. Less accurate then model driven OCR but faster"
       },
       "INGEST": {
         "TITLE": "Embedding",

@@ -16,6 +16,7 @@ import OCRProcessor from './OCRProcessor';
 import WatcherService from './WatcherService';
 import LicenseService from './LicenseService';
 import OCRllmProcessor from './OCRllmProcessor';
+import { to } from 'mathjs';
 
 const userHomePath: string = app.getPath('home');
 // const assetsPakFolderPath: string = app.getPath('assets');
@@ -42,6 +43,7 @@ let watcherService: WatcherService;
 let ocrProcessor: OCRProcessor;
 let ocrLlmProcessor: OCRllmProcessor;
 let licenseService: LicenseService;
+let useWatcher: boolean = false;
 
 log.initialize();
 
@@ -76,6 +78,15 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
   }
   systemInfo = new SystemInfo(toolsDLS);
   systemInfo.register(win?.webContents);
+  const totalMemory: number = Math.ceil(await systemInfo.getTotalMemory()/1024/1024/1024)
+  log.info('System Total Memory:', totalMemory);
+  if (totalMemory < 12) {
+    useWatcher = true;
+  } else {
+    useWatcher = await dockerEnv.getKeyValue('USE_WATCHER')?.toLowerCase() === 'true' ? true : false;
+  }
+  log.info('Use Watcher Service:', useWatcher);
+  
   licenseService = new LicenseService(systemInfo.id, licenseKey, await dockerEnv.getKeyValue('LICENSE_GET_URL'), await dockerEnv.getKeyValue('LICENSE_ACTIVATE_URL'));
   licenseService.register(win?.webContents);
   await licenseService.validate();  
@@ -89,43 +100,44 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
     const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');
-    /*
-    const ghostscript_version: string | undefined = await dockerEnv.getKeyValue('GHOSTSCRIPT_VERSION');
-    const watcher_version: string | undefined = await dockerEnv.getKeyValue('WATCHER_VERSION');
     
-    const watcher_win_dl = toolsDLS.WATCHER_WIN_DOWNLOAD_LINK;
-    const watcher_mac_dl = toolsDLS.WATCHER_MAC_DOWNLOAD_LINK;
-    
-    if (ghostscript_version && watcher_version && watcher_win_dl && watcher_mac_dl) {
-      log.info('Initialising watcher service:', watcher_version, toolsDLS.WATCHER_VERSION, watcher_win_dl, watcher_mac_dl);
-      watcherService = new WatcherService(
-        watcher_version,
-        toolsDLS.WATCHER_VERSION,
-        watcher_mac_dl,
-        watcher_win_dl,
-        ghostscript_version,
-        toolsDLS.GHOSTSCRIPT_WIN_DOWNLOAD_LINK,
-        toolsDLS.HOMEBREW_MAC_DOWNLOAD_LINK,         
-        toolsDLS.HOMEBREW_MAC_VERSION,
-        toolsDLS.GHOSTSCRIPT_MAC_DOWNLOAD_LINK,
-        toolsDLS.TESSERACT_WIN_VERSION,
-        toolsDLS.TESSERACT_WIN_DOWNLOAD_LINK,
-        path.join(userDataPath, 'watcher'),
-        userTempPath,
-        appDataPath,
-        async () => {
-          await dockerEnv.kvFile?.set('WATCHER_VERSION', toolsDLS.WATCHER_VERSION);
-          await dockerEnv.kvFile?.writeFile();
-        }
-      )
-      watcherService.register(win?.webContents);
-      await watcherService.install();
-    } else {
-      log.info('Ignoring WATCHER service:', watcher_version, watcher_win_dl, watcher_mac_dl);
+    if (useWatcher) {
+      const ghostscript_version: string | undefined = await dockerEnv.getKeyValue('GHOSTSCRIPT_VERSION');
+      const watcher_version: string | undefined = await dockerEnv.getKeyValue('WATCHER_VERSION');
+      
+      const watcher_win_dl = toolsDLS.WATCHER_WIN_DOWNLOAD_LINK;
+      const watcher_mac_dl = toolsDLS.WATCHER_MAC_DOWNLOAD_LINK;
+      
+      if (ghostscript_version && watcher_version && watcher_win_dl && watcher_mac_dl) {
+        log.info('Initialising watcher service:', watcher_version, toolsDLS.WATCHER_VERSION, watcher_win_dl, watcher_mac_dl);
+        watcherService = new WatcherService(
+          watcher_version,
+          toolsDLS.WATCHER_VERSION,
+          watcher_mac_dl,
+          watcher_win_dl,
+          ghostscript_version,
+          toolsDLS.GHOSTSCRIPT_WIN_DOWNLOAD_LINK,
+          toolsDLS.HOMEBREW_MAC_DOWNLOAD_LINK,         
+          toolsDLS.HOMEBREW_MAC_VERSION,
+          toolsDLS.GHOSTSCRIPT_MAC_DOWNLOAD_LINK,
+          toolsDLS.TESSERACT_WIN_VERSION,
+          toolsDLS.TESSERACT_WIN_DOWNLOAD_LINK,
+          path.join(userDataPath, 'watcher'),
+          userTempPath,
+          appDataPath,
+          async () => {
+            await dockerEnv.kvFile?.set('WATCHER_VERSION', toolsDLS.WATCHER_VERSION);
+            await dockerEnv.kvFile?.writeFile();
+          }
+        )
+        watcherService.register(win?.webContents);
+        await watcherService.install();
+      } else {
+        log.info('Ignoring WATCHER service:', watcher_version, watcher_win_dl, watcher_mac_dl);
+      }
+      ocrProcessor = new OCRProcessor(watcherService, dockerEnv);
+      await ocrProcessor.start();
     }
-    ocrProcessor = new OCRProcessor(watcherService, dockerEnv);
-    await ocrProcessor.start();
-    */    
     
     const darwin_dl = toolsDLS.DARWIN_DOWNLOAD_LINK;
     const ipex_dl = toolsDLS.IPEX_DOWNLOAD_LINK;
@@ -167,9 +179,9 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     langchainService = new LangchainService(
       docPath ? docPath : path.join(userDataPath, 'docs'),
       path.join(appDataPath, 'lrag-app', 'lrag'),
-      undefined, // ocrProcessor,
+      useWatcher ? ocrProcessor : undefined,
       ocrLlmProcessor
-  );
+    );
     langchainService.register(win?.webContents);
   
     const reranker_win_dl = toolsDLS.RERANKER_WIN_DOWNLOAD_LINK;
@@ -321,7 +333,7 @@ try {
         log.info('main:starting services if already installed:');      
         ollamaService.startIfInstalled();
         rerankerService.startIfInstalled();
-        // watcherService.startIfInstalled(); 
+        if (useWatcher) { watcherService.startIfInstalled(); }
         browserWin.show();
       })      
     }, 400)    
@@ -332,7 +344,7 @@ try {
     ollamaService.abort();
     await ollamaService.stop();
     await rerankerService.stop();
-    // await watcherService.stop();
+    if (useWatcher) { await watcherService.stop(); }
   });
 
   /*

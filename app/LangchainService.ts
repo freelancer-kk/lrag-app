@@ -72,7 +72,7 @@ export default class LangchainService {
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
     this.semanticChunking.register(webContents);
-    // this.ocrProcessor?.register(webContents);
+    this.ocrProcessor?.register(webContents);
     this.ocrLLMProcessor.register(webContents);
     ipcMain.on('ingest', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
@@ -386,8 +386,11 @@ export default class LangchainService {
       let hasOCRTasks: boolean = false
       if (params.localVector === false) {
         // Check for OCR
-        // hasOCRTasks = await this.OCRDocs(docs, this.doc_path);
-        hasOCRTasks = await this.OCRLlmDocs(params.ocr, docs, this.doc_path);
+        if (this.ocrProcessor) {       
+          hasOCRTasks = await this.OCRDocs(docs, this.doc_path);
+        } else {
+          hasOCRTasks = await this.OCRLlmDocs(params.ocr, docs, this.doc_path);
+        }
       }
       if (!hasOCRTasks) {
         this.embeddings = new OllamaEmbeddings({

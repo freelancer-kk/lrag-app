@@ -307,6 +307,7 @@ export class AppComponent implements OnInit {
         
         switch(type) {
           case 'after-link-opened': {
+            /*
             if (data.serviceName === 'watcher') {
               if (data.installType === 'ghostscript') {
                 this.watcherService.ghostscriptStatus.update(EStatus.installed)
@@ -315,6 +316,8 @@ export class AppComponent implements OnInit {
               }
               this.forceExit('RESTART_INSTALL', true)
             }
+              */
+            this.forceExit('RESTART_INSTALL', true)
           }
           break;
           case 'shell-running-exit':
@@ -376,9 +379,6 @@ export class AppComponent implements OnInit {
                 if (shellCommands) {
                   this.watcherService.shellCommands = shellCommands;
                 }
-                if (url) {
-                  this.watcherService.url = url;             
-                }
                 if (brew) {                
                   this.watcherService.brew = brew;
                 }
@@ -389,31 +389,49 @@ export class AppComponent implements OnInit {
                 if (Number.parseInt(version)) {
                   switch (prereq) {
                     case 'homebrew': {
+                      if (url) {
+                        this.watcherService.burl = url;             
+                      }                      
                       this.watcherService.brewStatus.update(brew ? EStatus.installed : EStatus.installed)
                     }
                     break;
                     case 'tesseract': {
+                      if (url) {
+                        this.watcherService.turl = url;             
+                      }                      
                       this.watcherService.wingetStatus.update(EStatus.installed)
                     }
                     break;
                     default: {
+                      if (url) {
+                        this.watcherService.gurl = url;             
+                      }                      
                       this.watcherService.ghostscriptStatus.update(brew ? EStatus.installed : EStatus.installed)
                     }
                   }                                    
                 } else {
                   switch (prereq) {
                     case 'homebrew': {
+                      if (url) {
+                        this.watcherService.burl = url;             
+                      }                      
                       this.watcherService.brewStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade)
                       this.watcherService.status.update(EStatus.not_running);
                     }
                     break;
                     case 'tesseract': {
+                      if (url) {
+                        this.watcherService.turl = url;             
+                      }                      
                       this.watcherService.wingetStatus.update(EStatus.upgrade_winget);
                       this.watcherService.clearTT();
                       this.watcherService.status.update(EStatus.not_running);
                     }
                     break;
                     default: {
+                      if (url) {
+                        this.watcherService.gurl = url;             
+                      }                      
                       this.watcherService.ghostscriptStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade)
                       this.watcherService.status.update(EStatus.not_running);
                     }
@@ -429,10 +447,7 @@ export class AppComponent implements OnInit {
               if (serviceName === 'watcher') {
                 if (shellCommands) {
                   this.watcherService.shellCommands = shellCommands;
-                }
-                if (url) {
-                  this.watcherService.url = url;
-                }
+                }                
                 if (brew) {                
                   this.watcherService.brew = brew;
                 }
@@ -444,14 +459,23 @@ export class AppComponent implements OnInit {
                   this.watcherService.clearTimer();
                   switch (prereq) {
                     case 'homebrew': {
+                      if (url) {
+                        this.watcherService.burl = url;
+                      }
                       this.watcherService.brewStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed)
                     }
                     break;
                     case 'tesseract': {
+                      if (url) {
+                        this.watcherService.turl = url;
+                      }
                       this.watcherService.wingetStatus.update(EStatus.installed_winget);
                     }
                     break;
                     default: {
+                      if (url) {
+                        this.watcherService.gurl = url;
+                      }
                       this.watcherService.ghostscriptStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed)
                     }
                   }                                    
@@ -605,7 +629,7 @@ export class AppComponent implements OnInit {
               this.forceExit();
             })
           }
-          break;          
+          break;
           case 'ollama-pull-start': {
             this.ngZone.run(() => {
               this.systemService.modelStatus.update(EStatus.downloading, 0);
@@ -806,6 +830,10 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.watcherService.useWatcher = await this.commonService.getEnvValue('USE_WATCHER') === 'true' ? true : false;
+    if (this.watcherService.useWatcher) {
+      this.watcherService.status.update(EStatus.not_running);
+    }
     const apiKey: string = await this.commonService.getEnvValue('OLLAMA_API_KEY');
     if (apiKey && apiKey.length > 50) {
       console.log('APIKEY:', apiKey);
@@ -838,11 +866,9 @@ export class AppComponent implements OnInit {
       /*
       * Comment out since only necessary for reload
       */
-     /*
       this.ollamaService.startOnTimer();
       this.watcherService.startIfNecessary();
-      this.rerankerService.startIfNecessary();          
-    */
+      this.rerankerService.startIfNecessary();    
     }, 400)   
   }
 
@@ -906,11 +932,13 @@ export class AppComponent implements OnInit {
       const responseM: any = await this.ollamaService.pull(this.ollamaService.models[0].value);
       if (responseM !== 'pulled') {
         this.systemService.modelStatus.update(EStatus.downloading);
-      }   
-      const responseO: any = await this.ollamaService.pull(this.ollamaService.ocr_models[0].value);
-      if (responseO !== 'pulled') {
-        this.systemService.modelStatus.update(EStatus.downloading);
-      }            
+      }
+      if (this.watcherService.useWatcher) {
+        const responseO: any = await this.ollamaService.pull(this.ollamaService.ocr_models[0].value);
+        if (responseO !== 'pulled') {
+          this.systemService.modelStatus.update(EStatus.downloading);
+        }            
+      }
       this.firstTime = false;
       this.systemService.modelStatus.update(EStatus.running);
       this.systemService.hasBasicSetup = true;     

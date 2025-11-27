@@ -12,6 +12,7 @@ export const isLinux: boolean = platform() === "linux";
 export default class SystemInfo {
   webContents: Electron.WebContents | undefined;
   private graphics: Systeminformation.GraphicsData | undefined;
+  private mem: Systeminformation.MemData | undefined;
   tools: any;
   id: string;
 
@@ -23,6 +24,11 @@ export default class SystemInfo {
   getGraphics = async (): Promise<Systeminformation.GraphicsData> => {
     this.graphics = await graphics();
     return this.graphics;
+  }
+
+  getTotalMemory = async (): Promise<number> => {
+    this.mem = await mem();
+    return this.mem.total;
   }
 
   emit = (args: any) => {
@@ -39,7 +45,7 @@ export default class SystemInfo {
       let response: any = {}
       switch (command) {
         case "mem": {
-          response = await mem();
+          response = this.mem ? this.mem : await mem();
         }
         break;
         case "cpu": {

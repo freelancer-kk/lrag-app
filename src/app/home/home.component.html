@@ -58,91 +58,91 @@
             }            
           </div>            
         </div>
-        <!--
-        @if ( watcherService.wingetStatus.get() === EStatus.installed_winget || 
-              watcherService.wingetStatus.get() === EStatus.upgrade_winget ||
-              watcherService.brewStatus.get() === EStatus.not_installed || 
-              watcherService.brewStatus.get() === EStatus.upgrade ||
-              (watcherService.ghostscriptStatus.get() === EStatus.upgrade_brew && watcherService.brewStatus.get() === EStatus.installed) ||
-              (watcherService.ghostscriptStatus.get() === EStatus.installed_brew && watcherService.brewStatus.get() === EStatus.installed) ||
-              watcherService.ghostscriptStatus.get() === EStatus.upgrade ||
-              watcherService.ghostscriptStatus.get() === EStatus.not_installed) {
-        <div class="installhint">
-          {{ 'PAGES.HOME.CLICK_TO_INSTALL' | translate }}
-        </div>
-        }
-        <div class="onerow">
-          {{ 'PAGES.HOME.WATCHER' | translate }}
-          &nbsp;<span class="small">({{ watcherService.servicePID }})</span>
-          @if (watcherService.status.get() === EStatus.running && watcherService.servicePID !== -1) {                    
-            <button matButton [matTooltip]="'PAGES.HOME.RESTART_SERVICE' | translate" matButton (click)="watcherService.restart($event)">
-              <mat-icon class="success">refresh</mat-icon>
-            </button>
-          }
-          <span class="spacer"></span>
+        @if (watcherService.useWatcher) {
           @if ( watcherService.wingetStatus.get() === EStatus.installed_winget || 
-                watcherService.wingetStatus.get() === EStatus.upgrade_winget ) {
-            <button matButton="filled" (click)="watcherService.installUpgradeTesseract($event)">
-              Tesseract {{ watcherService.wingetStatus.getS() }}
-            </button>
-          } @else if (watcherService.wingetStatus.get() === EStatus.upgrading_winget || 
-                      watcherService.wingetStatus.get() === EStatus.installing_winget) {
-            <div [class]="watcherService.wingetStatus.getC()">
-              <mat-spinner diameter="30"></mat-spinner>              
-              Tesseract {{ watcherService.wingetStatus.getS() }}
-            </div>
-          } @else if (watcherService.wingetStatus.get() === EStatus.error) {
-            <div [class]="watcherService.wingetStatus.getC()">
-              Tesseract {{ watcherService.wingetStatus.getS() }}
-            </div>
-          }
-          @if ( watcherService.brewStatus.get() === EStatus.not_installed || 
-                watcherService.brewStatus.get() === EStatus.upgrade ) {
-            <button matButton="filled" (click)="watcherService.installUpgradeBrew($event)">
-              Brew {{ watcherService.brewStatus.getS() }}
-            </button>
-          } @else if (watcherService.brewStatus.get() === EStatus.upgrading || 
-                      watcherService.brewStatus.get() === EStatus.installing) {
-            <div [class]="watcherService.brewStatus.getC()">
-              <mat-spinner diameter="30"></mat-spinner>              
-              Brew {{ watcherService.brewStatus.getS() }}
-            </div>
-          } @else if (watcherService.brewStatus.get() === EStatus.error) {
-            <div [class]="watcherService.brewStatus.getC()">
-              Brew {{ watcherService.brewStatus.getS() }}
-            </div>
-          }
-          @if ( (watcherService.ghostscriptStatus.get() === EStatus.upgrade_brew && watcherService.brewStatus.get() === EStatus.installed) ||
+                watcherService.wingetStatus.get() === EStatus.upgrade_winget ||
+                watcherService.brewStatus.get() === EStatus.not_installed || 
+                watcherService.brewStatus.get() === EStatus.upgrade ||
+                (watcherService.ghostscriptStatus.get() === EStatus.upgrade_brew && watcherService.brewStatus.get() === EStatus.installed) ||
                 (watcherService.ghostscriptStatus.get() === EStatus.installed_brew && watcherService.brewStatus.get() === EStatus.installed) ||
                 watcherService.ghostscriptStatus.get() === EStatus.upgrade ||
                 watcherService.ghostscriptStatus.get() === EStatus.not_installed) {
-            <button matButton="filled" (click)="watcherService.installUpgradeGS($event)">
-              Ghostscript {{ watcherService.ghostscriptStatus.getS() }}
-            </button>
-          } @else if ((watcherService.ghostscriptStatus.get() === EStatus.upgrading_brew && watcherService.brewStatus.get() === EStatus.installed) || 
-                      (watcherService.ghostscriptStatus.get() === EStatus.installing_brew && watcherService.brewStatus.get() === EStatus.installed)  ||
-                      watcherService.ghostscriptStatus.get() === EStatus.upgrading ||
-                      watcherService.ghostscriptStatus.get() === EStatus.installing) {
-            <div [class]="watcherService.brewStatus.getC()">
-              <mat-spinner diameter="30"></mat-spinner>              
-              Ghostscript {{ watcherService.ghostscriptStatus.getS() }}
-            </div>
-          } @else if (watcherService.ghostscriptStatus.get() === EStatus.error) {
-            <div [class]="watcherService.ghostscriptStatus.getC()">
-              Ghostscript {{ watcherService.ghostscriptStatus.getS() }}
-            </div>
-          }          
-          <div [class]="watcherService.status.getC()">  
-            @if (watcherService.status.get() === EStatus.downloading || watcherService.status.get() === EStatus.starting) {
-              <mat-spinner diameter="30"></mat-spinner>
-              {{ watcherService.status.getS() }}
-            } @else {            
-              <mat-icon>{{ watcherService.status.getI() }}</mat-icon>
-              {{ watcherService.status.getS() }}
-            }            
-          </div>            
-        </div>
-        -->
+          <div class="installhint">
+            {{ 'PAGES.HOME.CLICK_TO_INSTALL' | translate }}
+          </div>
+          }
+          <div class="onerow">
+            {{ 'PAGES.HOME.WATCHER' | translate }}
+            &nbsp;<span class="small">({{ watcherService.servicePID }})</span>
+            @if (watcherService.status.get() === EStatus.running && watcherService.servicePID !== -1) {                    
+              <button matButton [matTooltip]="'PAGES.HOME.RESTART_SERVICE' | translate" matButton (click)="watcherService.restart($event)">
+                <mat-icon class="success">refresh</mat-icon>
+              </button>
+            }
+            <span class="spacer"></span>
+            @if ( watcherService.wingetStatus.get() === EStatus.installed_winget || 
+                  watcherService.wingetStatus.get() === EStatus.upgrade_winget ) {
+              <button matButton="filled" (click)="watcherService.installUpgradeTesseract($event)">
+                Tesseract {{ watcherService.wingetStatus.getS() }}
+              </button>
+            } @else if (watcherService.wingetStatus.get() === EStatus.upgrading_winget || 
+                        watcherService.wingetStatus.get() === EStatus.installing_winget) {
+              <div [class]="watcherService.wingetStatus.getC()">
+                <mat-spinner diameter="30"></mat-spinner>              
+                Tesseract {{ watcherService.wingetStatus.getS() }}
+              </div>
+            } @else if (watcherService.wingetStatus.get() === EStatus.error) {
+              <div [class]="watcherService.wingetStatus.getC()">
+                Tesseract {{ watcherService.wingetStatus.getS() }}
+              </div>
+            }
+            @if ( watcherService.brewStatus.get() === EStatus.not_installed || 
+                  watcherService.brewStatus.get() === EStatus.upgrade ) {
+              <button matButton="filled" (click)="watcherService.installUpgradeBrew($event)">
+                Brew {{ watcherService.brewStatus.getS() }}
+              </button>
+            } @else if (watcherService.brewStatus.get() === EStatus.upgrading || 
+                        watcherService.brewStatus.get() === EStatus.installing) {
+              <div [class]="watcherService.brewStatus.getC()">
+                <mat-spinner diameter="30"></mat-spinner>              
+                Brew {{ watcherService.brewStatus.getS() }}
+              </div>
+            } @else if (watcherService.brewStatus.get() === EStatus.error) {
+              <div [class]="watcherService.brewStatus.getC()">
+                Brew {{ watcherService.brewStatus.getS() }}
+              </div>
+            }
+            @if ( (watcherService.ghostscriptStatus.get() === EStatus.upgrade_brew && watcherService.brewStatus.get() === EStatus.installed) ||
+                  (watcherService.ghostscriptStatus.get() === EStatus.installed_brew && watcherService.brewStatus.get() === EStatus.installed) ||
+                  watcherService.ghostscriptStatus.get() === EStatus.upgrade ||
+                  watcherService.ghostscriptStatus.get() === EStatus.not_installed) {
+              <button matButton="filled" (click)="watcherService.installUpgradeGS($event)">
+                Ghostscript {{ watcherService.ghostscriptStatus.getS() }}
+              </button>
+            } @else if ((watcherService.ghostscriptStatus.get() === EStatus.upgrading_brew && watcherService.brewStatus.get() === EStatus.installed) || 
+                        (watcherService.ghostscriptStatus.get() === EStatus.installing_brew && watcherService.brewStatus.get() === EStatus.installed)  ||
+                        watcherService.ghostscriptStatus.get() === EStatus.upgrading ||
+                        watcherService.ghostscriptStatus.get() === EStatus.installing) {
+              <div [class]="watcherService.brewStatus.getC()">
+                <mat-spinner diameter="30"></mat-spinner>              
+                Ghostscript {{ watcherService.ghostscriptStatus.getS() }}
+              </div>
+            } @else if (watcherService.ghostscriptStatus.get() === EStatus.error) {
+              <div [class]="watcherService.ghostscriptStatus.getC()">
+                Ghostscript {{ watcherService.ghostscriptStatus.getS() }}
+              </div>
+            }          
+            <div [class]="watcherService.status.getC()">  
+              @if (watcherService.status.get() === EStatus.downloading || watcherService.status.get() === EStatus.starting) {
+                <mat-spinner diameter="30"></mat-spinner>
+                {{ watcherService.status.getS() }}
+              } @else {            
+                <mat-icon>{{ watcherService.status.getI() }}</mat-icon>
+                {{ watcherService.status.getS() }}
+              }            
+            </div>            
+          </div>
+        }
         @if (ollamaService.status.get() === EStatus.running) {
           <div class="onerow">
             {{ 'PAGES.HOME.MODEL' | translate }}&nbsp;            
