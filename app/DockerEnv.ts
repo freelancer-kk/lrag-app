@@ -137,6 +137,11 @@ export default class DockerEnv {
     this.generateEnvFile();
   }
 
+  forceWatcher = async () => {
+    await this.kvFile?.set('USE_WATCHER', 'true');
+    await this.kvFile?.writeFile();
+  }
+
   getDocSourcePath = (): string => {
     return this.dsp ? this.dsp : this.userDataPath;
   }

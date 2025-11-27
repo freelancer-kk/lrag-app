@@ -82,6 +82,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
   log.info('System Total Memory:', totalMemory);
   if (totalMemory < 12) {
     useWatcher = true;
+    await dockerEnv.forceWatcher();
   } else {
     useWatcher = await dockerEnv.getKeyValue('USE_WATCHER')?.toLowerCase() === 'true' ? true : false;
   }
