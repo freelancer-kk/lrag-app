@@ -367,7 +367,7 @@ export class InsightsComponent implements OnInit {
         maxWidth: '95vw',
         maxHeight: '95vh',
         width: '100%',
-        height: '40%',        
+        height: '60%',        
         position: { top: '100px' },
         panelClass: 'full-screen-modal',
         hasBackdrop: false,
