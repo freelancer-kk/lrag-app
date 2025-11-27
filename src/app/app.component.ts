@@ -830,7 +830,7 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.watcherService.useWatcher = await this.commonService.getEnvValue('USE_WATCHER') === 'true' ? true : false;
+    this.watcherService.useWatcher = (await this.commonService.getEnvValue('USE_WATCHER') === 'true') ? true : false;
     if (this.watcherService.useWatcher) {
       this.watcherService.status.update(EStatus.not_running);
     }
@@ -866,9 +866,11 @@ export class AppComponent implements OnInit {
       /*
       * Comment out since only necessary for reload
       */
+     /*
       this.ollamaService.startOnTimer();
       this.watcherService.startIfNecessary();
       this.rerankerService.startIfNecessary();    
+      */
     }, 400)   
   }
 
