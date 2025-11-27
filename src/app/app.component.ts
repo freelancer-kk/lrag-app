@@ -935,7 +935,7 @@ export class AppComponent implements OnInit {
       if (responseM !== 'pulled') {
         this.systemService.modelStatus.update(EStatus.downloading);
       }
-      if (this.watcherService.useWatcher) {
+      if (!this.watcherService.useWatcher) {
         const responseO: any = await this.ollamaService.pull(this.ollamaService.ocr_models[0].value);
         if (responseO !== 'pulled') {
           this.systemService.modelStatus.update(EStatus.downloading);
