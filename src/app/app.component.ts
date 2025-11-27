@@ -454,7 +454,7 @@ export class AppComponent implements OnInit {
                 if (winget) {
                   this.watcherService.winget = winget;
                 }
-                this.watcherService.depNotInstalledTimer = setTimeout(() => {
+                setTimeout(() => {
                   this.watcherService.clearTT();
                   this.watcherService.clearTimer();
                   switch (prereq) {
@@ -476,6 +476,7 @@ export class AppComponent implements OnInit {
                       if (url) {
                         this.watcherService.gurl = url;
                       }
+                      console.log('dep:not:installed:ghostscript:', brew);
                       this.watcherService.ghostscriptStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed)
                     }
                   }                                    
