@@ -16,7 +16,6 @@ import OCRProcessor from './OCRProcessor';
 import WatcherService from './WatcherService';
 import LicenseService from './LicenseService';
 import OCRllmProcessor from './OCRllmProcessor';
-import { to } from 'mathjs';
 
 const userHomePath: string = app.getPath('home');
 // const assetsPakFolderPath: string = app.getPath('assets');
