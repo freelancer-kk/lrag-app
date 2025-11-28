@@ -23,7 +23,7 @@
 
 .filelistscroll {
   width: 100%;
-  min-height: 20%;
+  min-height: 30%;
 }
 
 ::ng-deep .mat-mdc-dialog-content {
@@ -46,4 +46,10 @@
   /* Optional: Add a background overlay and z-index */
   background: rgba(0, 0, 0, 0.32);
   z-index: 2000;
+}
+
+.fab-flex-container {
+  display: flex;
+  float: left;
+  align-items: flex-end;
 }

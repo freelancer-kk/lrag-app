@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CommonService, LStatus } from './common-service';
-import { EStatus } from '../../shared/model';
+import { EStatus, IChat } from '../../shared/model';
 import { SettingsService } from './settings-service';
 
 @Injectable({
@@ -13,6 +13,7 @@ export class OllamaService {
   apiKey: string = '';
   cloudSelected: boolean = false;
   useDocContext: boolean = false;
+  chatHistory: IChat[] = [];
   
   availableModels: any[] = [];
   models: any[] = [
@@ -22,8 +23,16 @@ export class OllamaService {
     {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, cloud: false, memory: 1, description: 'EmbeddingGemma is a 300M parameter embedding model from Google'},    
   ]
   ocr_models: any[] = [
+    { value: 'granite3.2-vision', viewValue: 'Granite3.2-vision (<3GB)', thinking: false, cloud: false, memory: 5, description: 'A compact and efficient vision-language model, specifically designed for visual document understanding, enabling automated content extraction from tables, charts, infographics, plots, diagrams, and more. ', prompt: 'Perform Optical Character Recognition (OCR) on the provided image and format all extracted text as a clear, structured Markdown document. Include tables as markdown tables, lists as markdown lists, etc.',
+        params: {
+          "num_ctx": 16384,
+          "temperature": 0
+        } 
+    },
     { value: 'benhaotang/Nanonets-OCR-s:latest', viewValue: 'Nanonets-OCR-s (<5GB)', thinking: false, cloud: false, memory: 5, description: 'Nanonets OCR is a cloud-based optical character recognition model that provides accurate text extraction from images.', prompt: 'Perform Optical Character Recognition (OCR) on the provided image and format all extracted text as a clear, structured Markdown document. Include tables as markdown tables, lists as markdown lists, etc.',
-        params: {}
+        params: {
+          
+        }
     },
     {value: 'deepseek-ocr:latest', viewValue: 'deepseek-ocr (<8GB)', thinking: false, cloud: false, memory: 8, description: 'DeepSeek OCR is an advanced optical character recognition model designed to extract text from images with high accuracy.', prompt: '<|grounding|>Convert the document to markdown.',
       params: {
@@ -48,6 +57,10 @@ export class OllamaService {
     private commonService: CommonService,
     private settingsService: SettingsService
   ) {}
+
+  resetChatHistory = () => {
+    this.chatHistory = [];    
+  }
 
   getGpuAcceleration = async () => {
     const gpuAccelStr: string = await this.commonService.getEnvValue('GPU_ACCELERATION');    

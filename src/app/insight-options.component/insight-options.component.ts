@@ -11,6 +11,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
+import { SettingsService } from '../core/services/settings-service';
 
 @Component({
   selector: 'app-insight-options.component',
@@ -37,7 +38,8 @@ export class InsightOptionsComponent {
   EStatus: typeof EStatus = EStatus;
 
   constructor(
-    public systemService: SystemService,    
+    public systemService: SystemService,
+    public settingsService: SettingsService,   
   ) {
 
     effect(() => {      

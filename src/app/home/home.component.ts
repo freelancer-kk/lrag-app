@@ -225,7 +225,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.systemService.numCtx = this.systemService.history[index].insight.numCtx;
     this.systemService.question = this.systemService.history[index].question;
 
-    this.systemService.chatHistory = [];
+    this.ollamaService.resetChatHistory();
     this._snackBar.open(await this.commonService.get('PAGES.HOME.RESTORE_SETTINGS'), 'OK', {
       duration: 2500
     });

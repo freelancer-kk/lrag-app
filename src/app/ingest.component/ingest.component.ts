@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, effect } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { MatButtonModule, MatFabButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { SystemService } from '../core/services/system/system.service';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +14,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSelectModule} from '@angular/material/select';
@@ -59,7 +60,9 @@ export interface IngestDialogData {
     MatExpansionModule,
     MatSlideToggle,
     SpecialCharacterDirective,
-    MatDialogModule
+    MatDialogModule,
+    MatCheckboxModule,
+    MatFabButton
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
@@ -82,7 +85,8 @@ export class IngestComponent implements OnInit {
   filesSize: number = 0;
   loadedSize: number = 0;
   hasOCR: boolean = false;
-
+  addColState: boolean = false;
+  
   overallStatus: EStatus | undefined;
   ingestStatus: EStatus = EStatus.not_running;
   
@@ -192,7 +196,7 @@ export class IngestComponent implements OnInit {
         if ((result && result.status === 'completed')) {
           this.systemService.ingestStatus.update(EStatus.not_running);
           this.systemService.ragFiles = await this.mediaService.ls(true);
-          this.systemService.chatHistory = [];
+          this.ollamaService.resetChatHistory
           const snackBarRef = this._snackBar.open(
             await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
             duration: 10000,
@@ -374,6 +378,33 @@ export class IngestComponent implements OnInit {
     }
   }
 
+  removeChecked = async (event: any) => {
+    console.log('remove: checked files:');
+    const docs: string [] = this.mediaService.filesChecked.map((m, i) => m ? this.systemService.ragFiles[i].name : '');
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 1,
+          params: {
+            message: await this.commonService.get('PAGES.INGEST.DELETE_ARE_YOU_SURE') + docs.join(' ')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Dialog result: ${result}`);
+      if (result === true) {                
+        for await (const doc of docs) {
+          const fIdx: number = this.systemService.ragFiles.findIndex(r => r.name === doc);
+          if (fIdx > -1) {
+            await this.mediaService.remove(this.systemService.ragFiles[fIdx].name);
+            this.systemService.ragFiles.splice(fIdx, 1);            
+          }
+        }
+        this.systemService.ragFiles = await this.mediaService.ls(true);
+      }
+    });    
+  }
+
   download = async (event: any, index: number) => {}
 
   toggleOpen = (event: any) => {
@@ -395,6 +426,10 @@ export class IngestComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  hasChecked = (): boolean => {
+    return this.mediaService.filesChecked.reduce(((a: boolean, c: boolean) => a || c ), false);
   }
 
   newCollection = async (ev: any) => {
@@ -420,6 +455,7 @@ export class IngestComponent implements OnInit {
           this.systemService.collection = this.collection;          
           this.systemService.ragFiles = await this.mediaService.ls(true);          
           console.log('ragFiles:', this.systemService.ragFiles);
+          this.addColState = false;
         } else {
           console.log('collection already exists!:', this.collection)
         }

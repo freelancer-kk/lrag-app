@@ -140,7 +140,8 @@ export class InsightsComponent implements OnInit {
   }
 
   clearHistory = () => {
-    this.systemService.chatHistory = [];
+    this.ollamaService.resetChatHistory();
+    this.ollamaService.useDocContext = false;
   }
 
   //TODO: When we submit a query perform a ps to get the model usage
@@ -161,7 +162,7 @@ export class InsightsComponent implements OnInit {
         prompt: await this.commonService.get('PAGES.INSIGHT.PROMPT'),
         historyPrompt: await this.commonService.get('PAGES.INSIGHT.HISTORY_PROMPT'),
         contextPrompt: await this.commonService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT'),
-        chatHistory: this.systemService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n'),
+        chatHistory: this.ollamaService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n'),
         max_tokens: 256,
         temperature: 0.7,
         top_p: 0.9,
@@ -178,7 +179,7 @@ export class InsightsComponent implements OnInit {
         options.filter = this.systemService.filter;
       }
 
-      this.systemService.chatHistory.push({
+      this.ollamaService.chatHistory.push({
         who: EWho.User,
         content: question,
         docSources: [],
@@ -196,7 +197,7 @@ export class InsightsComponent implements OnInit {
       try {
         if (!error) {
           console.log('PUSHING ANSWER:', answer);
-          this.systemService.chatHistory.push({
+          this.ollamaService.chatHistory.push({
             who: EWho.Assistant,
             content: this.generationInfo ? this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count) : this.reformat(answer, 0, 0),
             docSources

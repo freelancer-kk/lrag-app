@@ -17,19 +17,10 @@
       {{ systemService.insightStatus.getS() }}      
     </div>
   }
-  <!--
-    <mat-slide-toggle 
-      [disabled]="!systemService.hasEmbedded()" 
-      [(ngModel)]="ollamaService.useDocContext" 
-      [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" 
-    >
-      {{ 'PAGES.INSIGHT.DOC_CONTEXT' | translate }}
-    </mat-slide-toggle>
-  -->
   <button [disabled]="isDocsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" matIconButton (click)="addDocuments($event)">
     <mat-icon>note_add</mat-icon>
   </button>
-  @if (settingsService.isActivePro() && ollamaService.useDocContext) {
+  @if (ollamaService.useDocContext) {
     <button [disabled]="isSettingsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_SETTINGS_TIP' | translate" matIconButton (click)="openSettings($event)">
       <mat-icon>settings</mat-icon>
     </button>
@@ -37,104 +28,12 @@
   <button [disabled]="isModelOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_MANAGE_TIP' | translate" matIconButton (click)="manageModel($event)">
     <mat-icon>psychology</mat-icon>
   </button>  
-  @if (systemService.chatHistory.length>0) {                  
+  @if (ollamaService.chatHistory.length>0) {                  
     <button [disabled]="insightStatus === EStatus.thinking" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="clearHistory()">
       <mat-icon>playlist_remove</mat-icon>
     </button>          
   }  
 </mat-toolbar>
-<!--
-<mat-accordion>  
-@if (ollamaService.useDocContext) {  
-    <mat-expansion-panel [expanded]="false">
-      <mat-expansion-panel-header>
-      <mat-panel-title>{{ 'PAGES.INSIGHT.FILES' | translate }}</mat-panel-title>
-      <mat-panel-description>        
-      </mat-panel-description>
-      </mat-expansion-panel-header> 
-      <mat-grid-list [cols]="breakpoint" rowHeight="100px" (window:resize)="onResize($event)">
-        @for (entry of systemService.ragFiles; track $index) {
-          <mat-grid-tile colspan="1" rowspan="1">
-            <mat-list-item>
-              @if (entry.status === 0) {
-                <mat-icon matListItemIcon class="success">checkmark</mat-icon>
-              } @else if (entry.status === 1) {
-                <mat-icon matListItemIcon class="danger">close</mat-icon>
-              } @else {
-                <mat-spinner diameter="20"></mat-spinner>
-              }
-              <div matListItemTitle>
-                {{ commonService.basename(entry.name) }}
-              </div>
-              <div matListItemLine [class]="entry.status === 0 ? 'success' : entry.status === 1 ? 'danger' : 'warning'">
-                {{ entry.text }}
-              </div>
-            </mat-list-item>
-          </mat-grid-tile>      
-        }         
-      </mat-grid-list>
-    </mat-expansion-panel>  
-}
-<mat-expansion-panel [expanded]="false">
-  <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'PAGES.INSIGHT.MODEL' | translate }}</mat-panel-title>
-    <mat-panel-description>        
-    </mat-panel-description>
-    </mat-expansion-panel-header>    
-      <mat-form-field class="full-width">
-      <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
-      <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel">
-        @for (entry of ollamaService.filteredAvailableModels(); track $index) {
-          <mat-option [matTooltip]="entry.description" [disabled]="(entry.size / 1000) > (systemService.totalMainMemory-4) && !entry.cloud" [value]="entry.name">{{ entry.viewValue }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>    
-  </mat-expansion-panel>  
-</mat-accordion>
--->
-<!--
-@if (settingsService.isActivePro() && ollamaService.useDocContext) {
-<mat-accordion>
-  <mat-expansion-panel [expanded]="systemService.filter">
-    <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
-    <mat-panel-description>        
-    </mat-panel-description>
-    </mat-expansion-panel-header> 
-    <div class="onerow">
-      <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="8" max="2048" step="1" showTickMarks discrete>
-        <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
-      </mat-slider>
-      <span class="spacer"></span>
-      <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.k = 8">
-        {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
-      </button>
-    </div>
-    <div class="onerow">
-      <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" min="2048" max="10240" step="32" showTickMarks discrete>
-        <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
-      </mat-slider>
-      <span class="spacer"></span>
-      <button [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.numCtx = 2048">
-        {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
-      </button>
-    </div>
-    <div class="onerow">
-      <mat-form-field class="half-width">
-        <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>
-        <input matInput [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.filter">      
-      </mat-form-field>
-      <span class="spacer"></span>
-      <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.filter = undefined">
-        {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
-      </button>
-    </div>
-  </mat-expansion-panel>        
-</mat-accordion>  
-}
--->
 @if (overallStatus === EStatus.running_healthy) {
   <mat-form-field class="full-width">
     <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
@@ -151,7 +50,7 @@
 @if (overallStatus === EStatus.running_healthy) {
   <div class="full-width-height">
     <table mat-table class="full-width">
-      @for (entry of systemService.chatHistory; track $index) {
+      @for (entry of ollamaService.chatHistory; track $index) {
         <tr mat-row>
           @if (entry.who === 0) {
               <mat-icon matListItemIcon class="user">face</mat-icon>

@@ -3,7 +3,7 @@ import { BridgeService } from '../bridge/bridge.service';
 import {FormControl} from '@angular/forms';
 import { ConnectionService, ConnectionState } from 'ng-connection-service';
 import { Subscription, tap } from 'rxjs';
-import { connOptions, EStatus, IChat, IHistory } from '../../../shared/model';
+import { connOptions, EStatus, IHistory } from '../../../shared/model';
 import { OllamaService } from '../ollama-service';
 import { CommonService, LStatus } from '../common-service';
 import { RerankerService } from '../reranker-service';
@@ -41,7 +41,6 @@ export class SystemService {
   dark: boolean = true;
   docsEmpty: boolean = true;
   osType: any;
-  chatHistory: IChat[] = [];
   brand: string = '';
   chunkSize: number = 512;
   overlap: number = 48;

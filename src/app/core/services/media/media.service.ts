@@ -12,6 +12,7 @@ export class MediaService {
   files: string[] = [];
   loadedIndex: boolean = false;
   rootPath: string = '';
+  filesChecked: boolean[] = [];
 
   constructor(
     private systemService: SystemService,
@@ -202,6 +203,9 @@ export class MediaService {
 
   ls = (force: boolean = false) : Promise<any[]> => {    
     return this.getFiles(force).then(async (names: string[]) => {
+      if (names.length > 0) {
+        this.filesChecked = [...Array(names.length - 1).fill(false)];
+      }
       const ocrRequired: string = await this.commonService.get('PAGES.INGEST.OCR_NEEDED');
       const unknown: string = await this.commonService.get('PAGES.INGEST.UNKNOWN');
       return names.map((v: string) => {
