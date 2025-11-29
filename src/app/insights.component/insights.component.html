@@ -20,9 +20,11 @@
   <button [disabled]="isDocsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.DOC_CONTEXT_TIP' | translate" matIconButton (click)="addDocuments($event)">
     <mat-icon>note_add</mat-icon>
   </button>
+  @if (ollamaService.useDocContext || !watcherService.useWatcher) {
   <button [disabled]="isSettingsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_SETTINGS_TIP' | translate" matIconButton (click)="openSettings($event)">
     <mat-icon>settings</mat-icon>
   </button>
+  }
   <button [disabled]="isModelOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_MANAGE_TIP' | translate" matIconButton (click)="manageModel($event)">
     <mat-icon>psychology</mat-icon>
   </button>  

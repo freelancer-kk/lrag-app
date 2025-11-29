@@ -31,6 +31,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { IngestComponent } from '../ingest.component/ingest.component';
 import { DetailComponent } from '../detail/detail.component';
 import { InsightOptionsComponent } from '../insight-options.component/insight-options.component';
+import { WatcherService } from '../core/services/watcher-service';
 
 @Component({
   selector: 'app-insights.component',
@@ -80,6 +81,7 @@ export class InsightsComponent implements OnInit {
     public systemService: SystemService,
     public commonService: CommonService,
     public ollamaService: OllamaService,
+    public watcherService: WatcherService,
     public settingsService: SettingsService,
     private sanitizer: DomSanitizer,
     private mediaService: MediaService,
