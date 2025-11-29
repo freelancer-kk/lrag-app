@@ -383,13 +383,13 @@ export class IngestComponent implements OnInit {
 
   removeChecked = async (event: any) => {
     console.log('remove: checked files:');
-    const docs: string [] = this.mediaService.filesChecked.map((m, i) => m ? this.systemService.ragFiles[i].name : '');
+    const docs: string [] = this.mediaService.filesChecked.map((m, i) => m ? this.systemService.ragFiles[i].name : '').filter(f => f !== '');
     const dialogRef = this.dialog.open(
       AlertComponent, {
         data: {
           type: 1,
           params: {
-            message: await this.commonService.get('PAGES.INGEST.DELETE_ARE_YOU_SURE') + docs.map(m => this.commonService.basename(m)).join(', ')
+            message: await this.commonService.get('PAGES.INGEST.DELETE_ARE_YOU_SURE') + ' ' + docs.map(m => this.commonService.basename(m)).join(', ')
           }
         }
       });
