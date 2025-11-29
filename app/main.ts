@@ -77,6 +77,10 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
   }
   systemInfo = new SystemInfo(toolsDLS);
   systemInfo.register(win?.webContents);
+  licenseService = new LicenseService(systemInfo.id, licenseKey, await dockerEnv.getKeyValue('LICENSE_GET_URL'), await dockerEnv.getKeyValue('LICENSE_ACTIVATE_URL'));
+  licenseService.register(win?.webContents);
+  await licenseService.validate();
+
   const totalMemory: number = Math.ceil(await systemInfo.getTotalMemory()/1024/1024/1024)
   log.info('System Total Memory:', totalMemory);
   if (totalMemory < 12) {
@@ -87,9 +91,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
   }
   log.info('Use Watcher Service:', useWatcher);
   
-  licenseService = new LicenseService(systemInfo.id, licenseKey, await dockerEnv.getKeyValue('LICENSE_GET_URL'), await dockerEnv.getKeyValue('LICENSE_ACTIVATE_URL'));
-  licenseService.register(win?.webContents);
-  await licenseService.validate();  
+
   await systemInfo.getGraphics().then(async (graphics: Systeminformation.GraphicsData) => {
     log.info('graphics:', graphics.controllers.map(v => v.vendor));
     lragFiles = new LRagFiles(docPath, dataPath);

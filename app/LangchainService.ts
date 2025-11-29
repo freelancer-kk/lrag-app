@@ -344,7 +344,7 @@ export default class LangchainService {
   }
 
   OCRLlmDocs = async (ocrobj: any, loaded_docs: Document[], doc_path: string): Promise<boolean> => {
-    this.ocrLLMProcessor.init(ocrobj);
+    await this.ocrLLMProcessor.init(ocrobj);
     
     let hasOCRTasks: boolean = false;
     const file_names: string[] = fs.readdirSync(doc_path);

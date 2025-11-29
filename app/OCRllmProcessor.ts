@@ -14,7 +14,7 @@ enum EOCLlmStatus {
   ERROR
 }
 
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 1;
 export default class OCRllmProcessor {
   webContents: Electron.WebContents | undefined;
   ollamaService: OllamaService;
@@ -24,6 +24,7 @@ export default class OCRllmProcessor {
   doc_processor_path: string;
   lastocrmodel: string = '';
   prompt: string = 'Convert the document to markdown.';
+  ollamaOptions: any;
   
   constructor(ollamaService: OllamaService, userTempPath: string) {
     this.ollamaService = ollamaService;
@@ -32,24 +33,31 @@ export default class OCRllmProcessor {
     log.info('doc_processor_path:', this.doc_processor_path);
   }
  
-  init = (ocrobj: any) => {
+  init = async (ocrobj: any) => {
     this.prompt = ocrobj.prompt;
-    if (ocrobj.model !== this.lastocrmodel) {      
+    if (ocrobj.model !== this.lastocrmodel) {         
+      this.lastocrmodel = ocrobj.model;
+
+      await this.ollamaService.unloadLastUsedModel();
+
+      this.ollamaService.setLastUsedModel(ocrobj.model);
       const ollamaOptions: OllamaInput = {
           ...{
             baseUrl: 'http://127.0.0.1:11434',
             model: ocrobj.model,
             headers: this.ollamaService.headers ? this.ollamaService.headers : undefined,
-            maxConcurrency: BATCH_SIZE,
+            maxConcurrency: BATCH_SIZE
           },
           ...ocrobj.params
       };  
       log.info('Ollama ocr llm connection:options:', ollamaOptions);
+      this.ollamaOptions = ollamaOptions;
+      this.ollamaOCRLlm = [];
       for (let i = 0; i < BATCH_SIZE; i++) {
         log.info(`Initializing Ollama OCR LLM instance ${i + 1} of ${BATCH_SIZE}`);
         this.ollamaOCRLlm.push(new Ollama(ollamaOptions));
-      }    
-    
+      }
+      
       log.info('Ollama ocr llm connection initialized');
     }
   }
@@ -80,8 +88,9 @@ export default class OCRllmProcessor {
   pdfToImages = async (pdfPath: string, outputDir: string): Promise<string[]> => {
     try {
         const options = {
-          scale: 3.0,
-          format: 'jpg'
+          scale: 2.0,
+          format: 'jpg',
+          
         };
         let counter: number = 1;
         const document: any = await pdf(pdfPath, options);
@@ -107,8 +116,11 @@ export default class OCRllmProcessor {
 
   threadOllama = (counter: number, total: number, batchIdx: number, image: string): Promise<any> => {
       try {
-        log.info('Sending prompt to Ollama OCR LLM:', counter, total, batchIdx); 
-        return this.ollamaOCRLlm[batchIdx].invoke(
+        log.info('Sending prompt to Ollama OCR LLM:', counter, total, batchIdx);
+        
+        // const ollamaConn: Ollama = new Ollama(this.ollamaOptions);
+        // return ollamaConn.invoke(
+        return this.ollamaOCRLlm[batchIdx].invoke(        
           this.prompt, {
             images: [image]
           },
@@ -222,6 +234,7 @@ export default class OCRllmProcessor {
               this.filesToProcess.splice(fIdx, 1);
               if (this.filesToProcess.length === 0) {
                 this.emit( { type: 'ocr-llm-processor-all-complete', data: {} });
+                log.info('OCR:LLM:Freeing up ocr model:', this.lastocrmodel);                
               } 
             }
           }          

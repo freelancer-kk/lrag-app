@@ -169,6 +169,9 @@ export class IngestComponent implements OnInit {
 
       const ocrentry: any = this.ollamaService.ocr_models.find(f => f.value === this.ollamaService.ocr_model);
 
+      if (this.systemService.ocr_num_ctx && this.systemService.ocr_num_ctx !== 0) {
+        ocrentry.params.num_ctx = this.systemService.ocr_num_ctx * 1000;
+      }
       this.systemService.commandIngest(
         'start',
         {        
@@ -181,7 +184,7 @@ export class IngestComponent implements OnInit {
             embeddings: this.ollamaService.embeddings_model,
             ocr: { 
               model: this.ollamaService.ocr_model,
-              prompt: ocrentry.prompt,
+              prompt: this.systemService.ocrPrompt && this.systemService.ocrPrompt !== '' ? this.systemService.ocrPrompt : ocrentry.prompt,
               params: ocrentry.params
             }
           }

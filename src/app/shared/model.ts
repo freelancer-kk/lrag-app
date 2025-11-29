@@ -99,6 +99,8 @@ export interface IHistory {
   ingest: {
     embeddings_model: string
     ocr_model: string,
+    ocrPrompt: string | undefined,
+    ocrNumCtx: number | undefined,
     chunkSize: number,
     overlap: number,
     separator: string,

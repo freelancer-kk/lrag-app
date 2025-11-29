@@ -55,6 +55,8 @@ export class SystemService {
   selectedCollections = new FormControl(null);
   ragPrompt: string | undefined = undefined;
   userPrompt: string | undefined = undefined;
+  ocrPrompt: string | undefined = undefined;
+  ocr_num_ctx: number | undefined = undefined;
   
   currentState!: ConnectionState;
   subscription = new Subscription();
@@ -123,7 +125,9 @@ export class SystemService {
       overlap: this.overlap,
       useSemantic: this.useSemantic,
       localVector: this.localVector,
-      collection: this.collection
+      collection: this.collection,
+      ocrPrompt: this.ocrPrompt,
+      ocrNumCtx: this.ocr_num_ctx
     }))
     console.log(localStorage.getItem('chunk-settings'));
   }

@@ -23,7 +23,7 @@ export default class ContextChat {
   prompt: string = '';
   context: string = ''
   ollamaLlm: Ollama | undefined;
-  webContents: Electron.WebContents | undefined
+  webContents: Electron.WebContents | undefined;
 
   constructor(langchainService: LangchainService, ollamaService: OllamaService, rerankerService: ReRankerService, dockerEnv: DockerEnv) {
     this.langchainService = langchainService;    
@@ -64,8 +64,11 @@ export default class ContextChat {
     if (!this.ollamaService.isReady() || !this.ollamaService.ollama || !this.rerankerService.isReady()) {
       return Promise.resolve({ error: 'Services not ready ' + this.ollamaService.isReady() + ':' + (this.ollamaService.ollama !== undefined) + ':' + this.rerankerService.isReady() });
     }
-
+    
     try {
+      await this.ollamaService.unloadLastUsedModel();
+      
+      this.ollamaService.setLastUsedModel(options.model);
       const ollamaOptions: OllamaInput = {
         baseUrl: options.baseUrl,
         model: options.model,

@@ -99,26 +99,7 @@
         {{ 'PAGES.DETAIL.ACTIVATE' | translate }}
       </button>
     </div>  
-  </mat-expansion-panel>
-  <mat-expansion-panel expanded="false">
-    <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
-    <mat-panel-description>        
-    </mat-panel-description>
-  </mat-expansion-panel-header> 
-    <div class="onerow">
-      <mat-form-field class="full-width">
-        <mat-label [matTooltip]="'PAGES.DETAIL.RAG_PROMPT_TIP' | translate">{{ 'PAGES.DETAIL.RAG_PROMPT' | translate }}</mat-label>
-        <textarea [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
-      </mat-form-field>                        
-    </div>
-    <div class="onerow">
-      <mat-form-field class="full-width">
-        <mat-label [matTooltip]="'PAGES.DETAIL.USER_PROMPT_TIP'| translate">{{ 'PAGES.DETAIL.USER_PROMPT' | translate }}</mat-label>
-        <textarea [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
-      </mat-form-field>                        
-    </div>
-  </mat-expansion-panel>        
+  </mat-expansion-panel>  
   </mat-accordion>
   }
 <mat-dialog-content>      

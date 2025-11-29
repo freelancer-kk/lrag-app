@@ -217,7 +217,9 @@ export class InsightsComponent implements OnInit {
               separator: this.systemService.separator,
               useSemantic: this.systemService.useSemantic,
               localVector: this.systemService.localVector,
-              collection: this.systemService.collection
+              collection: this.systemService.collection,
+              ocrPrompt: this.systemService.ocrPrompt,
+              ocrNumCtx: this.systemService.ocr_num_ctx
             },
             insight: {
               model: this.ollamaService.selectedModel,                            

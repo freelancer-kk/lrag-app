@@ -25,6 +25,8 @@ import { EStatus, IStatus } from './shared/model';
 import { RerankerService } from './core/services/reranker-service';
 import { WatcherService } from './core/services/watcher-service';
 
+export const MAX_OCR_WAIT_PAGE: number = 120000;
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -62,6 +64,8 @@ export class AppComponent implements OnInit {
   ingestStatus: EStatus | undefined;
   gpuStatus: EStatus | undefined;
   overallStatus: EStatus | undefined;
+
+  ocrPageTimeout: any;
 
   constructor(
     private electronService: ElectronService,
@@ -238,7 +242,25 @@ export class AppComponent implements OnInit {
           break;
           case 'ocr-llm-images-to-markdown-progress': {
             this.ngZone.run(() => {
-              this.systemService.ingestStatus.update(EStatus.preparing, { percentage: Math.floor(Number(data.counter * 100 / data.total)) })
+              const percentage: number = Math.floor(Number(data.counter * 100 / data.total));
+              if (this.ocrPageTimeout) {
+                clearTimeout(this.ocrPageTimeout);
+              }
+              this.ocrPageTimeout = setTimeout(async () => {
+                const dialogRef = this.dialog.open(
+                  AlertComponent, {
+                    data: {
+                      type: 2,
+                      params: {
+                        message: await this.commonService.get('OCR_TIMEOUT')
+                      }
+                    }
+                  });
+                  dialogRef.afterClosed().subscribe(async () => {
+                    // await this.commonService.quitApp();      
+                  });                
+              }, MAX_OCR_WAIT_PAGE);
+              this.systemService.ingestStatus.update(EStatus.preparing, { percentage })
             });
           }
           break;
@@ -263,6 +285,9 @@ export class AppComponent implements OnInit {
           break;
           case 'ocr-llm-processor-complete': {
             this.ngZone.run(async () => {
+              if (this.ocrPageTimeout) {
+                clearTimeout(this.ocrPageTimeout);
+              }
               if (this.mediaService.docStatus) {
                 /*
                 const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
@@ -316,8 +341,10 @@ export class AppComponent implements OnInit {
               }
               this.forceExit('RESTART_INSTALL', true)
             }
-              */
-            this.forceExit('RESTART_INSTALL', true)
+            */
+           if (data.serviceName && data.serviceName === 'watcher') {
+              this.forceExit('RESTART_INSTALL', true);
+           }
           }
           break;
           case 'shell-running-exit':
@@ -867,8 +894,8 @@ export class AppComponent implements OnInit {
       /*
       * Comment out since only necessary for reload
       */
-      this.ollamaService.startOnTimer();
-      this.rerankerService.startIfNecessary();    
+      // this.ollamaService.startOnTimer();
+      // this.rerankerService.startIfNecessary();    
       // this.watcherService.startIfNecessary();           
     }, 400)   
   }

@@ -15,6 +15,7 @@ export default class OllamaService {
   gpuAcceleration = true;
   isIPEX: boolean = false;
   headers: any;
+  lastUsedModel: string = '';
   
   constructor(
     ollama_api_key: string | undefined,
@@ -156,6 +157,10 @@ export default class OllamaService {
           response = await this.rm(params as DeleteRequest);          
         }
         break;
+        case "unload": {
+          response = await this.unloadModel(params.model);          
+        }
+        break;
         case "list": {
           response = await this.list();
         }
@@ -243,6 +248,26 @@ export default class OllamaService {
     this.webContents?.send('event', {
       response: args
     })                
+  }
+
+  setLastUsedModel = (model: string) => {
+    this.lastUsedModel = model;
+  }
+
+  unloadLastUsedModel = async (): Promise<string>  => {
+    if (this.lastUsedModel !== '') {
+      return this.unloadModel(this.lastUsedModel);
+    } else {
+      return Promise.resolve('');
+    }
+  }
+
+  unloadModel = async (model: string): Promise<string> => {
+    return this.generate({
+      model,
+      prompt: '',
+      keep_alive: '0m'
+    } as GenerateRequest);
   }
   
   generate = async (request: any): Promise<string> => {

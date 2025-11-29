@@ -81,7 +81,8 @@ export default class DockerEnv {
       this.dsp = path.join(this.userHomePath, 'lrag').replace(new RegExp('\\\\','g'), '\\\\');
       this.ellm = "embeddinggemma:300m";
       this.llm = "gemma3:1b";
-      this.ocrllm = "deepseek-ocr:latest";
+      this.ocrllm = "deepseek-ocr:latest";            
+      // this.ocrllm = "gemma3:4b";
       // this.ocrllm = "benhaotang/Nanonets-OCR-s:latest";
       // this.ocrllm = "granite3.2-vision:latest";
       this.generateEnvFile();
