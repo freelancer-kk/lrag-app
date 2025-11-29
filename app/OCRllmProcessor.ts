@@ -5,6 +5,7 @@ import * as path from 'path';
 import log from 'electron-log/main';
 import OllamaService from './OllamaService';
 import { Ollama, OllamaInput } from "@langchain/ollama";
+import * as PImage from "pureimage";
 
 enum EOCLlmStatus {
   REQUESTED = 0,
@@ -46,7 +47,7 @@ export default class OCRllmProcessor {
             baseUrl: 'http://127.0.0.1:11434',
             model: ocrobj.model,
             headers: this.ollamaService.headers ? this.ollamaService.headers : undefined,
-            maxConcurrency: BATCH_SIZE
+            maxConcurrency: BATCH_SIZE            
           },
           ...ocrobj.params
       };  
@@ -85,24 +86,65 @@ export default class OCRllmProcessor {
     })                
   }
 
+  convertToGrayscale = async (inputPath: string, outputPath: string): Promise<void> => {
+    try {
+      let img: any;
+
+      // 1. Load the image based on file extension
+      if (inputPath.endsWith('.png')) {
+          img = await PImage.decodePNGFromStream(fs.createReadStream(inputPath));
+      } else if (inputPath.endsWith('.jpg') || inputPath.endsWith('.jpeg')) {
+          img = await PImage.decodeJPEGFromStream(fs.createReadStream(inputPath));
+      } else {
+          console.error("Unsupported file type. Use .png or .jpg");
+          return;
+      }
+
+      // 2. Get image data using the typed context
+      const ctx: CanvasRenderingContext2D = img.getContext("2d");
+      const imageData: ImageData = ctx.getImageData(0, 0, img.width, img.height);
+      const data: Uint8ClampedArray = imageData.data;
+
+      // 3. Process pixels: Loop through the data array by increments of 4 (R, G, B, A)
+      for (let i = 0; i < data.length; i += 4) {
+          // Apply the standard luminance grayscale formula
+          const grayscale = (0.2126 * data[i]) + (0.7152 * data[i + 1]) + (0.0722 * data[i + 2]);
+
+          // Set R, G, and B channels to the same grayscale value
+          data[i] = grayscale;     // Red
+          data[i + 1] = grayscale; // Green
+          data[i + 2] = grayscale; // Blue
+          // Alpha channel (data[i + 3]) remains unchanged
+      }
+
+      // 4. Save the image to a new file as a PNG
+      await PImage.encodePNGToStream(img, fs.createWriteStream(outputPath));
+      console.log(`Successfully converted image to grayscale and saved to ${outputPath}`);
+    } catch (e) {
+        console.error("An error occurred during image processing:", e);
+    }
+  }
+
   pdfToImages = async (pdfPath: string, outputDir: string): Promise<string[]> => {
     try {
         const options = {
           scale: 2.0,
-          format: 'jpg',
+          format: 'png',
           
         };
         let counter: number = 1;
         const document: any = await pdf(pdfPath, options);
         const imagePaths: string[] = [];
         for await (const image of document) {
-          const imagePath: string = path.join(outputDir, `page${counter}.jpg`);
-          imagePaths.push(imagePath);
+          const imagePath: string = path.join(outputDir, `page${counter}.png`);
           await fs.writeFileSync(imagePath, image);
+          const targetImagePath: string = path.join(outputDir, `page${counter}.jpg`);
+          await this.convertToGrayscale(imagePath, targetImagePath);
+          imagePaths.push(targetImagePath);          
           this.emit({ type: 'ocr-llm-pdf-to-image-progress', data: {
               path: pdfPath,
               counter,
-              total: document.numPages
+              total: document.length
             }
           });
           counter++;
@@ -122,9 +164,9 @@ export default class OCRllmProcessor {
         // return ollamaConn.invoke(
         return this.ollamaOCRLlm[batchIdx].invoke(        
           this.prompt, {
-            images: [image]
+            images: [image],            
           },
-        ).then((response: string) => {
+        ).then(async (response: string) => {                    
           log.info('Received response from Ollama OCR LLM:', response.length);
           this.emit({ type: 'ocr-llm-images-to-markdown-progress', data: {
               path: image.length,
@@ -141,6 +183,12 @@ export default class OCRllmProcessor {
         console.error(`Error processing image to md ${counter} with Ollama OCR LLM:`, error);
         throw error;
       }    
+  }
+
+  delay = (ms: number) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
   }
 
   imagesToMarkdown = async (imagePaths: string[]): Promise<string> => {
@@ -165,8 +213,8 @@ export default class OCRllmProcessor {
           const responses: any[] = await Promise.all(promiseArray);
           responses.sort((a, b) => a.batchIdx - b.batchIdx);
           combinedMarkdown += responses.map(f => f.response).join('\n\n');
-          images = [];          
-        }
+          images = [];
+        }        
       } catch (error) {
         console.error(`Error processing image to md ${imagePath} with Ollama OCR LLM:`, error);
         throw error;
@@ -179,14 +227,6 @@ export default class OCRllmProcessor {
   }
 
   removeImagePaths = async (imagePaths: string[]): Promise<void> => {
-    for (const imagePath of imagePaths) {
-      try {
-        await fs.promises.unlink(imagePath);
-        log.info('Deleted image file:', imagePath);
-      } catch (error) {
-        console.error('Error deleting image file:', imagePath, error);
-      }
-    }
     fs.rmSync(path.dirname(imagePaths[0]), { recursive: true });
   }
 
