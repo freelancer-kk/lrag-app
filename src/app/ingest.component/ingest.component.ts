@@ -352,7 +352,7 @@ export class IngestComponent implements OnInit {
     console.log('fileRemove:', event);
     if (this.systemService.selectedDocuments.value) {
       const docs: string[] = (this.systemService.selectedDocuments.value as unknown) as string[];
-      const deleteStr: string = docs.map(doc => this.commonService.basename(doc)).join(' ');
+      const deleteStr: string = docs.map(doc => this.commonService.basename(doc)).join(', ');
       console.log('fileRemove:', deleteStr)    
       const dialogRef = this.dialog.open(
         AlertComponent, {
@@ -389,7 +389,7 @@ export class IngestComponent implements OnInit {
         data: {
           type: 1,
           params: {
-            message: await this.commonService.get('PAGES.INGEST.DELETE_ARE_YOU_SURE') + docs.join(' ')
+            message: await this.commonService.get('PAGES.INGEST.DELETE_ARE_YOU_SURE') + docs.map(m => this.commonService.basename(m)).join(', ')
           }
         }
       });

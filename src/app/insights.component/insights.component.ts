@@ -384,6 +384,6 @@ export class InsightsComponent implements OnInit {
   }
 
   getRemoveMsg = (msg: string): string => {
-    return msg + ' ' + this.systemService.ragFiles.map(e => this.commonService.basename(e.name)).join(',');
+    return msg + ' ' + this.systemService.ragFiles.map(e => this.commonService.basename(e.name)).join(', ');
   }
 }

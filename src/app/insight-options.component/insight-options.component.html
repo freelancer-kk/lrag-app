@@ -64,7 +64,9 @@
         <div class="onerow">
           <mat-form-field class="full-width">
             <mat-label [matTooltip]="'PAGES.DETAIL.OCR_PROMPT_TIP' | translate">{{ 'PAGES.DETAIL.OCR_PROMPT' | translate }}</mat-label>
-            <textarea [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveChunkSettings()" matInput type="text" [(ngModel)]="systemService.ocrPrompt">{{ systemService.ocrPrompt }}</textarea>
+            <textarea cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveChunkSettings()" matInput type="text" [(ngModel)]="systemService.ocrPrompt">{{ systemService.ocrPrompt }}</textarea>
           </mat-form-field>                        
         </div>
       }
@@ -72,13 +74,17 @@
         <div class="onerow">
           <mat-form-field class="full-width">
             <mat-label [matTooltip]="'PAGES.DETAIL.RAG_PROMPT_TIP' | translate">{{ 'PAGES.DETAIL.RAG_PROMPT' | translate }}</mat-label>
-            <textarea [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
+            <textarea cdkTextareaAutosize
+            #autosize1="cdkTextareaAutosize"
+            [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
           </mat-form-field>                        
         </div>
         <div class="onerow">
           <mat-form-field class="full-width">
             <mat-label [matTooltip]="'PAGES.DETAIL.USER_PROMPT_TIP'| translate">{{ 'PAGES.DETAIL.USER_PROMPT' | translate }}</mat-label>
-            <textarea [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
+            <textarea cdkTextareaAutosize
+            #autosize2="cdkTextareaAutosize"
+            [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
           </mat-form-field>                        
         </div>
       }

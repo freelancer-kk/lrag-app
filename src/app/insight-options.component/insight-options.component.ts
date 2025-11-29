@@ -1,4 +1,4 @@
-import { Component, effect } from '@angular/core';
+import { Component, effect, inject, Injector, ViewChild, afterNextRender } from '@angular/core';
 import { SystemService } from '../core/services';
 import { EStatus } from '../shared/model';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,6 +14,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { SettingsService } from '../core/services/settings-service';
 import { OllamaService } from '../core/services/ollama-service';
 import { WatcherService } from '../core/services/watcher-service';
+import {CdkTextareaAutosize, TextFieldModule} from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-insight-options.component',
@@ -28,12 +29,19 @@ import { WatcherService } from '../core/services/watcher-service';
     FormsModule,
     ReactiveFormsModule,
     MatSlideToggleModule,
-    MatDialogModule
+    MatDialogModule,
+    TextFieldModule
   ],
   templateUrl: './insight-options.component.html',
   styleUrl: './insight-options.component.scss'
 })
 export class InsightOptionsComponent {
+  private _injector = inject(Injector);
+  
+  @ViewChild('autosize') autosize: CdkTextareaAutosize | undefined;
+  @ViewChild('autosize1') autosize1: CdkTextareaAutosize | undefined;
+  @ViewChild('autosize2') autosize2: CdkTextareaAutosize | undefined;
+
   overallStatus: EStatus | undefined;
   insightStatus: EStatus | undefined;
 
@@ -49,7 +57,20 @@ export class InsightOptionsComponent {
     effect(() => {      
       this.insightStatus = this.systemService.insightStatus.get();
       this.overallStatus = this.systemService.mainStatus.get();      
-    })
+    })    
   }
 
+  triggerResize = () => {
+    // Wait for content to render, then trigger textarea resize.
+    afterNextRender(
+      () => {
+        this.autosize?.resizeToFitContent(true);
+        this.autosize1?.resizeToFitContent(true);
+        this.autosize2?.resizeToFitContent(true);
+      },
+      {
+        injector: this._injector,
+      },
+    );
+  }
 }
