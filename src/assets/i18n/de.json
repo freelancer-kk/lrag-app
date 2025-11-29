@@ -2,6 +2,7 @@
   "DARK": "Dunkel",
   "DOWNLOAD": "Herunterladen",
   "CANCEL": "Stornieren",
+  "ADD": "Hinzufügen",
   "OK": "Ok",
   "WARNING": "Warnung",
   "PAUSE": "Pause",
@@ -259,7 +260,8 @@
       "MODEL": "Modell",
       "MODEL_SETTINGS_TIP": "Passen Sie Modelleinstellungen wie Kontextgröße, k-Größe, Filterung usw. an",
       "OCR_CONTEXT_SIZE": "OCR-Kontextgröße",
-      "OCR_CONTEXT_SIZE_TIP": "Passen Sie optional die OCR-Kontextgröße an, um sie optimal an die Dokumente anzupassen, die Sie per OCR erfassen möchten. Auf 0 setzen, um die Standardeinstellung zu verwenden"
+      "OCR_CONTEXT_SIZE_TIP": "Passen Sie optional die OCR-Kontextgröße an, um sie optimal an die Dokumente anzupassen, die Sie per OCR erfassen möchten. Auf 0 setzen, um die Standardeinstellung zu verwenden",
+      "DOC_REMOVE_CONTEXT_TIP": "Angehängte Dokumente entfernen"
     },
     "HELP": {
       "TITLE": "Uber",

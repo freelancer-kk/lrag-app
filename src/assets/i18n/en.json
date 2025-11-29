@@ -2,6 +2,7 @@
   "DARK": "Dark",
   "DOWNLOAD": "Download",
   "CANCEL": "Cancel",
+  "ADD": "Add",
   "OK": "Ok",
   "WARNING": "Warning",
   "PAUSE": "Pause",
@@ -259,7 +260,8 @@
         "FILES": "Documents",
         "MODEL_SETTINGS_TIP": "Adjust model settings such as context size, k size, filtering etc...",
         "OCR_CONTEXT_SIZE": "OCR Context Size",
-        "OCR_CONTEXT_SIZE_TIP": "Optionally adjust the OCR context size to best fit the documents you are attempting to OCR. Set to 0 to use default"
+        "OCR_CONTEXT_SIZE_TIP": "Optionally adjust the OCR context size to best fit the documents you are attempting to OCR. Set to 0 to use default",
+        "DOC_REMOVE_CONTEXT_TIP": "Remove attached documents"
       },
       "HELP": {
         "TITLE": "About",

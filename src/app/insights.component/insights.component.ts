@@ -372,7 +372,7 @@ export class InsightsComponent implements OnInit {
         maxWidth: '95vw',
         maxHeight: '95vh',
         width: '100%',
-        height: '60%',        
+        height: '80%',        
         position: { top: '100px' },
         panelClass: 'full-screen-modal',
         hasBackdrop: false,
@@ -381,5 +381,9 @@ export class InsightsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (result: boolean) => {
       this.isSettingsOpen = false;      
     });    
+  }
+
+  getRemoveMsg = (msg: string): string => {
+    return msg + ' ' + this.systemService.ragFiles.map(e => this.commonService.basename(e.name)).join(',');
   }
 }

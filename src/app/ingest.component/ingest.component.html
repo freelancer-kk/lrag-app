@@ -182,13 +182,12 @@
       </mat-grid-list>
     </div>
   </mat-dialog-content>
-  <mat-dialog-actions align="end">
+  <mat-dialog-actions align="end">    
+    <button matButton [disabled]="systemService.ragFiles.length === 0 || (!(overallStatus === EStatus.running_healthy && docsHealthy() && !hasOCR))" [mat-dialog-close]="true" cdkFocusInitial>{{ 'ADD' | translate }}</button>
+    <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
     <div class="fab-flex-container">
       <button matFab [disabled]="!hasChecked()" aria-label="Clear" (click)="removeChecked($event)">
         <mat-icon>delete</mat-icon>
       </button>
-    </div>      
-  
-    <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy() && !hasOCR)" [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
-    <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+    </div>  
   </mat-dialog-actions>
