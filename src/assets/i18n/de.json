@@ -129,7 +129,7 @@
         "TITLE": "Upgrade auf Pro",
         "LINE1": "Zugang zu unserem Support-Ticketsystem, das von erfahrenen Mitarbeitern betreut wird",
         "LINE2": "Zugriff auf mehrere Sammlungen, erweiterte Optionen zum Einbetten, semantisches Chunking und Prompt-Tuning",
-        "LINE3": "Zugang zu spezialisierten, anspruchsvollen, domänenspezifischen und Cloud Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw. (in Kürze erhältlich)",
+        "LINE3": "Zugang zu spezialisierten, anspruchsvollen, domänenspezifischen, deepseek ocr und Cloud Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw. (in Kürze erhältlich)",
         "LINE4": "Regelmäßige Modellaktualisierungen und Zugriff auf multimodale Modelle, Bilder, Videos usw. (kommt später)"
       },
       "GO_PROPLUS": {
@@ -242,7 +242,7 @@
       "RUNNING_TIP": "Abhängig von Ihrem PC variiert die Verarbeitungszeit für Ihre Frage",
       "OPTIONS": "Optionen",
       "SEARCH": "Abrufbezogen",
-      "PROMPT_OPTS":"OCR und Eingabeaufforderung bezogen",
+      "PROMPT_OPTS": "OCR und Eingabeaufforderung bezogen",
       "K_SIZE": "Anzahl der Ergebnisse",
       "K_SIZE_TIP": "Um eine Frage zu beantworten, möchten Sie in der Regel die Top 4 -Ergebnisse aus Ihren Dokumenten vornehmen. In bestimmten Fällen müssen Sie jedoch möglicherweise diesen Wert ändern, z. B. während der Analyse einer großen Anzahl von Transaktionen",
       "FILTER": "Filter",
@@ -261,7 +261,8 @@
       "MODEL_SETTINGS_TIP": "Passen Sie Modelleinstellungen wie Kontextgröße, k-Größe, Filterung usw. an",
       "OCR_CONTEXT_SIZE": "OCR-Kontextgröße",
       "OCR_CONTEXT_SIZE_TIP": "Passen Sie optional die OCR-Kontextgröße an, um sie optimal an die Dokumente anzupassen, die Sie per OCR erfassen möchten. Auf 0 setzen, um die Standardeinstellung zu verwenden",
-      "DOC_REMOVE_CONTEXT_TIP": "Angehängte Dokumente entfernen"
+      "DOC_REMOVE_CONTEXT_TIP": "Angehängte Dokumente entfernen",
+      "QUERY_TOO_LONG_WARNING": "Die Bearbeitung Ihrer Frage dauert sehr lange. Möglicherweise ist Ihr PC überlastet. Beenden Sie die Anwendung und versuchen Sie es erneut mit einer genaueren Frage"
     },
     "HELP": {
       "TITLE": "Uber",
@@ -285,5 +286,5 @@
       "EMAIL_SUPPORT_TITLE": "Unterstützung",
       "EMAIL_SUPPORT": "Begrenzte E -Mail -Support - support@divm.com"
     }
-  }  
+  }
 }

@@ -13,6 +13,8 @@ export class MediaService {
   loadedIndex: boolean = false;
   rootPath: string = '';
   filesChecked: boolean[] = [];
+  ocrRequiredStr: string | undefined;
+  unknownStr: string | undefined;
 
   constructor(
     private systemService: SystemService,
@@ -21,6 +23,12 @@ export class MediaService {
     this.systemService.lragfiles('rootpath', {}).then((value: string) => {
       this.rootPath = value;
     });
+    this.commonService.get('PAGES.INGEST.OCR_NEEDED').then((value: string) => {
+      this.ocrRequiredStr = value;
+    })
+    this.commonService.get('PAGES.INGEST.UNKNOWN').then((value: string) => {
+      this.unknownStr = value;
+    })
   }
 
   getFileSize = (fileSize: number): number => {
@@ -90,15 +98,16 @@ export class MediaService {
   }
 
   areAllCSV = async (): Promise<boolean> => {
-    const files: any = await this.ls();
-    return files.length > 0 && files.filter((v: any) => v.name.toLowerCase().endsWith('.csv')).length === files.length;
+    const files: any[] = [];
+    await this.ls((names: any[]) => { files.push(names); }, true);
+    return files.length > 0 && files.filter((v: any) => v && v.name && v.name.toLowerCase().endsWith('.csv')).length === files.length;
   }
 
-  getFiles = async (force: boolean): Promise<string[]> => {
+  getFiles = async (cb: (names: string[]) => void, force: boolean): Promise<string[]> => {
     if (!this.loadedIndex) {
       this.loadedIndex = true;
       await this.loadIndex();
-      this.docStatus = [];
+      this.docStatus = [];      
     }
     if (this.files.length === 0 || force) {
       this.docStatus = [];
@@ -130,6 +139,7 @@ export class MediaService {
                 // console.log('getFiles:status:new:', this.docStatus[this.docStatus.length - 1]);
               }
             }
+            cb(this.getStatusFromFile(name));
           }        
           this.files = names;
           return this.files;
@@ -138,6 +148,9 @@ export class MediaService {
         }
       });
     } else {
+      cb(this.files.map((v: string) => {
+        return this.getStatusFromFile(v);        
+      }));
       return Promise.resolve(this.files);
     }
   }
@@ -201,36 +214,38 @@ export class MediaService {
     });
   }
 
-  ls = (force: boolean = false) : Promise<any[]> => {    
-    return this.getFiles(force).then(async (names: string[]) => {
+  getStatusFromFile = (v: string): any => {
+    if (this.docStatus) {
+      const statusEntry: any = this.docStatus.find(f => f.name === v);
+      if (statusEntry) {
+        return { 
+          name: v,
+          status: statusEntry.status > 1 ? (this.systemService.localVector ? 1 : 2) : statusEntry.status,
+          text: statusEntry.text ? statusEntry.text : this.ocrRequiredStr
+        }
+      } else {
+        return { 
+          name: v,
+          status: 0,
+          text: v.toLowerCase().endsWith('.pdf') ? this.ocrRequiredStr : ''
+        }
+      }
+    } else {
+      return { 
+        name: v,
+        status: 3,
+        text: this.unknownStr
+      }          
+    }
+  }
+
+  ls = (cb: (names: any[]) => void, force: boolean = false) : Promise<any[]> => {    
+    return this.getFiles(cb, force).then(async (names: string[]) => {
       if (names.length > 0) {
         this.filesChecked = [...Array(names.length - 1).fill(false)];
       }
-      const ocrRequired: string = await this.commonService.get('PAGES.INGEST.OCR_NEEDED');
-      const unknown: string = await this.commonService.get('PAGES.INGEST.UNKNOWN');
       return names.map((v: string) => {
-        if (this.docStatus) {
-          const statusEntry: any = this.docStatus.find(f => f.name === v);
-          if (statusEntry) {
-            return { 
-              name: v,
-              status: statusEntry.status > 1 ? (this.systemService.localVector ? 1 : 2) : statusEntry.status,
-              text: statusEntry.text ? statusEntry.text : ocrRequired
-            }
-          } else {
-            return { 
-              name: v,
-              status: 0,
-              text: v.toLowerCase().endsWith('.pdf') ? ocrRequired : ''
-            }
-          }
-        } else {
-          return { 
-            name: v,
-            status: 3,
-            text: unknown
-          }
-        }
+        return this.getStatusFromFile(v);        
       });      
     })
   }

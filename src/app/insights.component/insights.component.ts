@@ -132,11 +132,12 @@ export class InsightsComponent implements OnInit {
     const selectedCollection: any = this.systemService.collections.find(f => f.name === this.systemService.collection).value
     console.log('selected:', selectedCollection);
     this.systemService.selectedCollections.setValue(selectedCollection);
-    this.systemService.ragFiles = await this.mediaService.ls();
+    this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
   }
 
   check = () => {
-    this.mediaService.ls().then((files: any[]) => {
+    const files: any[] = [];
+    this.mediaService.ls((names: string[]) => { files.push(names); }).then((files: any[]) => {
       this.systemService.docsEmpty = (files.length === 0)
     })
   }
@@ -190,7 +191,19 @@ export class InsightsComponent implements OnInit {
       this.systemService.insightStatus.update(EStatus.thinking);
       this.streaming = true;
       this.streamedResponse = '';
+      const questionTimeout = setTimeout(async () => {
+        this.dialog.open(
+          AlertComponent, {
+            data: {
+              type: 2,
+              params: {
+                message: await this.commonService.get('PAGES.INSIGHT.QUERY_TOO_LONG_WARNING')
+              }
+            }
+        });        
+      }, 180000)
       const answerResponse: any = await this.systemService.commandInsight('question', options);
+      clearTimeout(questionTimeout);
       const { answer, error, docSources } = answerResponse;
       this.streamedResponse = '';
       this.streaming = false;
@@ -320,7 +333,7 @@ export class InsightsComponent implements OnInit {
     this.clearHistory();
     await this.systemService.saveChunkSettings();
     this.mediaService.loadedIndex = false;    
-    this.systemService.ragFiles = await this.mediaService.ls(true);    
+    this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); }, true);
   }
 
   addDocuments = async (ev: any) => {

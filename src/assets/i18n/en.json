@@ -129,7 +129,7 @@
           "TITLE": "Upgrade To Pro",
           "LINE1": "Access to our support ticketing system run by expert agents",
           "LINE2": "Access to multiple collections, advanced options for embedding, semantic chunking and prompt tuning",
-          "LINE3": "Access to specialised, sophisticated, domain specific and cloud models e.g focussing on Law, Finance etc. (coming soon)",
+          "LINE3": "Access to specialised, sophisticated, domain specific, deepseek ocr and cloud models e.g focussing on Law, Finance etc. (coming soon)",
           "LINE4": "Regular model updates and access to multi modal models, images, video etc. (coming later)"
         },
         "GO_PROPLUS": {
@@ -261,7 +261,8 @@
         "MODEL_SETTINGS_TIP": "Adjust model settings such as context size, k size, filtering etc...",
         "OCR_CONTEXT_SIZE": "OCR Context Size",
         "OCR_CONTEXT_SIZE_TIP": "Optionally adjust the OCR context size to best fit the documents you are attempting to OCR. Set to 0 to use default",
-        "DOC_REMOVE_CONTEXT_TIP": "Remove attached documents"
+        "DOC_REMOVE_CONTEXT_TIP": "Remove attached documents",
+        "QUERY_TOO_LONG_WARNING": "Your question is taking a long time to process, it is possible your PC is overloaded. Exit the application and try again with a more precise question"
       },
       "HELP": {
         "TITLE": "About",

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect } from '@angular/core';
+import { Component, OnInit, inject, effect, NgZone } from '@angular/core';
 import { MatButtonModule, MatFabButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { SystemService } from '../core/services/system/system.service';
@@ -99,6 +99,7 @@ export class IngestComponent implements OnInit {
     public ollamaService: OllamaService,
     public mediaService: MediaService,
     private router: Router,
+    private ngZone: NgZone
   ) {
     effect(() => {
       this.ingestStatus = this.systemService.ingestStatus.get();
@@ -138,7 +139,10 @@ export class IngestComponent implements OnInit {
     const selectedCollection: any = this.systemService.collections.find(f => f.name === this.systemService.collection).value
     console.log('selected:', selectedCollection);
     this.systemService.selectedCollections.setValue(selectedCollection);
-    this.systemService.ragFiles = await this.mediaService.ls(true);
+    this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { 
+      console.log('PUSHING:', names);
+      this.systemService.ragFiles.push(names); 
+    }, true);
     console.log('ragFiles:', this.systemService.ragFiles);
   }
 
@@ -190,6 +194,7 @@ export class IngestComponent implements OnInit {
           }
         }
       ).then(async (result: any) => {
+        this.isUploading = false;      
         console.log('ingest result:', result);
         this.afterLastFinish = false;
         setTimeout(() => {
@@ -197,7 +202,7 @@ export class IngestComponent implements OnInit {
         }, 2000);
         await this.mediaService.saveIndex();
         if ((result && result.status === 'completed')) {
-          this.systemService.ragFiles = await this.mediaService.ls(true);
+          this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); }, true);
           this.systemService.ingestStatus.update(EStatus.not_running);          
           this.ollamaService.resetChatHistory();
           const snackBarRef = this._snackBar.open(
@@ -230,11 +235,12 @@ export class IngestComponent implements OnInit {
         }
         */
       }).catch(async (e) => {
+        this.isUploading = false;
         console.error('ingest error:', e);      
         this.systemService.ingestStatus.update(EStatus.error);
         const snackBarRef2 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK',
         { panelClass: ['ingest-snackbar-positioning'] });
-        this.systemService.ragFiles = await this.mediaService.ls();
+        this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
         snackBarRef2.onAction().subscribe(() => {
           this.systemService.ingestStatus.update(EStatus.not_running);
         });      
@@ -257,7 +263,7 @@ export class IngestComponent implements OnInit {
   }
 
   dropped = async (files: NgxFileDropEntry[]) => {
-    // TODO: take care when uploading the same file again IT SHOULD NOT BE IGNORED AS IS THE CASE
+    console.log('dropped:event:called');
     this.isUploading = true;
     const totalLength: number = files.length + this.systemService.ragFiles.length;
     this.totalUploaded = 0;
@@ -290,11 +296,16 @@ export class IngestComponent implements OnInit {
                 console.log('Total uploaded:', file.name, this.totalUploaded, files.length);
                 await this.mediaService.completedUpload(file);
                 if (this.totalUploaded === files.length) {
-                  console.log('starting ingestion after All files uploaded!');
-                  this.isUploading = false;
-                  this.systemService.ragFiles = await this.mediaService.ls(true);
-                  this.systemService.ingestStatus.update(EStatus.uploaded);                  
-                  this.startIngestion();
+                  console.log('total file upload reached!');
+                  this.ngZone.run(async () => {
+                    this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); }, true);
+                    this.systemService.ingestStatus.update(EStatus.uploaded);
+                    setTimeout(() => {
+                      this.isUploading = false;
+                    }, 60000);
+                    console.log('starting ingestion after All files uploaded!', this.systemService.ragFiles);
+                    this.startIngestion();               
+                  });
                 };
               };
               reader.onerror = (event: any) => {
@@ -312,7 +323,7 @@ export class IngestComponent implements OnInit {
               await this.mediaService.startUpload(file);
               reader.readAsArrayBuffer(file); // read file as data url
             } finally {
-              this.isUploading = false;
+              // this.isUploading = false;
               this.systemService.ingestStatus.update(EStatus.uploaded);
             }
             
@@ -320,6 +331,7 @@ export class IngestComponent implements OnInit {
         } else {
           const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
           console.log(droppedFile.relativePath, fileEntry);
+          this.isUploading = false;
           this._snackBar.open(await this.commonService.get('PAGES.INGEST.DIR_NOT_SUPPORTED'), 'OK',
           {
             panelClass: ['ingest-snackbar-positioning']
@@ -327,12 +339,12 @@ export class IngestComponent implements OnInit {
         }
       }
     } else {
+      this.isUploading = false;
       this._snackBar.open(await this.commonService.get('PAGES.INGEST.TOO_MANY_FILES') + this.systemService.MAX_FILES, 'OK',
         {
           panelClass: ['ingest-snackbar-positioning']
         });
-    }
-    
+    }    
   }
 
   fileOver = (event: any) => {
@@ -372,8 +384,8 @@ export class IngestComponent implements OnInit {
               this.systemService.ragFiles.splice(fIdx, 1);            
             }
           }
-          this.systemService.ragFiles = await this.mediaService.ls(true);
-          // await this.startIngestion();
+          this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); }, true);
+          this.startIngestion();
         }
         this.systemService.selectedDocuments.setValue('');
       });    
@@ -402,7 +414,10 @@ export class IngestComponent implements OnInit {
             this.systemService.ragFiles.splice(fIdx, 1);            
           }
         }
-        this.systemService.ragFiles = await this.mediaService.ls(true);
+        this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); }, true);
+        if (this.systemService.ragFiles.length > 0) {
+          this.startIngestion();
+        }
       }
     });    
   }
@@ -455,7 +470,7 @@ export class IngestComponent implements OnInit {
           console.log('selectedCollection:', this.collection, selectedCollection);
           this.systemService.selectedCollections.setValue(selectedCollection);
           this.systemService.collection = this.collection;          
-          this.systemService.ragFiles = await this.mediaService.ls(true);          
+          this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); }, true);
           console.log('ragFiles:', this.systemService.ragFiles);
           this.addColState = false;
         } else {
@@ -472,7 +487,7 @@ export class IngestComponent implements OnInit {
     console.log('change to collection:', this.systemService.collection)
     await this.systemService.saveChunkSettings();
     this.mediaService.loadedIndex = false;    
-    this.systemService.ragFiles = await this.mediaService.ls(true);        
+   this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); }, true);
   }
 
   collectionRemove = async (ev: any) => {
@@ -496,7 +511,7 @@ export class IngestComponent implements OnInit {
           this.systemService.collection = "general";
           const generalCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
           this.systemService.selectedCollections.setValue(generalCollection);
-          this.systemService.ragFiles = await this.mediaService.ls(true);          
+          this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
           await this.systemService.saveChunkSettings();
         }
       });

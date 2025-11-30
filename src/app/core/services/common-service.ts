@@ -34,7 +34,7 @@ export class CommonService {
   }
 
   basename = (fullpath: string): string => {    
-    return path.basename(fullpath.replace(/\\/g,'/'));
+    return fullpath ? path.basename(fullpath.replace(/\\/g,'/')) : fullpath;
   }
 
   setEnvValue = (key: string, value: string): Promise<string> => {

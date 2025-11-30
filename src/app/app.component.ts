@@ -115,7 +115,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_ERROR')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
+                this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
               }                            
             })            
           }
@@ -135,7 +135,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_PREPARE')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
+                this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
               }                            
             })
           }
@@ -154,7 +154,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_START')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
+                this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
               }                            
             })
           }
@@ -173,7 +173,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_DONE')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();                
+                this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
               }                            
             })
           }
@@ -209,7 +209,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_ERROR')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
+                this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
               }                            
             })            
           }
@@ -229,7 +229,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_START')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
+                this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
               }                            
             })
           }
@@ -278,7 +278,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_COMPLETE')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
+                this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
               }                            
             })
           }
@@ -302,7 +302,7 @@ export class AppComponent implements OnInit {
                   text: await this.commonService.get('PAGES.INGEST.OCR_DONE')
                 });               
                 // }
-                this.systemService.ragFiles = await this.mediaService.ls(true);                
+                this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); }, true);
               }                            
             })
           }
@@ -698,7 +698,7 @@ export class AppComponent implements OnInit {
                     status: 0,
                     text: ''
                   });
-                  console.log('doc statuses:', this.mediaService.docStatus);
+                  // console.log('doc statuses:', this.mediaService.docStatus);
                 }
               }
             })            
@@ -749,7 +749,7 @@ export class AppComponent implements OnInit {
                     status: 0,
                     text: 'embedded'
                   });
-                  console.log('doc statuses:', this.mediaService.docStatus);
+                  // console.log('doc statuses:', this.mediaService.docStatus);
                 }
               }
             })
@@ -837,7 +837,7 @@ export class AppComponent implements OnInit {
   navigateAway = async () => {
     if (this.firstRun) {
       this.firstRun = false;
-      this.systemService.ragFiles = await this.mediaService.ls();
+      this.systemService.ragFiles = []; await this.mediaService.ls((names: any[]) => { this.systemService.ragFiles.push(names); });
       /*
       if (this.mediaService.noOfValidFiles() > 0) {
         this.router.navigate(['insights']);
