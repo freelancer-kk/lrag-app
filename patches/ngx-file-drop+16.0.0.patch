@@ -1,0 +1,32 @@
+diff --git a/node_modules/ngx-file-drop/esm2022/lib/ngx-file-drop.component.mjs b/node_modules/ngx-file-drop/esm2022/lib/ngx-file-drop.component.mjs
+index 47cb21f..e8fd80b 100644
+--- a/node_modules/ngx-file-drop/esm2022/lib/ngx-file-drop.component.mjs
++++ b/node_modules/ngx-file-drop/esm2022/lib/ngx-file-drop.component.mjs
+@@ -196,9 +196,9 @@ export class NgxFileDropComponent {
+                         }
+                         else {
+                             for (let i = 0; i < entries.length; i++) {
+-                                this.zone.run(() => {
++                                // this.zone.run(() => {
+                                     this.traverseFileTree(entries[i], path + entries[i].name);
+-                                });
++                                // });
+                             }
+                         }
+                     }
+diff --git a/node_modules/ngx-file-drop/fesm2022/ngx-file-drop.mjs b/node_modules/ngx-file-drop/fesm2022/ngx-file-drop.mjs
+index 911ba4f..dc6ffde 100644
+--- a/node_modules/ngx-file-drop/fesm2022/ngx-file-drop.mjs
++++ b/node_modules/ngx-file-drop/fesm2022/ngx-file-drop.mjs
+@@ -220,9 +220,9 @@ class NgxFileDropComponent {
+                         }
+                         else {
+                             for (let i = 0; i < entries.length; i++) {
+-                                this.zone.run(() => {
++                                // this.zone.run(() => {
+                                     this.traverseFileTree(entries[i], path + entries[i].name);
+-                                });
++                                // });
+                             }
+                         }
+                     }

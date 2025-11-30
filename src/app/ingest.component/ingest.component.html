@@ -1,4 +1,4 @@
-  @if (!docsHealthy()) {
+  @if (!docsHealthy() || isUploading) {
     <div class="spinner-container">
       <mat-spinner></mat-spinner>
     </div>
@@ -160,7 +160,7 @@
               <!--
               <mat-icon matListItemIcon class="success">checkmark</mat-icon>
               -->
-              <mat-checkbox [(ngModel)]="mediaService.filesChecked[$index]"></mat-checkbox>
+              <mat-checkbox [disabled]="overallStatus !== EStatus.running_healthy" [(ngModel)]="mediaService.filesChecked[$index]"></mat-checkbox>
             } @else if (entry.status === 1) {
               <!--
               <mat-icon matListItemIcon class="danger">close</mat-icon>
@@ -186,7 +186,7 @@
     <button matButton [disabled]="systemService.ragFiles.length === 0 || (!(overallStatus === EStatus.running_healthy && docsHealthy() && !hasOCR))" [mat-dialog-close]="true" cdkFocusInitial>{{ 'ADD' | translate }}</button>
     <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
     <div class="fab-flex-container">
-      <button matFab [disabled]="!hasChecked()" aria-label="Clear" (click)="removeChecked($event)">
+      <button matFab [disabled]="!hasChecked() || overallStatus !== EStatus.running_healthy" aria-label="Clear" (click)="removeChecked($event)">
         <mat-icon>delete</mat-icon>
       </button>
     </div>  

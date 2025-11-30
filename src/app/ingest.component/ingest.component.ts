@@ -197,9 +197,9 @@ export class IngestComponent implements OnInit {
         }, 2000);
         await this.mediaService.saveIndex();
         if ((result && result.status === 'completed')) {
-          this.systemService.ingestStatus.update(EStatus.not_running);
           this.systemService.ragFiles = await this.mediaService.ls(true);
-          this.ollamaService.resetChatHistory
+          this.systemService.ingestStatus.update(EStatus.not_running);          
+          this.ollamaService.resetChatHistory();
           const snackBarRef = this._snackBar.open(
             await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
             duration: 10000,
@@ -258,7 +258,7 @@ export class IngestComponent implements OnInit {
 
   dropped = async (files: NgxFileDropEntry[]) => {
     // TODO: take care when uploading the same file again IT SHOULD NOT BE IGNORED AS IS THE CASE
-
+    this.isUploading = true;
     const totalLength: number = files.length + this.systemService.ragFiles.length;
     this.totalUploaded = 0;
     this.fileProgress = 0;
@@ -278,7 +278,6 @@ export class IngestComponent implements OnInit {
               const reader: FileReader = new FileReader();          
               reader.onloadstart = (event: any) => {
                 console.log('onloadstart:', file.name);                
-                this.isUploading = true;
                 this.systemService.ingestStatus.update(EStatus.uploading);
               };              
               reader.onload = async (event: any) => {
@@ -293,8 +292,8 @@ export class IngestComponent implements OnInit {
                 if (this.totalUploaded === files.length) {
                   console.log('starting ingestion after All files uploaded!');
                   this.isUploading = false;
-                  this.systemService.ingestStatus.update(EStatus.uploaded);
                   this.systemService.ragFiles = await this.mediaService.ls(true);
+                  this.systemService.ingestStatus.update(EStatus.uploaded);                  
                   this.startIngestion();
                 };
               };
