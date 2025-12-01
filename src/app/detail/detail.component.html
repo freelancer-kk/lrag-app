@@ -5,12 +5,14 @@
     {{ 'PAGES.DETAIL.MODEL_ACCURACY' | translate }}  
   </sub>
 </h1>
+<!--
 @if (systemService.brand === 'Nvidia' || systemService.brand === 'Intel' || systemService.brand === 'Amd') {
   <span class="spacer"></span>
   <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="ollamaService.gpuAcceleration" (change)="switchGPUAccel($event)">
     {{ 'GPU_ACCEL' | translate }}
   </mat-slide-toggle>
 }
+-->
   </div>
   <div class="onerow">
     <mat-form-field class="full-width">
@@ -60,7 +62,7 @@
     <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'PAGES.DETAIL.USE_WATCHER_TIP' | translate" [checked]="ollamaService.useTesseractJS" (change)="switchOCR($event)">
       {{ 'PAGES.DETAIL.USE_WATCHER' | translate }}
     </mat-slide-toggle>
-    @if (!ollamaService.useTesseractJS) {
+    @if (!ollamaService.useTesseractJS && systemService.totalMainMemory > 12) {
       <div class="onerow">
         <mat-form-field class="full-width">
           <mat-label>{{ 'PAGES.DETAIL.OCR_MODEL_SELECT' | translate }}</mat-label>
