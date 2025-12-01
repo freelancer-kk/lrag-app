@@ -12,8 +12,6 @@ import ContextChat from './ContextChat';
 import { Systeminformation } from 'systeminformation';
 import AppUpdates from './AppUpdates';
 import ReRankerService from './RerankerService';
-import OCRProcessor from './OCRProcessor';
-import WatcherService from './WatcherService';
 import LicenseService from './LicenseService';
 import OCRllmProcessor from './OCRllmProcessor';
 import OCRJSProcessor from './OCRJSProcessor';
@@ -39,12 +37,9 @@ let tray: Tray;
 let favIconPath: string;
 let favImage: Electron.NativeImage;
 let appUpdates: AppUpdates;
-let watcherService: WatcherService;
-let ocrProcessor: OCRProcessor;
 let ocrLlmProcessor: OCRllmProcessor;
 let ocrJSProcessor: OCRJSProcessor;
 let licenseService: LicenseService;
-let useWatcher: boolean = false;
 let useTesseractJS: boolean = false;
 
 log.initialize();
@@ -104,45 +99,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     const gpuAcceleration: boolean = gpuAccelerationStr && gpuAccelerationStr.toLowerCase() === "true" ? true : false;
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
-    const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');
-    
-    if (useWatcher) {
-      const ghostscript_version: string | undefined = await dockerEnv.getKeyValue('GHOSTSCRIPT_VERSION');
-      const watcher_version: string | undefined = await dockerEnv.getKeyValue('WATCHER_VERSION');
-      
-      const watcher_win_dl = toolsDLS.WATCHER_WIN_DOWNLOAD_LINK;
-      const watcher_mac_dl = toolsDLS.WATCHER_MAC_DOWNLOAD_LINK;
-      
-      if (ghostscript_version && watcher_version && watcher_win_dl && watcher_mac_dl) {
-        log.info('Initialising watcher service:', watcher_version, toolsDLS.WATCHER_VERSION, watcher_win_dl, watcher_mac_dl);
-        watcherService = new WatcherService(
-          watcher_version,
-          toolsDLS.WATCHER_VERSION,
-          watcher_mac_dl,
-          watcher_win_dl,
-          ghostscript_version,
-          toolsDLS.GHOSTSCRIPT_WIN_DOWNLOAD_LINK,
-          toolsDLS.HOMEBREW_MAC_DOWNLOAD_LINK,         
-          toolsDLS.HOMEBREW_MAC_VERSION,
-          toolsDLS.GHOSTSCRIPT_MAC_DOWNLOAD_LINK,
-          toolsDLS.TESSERACT_WIN_VERSION,
-          toolsDLS.TESSERACT_WIN_DOWNLOAD_LINK,
-          path.join(userDataPath, 'watcher'),
-          userTempPath,
-          appDataPath,
-          async () => {
-            await dockerEnv.kvFile?.set('WATCHER_VERSION', toolsDLS.WATCHER_VERSION);
-            await dockerEnv.kvFile?.writeFile();
-          }
-        )
-        watcherService.register(win?.webContents);
-        await watcherService.install();
-      } else {
-        log.info('Ignoring WATCHER service:', watcher_version, watcher_win_dl, watcher_mac_dl);
-      }
-      ocrProcessor = new OCRProcessor(watcherService, dockerEnv);
-      await ocrProcessor.start();
-    }
+    const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');    
     
     const darwin_dl = toolsDLS.DARWIN_DOWNLOAD_LINK;
     const ipex_dl = toolsDLS.IPEX_DOWNLOAD_LINK;
@@ -341,8 +298,7 @@ try {
         log.info('main:ready-to-show');
         log.info('main:starting services if already installed:');      
         ollamaService.startIfInstalled();
-        rerankerService.startIfInstalled();
-        if (useWatcher) { watcherService.startIfInstalled(); }
+        rerankerService.startIfInstalled();        
         browserWin.show();
       })      
     }, 400)    
@@ -352,8 +308,7 @@ try {
     log.info("before-quit: abort any transactions ollama may be doing");
     ollamaService.abort();
     await ollamaService.stop();
-    await rerankerService.stop();
-    if (useWatcher) { await watcherService.stop(); }
+    await rerankerService.stop();    
   });
 
   /*
