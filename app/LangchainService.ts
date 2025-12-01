@@ -18,7 +18,7 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import SemanticChunking, { LanguageTypes } from './SemanticChunking';
 import * as fs from 'fs';
-import OCRProcessor from './OCRProcessor';
+import OCRJSProcessor from './OCRJSProcessor';
 import { v4 as uuidv4 } from 'uuid';
 import log from 'electron-log/main';
 import OCRllmProcessor from './OCRllmProcessor';
@@ -39,12 +39,12 @@ export default class LangchainService {
   numOfDocs: number = 0;
   semanticChunking: SemanticChunking;
   vectorStoreType: EVectorStoreType | undefined;
-  ocrProcessor: OCRProcessor | undefined;
+  ocrJSProcessor: OCRJSProcessor | undefined;
   ocrLLMProcessor: OCRllmProcessor;
   uuid: string;
   baseUrl: string;
 
-  constructor(doc_path: string, db_dir: string, ocrProcessor: OCRProcessor | undefined, ocrLLMProcessor: OCRllmProcessor, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
+  constructor(doc_path: string, db_dir: string, ocrJSProcessor: OCRJSProcessor | undefined, ocrLLMProcessor: OCRllmProcessor, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
     this.root_doc_path = doc_path;
     mkdirSync(path.join(db_dir, 'hnsw'), { recursive: true });
@@ -61,7 +61,7 @@ export default class LangchainService {
     
     this.semanticChunking = new SemanticChunking(baseUrl, model);
 
-    this.ocrProcessor = ocrProcessor; 
+    this.ocrJSProcessor = ocrJSProcessor; 
     this.ocrLLMProcessor = ocrLLMProcessor;         
           
     this.uuid = uuidv4();
@@ -72,7 +72,7 @@ export default class LangchainService {
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
     this.semanticChunking.register(webContents);
-    this.ocrProcessor?.register(webContents);
+    this.ocrJSProcessor?.register(webContents);
     this.ocrLLMProcessor.register(webContents);
     ipcMain.on('ingest', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
@@ -309,7 +309,8 @@ export default class LangchainService {
     }
   }
 
-  OCRDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
+  /*
+  OCRWatcherDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
     let hasOCRTasks: boolean = false;
     const file_names: string[] = fs.readdirSync(doc_path);
     const loaded_doc_names: string[] = [];
@@ -342,8 +343,9 @@ export default class LangchainService {
 
     return hasOCRTasks;
   }
+  */
 
-  OCRLlmDocs = async (ocrobj: any, loaded_docs: Document[], doc_path: string): Promise<boolean> => {
+  OCRDocs = async (ocrobj: any, loaded_docs: Document[], doc_path: string, ocrProcessor: OCRllmProcessor | OCRJSProcessor): Promise<boolean> => {
     await this.ocrLLMProcessor.init(ocrobj);
     
     let hasOCRTasks: boolean = false;
@@ -359,11 +361,8 @@ export default class LangchainService {
       if (loaded_doc_names.findIndex(ldn => path.basename(ldn) === fn) === -1) {
         if (fn.endsWith('pdf') || fn.endsWith('PDF')) {
           // file has not been loaded convert to md
-          log.info('OCR:LLM:convert:', path.join(doc_path, fn));
-
-          this.ocrLLMProcessor.put(
-            path.join(doc_path, fn)
-          )          
+          log.info('OCR:convert:', path.join(doc_path, fn));
+          ocrProcessor.put(path.join(doc_path, fn))           
           hasOCRTasks = true;                  
         } else {
           log.info('OCR ignoring non pdf:', fn);
@@ -386,10 +385,10 @@ export default class LangchainService {
       let hasOCRTasks: boolean = false
       if (params.localVector === false) {
         // Check for OCR
-        if (this.ocrProcessor) {       
-          hasOCRTasks = await this.OCRDocs(docs, this.doc_path);
+        if (this.ocrJSProcessor) {       
+          hasOCRTasks = await this.OCRDocs(params.ocr, docs, this.doc_path, this.ocrJSProcessor);
         } else {
-          hasOCRTasks = await this.OCRLlmDocs(params.ocr, docs, this.doc_path);
+          hasOCRTasks = await this.OCRDocs(params.ocr, docs, this.doc_path, this.ocrLLMProcessor);
         }
       }
       if (!hasOCRTasks) {

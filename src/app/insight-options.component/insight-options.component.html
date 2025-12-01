@@ -42,7 +42,7 @@
       </div>
     </mat-expansion-panel>
   }
-  @if (!watcherService.useWatcher || (settingsService.isActivePro() && ollamaService.useDocContext)) {
+  @if (!ollamaService.useTesseractJS || (settingsService.isActivePro() && ollamaService.useDocContext)) {
     <mat-expansion-panel expanded="false">
       <mat-expansion-panel-header>
       <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
@@ -50,7 +50,7 @@
         {{ 'PAGES.INSIGHT.PROMPT_OPTS' | translate }}
       </mat-panel-description>
     </mat-expansion-panel-header> 
-      @if (!watcherService.useWatcher) {  
+      @if (!ollamaService.useTesseractJS) {  
         <div class="onerow">
             <mat-label [matTooltip]="'PAGES.INSIGHT.OCR_CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.OCR_CONTEXT_SIZE' | translate }}&nbsp;(k)</mat-label>&nbsp;
             <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="0" max="4096" step="32" showTickMarks discrete>

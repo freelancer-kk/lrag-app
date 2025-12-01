@@ -57,10 +57,10 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'PAGES.DETAIL.USE_WATCHER_TIP' | translate" [checked]="watcherService.useWatcher" (change)="switchWatcher($event)">
+    <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'PAGES.DETAIL.USE_WATCHER_TIP' | translate" [checked]="ollamaService.useTesseractJS" (change)="switchOCR($event)">
       {{ 'PAGES.DETAIL.USE_WATCHER' | translate }}
     </mat-slide-toggle>
-    @if (!watcherService.useWatcher) {
+    @if (!ollamaService.useTesseractJS) {
       <div class="onerow">
         <mat-form-field class="full-width">
           <mat-label>{{ 'PAGES.DETAIL.OCR_MODEL_SELECT' | translate }}</mat-label>

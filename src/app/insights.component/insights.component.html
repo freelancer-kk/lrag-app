@@ -26,7 +26,7 @@
     <mat-icon>folder_delete</mat-icon>
   </button>
   }
-  @if (ollamaService.useDocContext || !watcherService.useWatcher) {
+  @if (ollamaService.useDocContext || !ollamaService.useTesseractJS) {
   <button [disabled]="isSettingsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_SETTINGS_TIP' | translate" matIconButton (click)="openSettings($event)">
     <mat-icon>settings</mat-icon>
   </button>
@@ -43,7 +43,8 @@
 @if (overallStatus === EStatus.running_healthy) {
   <mat-form-field class="full-width">
     <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
-    <textarea [disabled]="insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.question">{{ systemService.question }}</textarea>
+    <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+    [disabled]="insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.question">{{ systemService.question }}</textarea>
     @if (systemService.question && systemService.question.length>0 && insightStatus !== EStatus.thinking) {
       <button matSuffix matIconButton aria-label="Clear" (click)="askQuestion()">
         <mat-icon>arrow_circle_right</mat-icon>

@@ -201,7 +201,7 @@
         "OCR_ERROR": "OCR conversion failed",
         "OCR_PREPARE": "OCR conversion preparing",
         "OCR_START": "OCR conversion starting",
-        "OCR_COMPLETE": "OCR conversion finishing",
+        "OCR_COMPLETE": "OCR conversion finished",
         "OCR_DONE": "OCR conversion done",
         "UNKNOWN": "Not embedded",
         "INDEX": "Embed documents",

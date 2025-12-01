@@ -20,7 +20,6 @@ import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
 import { SettingsService } from '../core/services/settings-service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { WatcherService } from '../core/services/watcher-service';
 
 export interface ModelDialogData {
   params: any;
@@ -66,7 +65,6 @@ export class DetailComponent implements OnInit {
     public commonService: CommonService,
     public systemService: SystemService,
     public ollamaService: OllamaService,
-    public watcherService: WatcherService,
     public settingsService: SettingsService,
   ) {    
     effect(() => {
@@ -116,7 +114,7 @@ export class DetailComponent implements OnInit {
     })
   }
 
-  switchWatcher = async (event: any) => {    
+  switchOCR = async (event: any) => {    
     const dialogRef = this.dialog.open(
       AlertComponent, {
         data: {
@@ -129,8 +127,8 @@ export class DetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (result) => {
       console.log(`Dialog result: ${result}`);
       if (result === true) {            
-        this.watcherService.useWatcher = event.checked;
-        await this.commonService.setEnvValue('USE_WATCHER', this.watcherService.useWatcher ? 'true' : 'false');
+        this.ollamaService.useTesseractJS = event.checked;
+        await this.commonService.setEnvValue('USE_TESSERACTJS', this.ollamaService.useTesseractJS ? 'true' : 'false');
           const dialogRef = this.dialog.open(
             AlertComponent, {
               data: {

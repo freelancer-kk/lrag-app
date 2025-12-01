@@ -16,6 +16,7 @@ import OCRProcessor from './OCRProcessor';
 import WatcherService from './WatcherService';
 import LicenseService from './LicenseService';
 import OCRllmProcessor from './OCRllmProcessor';
+import OCRJSProcessor from './OCRJSProcessor';
 
 const userHomePath: string = app.getPath('home');
 // const assetsPakFolderPath: string = app.getPath('assets');
@@ -41,8 +42,10 @@ let appUpdates: AppUpdates;
 let watcherService: WatcherService;
 let ocrProcessor: OCRProcessor;
 let ocrLlmProcessor: OCRllmProcessor;
+let ocrJSProcessor: OCRJSProcessor;
 let licenseService: LicenseService;
 let useWatcher: boolean = false;
+let useTesseractJS: boolean = false;
 
 log.initialize();
 
@@ -84,12 +87,12 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
   const totalMemory: number = Math.ceil(await systemInfo.getTotalMemory()/1024/1024/1024)
   log.info('System Total Memory:', totalMemory);
   if (totalMemory < 12) {
-    useWatcher = true;
-    await dockerEnv.forceWatcher();
+    useTesseractJS = true;
+    await dockerEnv.forceTesseractJS();
   } else {
-    useWatcher = await dockerEnv.getKeyValue('USE_WATCHER')?.toLowerCase() === 'true' ? true : false;
+    useTesseractJS = await dockerEnv.getKeyValue('USE_TESSERACTJS')?.toLowerCase() === 'true' ? true : false;
   }
-  log.info('Use Watcher Service:', useWatcher);
+  log.info('Use Tesseract Service:', useTesseractJS);
   
 
   await systemInfo.getGraphics().then(async (graphics: Systeminformation.GraphicsData) => {
@@ -176,12 +179,16 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
       }      
     }
 
+    ocrJSProcessor = new OCRJSProcessor(userTempPath);
+    await ocrJSProcessor.start();
+
     ocrLlmProcessor = new OCRllmProcessor(ollamaService, userTempPath);
     await ocrLlmProcessor.start();
+
     langchainService = new LangchainService(
       docPath ? docPath : path.join(userDataPath, 'docs'),
       path.join(appDataPath, 'lrag-app', 'lrag'),
-      useWatcher ? ocrProcessor : undefined,
+      useTesseractJS ? ocrJSProcessor : undefined,
       ocrLlmProcessor
     );
     langchainService.register(win?.webContents);

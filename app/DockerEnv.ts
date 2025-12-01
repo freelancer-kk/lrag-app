@@ -13,7 +13,8 @@ const mergeKeys: string[] = [
   "GHOSTSCRIPT_VERSION",
   "RERANKER_VERSION",
   "WATCHER_VERSION",
-  "USE_WATCHER"
+  "USE_WATCHER",
+  "USE_TESSERACTJS"
 ];
 
 const overwriteKeys: string[] = [
@@ -140,8 +141,8 @@ export default class DockerEnv {
     this.generateEnvFile();
   }
 
-  forceWatcher = async () => {
-    await this.kvFile?.set('USE_WATCHER', 'true');
+  forceTesseractJS = async () => {
+    await this.kvFile?.set('USE_TESSERACTJS', 'true');
     await this.kvFile?.writeFile();
   }
 

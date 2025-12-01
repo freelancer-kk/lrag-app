@@ -99,11 +99,15 @@ export class MediaService {
 
   areAllCSV = async (): Promise<boolean> => {
     const files: any[] = [];
-    await this.ls((names: any[]) => { files.push(names); }, true);
+    await this.ls((entries: any[]) => { 
+      entries.forEach((e: any) => {
+        files.push(e);   
+      })      
+    }, true);
     return files.length > 0 && files.filter((v: any) => v && v.name && v.name.toLowerCase().endsWith('.csv')).length === files.length;
   }
 
-  getFiles = async (cb: (names: string[]) => void, force: boolean): Promise<string[]> => {
+  getFiles = async (cb: (entries: any[]) => void, force: boolean): Promise<string[]> => {
     if (!this.loadedIndex) {
       this.loadedIndex = true;
       await this.loadIndex();
@@ -139,7 +143,7 @@ export class MediaService {
                 // console.log('getFiles:status:new:', this.docStatus[this.docStatus.length - 1]);
               }
             }
-            cb(this.getStatusFromFile(name));
+            cb([this.getStatusFromFile(name)]);
           }        
           this.files = names;
           return this.files;
@@ -239,14 +243,13 @@ export class MediaService {
     }
   }
 
-  ls = (cb: (names: any[]) => void, force: boolean = false) : Promise<any[]> => {    
+  ls = (cb: (entries: any[]) => void, force: boolean = false) : Promise<any[]> => {    
     return this.getFiles(cb, force).then(async (names: string[]) => {
       if (names.length > 0) {
         this.filesChecked = [...Array(names.length - 1).fill(false)];
       }
-      return names.map((v: string) => {
-        return this.getStatusFromFile(v);        
-      });      
+      const theFiles: any[] = names.map((n: string) => this.getStatusFromFile(n));
+      return theFiles;
     })
   }
 

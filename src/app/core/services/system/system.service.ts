@@ -7,8 +7,8 @@ import { connOptions, EStatus, IHistory } from '../../../shared/model';
 import { OllamaService } from '../ollama-service';
 import { CommonService, LStatus } from '../common-service';
 import { RerankerService } from '../reranker-service';
-import { WatcherService } from '../watcher-service';
 import { SettingsService } from '../settings-service';
+import { MediaService } from '../media/media.service';
 
 
 @Injectable({
@@ -81,8 +81,7 @@ export class SystemService {
     private settingsService: SettingsService,
     private commonService: CommonService,
     private ollamaService: OllamaService,
-    private rerankerService: RerankerService,
-    private watcherService: WatcherService
+    private rerankerService: RerankerService
   ) {}
 
   saveMainHistory = () => {
@@ -114,6 +113,15 @@ export class SystemService {
       ).subscribe()
     );
   }
+  
+  refreshFileList = (mediaService: MediaService, force: boolean = false): Promise<any[]> => {
+    this.ragFiles = [];
+    return mediaService.ls((entries: any[]) => { 
+      entries.forEach(e => {
+        this.ragFiles.push(e);
+      })
+    }, force);    
+  }
 
   destroy = (): void => {
     this.subscription.unsubscribe();
@@ -144,7 +152,7 @@ export class SystemService {
 
   setOverallStatus = (): EStatus => {
     if (this.ollamaService.status.get() === EStatus.running) {
-      if (this.modelStatus.get() === EStatus.running && this.watcherService.status.get() === EStatus.running && this.rerankerService.status.get() === EStatus.running && this.ingestStatus.get() === EStatus.not_running && this.gpuChangeStatus.get() === EStatus.not_running) {
+      if (this.modelStatus.get() === EStatus.running && this.rerankerService.status.get() === EStatus.running && this.ingestStatus.get() === EStatus.not_running && this.gpuChangeStatus.get() === EStatus.not_running) {
         this.mainStatus.update(EStatus.running_healthy);
       } else {
         this.mainStatus.update(EStatus.running_unhealthy);
