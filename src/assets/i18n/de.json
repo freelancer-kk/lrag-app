@@ -265,9 +265,8 @@
       "QUERY_TOO_LONG_WARNING": "Die Bearbeitung Ihrer Frage dauert sehr lange. Möglicherweise ist Ihr PC überlastet. Beenden Sie die Anwendung und versuchen Sie es erneut mit einer genaueren Frage"
     },
     "HELP": {
-      "TITLE": "Uber",
-      "WHAT_IS_LRAG_TITLE": "Uber LRag",
-      "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is a 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",
+      "TITLE": "HELP",
+      "DESC": "Über die folgenden Links erhalten Sie Zugriff auf unser Forum und unsere Wissensdatenbank",
       "USEFUL_LINKS": "Useful Links",
       "KB_LINK": "Knowledge Base",
       "FORUM_LINK": "Öffentliches Forum",
@@ -285,6 +284,14 @@
       "GPU": "LRag versucht, die Verarbeitung nach Möglichkeit mit Ihrer GPU zu beschleunigen. ",
       "EMAIL_SUPPORT_TITLE": "Unterstützung",
       "EMAIL_SUPPORT": "Begrenzte E -Mail -Support - support@divm.com"
+    },
+    "LEGAL": {
+      "TITLE": "Legal",
+      "LEGAL": "Datenschutz, EUA und Sicherheit",
+      "LEGAL_DESC": "Hier finden Sie unsere Datenschutzbestimmungen, Nutzungsbedingungen, Endbenutzer-Lizenzvereinbarung, Datenschutz- und Sicherheitsrichtlinien. Bitte lesen Sie die Richtlinien und aktivieren Sie die Kontrollkästchen, um die Anwendung nutzen zu können",
+      "PRIVACY_POLICY_LINK": "Datenschutzrichtlinie",
+      "EUA_POLICY_LINK": "Endbenutzer-Lizenzvereinbarung",
+      "SECURITY_POLICY_LINK": "Sicherheitsrichtlinie"
     }
   }
 }

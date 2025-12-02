@@ -1,0 +1,26 @@
+<div class="legal">
+  <p>{{ 'PAGES.LEGAL.LEGAL_DESC' | translate }}</p>
+  <p>&copy; Copyright K.N.Khaleque 2025 All rights reserved</p>
+  <ul>
+    <li>
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.pp_link)">
+        {{ 'PAGES.LEGAL.PRIVACY_POLICY_LINK' | translate }}
+      </a>
+      <mat-checkbox [(ngModel)]="commonService.accept_pp"></mat-checkbox>      
+    </li>
+    <br/>
+    <li>      
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.eua_link)">
+        {{ 'PAGES.LEGAL.EUA_POLICY_LINK' | translate }}
+      </a>
+      <mat-checkbox [(ngModel)]="commonService.accept_eua"></mat-checkbox>
+    </li>
+    <br/>
+    <li>      
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.security_link)">
+        {{ 'PAGES.LEGAL.SECURITY_POLICY_LINK' | translate }}
+      </a>
+      <mat-checkbox [(ngModel)]="commonService.accept_security"></mat-checkbox>
+    </li>    
+  </ul>
+</div>

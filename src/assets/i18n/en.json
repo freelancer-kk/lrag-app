@@ -265,9 +265,8 @@
         "QUERY_TOO_LONG_WARNING": "Your question is taking a long time to process, it is possible your PC is overloaded. Exit the application and try again with a more precise question"
       },
       "HELP": {
-        "TITLE": "About",
-        "WHAT_IS_LRAG_TITLE": "About LRag",
-        "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is a 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",
+        "TITLE": "Help",
+        "DESC": "The links below provide access our forum and knowledge base",
         "USEFUL_LINKS": "Useful Links",
         "KB_LINK": "Knowledge Base",
         "FORUM_LINK": "Public Forum",
@@ -285,6 +284,14 @@
         "GPU": "LRag attempts to accelerate processing using your GPU whenever possible. Intel support is relatively new, if you are having problems starting, switch of GPU acceleration",
         "EMAIL_SUPPORT_TITLE": "Support",
         "EMAIL_SUPPORT": "Limited email support - support@divm.com"
+      },
+      "LEGAL": {
+        "TITLE": "Legal",
+        "LEGAL": "Privacy, EUA and Security",
+        "LEGAL_DESC": "Here you will find our Data Privacy, End User License Agreement and Security Compliance Policies. Please read the policies and check the boxes in order to use the application",
+        "PRIVACY_POLICY_LINK": "Data Privacy Policy",
+        "EUA_POLICY_LINK": "End User License Agreement",
+        "SECURITY_POLICY_LINK": "Security Policy"
       }
   }
 }

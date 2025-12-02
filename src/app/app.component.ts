@@ -695,14 +695,20 @@ export class AppComponent implements OnInit {
     this.systemService.forum_link = await this.commonService.getEnvValue('FORUM_URL');
     this.systemService.support_link = await this.commonService.getEnvValue('TICKET_URL');
     this.systemService.register_link = await this.commonService.getEnvValue('REGISTRATION_URL');
+    this.systemService.pp_link = await this.commonService.getEnvValue('PRIVACY_POLICY_URL');
+    this.systemService.eua_link = await this.commonService.getEnvValue('EUA_URL');
+    this.systemService.security_link = await this.commonService.getEnvValue('SECURITY_URL');
+    this.commonService.accept_pp = (await this.commonService.getEnvValue('ACCEPT_PP') === 'true') ? true : false;
+    this.commonService.accept_eua = (await this.commonService.getEnvValue('ACCEPT_EUA') === 'true') ? true : false;
+    this.commonService.accept_security = (await this.commonService.getEnvValue('ACCEPT_SECURITY') === 'true') ? true : false;
     
     setTimeout(() => {
       this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
       /*
       * Comment out since only necessary for reload
       */
-      // this.ollamaService.startOnTimer();
-      // this.rerankerService.startIfNecessary();          
+      this.ollamaService.startOnTimer();
+      this.rerankerService.startIfNecessary();          
     }, 400)   
   }
 

@@ -19,6 +19,7 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MediaService } from '../core/services';
 import { SplashComponent } from '../splash.component/splash.component';
+import { LegalComponent } from '../legal.component/legal.component';
 import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
 import { CommonService } from '../core/services/common-service';
@@ -42,7 +43,8 @@ import { RerankerService } from '../core/services/reranker-service';
       MatChipsModule,
       MatTooltipModule,
       MatSlideToggleModule,
-      SplashComponent 
+      SplashComponent,
+      LegalComponent
     ]
 })
 export class HomeComponent implements OnInit, OnDestroy {

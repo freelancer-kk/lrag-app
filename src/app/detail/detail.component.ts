@@ -37,7 +37,6 @@ export interface ModelDialogData {
       MatInputModule,
       MatSelectModule,
       MatFormFieldModule,
-      MatToolbar,
       MatIconModule,
       MatChipsModule,
       MatToolbarModule,

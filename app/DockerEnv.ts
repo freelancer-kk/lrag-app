@@ -12,7 +12,10 @@ const mergeKeys: string[] = [
   "IPEX_VERSION",
   "RERANKER_VERSION",
   "USE_WATCHER",
-  "USE_TESSERACTJS"
+  "USE_TESSERACTJS",
+  "ACCEPT_PP",
+  "ACCEPT_EUA",
+  "ACCEPT_SECURITY"
 ];
 
 const overwriteKeys: string[] = [
@@ -29,6 +32,9 @@ const overwriteKeys: string[] = [
   "FORUM_URL",
   "REGISTRATION_URL",
   "KB_URL",
+  "PRIVACY_POLICY_URL",
+  "EUA_URL",
+  "SECURITY_URL",
   "LICENSE_GET_URL",
   "LICENSE_ACTIVATE_URL",
   "OLLAMA_KEYS_URL"

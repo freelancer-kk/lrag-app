@@ -10,8 +10,18 @@
         </mat-expansion-panel-header>
         <app-splash></app-splash>
       </mat-expansion-panel>        
-    </mat-accordion>    
-
+    </mat-accordion>
+    <mat-accordion>
+      <mat-expansion-panel #legal [expanded]="!(commonService.accept_pp && commonService.accept_eua && commonService.accept_security)" (afterCollapse)="commonService.writeAcceptance($event)">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ 'PAGES.LEGAL.TITLE' | translate }}</mat-panel-title>
+          <mat-panel-description>
+            {{ 'PAGES.LEGAL.LEGAL' | translate }}
+          </mat-panel-description>          
+        </mat-expansion-panel-header>
+        <app-legal></app-legal>
+      </mat-expansion-panel>      
+    </mat-accordion>
     <mat-accordion>
       <mat-expansion-panel [expanded]="!systemService.hasBasicSetup || systemService.appVersionChange || systemService.servicesDownloading || overallStatus !== EStatus.running_healthy">
         <mat-expansion-panel-header>
