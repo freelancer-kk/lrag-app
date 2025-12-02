@@ -18,7 +18,46 @@ export class OllamaService {
   
   availableModels: any[] = [];
   models: any[] = [
-    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, cloud: false, memory: 1, description: ''},
+    {
+      "value": "gemma3:1b",
+      "viewValue": "gemma3:1b - tiny, fast, sacrifices accuracy (<1GB)",
+      "thinking": false,
+      "cloud": false,
+      "memory": 1,
+      "description": "The current, most capable model that runs on a single GPU"
+    },
+    {
+      "value": "granite3-dense:2b",
+      "viewValue": "granite3-dense:2b - small, fast, trade off accuracy (<2GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 2,
+      "description": "The IBM Granite 2B and 8B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
+    },
+    {
+      "value": "llama3-chatqa:8b",
+      "viewValue": "llama3-chatqa:8b - focus on Rag queries (<5GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 5,
+      "description": "A model from NVIDIA based on Llama 3 that excels at conversational question answering (QA) and retrieval-augmented generation (RAG)"
+    },
+    {
+      "value": "deepseek-r1:14b",
+      "viewValue": "deepseek-r1:14b - Reasoning model with great performance (<12GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 9,
+      "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+    },
+    {
+      "value": "deepseek-r1:32b",
+      "viewValue": "deepseek-r1:32b - Reasoning model, performance and accuracy (<22GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 32,
+      "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+    }
   ];
   embedding_models: any[] = [    
     {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, cloud: false, memory: 1, description: 'EmbeddingGemma is a 300M parameter embedding model from Google'},    
