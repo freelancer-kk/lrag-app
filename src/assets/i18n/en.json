@@ -161,7 +161,7 @@
         "REFRESH_LLM_TIP": "Download updates for previously downloaded models",
         "CLOUD": "Cloud Options",
         "API_KEY": "Ollama API Key",
-        "ACTIVATE": "Confirm",
+        "ACTIVATE": "Set",
         "EXIT_AFTER_ACTIVATION": "Ollama API key set. The application will exit and must be restarted",
         "GET_OLLAMA_KEY": "Get Key",
         "EMBEDDED_MODEL": "Other Models",
