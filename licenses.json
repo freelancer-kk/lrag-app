@@ -1,0 +1,4054 @@
+{
+  "@angular/cdk@20.2.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/components",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\cdk",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@angular\\cdk\\LICENSE"
+  },
+  "@angular/common@20.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular",
+    "publisher": "angular",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\common",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@angular\\common\\LICENSE"
+  },
+  "@angular/compiler@20.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular",
+    "publisher": "angular",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\compiler",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@angular\\compiler\\LICENSE"
+  },
+  "@angular/core@20.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular",
+    "publisher": "angular",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\core",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@angular\\core\\LICENSE"
+  },
+  "@angular/forms@20.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular",
+    "publisher": "angular",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\forms",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@angular\\forms\\LICENSE"
+  },
+  "@angular/language-service@20.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular",
+    "publisher": "angular",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\language-service"
+  },
+  "@angular/material@20.2.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/components",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\material",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@angular\\material\\LICENSE"
+  },
+  "@angular/platform-browser-dynamic@20.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular",
+    "publisher": "angular",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\platform-browser-dynamic",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@angular\\platform-browser-dynamic\\LICENSE"
+  },
+  "@angular/platform-browser@20.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular",
+    "publisher": "angular",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\platform-browser",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@angular\\platform-browser\\LICENSE"
+  },
+  "@angular/router@20.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular",
+    "publisher": "angular",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@angular\\router",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@angular\\router\\LICENSE"
+  },
+  "@anthropic-ai/sdk@0.27.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/anthropics/anthropic-sdk-typescript",
+    "publisher": "Anthropic",
+    "email": "support@anthropic.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@anthropic-ai\\sdk",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@anthropic-ai\\sdk\\LICENSE"
+  },
+  "@babel/runtime@7.28.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/babel/babel",
+    "publisher": "The Babel Team",
+    "url": "https://babel.dev/team",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@babel\\runtime",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@babel\\runtime\\LICENSE"
+  },
+  "@browserbasehq/sdk@2.6.0": {
+    "licenses": "Apache*",
+    "repository": "https://github.com/browserbase/sdk-node",
+    "publisher": "Browserbase",
+    "email": "support@browserbase.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@browserbasehq\\sdk",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@browserbasehq\\sdk\\LICENSE"
+  },
+  "@browserbasehq/stagehand@1.14.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/browserbase/stagehand",
+    "publisher": "Browserbase",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@browserbasehq\\stagehand",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@browserbasehq\\stagehand\\LICENSE"
+  },
+  "@cfworker/json-schema@4.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/cfworker/cfworker",
+    "publisher": "Jeremy Danyow",
+    "email": "jdanyow@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@cfworker\\json-schema",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@cfworker\\json-schema\\README.md"
+  },
+  "@graphql-typed-document-node/core@3.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dotansimha/graphql-typed-document-node",
+    "publisher": "Dotan Simha",
+    "email": "dotansimha@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@graphql-typed-document-node\\core",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@graphql-typed-document-node\\core\\LICENSE"
+  },
+  "@grpc/grpc-js@1.13.4": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/grpc/grpc-node/tree/master/packages/grpc-js",
+    "publisher": "Google Inc.",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@grpc\\grpc-js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@grpc\\grpc-js\\LICENSE"
+  },
+  "@grpc/proto-loader@0.7.15": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/grpc/grpc-node",
+    "publisher": "Google Inc.",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@grpc\\proto-loader",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@grpc\\proto-loader\\LICENSE"
+  },
+  "@ibm-cloud/watsonx-ai@1.6.13": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/IBM/watsonx-ai-node-sdk",
+    "publisher": "IBM Corp.",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@ibm-cloud\\watsonx-ai",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@ibm-cloud\\watsonx-ai\\LICENSE"
+  },
+  "@isaacs/cliui@8.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/yargs/cliui",
+    "publisher": "Ben Coe",
+    "email": "ben@npmjs.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\LICENSE.txt"
+  },
+  "@js-sdsl/ordered-map@4.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/js-sdsl/js-sdsl",
+    "publisher": "ZLY201",
+    "email": "951711127@qq.com",
+    "url": "https://github.com/js-sdsl/js-sdsl",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@js-sdsl\\ordered-map",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@js-sdsl\\ordered-map\\LICENSE"
+  },
+  "@langchain/community@0.3.56": {
+    "licenses": "MIT",
+    "repository": "https://github.com/langchain-ai/langchainjs",
+    "publisher": "LangChain",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\community",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\community\\LICENSE"
+  },
+  "@langchain/core@0.3.77": {
+    "licenses": "MIT",
+    "repository": "https://github.com/langchain-ai/langchainjs",
+    "publisher": "LangChain",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\core",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\core\\LICENSE"
+  },
+  "@langchain/ollama@0.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/langchain-ai/langchainjs",
+    "publisher": "LangChain",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\ollama",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\ollama\\LICENSE"
+  },
+  "@langchain/openai@0.6.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/langchain-ai/langchainjs",
+    "publisher": "LangChain",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\openai",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\openai\\LICENSE"
+  },
+  "@langchain/textsplitters@0.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/langchain-ai/langchainjs",
+    "publisher": "LangChain",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\textsplitters",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\textsplitters\\LICENSE"
+  },
+  "@langchain/weaviate@0.2.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/langchain-ai/langchainjs",
+    "publisher": "LangChain",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\weaviate",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\weaviate\\LICENSE"
+  },
+  "@mongodb-js/saslprep@1.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mongodb-js/devtools-shared",
+    "publisher": "Dmitry Tsvettsikh",
+    "email": "me@reklatsmasters.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@mongodb-js\\saslprep",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@mongodb-js\\saslprep\\LICENSE"
+  },
+  "@napi-rs/canvas-win32-x64-msvc@0.1.82": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Brooooooklyn/canvas",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@napi-rs\\canvas-win32-x64-msvc",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@napi-rs\\canvas-win32-x64-msvc\\README.md"
+  },
+  "@napi-rs/canvas@0.1.82": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Brooooooklyn/canvas",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@napi-rs\\canvas",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@napi-rs\\canvas\\LICENSE"
+  },
+  "@pkgjs/parseargs@0.11.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/pkgjs/parseargs",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@pkgjs\\parseargs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@pkgjs\\parseargs\\LICENSE"
+  },
+  "@playwright/test@1.55.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/microsoft/playwright",
+    "publisher": "Microsoft Corporation",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@playwright\\test",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@playwright\\test\\LICENSE",
+    "noticeFile": "C:\\projects\\lrag-app\\node_modules\\@playwright\\test\\NOTICE"
+  },
+  "@protobufjs/aspromise@1.1.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\aspromise",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\aspromise\\LICENSE"
+  },
+  "@protobufjs/base64@1.1.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\base64",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\base64\\LICENSE"
+  },
+  "@protobufjs/codegen@2.0.4": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\codegen",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\codegen\\LICENSE"
+  },
+  "@protobufjs/eventemitter@1.1.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\eventemitter",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\eventemitter\\LICENSE"
+  },
+  "@protobufjs/fetch@1.1.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\fetch",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\fetch\\LICENSE"
+  },
+  "@protobufjs/float@1.0.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\float",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\float\\LICENSE"
+  },
+  "@protobufjs/inquire@1.1.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\inquire",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\inquire\\LICENSE"
+  },
+  "@protobufjs/path@1.1.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\path",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\path\\LICENSE"
+  },
+  "@protobufjs/pool@1.1.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\pool",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\pool\\LICENSE"
+  },
+  "@protobufjs/utf8@1.1.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/dcodeIO/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\utf8",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@protobufjs\\utf8\\LICENSE"
+  },
+  "@redis/bloom@1.2.0": {
+    "licenses": "MIT",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@redis\\bloom",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@redis\\bloom\\README.md"
+  },
+  "@redis/client@1.6.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/redis/node-redis",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@redis\\client",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@redis\\client\\README.md"
+  },
+  "@redis/graph@1.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/redis/node-redis",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@redis\\graph",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@redis\\graph\\README.md"
+  },
+  "@redis/json@1.0.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/redis/node-redis",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@redis\\json",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@redis\\json\\README.md"
+  },
+  "@redis/search@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/redis/node-redis",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@redis\\search",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@redis\\search\\README.md"
+  },
+  "@redis/time-series@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/redis/node-redis",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@redis\\time-series",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@redis\\time-series\\README.md"
+  },
+  "@splidejs/splide@4.1.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Splidejs/splide",
+    "publisher": "Naotoshi Fujita",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@splidejs\\splide",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@splidejs\\splide\\LICENSE"
+  },
+  "@tokenizer/token@0.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Borewit/tokenizer-token",
+    "publisher": "Borewit",
+    "url": "https://github.com/Borewit",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@tokenizer\\token",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@tokenizer\\token\\README.md"
+  },
+  "@tootallnate/once@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/once",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@tootallnate\\once",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@tootallnate\\once\\LICENSE"
+  },
+  "@types/debug@4.1.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@types\\debug",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@types\\debug\\LICENSE"
+  },
+  "@types/ms@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@types\\ms",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@types\\ms\\LICENSE"
+  },
+  "@types/node-fetch@2.6.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@types\\node-fetch",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@types\\node-fetch\\LICENSE"
+  },
+  "@types/node@18.19.127": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@anthropic-ai\\sdk\\node_modules\\@types\\node",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@anthropic-ai\\sdk\\node_modules\\@types\\node\\LICENSE"
+  },
+  "@types/node@24.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@types\\node",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@types\\node\\LICENSE"
+  },
+  "@types/retry@0.12.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\langsmith\\node_modules\\@types\\retry",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\langsmith\\node_modules\\@types\\retry\\LICENSE"
+  },
+  "@types/tough-cookie@4.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@types\\tough-cookie",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@types\\tough-cookie\\LICENSE"
+  },
+  "@types/uuid@10.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@types\\uuid",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@types\\uuid\\LICENSE"
+  },
+  "@types/webidl-conversions@7.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@types\\webidl-conversions",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@types\\webidl-conversions\\LICENSE"
+  },
+  "@types/whatwg-url@11.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@types\\whatwg-url",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@types\\whatwg-url\\LICENSE"
+  },
+  "@xmldom/xmldom@0.8.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/xmldom/xmldom",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@xmldom\\xmldom",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@xmldom\\xmldom\\LICENSE"
+  },
+  "@yarnpkg/lockfile@1.1.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/yarnpkg/yarn/blob/master/packages/lockfile",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@yarnpkg\\lockfile",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@yarnpkg\\lockfile\\README.md"
+  },
+  "abab@2.0.6": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/jsdom/abab",
+    "publisher": "Jeff Carpenter",
+    "email": "gcarpenterv@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\abab",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\abab\\LICENSE.md"
+  },
+  "abort-controller-x@0.4.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/deeplay-io/abort-controller-x",
+    "publisher": "Daniel Lytkin",
+    "email": "aikoven@deeplay.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\abort-controller-x",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\abort-controller-x\\LICENSE.md"
+  },
+  "abort-controller@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mysticatea/abort-controller",
+    "publisher": "Toru Nagashima",
+    "url": "https://github.com/mysticatea",
+    "path": "C:\\projects\\lrag-app\\node_modules\\abort-controller",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\abort-controller\\LICENSE"
+  },
+  "acorn-globals@7.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ForbesLindesay/acorn-globals",
+    "publisher": "ForbesLindesay",
+    "path": "C:\\projects\\lrag-app\\node_modules\\acorn-globals",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\acorn-globals\\LICENSE"
+  },
+  "acorn-walk@8.3.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/acornjs/acorn",
+    "path": "C:\\projects\\lrag-app\\node_modules\\acorn-walk",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\acorn-walk\\LICENSE"
+  },
+  "acorn@8.15.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/acornjs/acorn",
+    "path": "C:\\projects\\lrag-app\\node_modules\\acorn",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\acorn\\LICENSE"
+  },
+  "adm-zip@0.5.16": {
+    "licenses": "MIT",
+    "repository": "https://github.com/cthackers/adm-zip",
+    "publisher": "Nasca Iacob",
+    "email": "sy@another-d-mention.ro",
+    "url": "https://github.com/cthackers",
+    "path": "C:\\projects\\lrag-app\\node_modules\\adm-zip",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\adm-zip\\LICENSE"
+  },
+  "afinn-165-financialmarketnews@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/theryan722/afinn-165-financialmarketnews",
+    "publisher": "Ryan O'Day",
+    "email": "romanguy722@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\afinn-165-financialmarketnews",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\afinn-165-financialmarketnews\\license"
+  },
+  "afinn-165@1.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/words/afinn-165",
+    "publisher": "Titus Wormer",
+    "email": "tituswormer@gmail.com",
+    "url": "https://wooorm.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\afinn-165",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\afinn-165\\license"
+  },
+  "agent-base@6.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/node-agent-base",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jsdom\\node_modules\\agent-base",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jsdom\\node_modules\\agent-base\\README.md"
+  },
+  "agentkeepalive@4.6.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/node-modules/agentkeepalive",
+    "publisher": "fengmk2",
+    "email": "fengmk2@gmail.com",
+    "url": "https://github.com/fengmk2",
+    "path": "C:\\projects\\lrag-app\\node_modules\\agentkeepalive",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\agentkeepalive\\LICENSE"
+  },
+  "ansi-regex@5.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/ansi-regex",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ansi-regex",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ansi-regex\\license"
+  },
+  "ansi-regex@6.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/ansi-regex",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\ansi-regex",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\ansi-regex\\license"
+  },
+  "ansi-styles@4.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/ansi-styles",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ansi-styles",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ansi-styles\\license"
+  },
+  "ansi-styles@5.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/ansi-styles",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\core\\node_modules\\ansi-styles",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\core\\node_modules\\ansi-styles\\license"
+  },
+  "ansi-styles@6.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/ansi-styles",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\ansi-styles",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\ansi-styles\\license"
+  },
+  "apparatus@0.0.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/NaturalNode/apparatus",
+    "publisher": "Chris Umbel",
+    "email": "chris@chrisumbel.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\apparatus",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\apparatus\\LICENSE.txt"
+  },
+  "argparse@2.0.1": {
+    "licenses": "Python-2.0",
+    "repository": "https://github.com/nodeca/argparse",
+    "path": "C:\\projects\\lrag-app\\node_modules\\argparse",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\argparse\\LICENSE"
+  },
+  "asn1@0.2.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/joyent/node-asn1",
+    "publisher": "Joyent",
+    "url": "joyent.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\asn1",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\asn1\\LICENSE"
+  },
+  "async@3.2.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/caolan/async",
+    "publisher": "Caolan McMahon",
+    "path": "C:\\projects\\lrag-app\\node_modules\\async",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\async\\LICENSE"
+  },
+  "asynckit@0.4.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/alexindigo/asynckit",
+    "publisher": "Alex Indigo",
+    "email": "iam@alexindigo.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\asynckit",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\asynckit\\LICENSE"
+  },
+  "at-least-node@1.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/RyanZim/at-least-node",
+    "publisher": "Ryan Zimmerman",
+    "email": "opensrc@ryanzim.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\at-least-node",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\at-least-node\\LICENSE"
+  },
+  "available-typed-arrays@1.0.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/available-typed-arrays",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\available-typed-arrays",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\available-typed-arrays\\LICENSE"
+  },
+  "axios@1.12.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/axios/axios",
+    "publisher": "Matt Zabriskie",
+    "path": "C:\\projects\\lrag-app\\node_modules\\axios",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\axios\\LICENSE"
+  },
+  "balanced-match@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/juliangruber/balanced-match",
+    "publisher": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\balanced-match",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\balanced-match\\LICENSE.md"
+  },
+  "base64-js@1.5.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/beatgammit/base64-js",
+    "publisher": "T. Jameson Little",
+    "email": "t.jameson.little@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\base64-js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\base64-js\\LICENSE"
+  },
+  "basic-auth@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jshttp/basic-auth",
+    "path": "C:\\projects\\lrag-app\\node_modules\\basic-auth",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\basic-auth\\LICENSE"
+  },
+  "bcrypt-pbkdf@1.0.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/joyent/node-bcrypt-pbkdf",
+    "path": "C:\\projects\\lrag-app\\node_modules\\bcrypt-pbkdf",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\bcrypt-pbkdf\\LICENSE"
+  },
+  "binary-extensions@2.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/binary-extensions",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\binary-extensions",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\binary-extensions\\license"
+  },
+  "bindings@1.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/node-bindings",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://tootallnate.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\bindings",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\bindings\\LICENSE.md"
+  },
+  "bl@1.2.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rvagg/bl",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\bl",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\bl\\LICENSE.md"
+  },
+  "bluebird@3.7.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/petkaantonov/bluebird",
+    "publisher": "Petka Antonov",
+    "email": "petka_antonov@hotmail.com",
+    "url": "http://github.com/petkaantonov/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\bluebird",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\bluebird\\LICENSE"
+  },
+  "bmp-js@0.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/shaozilee/bmp-js",
+    "publisher": "shaozilee",
+    "email": "shaozilee@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\bmp-js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\bmp-js\\LICENSE"
+  },
+  "brace-expansion@1.1.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/juliangruber/brace-expansion",
+    "publisher": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\glob\\node_modules\\brace-expansion",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\glob\\node_modules\\brace-expansion\\LICENSE"
+  },
+  "brace-expansion@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/juliangruber/brace-expansion",
+    "publisher": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\brace-expansion",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\brace-expansion\\LICENSE"
+  },
+  "braces@3.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromatch/braces",
+    "publisher": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert",
+    "path": "C:\\projects\\lrag-app\\node_modules\\braces",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\braces\\LICENSE"
+  },
+  "bson@6.10.4": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/mongodb/js-bson",
+    "publisher": "The MongoDB NodeJS Team",
+    "email": "dbx-node@mongodb.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\bson",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\bson\\LICENSE.md"
+  },
+  "buffer-alloc-unsafe@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/LinusU/buffer-alloc-unsafe",
+    "path": "C:\\projects\\lrag-app\\node_modules\\buffer-alloc-unsafe",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\buffer-alloc-unsafe\\readme.md"
+  },
+  "buffer-alloc@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/LinusU/buffer-alloc",
+    "path": "C:\\projects\\lrag-app\\node_modules\\buffer-alloc",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\buffer-alloc\\readme.md"
+  },
+  "buffer-crc32@0.2.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianloveswords/buffer-crc32",
+    "publisher": "Brian J. Brennan",
+    "email": "brianloveswords@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\buffer-crc32",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\buffer-crc32\\LICENSE"
+  },
+  "buffer-equal-constant-time@1.0.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/goinstant/buffer-equal-constant-time",
+    "publisher": "GoInstant Inc., a salesforce.com company",
+    "path": "C:\\projects\\lrag-app\\node_modules\\buffer-equal-constant-time",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\buffer-equal-constant-time\\LICENSE.txt"
+  },
+  "buffer-fill@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/LinusU/buffer-fill",
+    "path": "C:\\projects\\lrag-app\\node_modules\\buffer-fill",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\buffer-fill\\readme.md"
+  },
+  "buffer-from@1.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/LinusU/buffer-from",
+    "path": "C:\\projects\\lrag-app\\node_modules\\buffer-from",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\buffer-from\\LICENSE"
+  },
+  "buffer@5.7.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/buffer",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "C:\\projects\\lrag-app\\node_modules\\buffer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\buffer\\LICENSE"
+  },
+  "buffer@6.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/buffer",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "C:\\projects\\lrag-app\\node_modules\\readable-web-to-node-stream\\node_modules\\buffer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\readable-web-to-node-stream\\node_modules\\buffer\\LICENSE"
+  },
+  "call-bind-apply-helpers@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/call-bind-apply-helpers",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\call-bind-apply-helpers",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\call-bind-apply-helpers\\LICENSE"
+  },
+  "call-bind@1.0.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/call-bind",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\call-bind",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\call-bind\\LICENSE"
+  },
+  "call-bound@1.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/call-bound",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\call-bound",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\call-bound\\LICENSE"
+  },
+  "camelcase@6.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/camelcase",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\core\\node_modules\\camelcase",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\core\\node_modules\\camelcase\\license"
+  },
+  "chalk@4.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/chalk",
+    "path": "C:\\projects\\lrag-app\\node_modules\\chalk",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\chalk\\license"
+  },
+  "ci-info@3.9.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/watson/ci-info",
+    "publisher": "Thomas Watson Steen",
+    "email": "w@tson.dk",
+    "url": "https://twitter.com/wa7son",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ci-info",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ci-info\\LICENSE"
+  },
+  "cliui@8.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/yargs/cliui",
+    "publisher": "Ben Coe",
+    "email": "ben@npmjs.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@grpc\\proto-loader\\node_modules\\cliui",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@grpc\\proto-loader\\node_modules\\cliui\\LICENSE.txt"
+  },
+  "cluster-key-slot@1.1.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/Salakar/cluster-key-slot",
+    "publisher": "Mike Diarmid",
+    "email": "mike.diarmid@gmail.com",
+    "url": "http://github.com/Salakar/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\cluster-key-slot",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\cluster-key-slot\\LICENSE"
+  },
+  "color-convert@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Qix-/color-convert",
+    "publisher": "Heather Arthur",
+    "email": "fayearthur@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\color-convert",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\color-convert\\LICENSE"
+  },
+  "color-name@1.1.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/colorjs/color-name",
+    "publisher": "DY",
+    "email": "dfcreative@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\color-name",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\color-name\\LICENSE"
+  },
+  "combined-stream@1.0.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/felixge/node-combined-stream",
+    "publisher": "Felix Geisend├╢rfer",
+    "email": "felix@debuggable.com",
+    "url": "http://debuggable.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\combined-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\combined-stream\\License"
+  },
+  "commander@12.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tj/commander.js",
+    "publisher": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca",
+    "path": "C:\\projects\\lrag-app\\node_modules\\find-process\\node_modules\\commander",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\find-process\\node_modules\\commander\\LICENSE"
+  },
+  "commander@2.20.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tj/commander.js",
+    "publisher": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca",
+    "path": "C:\\projects\\lrag-app\\node_modules\\d3-dsv\\node_modules\\commander",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\d3-dsv\\node_modules\\commander\\LICENSE"
+  },
+  "complex.js@2.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rawify/Complex.js",
+    "publisher": "Robert Eisele",
+    "email": "robert@raw.org",
+    "url": "https://raw.org/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\complex.js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\complex.js\\LICENSE"
+  },
+  "concat-map@0.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/substack/node-concat-map",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\concat-map",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\concat-map\\LICENSE"
+  },
+  "concat-stream@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/maxogden/concat-stream",
+    "publisher": "Max Ogden",
+    "email": "max@maxogden.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\concat-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\concat-stream\\LICENSE"
+  },
+  "console-table-printer@2.14.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/console-table-printer/console-table-printer",
+    "publisher": "Nahiyan Kamal",
+    "path": "C:\\projects\\lrag-app\\node_modules\\console-table-printer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\console-table-printer\\LICENSE"
+  },
+  "core-util-is@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/isaacs/core-util-is",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\core-util-is",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\core-util-is\\LICENSE"
+  },
+  "corser@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/agrueneberg/Corser",
+    "publisher": "Alexander Gr├╝neberg",
+    "email": "alexander.grueneberg@googlemail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\corser",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\corser\\LICENSE"
+  },
+  "cross-fetch@3.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lquixada/cross-fetch",
+    "publisher": "Leonardo Quixada",
+    "email": "lquixada@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\cross-fetch",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\cross-fetch\\LICENSE"
+  },
+  "cross-spawn@7.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/moxystudio/node-cross-spawn",
+    "publisher": "Andr├⌐ Cruz",
+    "email": "andre@moxy.studio",
+    "path": "C:\\projects\\lrag-app\\node_modules\\cross-spawn",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\cross-spawn\\LICENSE"
+  },
+  "cssom@0.3.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/NV/CSSOM",
+    "publisher": "Nikita Vasilyev",
+    "email": "me@elv1s.ru",
+    "path": "C:\\projects\\lrag-app\\node_modules\\cssstyle\\node_modules\\cssom",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\cssstyle\\node_modules\\cssom\\LICENSE.txt"
+  },
+  "cssom@0.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/NV/CSSOM",
+    "publisher": "Nikita Vasilyev",
+    "email": "me@elv1s.ru",
+    "path": "C:\\projects\\lrag-app\\node_modules\\cssom",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\cssom\\LICENSE.txt"
+  },
+  "cssstyle@2.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/cssstyle",
+    "path": "C:\\projects\\lrag-app\\node_modules\\cssstyle",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\cssstyle\\LICENSE"
+  },
+  "csv-parse@6.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/adaltas/node-csv",
+    "publisher": "David Worms",
+    "email": "david@adaltas.com",
+    "url": "https://www.adaltas.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\csv-parse",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\csv-parse\\LICENSE"
+  },
+  "d3-array@3.2.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/d3/d3-array",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\projects\\lrag-app\\node_modules\\d3-array",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\d3-array\\LICENSE"
+  },
+  "d3-dsv@2.0.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/d3/d3-dsv",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\projects\\lrag-app\\node_modules\\d3-dsv",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\d3-dsv\\LICENSE"
+  },
+  "data-urls@3.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/data-urls",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\data-urls",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\data-urls\\LICENSE.txt"
+  },
+  "debug@3.2.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/visionmedia/debug",
+    "publisher": "TJ Holowaychuk",
+    "email": "tj@vision-media.ca",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pdf-parse\\node_modules\\debug",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pdf-parse\\node_modules\\debug\\LICENSE"
+  },
+  "debug@4.4.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/debug-js/debug",
+    "publisher": "Josh Junon",
+    "url": "https://github.com/qix-",
+    "path": "C:\\projects\\lrag-app\\node_modules\\debug",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\debug\\LICENSE"
+  },
+  "decamelize@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/decamelize",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decamelize",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decamelize\\license"
+  },
+  "decimal.js@10.6.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/MikeMcl/decimal.js",
+    "publisher": "Michael Mclaughlin",
+    "email": "M8ch88l@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decimal.js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decimal.js\\LICENCE.md"
+  },
+  "decompress-tar@4.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/decompress-tar",
+    "publisher": "Kevin M├Ñrtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "https://github.com/kevva",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tar",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\license"
+  },
+  "decompress-tarbz2@4.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/decompress-tarbz2",
+    "publisher": "Kevin M├Ñrtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "github.com/kevva",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tarbz2",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tarbz2\\license"
+  },
+  "decompress-targz@4.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/decompress-targz",
+    "publisher": "Kevin M├Ñrtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "https://github.com/kevva",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-targz",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-targz\\license"
+  },
+  "decompress-unzip@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/decompress-unzip",
+    "publisher": "Kevin M├Ñrtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "https://github.com/kevva",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-unzip",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-unzip\\license"
+  },
+  "decompress@4.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/decompress",
+    "publisher": "Kevin M├Ñrtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "github.com/kevva",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress\\license"
+  },
+  "deepmerge@4.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TehShrike/deepmerge",
+    "path": "C:\\projects\\lrag-app\\node_modules\\deepmerge",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\deepmerge\\license.txt"
+  },
+  "define-data-property@1.1.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/define-data-property",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\define-data-property",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\define-data-property\\LICENSE"
+  },
+  "delayed-stream@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/felixge/node-delayed-stream",
+    "publisher": "Felix Geisend├╢rfer",
+    "email": "felix@debuggable.com",
+    "url": "http://debuggable.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\delayed-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\delayed-stream\\License"
+  },
+  "domexception@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/domexception",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\domexception",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\domexception\\LICENSE.txt"
+  },
+  "dotenv@16.6.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/motdotla/dotenv",
+    "path": "C:\\projects\\lrag-app\\node_modules\\dotenv",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\dotenv\\LICENSE"
+  },
+  "dunder-proto@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/es-shims/dunder-proto",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\dunder-proto",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\dunder-proto\\LICENSE"
+  },
+  "duplexer2@0.1.4": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/deoxxa/duplexer2",
+    "publisher": "Conrad Pankoff",
+    "email": "deoxxa@fknsrs.biz",
+    "url": "http://www.fknsrs.biz/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\duplexer2",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\duplexer2\\LICENSE.md"
+  },
+  "eastasianwidth@0.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/komagata/eastasianwidth",
+    "publisher": "Masaki Komagata",
+    "path": "C:\\projects\\lrag-app\\node_modules\\eastasianwidth",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\eastasianwidth\\README.md"
+  },
+  "ecdsa-sig-formatter@1.0.11": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/Brightspace/node-ecdsa-sig-formatter",
+    "publisher": "D2L Corporation",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ecdsa-sig-formatter",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ecdsa-sig-formatter\\LICENSE"
+  },
+  "electron-log@5.4.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/megahertz/electron-log",
+    "publisher": "Alexey Prokhorov",
+    "path": "C:\\projects\\lrag-app\\node_modules\\electron-log",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\electron-log\\LICENSE"
+  },
+  "emoji-regex@8.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mathiasbynens/emoji-regex",
+    "publisher": "Mathias Bynens",
+    "url": "https://mathiasbynens.be/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\emoji-regex",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\emoji-regex\\LICENSE-MIT.txt"
+  },
+  "emoji-regex@9.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mathiasbynens/emoji-regex",
+    "publisher": "Mathias Bynens",
+    "url": "https://mathiasbynens.be/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\emoji-regex",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\emoji-regex\\LICENSE-MIT.txt"
+  },
+  "encoding@0.1.13": {
+    "licenses": "MIT",
+    "repository": "https://github.com/andris9/encoding",
+    "publisher": "Andris Reinman",
+    "path": "C:\\projects\\lrag-app\\node_modules\\encoding",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\encoding\\LICENSE"
+  },
+  "end-of-stream@1.4.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/end-of-stream",
+    "publisher": "Mathias Buus",
+    "email": "mathiasbuus@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\end-of-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\end-of-stream\\LICENSE"
+  },
+  "entities@6.0.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/fb55/entities",
+    "publisher": "Felix Boehm",
+    "email": "me@feedic.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\parse5\\node_modules\\entities",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\parse5\\node_modules\\entities\\LICENSE"
+  },
+  "es-define-property@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/es-define-property",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\es-define-property",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\es-define-property\\LICENSE"
+  },
+  "es-errors@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/es-errors",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\es-errors",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\es-errors\\LICENSE"
+  },
+  "es-object-atoms@1.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/es-object-atoms",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\es-object-atoms",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\es-object-atoms\\LICENSE"
+  },
+  "es-set-tostringtag@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/es-shims/es-set-tostringtag",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\es-set-tostringtag",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\es-set-tostringtag\\LICENSE"
+  },
+  "escalade@3.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lukeed/escalade",
+    "publisher": "Luke Edwards",
+    "email": "luke.edwards05@gmail.com",
+    "url": "https://lukeed.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\escalade",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\escalade\\license"
+  },
+  "escape-latex@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dangmai/escape-latex",
+    "publisher": "Dang Mai",
+    "path": "C:\\projects\\lrag-app\\node_modules\\escape-latex",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\escape-latex\\LICENSE.md"
+  },
+  "escodegen@2.1.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/estools/escodegen",
+    "path": "C:\\projects\\lrag-app\\node_modules\\escodegen",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\escodegen\\LICENSE.BSD"
+  },
+  "esprima@4.0.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/jquery/esprima",
+    "publisher": "Ariya Hidayat",
+    "email": "ariya.hidayat@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\esprima",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\esprima\\LICENSE.BSD"
+  },
+  "estraverse@5.3.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/estools/estraverse",
+    "path": "C:\\projects\\lrag-app\\node_modules\\estraverse",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\estraverse\\LICENSE.BSD"
+  },
+  "esutils@2.0.3": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/estools/esutils",
+    "path": "C:\\projects\\lrag-app\\node_modules\\esutils",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\esutils\\LICENSE.BSD"
+  },
+  "event-target-shim@5.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mysticatea/event-target-shim",
+    "publisher": "Toru Nagashima",
+    "path": "C:\\projects\\lrag-app\\node_modules\\event-target-shim",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\event-target-shim\\LICENSE"
+  },
+  "eventemitter3@4.0.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/primus/eventemitter3",
+    "publisher": "Arnout Kazemier",
+    "path": "C:\\projects\\lrag-app\\node_modules\\eventemitter3",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\eventemitter3\\LICENSE"
+  },
+  "events@3.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Gozala/events",
+    "publisher": "Irakli Gozalishvili",
+    "email": "rfobic@gmail.com",
+    "url": "http://jeditoolkit.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\events",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\events\\LICENSE"
+  },
+  "expr-eval@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/silentmatt/expr-eval",
+    "publisher": "Matthew Crumley",
+    "path": "C:\\projects\\lrag-app\\node_modules\\expr-eval",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\expr-eval\\LICENSE.txt"
+  },
+  "extend@3.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/justmoon/node-extend",
+    "publisher": "Stefan Thomas",
+    "email": "justmoon@members.fsf.org",
+    "url": "http://www.justmoon.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\extend",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\extend\\LICENSE"
+  },
+  "fd-slicer@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/andrewrk/node-fd-slicer",
+    "publisher": "Andrew Kelley",
+    "email": "superjoe30@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\fd-slicer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\fd-slicer\\LICENSE"
+  },
+  "file-type@16.5.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/file-type",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\file-type",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\file-type\\license"
+  },
+  "file-type@3.9.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/file-type",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-unzip\\node_modules\\file-type",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-unzip\\node_modules\\file-type\\license"
+  },
+  "file-type@5.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/file-type",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\file-type",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\file-type\\license"
+  },
+  "file-type@6.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/file-type",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tarbz2\\node_modules\\file-type",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tarbz2\\node_modules\\file-type\\license"
+  },
+  "file-uri-to-path@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/file-uri-to-path",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\file-uri-to-path",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\file-uri-to-path\\LICENSE"
+  },
+  "fill-range@7.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jonschlinkert/fill-range",
+    "publisher": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert",
+    "path": "C:\\projects\\lrag-app\\node_modules\\fill-range",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\fill-range\\LICENSE"
+  },
+  "find-process@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/yibn2008/find-process",
+    "publisher": "zoujie",
+    "email": "yibn2008@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\find-process",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\find-process\\LICENSE"
+  },
+  "find-yarn-workspace-root@2.0.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/square/find-yarn-workspace-root",
+    "publisher": "Square, Inc.",
+    "path": "C:\\projects\\lrag-app\\node_modules\\find-yarn-workspace-root",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\find-yarn-workspace-root\\LICENSE"
+  },
+  "flat@5.0.2": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/hughsk/flat",
+    "publisher": "Hugh Kennedy",
+    "email": "hughskennedy@gmail.com",
+    "url": "http://hughskennedy.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\flat",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\flat\\LICENSE"
+  },
+  "follow-redirects@1.15.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/follow-redirects/follow-redirects",
+    "publisher": "Ruben Verborgh",
+    "email": "ruben@verborgh.org",
+    "url": "https://ruben.verborgh.org/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\follow-redirects",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\follow-redirects\\LICENSE"
+  },
+  "for-each@0.3.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Raynos/for-each",
+    "publisher": "Raynos",
+    "email": "raynos2@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\for-each",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\for-each\\LICENSE"
+  },
+  "foreground-child@3.3.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/tapjs/foreground-child",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\foreground-child",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\foreground-child\\LICENSE"
+  },
+  "form-data-encoder@1.7.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/octet-stream/form-data-encoder",
+    "publisher": "Nick K.",
+    "path": "C:\\projects\\lrag-app\\node_modules\\form-data-encoder",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\form-data-encoder\\license"
+  },
+  "form-data@4.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/form-data/form-data",
+    "publisher": "Felix Geisend├╢rfer",
+    "email": "felix@debuggable.com",
+    "url": "http://debuggable.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\form-data",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\form-data\\License"
+  },
+  "formdata-node@4.4.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/octet-stream/form-data",
+    "publisher": "Nick K.",
+    "email": "io@octetstream.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\formdata-node",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\formdata-node\\license"
+  },
+  "fraction.js@5.3.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rawify/Fraction.js",
+    "publisher": "Robert Eisele",
+    "email": "robert@raw.org",
+    "url": "https://raw.org/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mathjs\\node_modules\\fraction.js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mathjs\\node_modules\\fraction.js\\LICENSE"
+  },
+  "fs-constants@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/fs-constants",
+    "publisher": "Mathias Buus",
+    "url": "@mafintosh",
+    "path": "C:\\projects\\lrag-app\\node_modules\\fs-constants",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\fs-constants\\LICENSE"
+  },
+  "fs-extra@11.3.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jprichardson/node-fs-extra",
+    "publisher": "JP Richardson",
+    "email": "jprichardson@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\unzipper\\node_modules\\fs-extra",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\unzipper\\node_modules\\fs-extra\\LICENSE"
+  },
+  "fs-extra@9.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jprichardson/node-fs-extra",
+    "publisher": "JP Richardson",
+    "email": "jprichardson@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\fs-extra",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\fs-extra\\LICENSE"
+  },
+  "fs.realpath@1.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/fs.realpath",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\fs.realpath",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\fs.realpath\\LICENSE"
+  },
+  "function-bind@1.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Raynos/function-bind",
+    "publisher": "Raynos",
+    "email": "raynos2@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\function-bind",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\function-bind\\LICENSE"
+  },
+  "generic-pool@3.9.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/coopernurse/node-pool",
+    "publisher": "James Cooper",
+    "email": "james@bitmechanic.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\generic-pool",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\generic-pool\\README.md"
+  },
+  "get-caller-file@2.0.5": {
+    "licenses": "ISC",
+    "repository": "https://github.com/stefanpenner/get-caller-file",
+    "publisher": "Stefan Penner",
+    "path": "C:\\projects\\lrag-app\\node_modules\\get-caller-file",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\get-caller-file\\LICENSE.md"
+  },
+  "get-intrinsic@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/get-intrinsic",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\get-intrinsic",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\get-intrinsic\\LICENSE"
+  },
+  "get-proto@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/get-proto",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\get-proto",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\get-proto\\LICENSE"
+  },
+  "get-stream@2.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/get-stream",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-unzip\\node_modules\\get-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-unzip\\node_modules\\get-stream\\license"
+  },
+  "glob@10.4.5": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-glob",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "https://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\officeparser\\node_modules\\glob",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\officeparser\\node_modules\\glob\\LICENSE"
+  },
+  "glob@7.2.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-glob",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\glob",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\glob\\LICENSE"
+  },
+  "gopd@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/gopd",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\gopd",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\gopd\\LICENSE"
+  },
+  "graceful-fs@4.2.11": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-graceful-fs",
+    "path": "C:\\projects\\lrag-app\\node_modules\\graceful-fs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\graceful-fs\\LICENSE"
+  },
+  "graphql-request@6.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jasonkuhrt/graphql-request",
+    "publisher": "Jason Kuhrt",
+    "email": "jasonkuhrt@me.com",
+    "url": "https://kuhrt.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\graphql-request",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\graphql-request\\LICENSE"
+  },
+  "graphql@16.11.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/graphql/graphql-js",
+    "path": "C:\\projects\\lrag-app\\node_modules\\graphql",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\graphql\\LICENSE"
+  },
+  "handlebars@4.7.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/handlebars-lang/handlebars.js",
+    "publisher": "Yehuda Katz",
+    "path": "C:\\projects\\lrag-app\\node_modules\\handlebars",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\handlebars\\LICENSE"
+  },
+  "has-flag@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/has-flag",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\has-flag",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\has-flag\\license"
+  },
+  "has-property-descriptors@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/has-property-descriptors",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\has-property-descriptors",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\has-property-descriptors\\LICENSE"
+  },
+  "has-symbols@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/has-symbols",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "url": "http://ljharb.codes",
+    "path": "C:\\projects\\lrag-app\\node_modules\\has-symbols",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\has-symbols\\LICENSE"
+  },
+  "has-tostringtag@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/has-tostringtag",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "url": "http://ljharb.codes",
+    "path": "C:\\projects\\lrag-app\\node_modules\\has-tostringtag",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\has-tostringtag\\LICENSE"
+  },
+  "hasown@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/hasOwn",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\hasown",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\hasown\\LICENSE"
+  },
+  "he@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mathiasbynens/he",
+    "publisher": "Mathias Bynens",
+    "url": "https://mathiasbynens.be/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\he",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\he\\LICENSE-MIT.txt"
+  },
+  "hnswlib-node@3.0.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/yoshoku/hnswlib-node",
+    "publisher": "Atsushi Tatsuma",
+    "path": "C:\\projects\\lrag-app\\node_modules\\hnswlib-node",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\hnswlib-node\\LICENSE.txt"
+  },
+  "html-encoding-sniffer@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/html-encoding-sniffer",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\html-encoding-sniffer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\html-encoding-sniffer\\LICENSE.txt"
+  },
+  "http-proxy-agent@5.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/node-http-proxy-agent",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jsdom\\node_modules\\http-proxy-agent",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jsdom\\node_modules\\http-proxy-agent\\README.md"
+  },
+  "http-proxy@1.18.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/http-party/node-http-proxy",
+    "publisher": "Charlie Robbins",
+    "email": "charlie.robbins@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\http-proxy",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\http-proxy\\LICENSE"
+  },
+  "http-server@14.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/http-party/http-server",
+    "path": "C:\\projects\\lrag-app\\node_modules\\http-server",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\http-server\\LICENSE"
+  },
+  "https-proxy-agent@5.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/node-https-proxy-agent",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jsdom\\node_modules\\https-proxy-agent",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jsdom\\node_modules\\https-proxy-agent\\README.md"
+  },
+  "humanize-ms@1.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/node-modules/humanize-ms",
+    "publisher": "dead-horse",
+    "email": "dead_horse@qq.com",
+    "url": "http://deadhorse.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\humanize-ms",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\humanize-ms\\LICENSE"
+  },
+  "ibm-cloud-sdk-core@5.4.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/IBM/node-sdk-core",
+    "publisher": "IBM Corp.",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ibm-cloud-sdk-core"
+  },
+  "iconv-lite@0.4.24": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ashtuchkin/iconv-lite",
+    "publisher": "Alexander Shtuchkin",
+    "email": "ashtuchkin@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\d3-dsv\\node_modules\\iconv-lite",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\d3-dsv\\node_modules\\iconv-lite\\LICENSE"
+  },
+  "iconv-lite@0.6.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ashtuchkin/iconv-lite",
+    "publisher": "Alexander Shtuchkin",
+    "email": "ashtuchkin@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\iconv-lite",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\iconv-lite\\LICENSE"
+  },
+  "idb-keyval@6.2.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/jakearchibald/idb-keyval",
+    "publisher": "Jake Archibald",
+    "path": "C:\\projects\\lrag-app\\node_modules\\idb-keyval",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\idb-keyval\\LICENCE"
+  },
+  "ieee754@1.2.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/feross/ieee754",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ieee754",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ieee754\\LICENSE"
+  },
+  "ignore@5.3.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kaelzhang/node-ignore",
+    "publisher": "kael",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ignore",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ignore\\LICENSE-MIT"
+  },
+  "inflight@1.0.6": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/inflight",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\inflight",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\inflight\\LICENSE"
+  },
+  "inherits@2.0.4": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/inherits",
+    "path": "C:\\projects\\lrag-app\\node_modules\\inherits",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\inherits\\LICENSE"
+  },
+  "internmap@2.0.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/mbostock/internmap",
+    "publisher": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike",
+    "path": "C:\\projects\\lrag-app\\node_modules\\internmap",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\internmap\\LICENSE"
+  },
+  "ip-address@10.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/beaugunderson/ip-address",
+    "publisher": "Beau Gunderson",
+    "email": "beau@beaugunderson.com",
+    "url": "https://beaugunderson.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ip-address",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ip-address\\LICENSE"
+  },
+  "is-callable@1.2.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/is-callable",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "url": "http://ljharb.codes",
+    "path": "C:\\projects\\lrag-app\\node_modules\\is-callable",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\is-callable\\LICENSE"
+  },
+  "is-docker@2.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/is-docker",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\is-docker",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\is-docker\\license"
+  },
+  "is-fullwidth-code-point@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/is-fullwidth-code-point",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\is-fullwidth-code-point",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\is-fullwidth-code-point\\license"
+  },
+  "is-natural-number@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/shinnn/is-natural-number.js",
+    "publisher": "Shinnosuke Watanabe",
+    "url": "https://github.com/shinnn",
+    "path": "C:\\projects\\lrag-app\\node_modules\\is-natural-number",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\is-natural-number\\LICENSE"
+  },
+  "is-number@7.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jonschlinkert/is-number",
+    "publisher": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert",
+    "path": "C:\\projects\\lrag-app\\node_modules\\is-number",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\is-number\\LICENSE"
+  },
+  "is-potential-custom-element-name@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mathiasbynens/is-potential-custom-element-name",
+    "publisher": "Mathias Bynens",
+    "url": "https://mathiasbynens.be/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\is-potential-custom-element-name",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\is-potential-custom-element-name\\LICENSE-MIT.txt"
+  },
+  "is-stream@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/is-stream",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\is-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\is-stream\\license"
+  },
+  "is-typed-array@1.1.15": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/is-typed-array",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "url": "http://ljharb.codes",
+    "path": "C:\\projects\\lrag-app\\node_modules\\is-typed-array",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\is-typed-array\\LICENSE"
+  },
+  "is-url@1.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/segmentio/is-url",
+    "path": "C:\\projects\\lrag-app\\node_modules\\is-url",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\is-url\\LICENSE-MIT"
+  },
+  "is-wsl@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/is-wsl",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\is-wsl",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\is-wsl\\license"
+  },
+  "isarray@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/juliangruber/isarray",
+    "publisher": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\isarray",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\isarray\\README.md"
+  },
+  "isarray@2.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/juliangruber/isarray",
+    "publisher": "Julian Gruber",
+    "email": "mail@juliangruber.com",
+    "url": "http://juliangruber.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\isarray",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\isarray\\LICENSE"
+  },
+  "isexe@2.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/isexe",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\isexe",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\isexe\\LICENSE"
+  },
+  "isstream@0.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/rvagg/isstream",
+    "publisher": "Rod Vagg",
+    "email": "rod@vagg.org",
+    "path": "C:\\projects\\lrag-app\\node_modules\\isstream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\isstream\\LICENSE.md"
+  },
+  "jackspeak@3.4.3": {
+    "licenses": "BlueOak-1.0.0",
+    "repository": "https://github.com/isaacs/jackspeak",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jackspeak",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jackspeak\\LICENSE.md"
+  },
+  "javascript-natural-sort@0.7.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Bill4Time/javascript-natural-sort",
+    "publisher": "Jim Palmer",
+    "url": "based on chunking idea from Dave Koelle, packaged by @khous of Bill4Time",
+    "path": "C:\\projects\\lrag-app\\node_modules\\javascript-natural-sort",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\javascript-natural-sort\\README.md"
+  },
+  "jpeg-js@0.4.4": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/eugeneware/jpeg-js",
+    "publisher": "Eugene Ware",
+    "email": "eugene@noblesamurai.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jpeg-js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jpeg-js\\LICENSE"
+  },
+  "js-tiktoken@1.0.21": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dqbd/tiktoken",
+    "path": "C:\\projects\\lrag-app\\node_modules\\js-tiktoken",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\js-tiktoken\\README.md"
+  },
+  "js-yaml@4.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodeca/js-yaml",
+    "publisher": "Vladimir Zapparov",
+    "email": "dervus.grim@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\js-yaml",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\js-yaml\\LICENSE"
+  },
+  "jsdom@20.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/jsdom",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jsdom",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jsdom\\LICENSE.txt"
+  },
+  "json-loader@0.5.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webpack/json-loader",
+    "publisher": "Tobias Koppers @sokra",
+    "path": "C:\\projects\\lrag-app\\node_modules\\json-loader",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\json-loader\\LICENSE"
+  },
+  "json-stable-stringify@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/json-stable-stringify",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\json-stable-stringify",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\json-stable-stringify\\LICENSE"
+  },
+  "jsonfile@6.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jprichardson/node-jsonfile",
+    "publisher": "JP Richardson",
+    "email": "jprichardson@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\jsonfile",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\jsonfile\\LICENSE"
+  },
+  "jsonify@0.0.1": {
+    "licenses": "Public Domain",
+    "repository": "https://github.com/ljharb/jsonify",
+    "publisher": "Douglas Crockford",
+    "url": "https://crockford.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jsonify",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jsonify\\README.md"
+  },
+  "jsonpointer@5.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/janl/node-jsonpointer",
+    "publisher": "Jan Lehnardt",
+    "email": "jan@apache.org",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jsonpointer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jsonpointer\\LICENSE.md"
+  },
+  "jsonrepair@3.13.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/josdejong/jsonrepair",
+    "publisher": "Jos de Jong",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jsonrepair",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jsonrepair\\LICENSE.md"
+  },
+  "jsonwebtoken@9.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/auth0/node-jsonwebtoken",
+    "publisher": "auth0",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jsonwebtoken",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jsonwebtoken\\LICENSE"
+  },
+  "jwa@1.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianloveswords/node-jwa",
+    "publisher": "Brian J. Brennan",
+    "email": "brianloveswords@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jwa",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jwa\\LICENSE"
+  },
+  "jws@3.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianloveswords/node-jws",
+    "publisher": "Brian J Brennan",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jws",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jws\\LICENSE"
+  },
+  "kareem@2.6.3": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/mongoosejs/kareem",
+    "publisher": "Valeri Karpov",
+    "email": "val@karpov.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\kareem",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\kareem\\LICENSE"
+  },
+  "key-value-file@1.0.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/poppa/key-value-file",
+    "publisher": "Pontus ├ûstlund",
+    "email": "poppanator@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\key-value-file",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\key-value-file\\LICENSE"
+  },
+  "klaw-sync@6.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/manidlou/node-klaw-sync",
+    "publisher": "Mani Maghsoudlou",
+    "path": "C:\\projects\\lrag-app\\node_modules\\klaw-sync",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\klaw-sync\\LICENSE"
+  },
+  "langchain@0.3.34": {
+    "licenses": "MIT",
+    "repository": "https://github.com/langchain-ai/langchainjs",
+    "publisher": "LangChain",
+    "path": "C:\\projects\\lrag-app\\node_modules\\langchain",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\langchain\\LICENSE"
+  },
+  "langsmith@0.3.69": {
+    "licenses": "MIT",
+    "repository": "https://github.com/langchain-ai/langsmith-sdk",
+    "publisher": "LangChain",
+    "path": "C:\\projects\\lrag-app\\node_modules\\langsmith",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\langsmith\\README.md"
+  },
+  "lodash.camelcase@4.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\lodash.camelcase",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\lodash.camelcase\\LICENSE"
+  },
+  "lodash.includes@4.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\lodash.includes",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\lodash.includes\\LICENSE"
+  },
+  "lodash.isboolean@3.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\lodash.isboolean",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\lodash.isboolean\\LICENSE"
+  },
+  "lodash.isinteger@4.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\lodash.isinteger",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\lodash.isinteger\\LICENSE"
+  },
+  "lodash.isnumber@3.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\lodash.isnumber",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\lodash.isnumber\\LICENSE"
+  },
+  "lodash.isplainobject@4.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\lodash.isplainobject",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\lodash.isplainobject\\LICENSE"
+  },
+  "lodash.isstring@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\lodash.isstring",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\lodash.isstring\\LICENSE"
+  },
+  "lodash.once@4.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\lodash.once",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\lodash.once\\LICENSE"
+  },
+  "lodash@4.17.21": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\lodash",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\lodash\\LICENSE"
+  },
+  "loglevel@1.9.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/pimterry/loglevel",
+    "publisher": "Tim Perry",
+    "email": "pimterry@gmail.com",
+    "url": "http://tim-perry.co.uk",
+    "path": "C:\\projects\\lrag-app\\node_modules\\loglevel",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\loglevel\\LICENSE-MIT"
+  },
+  "long@5.3.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/dcodeIO/long.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\long",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\long\\LICENSE"
+  },
+  "lrag-app@1.0.0": {
+    "licenses": "UNLICENSED",
+    "private": true,
+    "publisher": "Kabir Khaleque",
+    "email": "kabir@divm.com",
+    "path": "C:\\projects\\lrag-app",
+    "licenseFile": "C:\\projects\\lrag-app\\LICENSE.md"
+  },
+  "lru-cache@10.4.3": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-lru-cache",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\path-scurry\\node_modules\\lru-cache",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\path-scurry\\node_modules\\lru-cache\\LICENSE"
+  },
+  "make-dir@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/make-dir",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress\\node_modules\\make-dir",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress\\node_modules\\make-dir\\license"
+  },
+  "math-intrinsics@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/es-shims/math-intrinsics",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\math-intrinsics",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\math-intrinsics\\LICENSE"
+  },
+  "mathjs@15.0.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/josdejong/mathjs",
+    "publisher": "Jos de Jong",
+    "email": "wjosdejong@gmail.com",
+    "url": "https://github.com/josdejong",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mathjs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mathjs\\LICENSE",
+    "noticeFile": "C:\\projects\\lrag-app\\node_modules\\mathjs\\NOTICE"
+  },
+  "memjs@1.3.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/memcachier/memjs",
+    "publisher": "Amit Levy",
+    "path": "C:\\projects\\lrag-app\\node_modules\\memjs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\memjs\\LICENSE"
+  },
+  "memory-pager@1.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/memory-pager",
+    "publisher": "Mathias Buus",
+    "url": "@mafintosh",
+    "path": "C:\\projects\\lrag-app\\node_modules\\memory-pager",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\memory-pager\\LICENSE"
+  },
+  "micromatch@4.0.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromatch/micromatch",
+    "publisher": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert",
+    "path": "C:\\projects\\lrag-app\\node_modules\\micromatch",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\micromatch\\LICENSE"
+  },
+  "mime-db@1.52.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jshttp/mime-db",
+    "path": "C:\\projects\\lrag-app\\node_modules\\form-data\\node_modules\\mime-db",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\form-data\\node_modules\\mime-db\\LICENSE"
+  },
+  "mime-types@2.1.35": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jshttp/mime-types",
+    "path": "C:\\projects\\lrag-app\\node_modules\\form-data\\node_modules\\mime-types",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\form-data\\node_modules\\mime-types\\LICENSE"
+  },
+  "mime@1.6.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/broofa/node-mime",
+    "publisher": "Robert Kieffer",
+    "email": "robert@broofa.com",
+    "url": "http://github.com/broofa",
+    "path": "C:\\projects\\lrag-app\\node_modules\\http-server\\node_modules\\mime",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\http-server\\node_modules\\mime\\LICENSE"
+  },
+  "minimatch@3.1.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/minimatch",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\glob\\node_modules\\minimatch",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\glob\\node_modules\\minimatch\\LICENSE"
+  },
+  "minimatch@9.0.5": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/minimatch",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\minimatch",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\minimatch\\LICENSE"
+  },
+  "minimist@1.2.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/minimistjs/minimist",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\minimist",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\minimist\\LICENSE"
+  },
+  "minipass@7.1.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/minipass",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\officeparser\\node_modules\\minipass",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\officeparser\\node_modules\\minipass\\LICENSE"
+  },
+  "mongodb-connection-string-url@3.0.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/mongodb-js/mongodb-connection-string-url",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mongodb-connection-string-url",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mongodb-connection-string-url\\LICENSE"
+  },
+  "mongodb@6.20.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/mongodb/node-mongodb-native",
+    "publisher": "The MongoDB NodeJS Team",
+    "email": "dbx-node@mongodb.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mongodb",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mongodb\\LICENSE.md"
+  },
+  "mongoose@8.19.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Automattic/mongoose",
+    "publisher": "Guillermo Rauch",
+    "email": "guillermo@learnboost.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mongoose",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mongoose\\LICENSE.md"
+  },
+  "mpath@0.9.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/aheckmann/mpath",
+    "publisher": "Aaron Heckmann",
+    "email": "aaron.heckmann+github@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mpath",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mpath\\LICENSE"
+  },
+  "mquery@5.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/aheckmann/mquery",
+    "publisher": "Aaron Heckmann",
+    "email": "aaron.heckmann+github@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mquery",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mquery\\LICENSE"
+  },
+  "ms@2.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vercel/ms",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ms",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ms\\license.md"
+  },
+  "mustache@4.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/janl/mustache.js",
+    "publisher": "mustache.js Authors",
+    "email": "http://github.com/janl/mustache.js",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mustache",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mustache\\LICENSE"
+  },
+  "nan@2.23.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/nan",
+    "path": "C:\\projects\\lrag-app\\node_modules\\nan",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\nan\\LICENSE.md"
+  },
+  "natural@8.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/NaturalNode/natural",
+    "publisher": "Chris Umbel",
+    "email": "chris@chrisumbel.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\natural",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\natural\\LICENSE.txt"
+  },
+  "neo-async@2.6.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/suguru03/neo-async",
+    "path": "C:\\projects\\lrag-app\\node_modules\\neo-async",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\neo-async\\LICENSE"
+  },
+  "ng-connection-service@13.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ultrasonicsoft/ng-connection-service",
+    "publisher": "Balram Chavan",
+    "url": "https://balramchavan.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ng-connection-service",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ng-connection-service\\README.md"
+  },
+  "ngx-file-drop@16.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/georgipeltekov/ngx-file-drop",
+    "publisher": "Georgi Peltekov",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ngx-file-drop",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ngx-file-drop\\README.md"
+  },
+  "ngx-skeleton-loader@11.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/willmendesneto/ngx-skeleton-loader",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ngx-skeleton-loader",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ngx-skeleton-loader\\README.md"
+  },
+  "ngx-splide@7.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/JustCommunication-ru/ngx-splide",
+    "publisher": "wiistriker",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ngx-splide",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ngx-splide\\LICENSE"
+  },
+  "nice-grpc-client-middleware-retry@3.1.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/deeplay-io/nice-grpc",
+    "publisher": "Daniel Lytkin",
+    "email": "aikoven@deeplay.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\nice-grpc-client-middleware-retry",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\nice-grpc-client-middleware-retry\\LICENSE.md"
+  },
+  "nice-grpc-common@2.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/deeplay-io/nice-grpc",
+    "publisher": "Daniel Lytkin",
+    "email": "aikoven@deeplay.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\nice-grpc-common",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\nice-grpc-common\\LICENSE.md"
+  },
+  "nice-grpc@2.1.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/deeplay-io/nice-grpc",
+    "publisher": "Daniel Lytkin",
+    "email": "aikoven@deeplay.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\nice-grpc",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\nice-grpc\\LICENSE.md"
+  },
+  "node-addon-api@8.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/node-addon-api",
+    "path": "C:\\projects\\lrag-app\\node_modules\\hnswlib-node\\node_modules\\node-addon-api",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\hnswlib-node\\node_modules\\node-addon-api\\LICENSE.md"
+  },
+  "node-disk-info@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/cristiammercado/node-disk-info",
+    "publisher": "Cristiam Mercado",
+    "email": "contact@cristiammercado.com",
+    "url": "https://cristiammercado.com/en",
+    "path": "C:\\projects\\lrag-app\\node_modules\\node-disk-info",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\node-disk-info\\LICENSE"
+  },
+  "node-domexception@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jimmywarting/node-domexception",
+    "publisher": "Jimmy W├ñrting",
+    "path": "C:\\projects\\lrag-app\\node_modules\\node-domexception",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\node-domexception\\LICENSE"
+  },
+  "node-ensure@0.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bauerca/node-ensure",
+    "publisher": "Carl A. Bauer",
+    "path": "C:\\projects\\lrag-app\\node_modules\\node-ensure",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\node-ensure\\README.md"
+  },
+  "node-fetch@2.7.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bitinn/node-fetch",
+    "publisher": "David Frank",
+    "path": "C:\\projects\\lrag-app\\node_modules\\node-fetch",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\node-fetch\\LICENSE.md"
+  },
+  "node-int64@0.4.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/broofa/node-int64",
+    "publisher": "Robert Kieffer",
+    "email": "robert@broofa.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\node-int64",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\node-int64\\LICENSE"
+  },
+  "node-machine-id@1.1.12": {
+    "licenses": "MIT",
+    "repository": "https://github.com/automation-stack/node-machine-id",
+    "publisher": "Aleksandr Komlev",
+    "path": "C:\\projects\\lrag-app\\node_modules\\node-machine-id",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\node-machine-id\\LICENSE"
+  },
+  "nwsapi@2.2.22": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dperini/nwsapi",
+    "publisher": "Diego Perini",
+    "email": "diego.perini@gmail.com",
+    "url": "https://www.iport.it/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\nwsapi",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\nwsapi\\LICENSE"
+  },
+  "nxt-json-view@20.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Liquid-JS/nxt-components",
+    "path": "C:\\projects\\lrag-app\\node_modules\\nxt-json-view",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\nxt-json-view\\README.md"
+  },
+  "object-assign@4.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/object-assign",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\object-assign",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\object-assign\\license"
+  },
+  "object-inspect@1.13.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/object-inspect",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\object-inspect",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\object-inspect\\LICENSE"
+  },
+  "object-keys@1.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/object-keys",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "url": "http://ljharb.codes",
+    "path": "C:\\projects\\lrag-app\\node_modules\\object-keys",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\object-keys\\LICENSE"
+  },
+  "obuf@1.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/indutny/offset-buffer",
+    "publisher": "Fedor Indutny",
+    "email": "fedor@indutny.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\obuf",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\obuf\\LICENSE"
+  },
+  "officeparser@4.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/harshankur/officeParser",
+    "publisher": "Harsh Ankur",
+    "path": "C:\\projects\\lrag-app\\node_modules\\officeparser",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\officeparser\\LICENSE"
+  },
+  "ollama@0.5.18": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ollama/ollama-js",
+    "publisher": "Saul Boyd",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\ollama\\node_modules\\ollama",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\ollama\\node_modules\\ollama\\LICENSE"
+  },
+  "ollama@0.6.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ollama/ollama-js",
+    "publisher": "Saul Boyd",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ollama",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ollama\\LICENSE"
+  },
+  "once@1.4.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/once",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\once",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\once\\LICENSE"
+  },
+  "open@7.4.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/open",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\open",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\open\\license"
+  },
+  "openai@4.104.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/openai/openai-node",
+    "publisher": "OpenAI",
+    "email": "support@openai.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\openai",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\openai\\LICENSE"
+  },
+  "openai@5.12.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/openai/openai-node",
+    "publisher": "OpenAI",
+    "email": "support@openai.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\openai\\node_modules\\openai",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\openai\\node_modules\\openai\\LICENSE"
+  },
+  "openapi-types@12.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kogosoftwarellc/open-api/tree/master/packages/openapi-types",
+    "publisher": "Joseph Spencer",
+    "path": "C:\\projects\\lrag-app\\node_modules\\openapi-types",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\openapi-types\\LICENSE"
+  },
+  "opencollective-postinstall@2.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/opencollective/opencollective-postinstall",
+    "publisher": "Xavier Damman",
+    "url": "@xdamman",
+    "path": "C:\\projects\\lrag-app\\node_modules\\opencollective-postinstall",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\opencollective-postinstall\\LICENSE"
+  },
+  "opener@1.5.2": {
+    "licenses": "(WTFPL OR MIT)",
+    "repository": "https://github.com/domenic/opener",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\opener",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\opener\\LICENSE.txt"
+  },
+  "opentype.js@0.4.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodebox/opentype.js",
+    "publisher": "Frederik De Bleser",
+    "email": "frederik@debleser.be",
+    "path": "C:\\projects\\lrag-app\\node_modules\\opentype.js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\opentype.js\\LICENSE"
+  },
+  "os-tmpdir@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/os-tmpdir",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\os-tmpdir",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\os-tmpdir\\license"
+  },
+  "p-finally@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/p-finally",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\p-finally",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\p-finally\\license"
+  },
+  "p-queue@6.6.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/p-queue",
+    "path": "C:\\projects\\lrag-app\\node_modules\\p-queue",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\p-queue\\license"
+  },
+  "p-retry@4.6.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/p-retry",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\langsmith\\node_modules\\p-retry",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\langsmith\\node_modules\\p-retry\\license"
+  },
+  "p-timeout@3.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/p-timeout",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\p-timeout",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\p-timeout\\license"
+  },
+  "package-json-from-dist@1.0.1": {
+    "licenses": "BlueOak-1.0.0",
+    "repository": "https://github.com/isaacs/package-json-from-dist",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "https://izs.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\package-json-from-dist",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\package-json-from-dist\\LICENSE.md"
+  },
+  "parse5@7.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inikulin/parse5",
+    "publisher": "Ivan Nikulin",
+    "email": "ifaaan@gmail.com",
+    "url": "https://github.com/inikulin",
+    "path": "C:\\projects\\lrag-app\\node_modules\\jsdom\\node_modules\\parse5",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\jsdom\\node_modules\\parse5\\LICENSE"
+  },
+  "parse5@8.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inikulin/parse5",
+    "publisher": "Ivan Nikulin",
+    "email": "ifaaan@gmail.com",
+    "url": "https://github.com/inikulin",
+    "path": "C:\\projects\\lrag-app\\node_modules\\parse5",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\parse5\\LICENSE"
+  },
+  "patch-package@8.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ds300/patch-package",
+    "publisher": "David Sheldrick",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\LICENSE"
+  },
+  "path-browserify@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/browserify/path-browserify",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\path-browserify",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\path-browserify\\LICENSE"
+  },
+  "path-is-absolute@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/path-is-absolute",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\path-is-absolute",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\path-is-absolute\\license"
+  },
+  "path-key@3.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/path-key",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\path-key",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\path-key\\license"
+  },
+  "path-scurry@1.11.1": {
+    "licenses": "BlueOak-1.0.0",
+    "repository": "https://github.com/isaacs/path-scurry",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "https://blog.izs.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\path-scurry",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\path-scurry\\LICENSE.md"
+  },
+  "pdf-parse@1.1.1": {
+    "licenses": "MIT",
+    "repository": "git+https://gitlab.com/autokent/pdf-parse",
+    "publisher": "Mehmet Kozan",
+    "email": "mehmet.kozan@live.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pdf-parse",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pdf-parse\\LICENSE"
+  },
+  "pdf-to-img@5.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/k-yle/pdf-to-img",
+    "publisher": "Kyle Hensel",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pdf-to-img",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pdf-to-img\\LICENSE"
+  },
+  "pdfjs-dist@5.4.394": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/mozilla/pdf.js",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pdfjs-dist",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pdfjs-dist\\LICENSE"
+  },
+  "peek-readable@4.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Borewit/peek-readable",
+    "publisher": "Borewit",
+    "url": "https://github.com/Borewit",
+    "path": "C:\\projects\\lrag-app\\node_modules\\peek-readable",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\peek-readable\\LICENSE"
+  },
+  "pend@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/andrewrk/node-pend",
+    "publisher": "Andrew Kelley",
+    "email": "superjoe30@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pend",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pend\\LICENSE"
+  },
+  "pg-cloudflare@1.2.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianc/node-postgres",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-cloudflare",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-cloudflare\\LICENSE"
+  },
+  "pg-connection-string@2.9.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianc/node-postgres",
+    "publisher": "Blaine Bublitz",
+    "email": "blaine@iceddev.com",
+    "url": "http://iceddev.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-connection-string",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-connection-string\\LICENSE"
+  },
+  "pg-int8@1.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/charmander/pg-int8",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-int8",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-int8\\LICENSE"
+  },
+  "pg-pool@3.10.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianc/node-postgres",
+    "publisher": "Brian M. Carlson",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-pool",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-pool\\LICENSE"
+  },
+  "pg-protocol@1.10.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianc/node-postgres",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-protocol",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-protocol\\LICENSE"
+  },
+  "pg-types@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianc/node-pg-types",
+    "publisher": "Brian M. Carlson",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-types",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-types\\README.md"
+  },
+  "pg@8.16.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/brianc/node-postgres",
+    "publisher": "Brian Carlson",
+    "email": "brian.m.carlson@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg\\LICENSE"
+  },
+  "pgpass@1.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/hoegaarden/pgpass",
+    "publisher": "Hannes H├╢rl",
+    "email": "hannes.hoerl+pgpass@snowreporter.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pgpass",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pgpass\\README.md"
+  },
+  "picomatch@2.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromatch/picomatch",
+    "publisher": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert",
+    "path": "C:\\projects\\lrag-app\\node_modules\\micromatch\\node_modules\\picomatch",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\micromatch\\node_modules\\picomatch\\LICENSE"
+  },
+  "pify@2.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/pify",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pify",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pify\\license"
+  },
+  "pify@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/pify",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress\\node_modules\\make-dir\\node_modules\\pify",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress\\node_modules\\make-dir\\node_modules\\pify\\license"
+  },
+  "pinkie-promise@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/floatdrop/pinkie-promise",
+    "publisher": "Vsevolod Strukchinsky",
+    "email": "floatdrop@gmail.com",
+    "url": "github.com/floatdrop",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pinkie-promise",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pinkie-promise\\license"
+  },
+  "pinkie@2.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/floatdrop/pinkie",
+    "publisher": "Vsevolod Strukchinsky",
+    "email": "floatdrop@gmail.com",
+    "url": "github.com/floatdrop",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pinkie",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pinkie\\license"
+  },
+  "playwright-core@1.55.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/microsoft/playwright",
+    "publisher": "Microsoft Corporation",
+    "path": "C:\\projects\\lrag-app\\node_modules\\playwright-core",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\playwright-core\\LICENSE",
+    "noticeFile": "C:\\projects\\lrag-app\\node_modules\\playwright-core\\NOTICE"
+  },
+  "playwright@1.55.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/microsoft/playwright",
+    "publisher": "Microsoft Corporation",
+    "path": "C:\\projects\\lrag-app\\node_modules\\playwright",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\playwright\\LICENSE",
+    "noticeFile": "C:\\projects\\lrag-app\\node_modules\\playwright\\NOTICE"
+  },
+  "pngjs@7.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/pngjs/pngjs",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pngjs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pngjs\\LICENSE"
+  },
+  "portfinder@1.0.38": {
+    "licenses": "MIT",
+    "repository": "https://github.com/http-party/node-portfinder",
+    "publisher": "Charlie Robbins",
+    "email": "charlie.robbins@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\portfinder",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\portfinder\\LICENSE"
+  },
+  "possible-typed-array-names@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/possible-typed-array-names",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\possible-typed-array-names",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\possible-typed-array-names\\LICENSE"
+  },
+  "postgres-array@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bendrucker/postgres-array",
+    "publisher": "Ben Drucker",
+    "email": "bvdrucker@gmail.com",
+    "url": "bendrucker.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-types\\node_modules\\postgres-array",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-types\\node_modules\\postgres-array\\license"
+  },
+  "postgres-array@3.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bendrucker/postgres-array",
+    "publisher": "Ben Drucker",
+    "email": "bvdrucker@gmail.com",
+    "url": "bendrucker.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\postgres-array",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\postgres-array\\license"
+  },
+  "postgres-bytea@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bendrucker/postgres-bytea",
+    "publisher": "Ben Drucker",
+    "email": "bvdrucker@gmail.com",
+    "url": "bendrucker.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-types\\node_modules\\postgres-bytea",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-types\\node_modules\\postgres-bytea\\license"
+  },
+  "postgres-bytea@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bendrucker/postgres-bytea",
+    "publisher": "Ben Drucker",
+    "email": "bvdrucker@gmail.com",
+    "url": "bendrucker.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\postgres-bytea",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\postgres-bytea\\license"
+  },
+  "postgres-date@1.0.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bendrucker/postgres-date",
+    "publisher": "Ben Drucker",
+    "email": "bvdrucker@gmail.com",
+    "url": "bendrucker.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-types\\node_modules\\postgres-date",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-types\\node_modules\\postgres-date\\license"
+  },
+  "postgres-date@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bendrucker/postgres-date",
+    "publisher": "Ben Drucker",
+    "email": "bvdrucker@gmail.com",
+    "url": "bendrucker.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\postgres-date",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\postgres-date\\license"
+  },
+  "postgres-interval@1.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bendrucker/postgres-interval",
+    "publisher": "Ben Drucker",
+    "email": "bvdrucker@gmail.com",
+    "url": "bendrucker.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pg-types\\node_modules\\postgres-interval",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pg-types\\node_modules\\postgres-interval\\license"
+  },
+  "postgres-interval@4.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bendrucker/postgres-interval",
+    "publisher": "Ben Drucker",
+    "email": "bvdrucker@gmail.com",
+    "url": "https://www.bendrucker.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\postgres-interval",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\postgres-interval\\license"
+  },
+  "process-nextick-args@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/calvinmetcalf/process-nextick-args",
+    "path": "C:\\projects\\lrag-app\\node_modules\\process-nextick-args",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\process-nextick-args\\license.md"
+  },
+  "process@0.11.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/shtylman/node-process",
+    "publisher": "Roman Shtylman",
+    "email": "shtylman@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\process",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\process\\LICENSE"
+  },
+  "protobufjs@7.5.4": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/protobufjs/protobuf.js",
+    "publisher": "Daniel Wirtz",
+    "email": "dcode+protobufjs@dcode.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\protobufjs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\protobufjs\\LICENSE"
+  },
+  "proxy-from-env@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Rob--W/proxy-from-env",
+    "publisher": "Rob Wu",
+    "email": "rob@robwu.nl",
+    "url": "https://robwu.nl/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\proxy-from-env",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\proxy-from-env\\LICENSE"
+  },
+  "psl@1.15.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lupomontero/psl",
+    "publisher": "Lupo Montero",
+    "email": "lupomontero@gmail.com",
+    "url": "https://lupomontero.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\psl",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\psl\\LICENSE"
+  },
+  "punycode@2.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mathiasbynens/punycode.js",
+    "publisher": "Mathias Bynens",
+    "url": "https://mathiasbynens.be/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mongodb-connection-string-url\\node_modules\\punycode",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mongodb-connection-string-url\\node_modules\\punycode\\LICENSE-MIT.txt"
+  },
+  "pureimage@0.4.18": {
+    "licenses": "MIT",
+    "repository": "https://github.com/joshmarinacci/node-pureimage",
+    "publisher": "Josh Marinacci",
+    "email": "joshua@marinacci.org",
+    "url": "https://joshondesign.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\pureimage",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\pureimage\\LICENSE"
+  },
+  "qs@6.14.0": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/ljharb/qs",
+    "path": "C:\\projects\\lrag-app\\node_modules\\qs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\qs\\LICENSE.md"
+  },
+  "querystringify@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unshiftio/querystringify",
+    "publisher": "Arnout Kazemier",
+    "path": "C:\\projects\\lrag-app\\node_modules\\querystringify",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\querystringify\\LICENSE"
+  },
+  "readable-stream@2.3.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/readable-stream",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\readable-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\readable-stream\\LICENSE"
+  },
+  "readable-stream@3.6.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/readable-stream",
+    "path": "C:\\projects\\lrag-app\\node_modules\\readable-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\readable-stream\\LICENSE"
+  },
+  "readable-stream@4.7.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/readable-stream",
+    "path": "C:\\projects\\lrag-app\\node_modules\\readable-web-to-node-stream\\node_modules\\readable-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\readable-web-to-node-stream\\node_modules\\readable-stream\\LICENSE"
+  },
+  "readable-web-to-node-stream@3.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Borewit/readable-web-to-node-stream",
+    "publisher": "Borewit",
+    "url": "https://github.com/Borewit",
+    "path": "C:\\projects\\lrag-app\\node_modules\\readable-web-to-node-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\readable-web-to-node-stream\\README.md"
+  },
+  "redis@4.7.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/redis/node-redis",
+    "path": "C:\\projects\\lrag-app\\node_modules\\redis",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\redis\\LICENSE"
+  },
+  "regenerator-runtime@0.13.11": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/regenerator/tree/main/packages/runtime",
+    "publisher": "Ben Newman",
+    "email": "bn@cs.stanford.edu",
+    "path": "C:\\projects\\lrag-app\\node_modules\\regenerator-runtime",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\regenerator-runtime\\LICENSE"
+  },
+  "require-directory@2.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/troygoode/node-require-directory",
+    "publisher": "Troy Goode",
+    "email": "troygoode@gmail.com",
+    "url": "http://github.com/troygoode/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\require-directory",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\require-directory\\LICENSE"
+  },
+  "requires-port@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unshiftio/requires-port",
+    "publisher": "Arnout Kazemier",
+    "path": "C:\\projects\\lrag-app\\node_modules\\requires-port",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\requires-port\\LICENSE"
+  },
+  "retry-axios@2.6.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/JustinBeckwith/retry-axios",
+    "publisher": "Justin Beckwith",
+    "path": "C:\\projects\\lrag-app\\node_modules\\retry-axios",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\retry-axios\\LICENSE"
+  },
+  "retry@0.13.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/tim-kos/node-retry",
+    "publisher": "Tim Kosch├╝tzki",
+    "email": "tim@debuggable.com",
+    "url": "http://debuggable.com/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\langsmith\\node_modules\\retry",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\langsmith\\node_modules\\retry\\License"
+  },
+  "rimraf@2.7.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/rimraf",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\rimraf",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\rimraf\\LICENSE"
+  },
+  "rimraf@5.0.10": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/rimraf",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\officeparser\\node_modules\\rimraf",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\officeparser\\node_modules\\rimraf\\LICENSE"
+  },
+  "rw@1.3.3": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/mbostock/rw",
+    "publisher": "Mike Bostock",
+    "url": "http://bost.ocks.org/mike",
+    "path": "C:\\projects\\lrag-app\\node_modules\\rw",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\rw\\LICENSE"
+  },
+  "rxjs@7.8.2": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/reactivex/rxjs",
+    "publisher": "Ben Lesh",
+    "email": "ben@benlesh.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\rxjs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\rxjs\\LICENSE.txt"
+  },
+  "safe-buffer@5.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/safe-buffer",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "http://feross.org",
+    "path": "C:\\projects\\lrag-app\\node_modules\\basic-auth\\node_modules\\safe-buffer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\basic-auth\\node_modules\\safe-buffer\\LICENSE"
+  },
+  "safe-buffer@5.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/feross/safe-buffer",
+    "publisher": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "https://feross.org",
+    "path": "C:\\projects\\lrag-app\\node_modules\\safe-buffer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\safe-buffer\\LICENSE"
+  },
+  "safe-stable-stringify@2.5.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/BridgeAR/safe-stable-stringify",
+    "publisher": "Ruben Bridgewater",
+    "path": "C:\\projects\\lrag-app\\node_modules\\safe-stable-stringify",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\safe-stable-stringify\\LICENSE"
+  },
+  "safer-buffer@2.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ChALkeR/safer-buffer",
+    "publisher": "Nikita Skovoroda",
+    "email": "chalkerx@gmail.com",
+    "url": "https://github.com/ChALkeR",
+    "path": "C:\\projects\\lrag-app\\node_modules\\safer-buffer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\safer-buffer\\LICENSE"
+  },
+  "saxes@5.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/lddubeau/saxes",
+    "publisher": "Louis-Dominique Dubeau",
+    "email": "ldd@lddubeau.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\word-extractor\\node_modules\\saxes",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\word-extractor\\node_modules\\saxes\\README.md"
+  },
+  "saxes@6.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/lddubeau/saxes",
+    "publisher": "Louis-Dominique Dubeau",
+    "email": "ldd@lddubeau.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\saxes",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\saxes\\README.md"
+  },
+  "secure-compare@3.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/vdemedes/secure-compare",
+    "publisher": "Vadim Demedes",
+    "email": "vdemedes@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\secure-compare",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\secure-compare\\README.md"
+  },
+  "seedrandom@3.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/davidbau/seedrandom",
+    "publisher": "David Bau",
+    "path": "C:\\projects\\lrag-app\\node_modules\\seedrandom",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\seedrandom\\README.md"
+  },
+  "seek-bzip@1.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/cscott/seek-bzip",
+    "path": "C:\\projects\\lrag-app\\node_modules\\seek-bzip",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\seek-bzip\\LICENSE"
+  },
+  "semver@7.7.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/node-semver",
+    "publisher": "GitHub Inc.",
+    "path": "C:\\projects\\lrag-app\\node_modules\\semver",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\semver\\LICENSE"
+  },
+  "set-function-length@1.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/set-function-length",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\set-function-length",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\set-function-length\\LICENSE"
+  },
+  "shebang-command@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kevva/shebang-command",
+    "publisher": "Kevin M├Ñrtensson",
+    "email": "kevinmartensson@gmail.com",
+    "url": "github.com/kevva",
+    "path": "C:\\projects\\lrag-app\\node_modules\\shebang-command",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\shebang-command\\license"
+  },
+  "shebang-regex@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/shebang-regex",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\shebang-regex",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\shebang-regex\\license"
+  },
+  "side-channel-list@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/side-channel-list",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\side-channel-list",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\side-channel-list\\LICENSE"
+  },
+  "side-channel-map@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/side-channel-map",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\side-channel-map",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\side-channel-map\\LICENSE"
+  },
+  "side-channel-weakmap@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/side-channel-weakmap",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\side-channel-weakmap",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\side-channel-weakmap\\LICENSE"
+  },
+  "side-channel@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ljharb/side-channel",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\side-channel",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\side-channel\\LICENSE"
+  },
+  "sift@17.1.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/crcn/sift.js",
+    "publisher": "Craig Condon",
+    "email": "craig.j.condon@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\sift",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\sift\\README.md"
+  },
+  "signal-exit@4.1.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/tapjs/signal-exit",
+    "publisher": "Ben Coe",
+    "email": "ben@npmjs.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\signal-exit",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\signal-exit\\LICENSE.txt"
+  },
+  "simple-wcswidth@1.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/console-table-printer/simple-wcswidth",
+    "publisher": "Nahiyan Kamal",
+    "email": "noyanayihan@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\simple-wcswidth",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\simple-wcswidth\\LICENSE"
+  },
+  "slash@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/slash",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\slash",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\slash\\license"
+  },
+  "smart-buffer@4.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/JoshGlazebrook/smart-buffer",
+    "publisher": "Josh Glazebrook",
+    "path": "C:\\projects\\lrag-app\\node_modules\\smart-buffer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\smart-buffer\\LICENSE"
+  },
+  "socks@2.8.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/JoshGlazebrook/socks",
+    "publisher": "Josh Glazebrook",
+    "path": "C:\\projects\\lrag-app\\node_modules\\socks",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\socks\\LICENSE"
+  },
+  "source-map@0.6.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/mozilla/source-map",
+    "publisher": "Nick Fitzgerald",
+    "email": "nfitzgerald@mozilla.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\escodegen\\node_modules\\source-map",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\escodegen\\node_modules\\source-map\\LICENSE"
+  },
+  "sparse-bitfield@3.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/sparse-bitfield",
+    "publisher": "Mathias Buus",
+    "url": "@mafintosh",
+    "path": "C:\\projects\\lrag-app\\node_modules\\sparse-bitfield",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\sparse-bitfield\\LICENSE"
+  },
+  "split2@4.2.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/mcollina/split2",
+    "publisher": "Matteo Collina",
+    "email": "hello@matteocollina.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\split2",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\split2\\LICENSE"
+  },
+  "ssh2-sftp-client@12.0.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/theophilusx/ssh2-sftp-client",
+    "publisher": "Tim Cross",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ssh2-sftp-client",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ssh2-sftp-client\\LICENSE"
+  },
+  "ssh2@1.17.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mscdex/ssh2",
+    "publisher": "Brian White",
+    "email": "mscdex@mscdex.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ssh2",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ssh2\\LICENSE"
+  },
+  "stopwords-iso@1.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/stopwords-iso/stopwords-iso",
+    "publisher": "Gene Diaz",
+    "email": "genediazjr@gmail.com",
+    "url": "http://genediazjr.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\stopwords-iso",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\stopwords-iso\\README.md"
+  },
+  "string-walker@1.0.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/poppa/string-walker",
+    "publisher": "Pontus ├ûstlund",
+    "email": "poppanator@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\string-walker",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\string-walker\\LICENSE"
+  },
+  "string-width@4.2.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/string-width",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\string-width",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\string-width\\license"
+  },
+  "string-width@5.1.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sindresorhus/string-width",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\string-width",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\string-width\\license"
+  },
+  "string_decoder@1.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/string_decoder",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\string_decoder",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\string_decoder\\LICENSE"
+  },
+  "string_decoder@1.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/string_decoder",
+    "path": "C:\\projects\\lrag-app\\node_modules\\string_decoder",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\string_decoder\\LICENSE"
+  },
+  "strip-ansi@6.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/strip-ansi",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\strip-ansi",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\strip-ansi\\license"
+  },
+  "strip-ansi@7.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/strip-ansi",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\strip-ansi",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\strip-ansi\\license"
+  },
+  "strip-dirs@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/shinnn/node-strip-dirs",
+    "publisher": "Shinnosuke Watanabe",
+    "url": "https://github.com/shinnn",
+    "path": "C:\\projects\\lrag-app\\node_modules\\strip-dirs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\strip-dirs\\LICENSE"
+  },
+  "strtok3@6.3.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Borewit/strtok3",
+    "publisher": "Borewit",
+    "url": "https://github.com/Borewit",
+    "path": "C:\\projects\\lrag-app\\node_modules\\strtok3",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\strtok3\\LICENSE"
+  },
+  "supports-color@7.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/supports-color",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\supports-color",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\supports-color\\license"
+  },
+  "sylvester@0.0.12": {
+    "licenses": "MIT*",
+    "publisher": "Chris Umbel",
+    "email": "chris@chrisumbel.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\sylvester",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\sylvester\\LICENSE.txt"
+  },
+  "symbol-tree@3.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/js-symbol-tree",
+    "publisher": "Joris van der Wel",
+    "email": "joris@jorisvanderwel.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\symbol-tree",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\symbol-tree\\LICENSE"
+  },
+  "systeminformation@5.27.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/sebhildebrandt/systeminformation",
+    "publisher": "Sebastian Hildebrandt",
+    "email": "hildebrandt@plus-innovations.com",
+    "url": "https://plus-innovations.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\systeminformation",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\systeminformation\\LICENSE"
+  },
+  "tar-stream@1.6.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/mafintosh/tar-stream",
+    "publisher": "Mathias Buus",
+    "email": "mathiasbuus@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\tar-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\decompress-tar\\node_modules\\tar-stream\\LICENSE"
+  },
+  "tesseract.js-core@6.0.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/naptha/tesseract.js-core",
+    "publisher": "antimatter15",
+    "path": "C:\\projects\\lrag-app\\node_modules\\tesseract.js-core",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\tesseract.js-core\\LICENSE"
+  },
+  "tesseract.js@6.0.1": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/naptha/tesseract.js",
+    "path": "C:\\projects\\lrag-app\\node_modules\\tesseract.js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\tesseract.js\\LICENSE.md"
+  },
+  "text-loader@0.0.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/dfenstermaker/text-loader",
+    "publisher": "Danny Fenstermaker",
+    "path": "C:\\projects\\lrag-app\\node_modules\\text-loader",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\text-loader\\README.md"
+  },
+  "through@2.3.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/dominictarr/through",
+    "publisher": "Dominic Tarr",
+    "email": "dominic.tarr@gmail.com",
+    "url": "dominictarr.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\through",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\through\\LICENSE.APACHE2"
+  },
+  "tiny-emitter@2.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/scottcorgan/tiny-emitter",
+    "publisher": "Scott Corgan",
+    "path": "C:\\projects\\lrag-app\\node_modules\\tiny-emitter",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\tiny-emitter\\LICENSE"
+  },
+  "tmp@0.0.33": {
+    "licenses": "MIT",
+    "repository": "https://github.com/raszi/node-tmp",
+    "publisher": "KARASZI Istv├ín",
+    "email": "github@spam.raszi.hu",
+    "url": "http://raszi.hu/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\tmp",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\tmp\\LICENSE"
+  },
+  "to-buffer@1.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/browserify/to-buffer",
+    "publisher": "Mathias Buus",
+    "url": "@mafintosh",
+    "path": "C:\\projects\\lrag-app\\node_modules\\to-buffer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\to-buffer\\LICENSE"
+  },
+  "to-regex-range@5.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/micromatch/to-regex-range",
+    "publisher": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert",
+    "path": "C:\\projects\\lrag-app\\node_modules\\to-regex-range",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\to-regex-range\\LICENSE"
+  },
+  "token-types@4.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Borewit/token-types",
+    "publisher": "Borewit",
+    "url": "https://github.com/Borewit",
+    "path": "C:\\projects\\lrag-app\\node_modules\\token-types",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\token-types\\LICENSE"
+  },
+  "tough-cookie@4.1.4": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/salesforce/tough-cookie",
+    "publisher": "Jeremy Stashewsky",
+    "email": "jstash@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\tough-cookie",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\tough-cookie\\LICENSE"
+  },
+  "tr46@0.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Sebmaster/tr46.js",
+    "publisher": "Sebastian Mayr",
+    "email": "npm@smayr.name",
+    "path": "C:\\projects\\lrag-app\\node_modules\\node-fetch\\node_modules\\tr46"
+  },
+  "tr46@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/tr46",
+    "publisher": "Sebastian Mayr",
+    "email": "npm@smayr.name",
+    "path": "C:\\projects\\lrag-app\\node_modules\\data-urls\\node_modules\\tr46",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\data-urls\\node_modules\\tr46\\LICENSE.md"
+  },
+  "tr46@5.1.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/tr46",
+    "publisher": "Sebastian Mayr",
+    "email": "npm@smayr.name",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mongodb-connection-string-url\\node_modules\\tr46",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mongodb-connection-string-url\\node_modules\\tr46\\LICENSE.md"
+  },
+  "tr46@6.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/tr46",
+    "publisher": "Sebastian Mayr",
+    "email": "npm@smayr.name",
+    "path": "C:\\projects\\lrag-app\\node_modules\\tr46",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\tr46\\LICENSE.md"
+  },
+  "tree-kill@1.2.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/pkrumins/node-tree-kill",
+    "publisher": "Peteris Krumins",
+    "email": "peteris.krumins@gmail.com",
+    "url": "http://www.catonmat.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\tree-kill",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\tree-kill\\LICENSE"
+  },
+  "ts-error@1.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/gfmio/ts-error",
+    "publisher": "Fr├⌐d├⌐rique Mittelstaedt",
+    "email": "npm@gfm.io",
+    "url": "https://www.gfm.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ts-error",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ts-error\\LICENSE"
+  },
+  "tslib@2.8.1": {
+    "licenses": "0BSD",
+    "repository": "https://github.com/Microsoft/tslib",
+    "publisher": "Microsoft Corp.",
+    "path": "C:\\projects\\lrag-app\\node_modules\\tslib",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\tslib\\LICENSE.txt"
+  },
+  "tweetnacl@0.14.5": {
+    "licenses": "Unlicense",
+    "repository": "https://github.com/dchest/tweetnacl-js",
+    "publisher": "TweetNaCl-js contributors",
+    "path": "C:\\projects\\lrag-app\\node_modules\\tweetnacl",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\tweetnacl\\LICENSE"
+  },
+  "typed-array-buffer@1.0.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/typed-array-buffer",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\typed-array-buffer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\typed-array-buffer\\LICENSE"
+  },
+  "typed-function@4.2.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/josdejong/typed-function",
+    "publisher": "Jos de Jong",
+    "email": "wjosdejong@gmail.com",
+    "url": "https://github.com/josdejong",
+    "path": "C:\\projects\\lrag-app\\node_modules\\typed-function",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\typed-function\\LICENSE"
+  },
+  "typedarray@0.0.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/substack/typedarray",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\typedarray",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\typedarray\\LICENSE"
+  },
+  "uglify-js@3.19.3": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/mishoo/UglifyJS",
+    "publisher": "Mihai Bazon",
+    "email": "mihai.bazon@gmail.com",
+    "url": "http://lisperator.net/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\uglify-js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\uglify-js\\LICENSE"
+  },
+  "unbzip2-stream@1.4.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/regular/unbzip2-stream",
+    "publisher": "Jan B├╢lsche",
+    "email": "jan@lagomorph.de",
+    "path": "C:\\projects\\lrag-app\\node_modules\\unbzip2-stream",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\unbzip2-stream\\LICENSE"
+  },
+  "underscore@1.13.7": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jashkenas/underscore",
+    "publisher": "Jeremy Ashkenas",
+    "email": "jeremy@documentcloud.org",
+    "path": "C:\\projects\\lrag-app\\node_modules\\underscore",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\underscore\\LICENSE"
+  },
+  "undici-types@5.26.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/undici",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@anthropic-ai\\sdk\\node_modules\\undici-types",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@anthropic-ai\\sdk\\node_modules\\undici-types\\README.md"
+  },
+  "undici-types@7.10.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/nodejs/undici",
+    "path": "C:\\projects\\lrag-app\\node_modules\\undici-types",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\undici-types\\LICENSE"
+  },
+  "union@0.5.0": {
+    "licenses": "MIT*",
+    "repository": "https://github.com/flatiron/union",
+    "publisher": "Charlie Robbins",
+    "email": "charlie.robbins@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\union",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\union\\LICENSE"
+  },
+  "universalify@0.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/RyanZim/universalify",
+    "publisher": "Ryan Zimmerman",
+    "email": "opensrc@ryanzim.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\tough-cookie\\node_modules\\universalify",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\tough-cookie\\node_modules\\universalify\\LICENSE"
+  },
+  "universalify@2.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/RyanZim/universalify",
+    "publisher": "Ryan Zimmerman",
+    "email": "opensrc@ryanzim.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\universalify",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\patch-package\\node_modules\\universalify\\LICENSE"
+  },
+  "unzipper@0.12.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/ZJONSSON/node-unzipper",
+    "publisher": "Evan Oxfeld",
+    "email": "eoxfeld@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\unzipper",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\unzipper\\LICENSE"
+  },
+  "url-join@4.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jfromaniello/url-join",
+    "publisher": "Jos├⌐ F. Romaniello",
+    "email": "jfromaniello@gmail.com",
+    "url": "http://joseoncode.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\url-join",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\url-join\\LICENSE"
+  },
+  "url-parse@1.5.10": {
+    "licenses": "MIT",
+    "repository": "https://github.com/unshiftio/url-parse",
+    "publisher": "Arnout Kazemier",
+    "path": "C:\\projects\\lrag-app\\node_modules\\url-parse",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\url-parse\\LICENSE"
+  },
+  "util-deprecate@1.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/TooTallNate/util-deprecate",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\util-deprecate",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\util-deprecate\\LICENSE"
+  },
+  "uuid@10.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/uuidjs/uuid",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@langchain\\weaviate\\node_modules\\uuid",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@langchain\\weaviate\\node_modules\\uuid\\LICENSE.md"
+  },
+  "uuid@13.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/uuidjs/uuid",
+    "path": "C:\\projects\\lrag-app\\node_modules\\uuid",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\uuid\\LICENSE.md"
+  },
+  "uuid@9.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/uuidjs/uuid",
+    "path": "C:\\projects\\lrag-app\\node_modules\\weaviate-client\\node_modules\\uuid",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\weaviate-client\\node_modules\\uuid\\LICENSE.md"
+  },
+  "w3c-xmlserializer@4.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/w3c-xmlserializer",
+    "path": "C:\\projects\\lrag-app\\node_modules\\w3c-xmlserializer",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\w3c-xmlserializer\\LICENSE.md"
+  },
+  "wasm-feature-detect@1.8.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/GoogleChromeLabs/wasm-feature-detect",
+    "publisher": "Surma",
+    "email": "surma@surma.link",
+    "path": "C:\\projects\\lrag-app\\node_modules\\wasm-feature-detect",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\wasm-feature-detect\\LICENSE"
+  },
+  "weaviate-client@3.8.1": {
+    "licenses": "BSD-3-Clause",
+    "repository": "https://github.com/weaviate/typescript-client",
+    "publisher": "Weaviate",
+    "path": "C:\\projects\\lrag-app\\node_modules\\weaviate-client",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\weaviate-client\\LICENSE"
+  },
+  "web-streams-polyfill@4.0.0-beta.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/MattiasBuelens/web-streams-polyfill",
+    "publisher": "Mattias Buelens",
+    "email": "mattias@buelens.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\web-streams-polyfill",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\web-streams-polyfill\\LICENSE"
+  },
+  "webidl-conversions@3.0.1": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/jsdom/webidl-conversions",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\node-fetch\\node_modules\\webidl-conversions",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\node-fetch\\node_modules\\webidl-conversions\\LICENSE.md"
+  },
+  "webidl-conversions@7.0.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/jsdom/webidl-conversions",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\webidl-conversions",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\webidl-conversions\\LICENSE.md"
+  },
+  "webidl-conversions@8.0.0": {
+    "licenses": "BSD-2-Clause",
+    "repository": "https://github.com/jsdom/webidl-conversions",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\whatwg-url\\node_modules\\webidl-conversions",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\whatwg-url\\node_modules\\webidl-conversions\\LICENSE.md"
+  },
+  "whatwg-encoding@2.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/whatwg-encoding",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\whatwg-encoding",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\whatwg-encoding\\LICENSE.txt"
+  },
+  "whatwg-fetch@3.6.20": {
+    "licenses": "MIT",
+    "repository": "https://github.com/github/fetch",
+    "path": "C:\\projects\\lrag-app\\node_modules\\whatwg-fetch",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\whatwg-fetch\\LICENSE"
+  },
+  "whatwg-mimetype@3.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/whatwg-mimetype",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\whatwg-mimetype",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\whatwg-mimetype\\LICENSE.txt"
+  },
+  "whatwg-url@11.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/whatwg-url",
+    "publisher": "Sebastian Mayr",
+    "email": "github@smayr.name",
+    "path": "C:\\projects\\lrag-app\\node_modules\\data-urls\\node_modules\\whatwg-url",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\data-urls\\node_modules\\whatwg-url\\LICENSE.txt"
+  },
+  "whatwg-url@14.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/whatwg-url",
+    "publisher": "Sebastian Mayr",
+    "email": "github@smayr.name",
+    "path": "C:\\projects\\lrag-app\\node_modules\\mongodb-connection-string-url\\node_modules\\whatwg-url",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\mongodb-connection-string-url\\node_modules\\whatwg-url\\LICENSE.txt"
+  },
+  "whatwg-url@15.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/whatwg-url",
+    "publisher": "Sebastian Mayr",
+    "email": "github@smayr.name",
+    "path": "C:\\projects\\lrag-app\\node_modules\\whatwg-url",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\whatwg-url\\LICENSE.txt"
+  },
+  "whatwg-url@5.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jsdom/whatwg-url",
+    "publisher": "Sebastian Mayr",
+    "email": "github@smayr.name",
+    "path": "C:\\projects\\lrag-app\\node_modules\\node-fetch\\node_modules\\whatwg-url",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\node-fetch\\node_modules\\whatwg-url\\LICENSE.txt"
+  },
+  "which-typed-array@1.1.19": {
+    "licenses": "MIT",
+    "repository": "https://github.com/inspect-js/which-typed-array",
+    "publisher": "Jordan Harband",
+    "email": "ljharb@gmail.com",
+    "url": "http://ljharb.codes",
+    "path": "C:\\projects\\lrag-app\\node_modules\\which-typed-array",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\which-typed-array\\LICENSE"
+  },
+  "which@2.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/node-which",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me",
+    "path": "C:\\projects\\lrag-app\\node_modules\\which",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\which\\LICENSE"
+  },
+  "word-extractor@1.0.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/morungos/node-word-extractor",
+    "publisher": "Stuart Watt",
+    "email": "stuart@morungos.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\word-extractor",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\word-extractor\\LICENSE"
+  },
+  "wordnet-db@3.1.14": {
+    "licenses": "MIT",
+    "repository": "https://github.com/moos/wordnet-db",
+    "publisher": "Moos",
+    "email": "mooster@42at.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\wordnet-db",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\wordnet-db\\LICENSE"
+  },
+  "wordwrap@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/substack/node-wordwrap",
+    "publisher": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net",
+    "path": "C:\\projects\\lrag-app\\node_modules\\wordwrap",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\wordwrap\\LICENSE"
+  },
+  "wrap-ansi@7.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/wrap-ansi",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@grpc\\proto-loader\\node_modules\\wrap-ansi",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@grpc\\proto-loader\\node_modules\\wrap-ansi\\license"
+  },
+  "wrap-ansi@8.1.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/chalk/wrap-ansi",
+    "publisher": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "https://sindresorhus.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\wrap-ansi",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@isaacs\\cliui\\node_modules\\wrap-ansi\\license"
+  },
+  "wrappy@1.0.2": {
+    "licenses": "ISC",
+    "repository": "https://github.com/npm/wrappy",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\wrappy",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\wrappy\\LICENSE"
+  },
+  "ws@8.18.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/websockets/ws",
+    "publisher": "Einar Otto Stangvik",
+    "email": "einaros@gmail.com",
+    "url": "http://2x.io",
+    "path": "C:\\projects\\lrag-app\\node_modules\\ws",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\ws\\LICENSE"
+  },
+  "xml-name-validator@4.0.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/jsdom/xml-name-validator",
+    "publisher": "Domenic Denicola",
+    "email": "d@domenic.me",
+    "url": "https://domenic.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\xml-name-validator",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\xml-name-validator\\LICENSE.txt"
+  },
+  "xmlchars@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lddubeau/xmlchars",
+    "publisher": "Louis-Dominique Dubeau",
+    "email": "ldd@lddubeau.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\xmlchars",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\xmlchars\\LICENSE"
+  },
+  "xtend@4.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/Raynos/xtend",
+    "publisher": "Raynos",
+    "email": "raynos2@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\xtend",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\xtend\\LICENSE"
+  },
+  "y18n@5.0.8": {
+    "licenses": "ISC",
+    "repository": "https://github.com/yargs/y18n",
+    "publisher": "Ben Coe",
+    "email": "bencoe@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\y18n",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\y18n\\LICENSE"
+  },
+  "yallist@4.0.0": {
+    "licenses": "ISC",
+    "repository": "https://github.com/isaacs/yallist",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@redis\\client\\node_modules\\yallist",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@redis\\client\\node_modules\\yallist\\LICENSE"
+  },
+  "yallist@5.0.0": {
+    "licenses": "BlueOak-1.0.0",
+    "repository": "https://github.com/isaacs/yallist",
+    "publisher": "Isaac Z. Schlueter",
+    "email": "i@izs.me",
+    "url": "http://blog.izs.me/",
+    "path": "C:\\projects\\lrag-app\\node_modules\\yallist",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\yallist\\LICENSE.md"
+  },
+  "yaml@2.8.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/eemeli/yaml",
+    "publisher": "Eemeli Aro",
+    "email": "eemeli@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\yaml",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\yaml\\LICENSE"
+  },
+  "yargs-parser@21.1.1": {
+    "licenses": "ISC",
+    "repository": "https://github.com/yargs/yargs-parser",
+    "publisher": "Ben Coe",
+    "email": "ben@npmjs.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\yargs-parser",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\yargs-parser\\LICENSE.txt"
+  },
+  "yargs@17.7.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/yargs/yargs",
+    "path": "C:\\projects\\lrag-app\\node_modules\\@grpc\\proto-loader\\node_modules\\yargs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\@grpc\\proto-loader\\node_modules\\yargs\\LICENSE"
+  },
+  "yauzl@2.10.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/thejoshwolfe/yauzl",
+    "publisher": "Josh Wolfe",
+    "email": "thejoshwolfe@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\yauzl",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\yauzl\\LICENSE"
+  },
+  "zlibjs@0.3.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/imaya/zlib.js",
+    "publisher": "Yuta Imaya",
+    "email": "imaya.devel@gmail.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\zlibjs",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\zlibjs\\LICENSE"
+  },
+  "zod-to-json-schema@3.24.6": {
+    "licenses": "ISC",
+    "repository": "https://github.com/StefanTerdell/zod-to-json-schema",
+    "publisher": "Stefan Terdell",
+    "path": "C:\\projects\\lrag-app\\node_modules\\zod-to-json-schema",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\zod-to-json-schema\\LICENSE"
+  },
+  "zod@3.25.76": {
+    "licenses": "MIT",
+    "repository": "https://github.com/colinhacks/zod",
+    "publisher": "Colin McDonnell",
+    "email": "zod@colinhacks.com",
+    "path": "C:\\projects\\lrag-app\\node_modules\\zod",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\zod\\LICENSE"
+  },
+  "zone.js@0.15.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular",
+    "publisher": "Brian Ford",
+    "path": "C:\\projects\\lrag-app\\node_modules\\zone.js",
+    "licenseFile": "C:\\projects\\lrag-app\\node_modules\\zone.js\\LICENSE"
+  }
+}
+
