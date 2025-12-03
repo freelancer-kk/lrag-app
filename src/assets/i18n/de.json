@@ -288,7 +288,7 @@
     "LEGAL": {
       "TITLE": "Legal",
       "LEGAL": "Datenschutz, EUA und Sicherheit",
-      "LEGAL_DESC": "Hier finden Sie unsere Datenschutzbestimmungen, Nutzungsbedingungen, Endbenutzer-Lizenzvereinbarung, Datenschutz- und Sicherheitsrichtlinien. Bitte lesen Sie die Richtlinien und aktivieren Sie die Kontrollkästchen, um die Anwendung nutzen zu können",
+      "LEGAL_DESC": "Bitte lesen Sie die Richtlinien und aktivieren Sie die Kontrollkästchen, um die Anwendung nutzen zu können",
       "PRIVACY_POLICY_LINK": "Datenschutzrichtlinie",
       "EUA_POLICY_LINK": "Endbenutzer-Lizenzvereinbarung",
       "SECURITY_POLICY_LINK": "Sicherheitsrichtlinie"

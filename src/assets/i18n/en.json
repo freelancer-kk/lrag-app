@@ -288,7 +288,7 @@
       "LEGAL": {
         "TITLE": "Legal",
         "LEGAL": "Privacy, EUA and Security",
-        "LEGAL_DESC": "Here you will find our Data Privacy, End User License Agreement and Security Compliance Policies. Please read the policies and check the boxes in order to use the application",
+        "LEGAL_DESC": "Please read the policies and check the boxes in order to use the application",
         "PRIVACY_POLICY_LINK": "Data Privacy Policy",
         "EUA_POLICY_LINK": "End User License Agreement",
         "SECURITY_POLICY_LINK": "Security Policy"
