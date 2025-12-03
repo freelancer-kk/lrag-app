@@ -72,10 +72,7 @@ export class SystemService {
   kb_link: string | undefined;
   forum_link: string | undefined;
   support_link: string | undefined;
-  register_link: string | undefined;
-  pp_link: string | undefined;
-  eua_link: string | undefined;
-  security_link: string | undefined;
+  register_link: string | undefined;  
 
   firstTime: boolean = true;
   

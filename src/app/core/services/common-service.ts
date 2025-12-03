@@ -13,7 +13,10 @@ export class CommonService {
   private translate = inject(TranslateService)
   accept_pp: boolean = false;
   accept_eua: boolean = false;
-  accept_security: boolean = false;  
+  accept_security: boolean = false; 
+  pp_link: string | undefined;
+  eua_link: string | undefined;
+  security_link: string | undefined;
 
   constructor(
     private bridgeService: BridgeService,
@@ -101,6 +104,18 @@ export class CommonService {
     await this.setEnvValue('ACCEPT_PP', this.accept_pp ? "true" : "false");
     await this.setEnvValue('ACCEPT_EUA', this.accept_eua ? "true" : "false");
     await this.setEnvValue('ACCEPT_SECURITY', this.accept_security ? "true" : "false");
+    if (this.pp_link) {
+      const pp_parts: string[] = this.pp_link.split('/');
+      await this.setEnvValue('LC_PP', pp_parts[pp_parts.length - 1] );
+    }
+    if (this.eua_link) {
+      const eua_parts: string[] = this.eua_link.split('/');
+      await this.setEnvValue('LC_EUA', eua_parts[eua_parts.length - 1] );
+    }
+    if (this.security_link) {
+      const security_parts: string[] = this.security_link.split('/');
+      await this.setEnvValue('LC_SECURITY', security_parts[security_parts.length - 1] );
+    }
   }
 
   quitApp = (): Promise<void> => {

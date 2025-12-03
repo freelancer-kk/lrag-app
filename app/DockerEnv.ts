@@ -15,7 +15,10 @@ const mergeKeys: string[] = [
   "USE_TESSERACTJS",
   "ACCEPT_PP",
   "ACCEPT_EUA",
-  "ACCEPT_SECURITY"
+  "ACCEPT_SECURITY",
+  "LC_PP",
+  "LC_EUA",
+  "LC_SECURITY"
 ];
 
 const overwriteKeys: string[] = [
@@ -37,7 +40,7 @@ const overwriteKeys: string[] = [
   "SECURITY_URL",
   "LICENSE_GET_URL",
   "LICENSE_ACTIVATE_URL",
-  "OLLAMA_KEYS_URL"
+  "OLLAMA_KEYS_URL"  
 ];
 
 export default class DockerEnv {
