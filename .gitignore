@@ -12,6 +12,7 @@ src/**/*.js
 app/*.js
 .env
 scripts/.env
+lrag-key*
 
 # dependencies
 node_modules

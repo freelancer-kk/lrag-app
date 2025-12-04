@@ -73,3 +73,6 @@ Export Control Laws: Be aware of international trade and export control laws, wh
 Accessibility: Ensure your application's website is accessible to people with disabilities, in compliance with laws like the ADA in the US.
 Minor Protection: If your software targets users under 18, be aware of laws like the Children's Online Privacy Protection Act (COPPA) which requires parental consent for collecting data from children under 13. 
 It is highly recommended to seek professional legal advice to tailor these requirements to your specific business model and target markets
+
+# Data privacy / security video
+https://www.youtube.com/watch?v=tsrkB9I7m80

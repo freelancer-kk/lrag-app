@@ -25,6 +25,7 @@
     "@langchain/community": "0.3.56",
     "@langchain/core": "0.3.77",
     "@langchain/ollama": "0.2.4",
+    "@panva/hpke-noble": "^1.0.0",
     "adm-zip": "^0.5.16",
     "cluster-key-slot": "^1.1.2",
     "csv-parse": "6.1.0",
@@ -35,6 +36,7 @@
     "find-process": "2.0.0",
     "generic-pool": "^3.9.0",
     "hnswlib-node": "^3.0.0",
+    "hpke": "^1.0.0",
     "json-loader": "0.5.7",
     "jsonrepair": "3.13.0",
     "key-value-file": "1.0.10",
@@ -77,6 +79,7 @@
   "devDependencies": {
     "@types/adm-zip": "^0.5.7",
     "@types/csv-parse": "^1.1.12",
+    "@types/node": "^24.10.1",
     "@types/pdf-parse": "^1.1.5",
     "@types/ssh2-sftp-client": "^9.0.5",
     "@types/tesseract.js": "^0.0.2",

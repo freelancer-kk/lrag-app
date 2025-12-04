@@ -15,6 +15,7 @@ import ReRankerService from './RerankerService';
 import LicenseService from './LicenseService';
 import OCRllmProcessor from './OCRllmProcessor';
 import OCRJSProcessor from './OCRJSProcessor';
+import Quantum from './Quantum';
 
 const userHomePath: string = app.getPath('home');
 // const assetsPakFolderPath: string = app.getPath('assets');
@@ -41,6 +42,7 @@ let ocrLlmProcessor: OCRllmProcessor;
 let ocrJSProcessor: OCRJSProcessor;
 let licenseService: LicenseService;
 let useTesseractJS: boolean = false;
+let quantum: Quantum;
 
 log.initialize();
 
@@ -272,7 +274,11 @@ try {
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {            
-    setTimeout(async () => {
+    setTimeout(async () => {      
+      quantum = new Quantum(configPath);
+      await quantum.init();
+      await quantum.runTest('this is my message in');
+
       calcAssetsFolderPath();
 
       if (isLinux) {
@@ -296,9 +302,11 @@ try {
       const browserWin = await createWindow();
       browserWin.once("ready-to-show", () => {
         log.info('main:ready-to-show');
-        log.info('main:starting services if already installed:');      
+        log.info('main:starting services if already installed:');   
+
+        process.exit(1);
         ollamaService.startIfInstalled();
-        rerankerService.startIfInstalled();        
+        rerankerService.startIfInstalled();   
         browserWin.show();
       })      
     }, 400)    
