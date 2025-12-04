@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from '../electron/electron.service';
-import { isBreakStatement } from 'typescript';
-import { SystemService } from '../system/system.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +11,7 @@ export class BridgeService {
   cb: (ev: any, result: any) => void = () => {};
   chatcb: (ev: any, result: any) => void = () => {};
   ocrcb: (ev: any, result: any) => void = () => {};
+  ocrlocalcb: (ev: any, result: any) => void = () => {};
   liccb: (ev: any, result: any) => void = () => {};
   
   constructor(
@@ -60,6 +59,10 @@ export class BridgeService {
       this.electronService.ipcRenderer.on('ocr-event', (_event: any, result: any) => {
         // console.log('bridge:event', result.response);
         this.ocrcb(_event, result.response);        
+      })
+      this.electronService.ipcRenderer.on('ocr-local-event', (_event: any, result: any) => {
+        // console.log('bridge:event', result.response);
+        this.ocrlocalcb(_event, result.response);        
       }) 
       this.electronService.ipcRenderer.on('license-event', (_event: any, result: any) => {
         // console.log('bridge:event', result.response);
@@ -78,6 +81,10 @@ export class BridgeService {
 
   ocrCallback = (cb: (ev: any, result: any) => void) => {
     this.ocrcb = cb;
+  }
+
+  ocrLocalCallback = (cb: (ev: any, result: any) => void) => {
+    this.ocrlocalcb = cb;
   }
 
   licCallback = (cb: (ev: any, result: any) => void) => {
@@ -332,6 +339,7 @@ export class BridgeService {
       this.electronService.ipcRenderer.removeAllListeners('event')
       this.electronService.ipcRenderer.removeAllListeners('chat')
       this.electronService.ipcRenderer.removeAllListeners('ocr-event')
+      this.electronService.ipcRenderer.removeAllListeners('ocr-local-event')      
       this.electronService.ipcRenderer.removeAllListeners('license-event')
     }
   }

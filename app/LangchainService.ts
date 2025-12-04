@@ -18,9 +18,10 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { HNSWLib } from "@langchain/community/vectorstores/hnswlib";
 import SemanticChunking, { LanguageTypes } from './SemanticChunking';
 import * as fs from 'fs';
-import OCRProcessor from './OCRProcessor';
+import OCRJSProcessor from './OCRJSProcessor';
 import { v4 as uuidv4 } from 'uuid';
 import log from 'electron-log/main';
+import OCRllmProcessor from './OCRllmProcessor';
 
 export enum EVectorStoreType {
   Memory = 0,
@@ -38,18 +39,19 @@ export default class LangchainService {
   numOfDocs: number = 0;
   semanticChunking: SemanticChunking;
   vectorStoreType: EVectorStoreType | undefined;
-  ocrProcessor: OCRProcessor;
+  ocrJSProcessor: OCRJSProcessor | undefined;
+  ocrLLMProcessor: OCRllmProcessor;
   uuid: string;
   baseUrl: string;
 
-  constructor(doc_path: string, db_dir: string, ocrProcessor: OCRProcessor, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
+  constructor(doc_path: string, db_dir: string, ocrJSProcessor: OCRJSProcessor | undefined, ocrLLMProcessor: OCRllmProcessor, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
     this.doc_path = doc_path;
     this.root_doc_path = doc_path;
     mkdirSync(path.join(db_dir, 'hnsw'), { recursive: true });
     this.db_path = path.join(db_dir, 'hnsw');    
-  
+    
     log.info('db_path:', this.db_path);
-    log.info('doc_path:', this.doc_path);
+    log.info('doc_path:', this.doc_path);    
 
     this.embeddings = new OllamaEmbeddings({
         model,
@@ -59,7 +61,8 @@ export default class LangchainService {
     
     this.semanticChunking = new SemanticChunking(baseUrl, model);
 
-    this.ocrProcessor = ocrProcessor;          
+    this.ocrJSProcessor = ocrJSProcessor; 
+    this.ocrLLMProcessor = ocrLLMProcessor;         
           
     this.uuid = uuidv4();
 
@@ -69,7 +72,8 @@ export default class LangchainService {
   register = (webContents: Electron.WebContents | undefined) => {
     this.webContents = webContents;
     this.semanticChunking.register(webContents);
-    this.ocrProcessor.register(webContents);
+    this.ocrJSProcessor?.register(webContents);
+    this.ocrLLMProcessor.register(webContents);
     ipcMain.on('ingest', async (event: any, arg: any) => {
       const { callbackId, command, params }= arg;
       log.info('LangchainService:', callbackId, command, params)
@@ -305,7 +309,8 @@ export default class LangchainService {
     }
   }
 
-  OCRDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
+  /*
+  OCRWatcherDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
     let hasOCRTasks: boolean = false;
     const file_names: string[] = fs.readdirSync(doc_path);
     const loaded_doc_names: string[] = [];
@@ -321,9 +326,9 @@ export default class LangchainService {
           // file has not been loaded mark it for OCR processing
           log.info('OCR:REQUEST:put:', path.join(doc_path, fn));
           
-          this.ocrProcessor.put(
+          this.ocrProcessor?.put(
             path.join(doc_path, fn),
-            this.uuid + '-' + path.basename(fn)
+            path.basename(fn)
           )          
           hasOCRTasks = true;          
         } else {
@@ -338,6 +343,39 @@ export default class LangchainService {
 
     return hasOCRTasks;
   }
+  */
+
+  OCRDocs = async (ocrobj: any, loaded_docs: Document[], doc_path: string, ocrProcessor: OCRllmProcessor | OCRJSProcessor): Promise<boolean> => {
+    await this.ocrLLMProcessor.init(ocrobj);
+    
+    let hasOCRTasks: boolean = false;
+    const file_names: string[] = fs.readdirSync(doc_path);
+    const loaded_doc_names: string[] = [];
+    for await (const ld of loaded_docs) {
+      if (loaded_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
+        loaded_doc_names.push(ld.metadata.source);
+      }
+    }
+
+    for await (const fn of file_names) {
+      if (loaded_doc_names.findIndex(ldn => path.basename(ldn) === fn) === -1) {
+        if (fn.endsWith('pdf') || fn.endsWith('PDF')) {
+          // file has not been loaded convert to md
+          log.info('OCR:convert:', path.join(doc_path, fn));
+          ocrProcessor.put(path.join(doc_path, fn))           
+          hasOCRTasks = true;                  
+        } else {
+          log.info('OCR ignoring non pdf:', fn);
+          this.emit( { type: 'langchain-run-ocr-ignore', data: { name: fn } });
+        }
+      }
+    }
+    if (hasOCRTasks) {
+      this.emit( { type: 'langchain-run-has-ocr', data: {} });
+    }
+    
+    return hasOCRTasks;
+  }
 
   run = async (params: any): Promise<any> => {
     this.emit( { type: 'langchain-run-start', data: {} } );
@@ -347,7 +385,11 @@ export default class LangchainService {
       let hasOCRTasks: boolean = false
       if (params.localVector === false) {
         // Check for OCR
-        hasOCRTasks = await this.OCRDocs(docs, this.doc_path);
+        if (this.ocrJSProcessor) {       
+          hasOCRTasks = await this.OCRDocs(params.ocr, docs, this.doc_path, this.ocrJSProcessor);
+        } else {
+          hasOCRTasks = await this.OCRDocs(params.ocr, docs, this.doc_path, this.ocrLLMProcessor);
+        }
       }
       if (!hasOCRTasks) {
         this.embeddings = new OllamaEmbeddings({

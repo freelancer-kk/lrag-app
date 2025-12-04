@@ -5,12 +5,14 @@
     {{ 'PAGES.DETAIL.MODEL_ACCURACY' | translate }}  
   </sub>
 </h1>
+<!--
 @if (systemService.brand === 'Nvidia' || systemService.brand === 'Intel' || systemService.brand === 'Amd') {
   <span class="spacer"></span>
   <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'GPU_ACCEL_TIP' | translate" [checked]="ollamaService.gpuAcceleration" (change)="switchGPUAccel($event)">
     {{ 'GPU_ACCEL' | translate }}
   </mat-slide-toggle>
 }
+-->
   </div>
   <div class="onerow">
     <mat-form-field class="full-width">
@@ -56,7 +58,24 @@
           }
         </mat-select>
       </mat-form-field>
-    </div>  
+    </div>
+    @if (systemService.totalMainMemory > 12) {
+      <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'PAGES.DETAIL.USE_WATCHER_TIP' | translate" [checked]="ollamaService.useTesseractJS" (change)="switchOCR($event)">
+        {{ 'PAGES.DETAIL.USE_WATCHER' | translate }}
+      </mat-slide-toggle>
+    }
+    @if (!ollamaService.useTesseractJS) {
+      <div class="onerow">
+        <mat-form-field class="full-width">
+          <mat-label>{{ 'PAGES.DETAIL.OCR_MODEL_SELECT' | translate }}</mat-label>
+          <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.ocr_model" (selectionChange)="modelChange($event, 2)">
+            @for (entry of ollamaService.ocr_models; track $index) {
+              <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>  
+    }
   </mat-expansion-panel>
   <mat-expansion-panel [expanded]="ollamaService.cloudSelected">
     <mat-expansion-panel-header>
@@ -84,26 +103,7 @@
         {{ 'PAGES.DETAIL.ACTIVATE' | translate }}
       </button>
     </div>  
-  </mat-expansion-panel>
-  <mat-expansion-panel expanded="false">
-    <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
-    <mat-panel-description>        
-    </mat-panel-description>
-  </mat-expansion-panel-header> 
-    <div class="onerow">
-      <mat-form-field class="full-width">
-        <mat-label [matTooltip]="'PAGES.DETAIL.RAG_PROMPT_TIP' | translate">{{ 'PAGES.DETAIL.RAG_PROMPT' | translate }}</mat-label>
-        <textarea [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
-      </mat-form-field>                        
-    </div>
-    <div class="onerow">
-      <mat-form-field class="full-width">
-        <mat-label [matTooltip]="'PAGES.DETAIL.USER_PROMPT_TIP'| translate">{{ 'PAGES.DETAIL.USER_PROMPT' | translate }}</mat-label>
-        <textarea [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
-      </mat-form-field>                        
-    </div>
-  </mat-expansion-panel>        
+  </mat-expansion-panel>  
   </mat-accordion>
   }
 <mat-dialog-content>      
@@ -153,9 +153,12 @@
                 ollamaService.status.get() === EStatus.running && 
                 systemService.modelStatus.get() === EStatus.running &&
                 !entry.name.startsWith('embedding') &&
-                !entry.name.startsWith('gemma3:1b') &&                
+                !entry.name.startsWith('gemma3:1b') &&
+                !entry.name.startsWith('granite3.2-vision') &&
+                !entry.name.startsWith('') &&
                 entry.name !== ollamaService.selectedModel &&
-                entry.name !== ollamaService.embeddings_model
+                entry.name !== ollamaService.embeddings_model &&
+                entry.name !== ollamaService.ocr_model
               ) {
                 <button matButton (click)="removeModel($event, $index)">
                   <mat-icon class="danger">cancel</mat-icon>

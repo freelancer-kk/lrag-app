@@ -121,6 +121,10 @@ export default class LicenseService {
     }
   }
 
+  isActivePro = (): boolean => {
+      return this.licenseType === ELicenseType.PRO && this.licenseChecked && this.licenseStatus === ELicenseStatus.ACTIVATED;
+  }
+
   emit = (args: any) => {
     this.webContents?.send('license-event', {
       response: args

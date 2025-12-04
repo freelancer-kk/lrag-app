@@ -1,5 +1,5 @@
-import { Component, OnInit, inject, effect } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, OnInit, inject, effect, NgZone } from '@angular/core';
+import { MatButtonModule, MatFabButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { SystemService } from '../core/services/system/system.service';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +14,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatSelectModule} from '@angular/material/select';
@@ -59,7 +60,9 @@ export interface IngestDialogData {
     MatExpansionModule,
     MatSlideToggle,
     SpecialCharacterDirective,
-    MatDialogModule
+    MatDialogModule,
+    MatCheckboxModule,
+    MatFabButton
   ],
   templateUrl: './ingest.component.html',
   styleUrl: './ingest.component.scss'
@@ -82,11 +85,14 @@ export class IngestComponent implements OnInit {
   filesSize: number = 0;
   loadedSize: number = 0;
   hasOCR: boolean = false;
-
+  addColState: boolean = false;
+  
   overallStatus: EStatus | undefined;
   ingestStatus: EStatus = EStatus.not_running;
   
   EStatus: typeof EStatus = EStatus;
+
+  errorOCRStr: string | undefined;
 
   constructor(
     public systemService: SystemService,
@@ -95,7 +101,11 @@ export class IngestComponent implements OnInit {
     public ollamaService: OllamaService,
     public mediaService: MediaService,
     private router: Router,
+    private ngZone: NgZone
   ) {
+    this.commonService.get('PAGES.INGEST.OCR_ERROR').then((value: string) => {
+      this.errorOCRStr = value;
+    })
     effect(() => {
       this.ingestStatus = this.systemService.ingestStatus.get();
       this.overallStatus = this.systemService.mainStatus.get();
@@ -110,7 +120,10 @@ export class IngestComponent implements OnInit {
         this.systemService.ocrComplete.set(false);   
         this.hasOCR = false;             
         console.log('Starting ingestion after OCR complete!');
-        this.startIngestion();
+        
+        if (this.mediaService.docStatus?.findIndex(f => f.text === this.errorOCRStr) === -1) {
+          this.startIngestion();
+        }
       }      
       if (this.systemService.hasOCR() === true) {
         console.log('OCR tasks detected, waiting for completion before ingestion!');
@@ -134,8 +147,7 @@ export class IngestComponent implements OnInit {
     const selectedCollection: any = this.systemService.collections.find(f => f.name === this.systemService.collection).value
     console.log('selected:', selectedCollection);
     this.systemService.selectedCollections.setValue(selectedCollection);
-    this.systemService.ragFiles = await this.mediaService.ls(true);
-    console.log('ragFiles:', this.systemService.ragFiles);
+    await this.systemService.refreshFileList(this.mediaService, true);
   }
 
   resetDefaults = (ev: any) => {
@@ -163,6 +175,11 @@ export class IngestComponent implements OnInit {
         }
       }
 
+      const ocrentry: any = this.ollamaService.ocr_models.find(f => f.value === this.ollamaService.ocr_model);
+
+      if (this.systemService.ocr_num_ctx && this.systemService.ocr_num_ctx !== 0) {
+        ocrentry.params.num_ctx = this.systemService.ocr_num_ctx * 1000;
+      }
       this.systemService.commandIngest(
         'start',
         {        
@@ -172,10 +189,16 @@ export class IngestComponent implements OnInit {
             useSemantic: this.systemService.useSemantic,
             localVector: this.systemService.localVector,
             collection: this.systemService.collection,
-            embeddings: this.ollamaService.embeddings_model
+            embeddings: this.ollamaService.embeddings_model,
+            ocr: { 
+              model: this.ollamaService.ocr_model,
+              prompt: this.systemService.ocrPrompt && this.systemService.ocrPrompt !== '' ? this.systemService.ocrPrompt : ocrentry.prompt,
+              params: ocrentry.params
+            }
           }
         }
       ).then(async (result: any) => {
+        this.isUploading = false;      
         console.log('ingest result:', result);
         this.afterLastFinish = false;
         setTimeout(() => {
@@ -183,44 +206,25 @@ export class IngestComponent implements OnInit {
         }, 2000);
         await this.mediaService.saveIndex();
         if ((result && result.status === 'completed')) {
-          this.systemService.ingestStatus.update(EStatus.not_running);
-          this.systemService.ragFiles = await this.mediaService.ls();
-          this.systemService.chatHistory = [];
+          await this.systemService.refreshFileList(this.mediaService, true);
+          this.systemService.ingestStatus.update(EStatus.not_running);          
+          this.ollamaService.resetChatHistory();
           const snackBarRef = this._snackBar.open(
             await this.commonService.get('PAGES.INGEST.COMPLETE'), 'OK', {
             duration: 10000,
             panelClass: ['ingest-snackbar-positioning']
           });
           snackBarRef.onAction().subscribe(() => {
-            /*
-            if (this.mediaService.noOfValidFiles()) {
-              this.router.navigate(['insights']);
-            }
-              */
+         
           });      
-        } 
-        /*
-        else {
-          this.systemService.ingestStatus.update(EStatus.warning);
-          const snackBarRef1 = this._snackBar.open(
-            await this.commonService.get('PAGES.INGEST.WARNING') + (result.status ? (': ' + JSON.stringify(result)) : await this.commonService.get('PAGES.INGEST.EXITED')), 
-            'OK',
-            {
-              panelClass: ['ingest-snackbar-positioning']
-            }
-          );
-          this.systemService.ragFiles = await this.mediaService.ls();
-          snackBarRef1.onAction().subscribe(() => {
-            this.systemService.ingestStatus.update(EStatus.not_running);
-          });              
-        }
-        */
+        }        
       }).catch(async (e) => {
+        this.isUploading = false;
         console.error('ingest error:', e);      
         this.systemService.ingestStatus.update(EStatus.error);
         const snackBarRef2 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.ERROR') + (e ? (': ' + e.toString()) : ''), 'OK',
         { panelClass: ['ingest-snackbar-positioning'] });
-        this.systemService.ragFiles = await this.mediaService.ls();
+        await this.systemService.refreshFileList(this.mediaService);
         snackBarRef2.onAction().subscribe(() => {
           this.systemService.ingestStatus.update(EStatus.not_running);
         });      
@@ -243,8 +247,8 @@ export class IngestComponent implements OnInit {
   }
 
   dropped = async (files: NgxFileDropEntry[]) => {
-    // TODO: take care when uploading the same file again IT SHOULD NOT BE IGNORED AS IS THE CASE
-
+    console.log('dropped:event:called');
+    this.isUploading = true;
     const totalLength: number = files.length + this.systemService.ragFiles.length;
     this.totalUploaded = 0;
     this.fileProgress = 0;
@@ -264,7 +268,6 @@ export class IngestComponent implements OnInit {
               const reader: FileReader = new FileReader();          
               reader.onloadstart = (event: any) => {
                 console.log('onloadstart:', file.name);                
-                this.isUploading = true;
                 this.systemService.ingestStatus.update(EStatus.uploading);
               };              
               reader.onload = async (event: any) => {
@@ -277,11 +280,16 @@ export class IngestComponent implements OnInit {
                 console.log('Total uploaded:', file.name, this.totalUploaded, files.length);
                 await this.mediaService.completedUpload(file);
                 if (this.totalUploaded === files.length) {
-                  console.log('starting ingestion after All files uploaded!');
-                  this.isUploading = false;
-                  this.systemService.ingestStatus.update(EStatus.uploaded);
-                  this.systemService.ragFiles = await this.mediaService.ls(true);
-                  this.startIngestion();
+                  console.log('total file upload reached!');
+                  this.ngZone.run(async () => {
+                    await this.systemService.refreshFileList(this.mediaService, true);
+                    this.systemService.ingestStatus.update(EStatus.uploaded);
+                    setTimeout(() => {
+                      this.isUploading = false;
+                    }, 60000);
+                    console.log('starting ingestion after All files uploaded!', this.systemService.ragFiles);
+                    this.startIngestion();               
+                  });
                 };
               };
               reader.onerror = (event: any) => {
@@ -299,7 +307,7 @@ export class IngestComponent implements OnInit {
               await this.mediaService.startUpload(file);
               reader.readAsArrayBuffer(file); // read file as data url
             } finally {
-              this.isUploading = false;
+              // this.isUploading = false;
               this.systemService.ingestStatus.update(EStatus.uploaded);
             }
             
@@ -307,6 +315,7 @@ export class IngestComponent implements OnInit {
         } else {
           const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
           console.log(droppedFile.relativePath, fileEntry);
+          this.isUploading = false;
           this._snackBar.open(await this.commonService.get('PAGES.INGEST.DIR_NOT_SUPPORTED'), 'OK',
           {
             panelClass: ['ingest-snackbar-positioning']
@@ -314,12 +323,12 @@ export class IngestComponent implements OnInit {
         }
       }
     } else {
+      this.isUploading = false;
       this._snackBar.open(await this.commonService.get('PAGES.INGEST.TOO_MANY_FILES') + this.systemService.MAX_FILES, 'OK',
         {
           panelClass: ['ingest-snackbar-positioning']
         });
-    }
-    
+    }    
   }
 
   fileOver = (event: any) => {
@@ -338,7 +347,7 @@ export class IngestComponent implements OnInit {
     console.log('fileRemove:', event);
     if (this.systemService.selectedDocuments.value) {
       const docs: string[] = (this.systemService.selectedDocuments.value as unknown) as string[];
-      const deleteStr: string = docs.map(doc => this.commonService.basename(doc)).join(' ');
+      const deleteStr: string = docs.map(doc => this.commonService.basename(doc)).join(', ');
       console.log('fileRemove:', deleteStr)    
       const dialogRef = this.dialog.open(
         AlertComponent, {
@@ -359,12 +368,42 @@ export class IngestComponent implements OnInit {
               this.systemService.ragFiles.splice(fIdx, 1);            
             }
           }
-          this.systemService.ragFiles = await this.mediaService.ls(true);
-          // await this.startIngestion();
+          await this.systemService.refreshFileList(this.mediaService, true);
+          this.startIngestion();
         }
         this.systemService.selectedDocuments.setValue('');
       });    
     }
+  }
+
+  removeChecked = async (event: any) => {
+    console.log('remove: checked files:');
+    const docs: string [] = this.mediaService.filesChecked.map((m, i) => m ? this.systemService.ragFiles[i].name : '').filter(f => f !== '');
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 1,
+          params: {
+            message: await this.commonService.get('PAGES.INGEST.DELETE_ARE_YOU_SURE') + ' ' + docs.map(m => this.commonService.basename(m)).join(', ')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Dialog result: ${result}`);
+      if (result === true) {                
+        for await (const doc of docs) {
+          const fIdx: number = this.systemService.ragFiles.findIndex(r => r.name === doc);
+          if (fIdx > -1) {
+            await this.mediaService.remove(this.systemService.ragFiles[fIdx].name);
+            this.systemService.ragFiles.splice(fIdx, 1);            
+          }
+        }
+        await this.systemService.refreshFileList(this.mediaService, true);
+        if (this.systemService.ragFiles.length > 0) {
+          this.startIngestion();
+        }
+      }
+    });    
   }
 
   download = async (event: any, index: number) => {}
@@ -390,6 +429,10 @@ export class IngestComponent implements OnInit {
     }
   }
 
+  hasChecked = (): boolean => {
+    return this.mediaService.filesChecked.reduce(((a: boolean, c: boolean) => a || c ), false);
+  }
+
   newCollection = async (ev: any) => {
     if (this.collection.length > 7) {
       this.showErrors = false;
@@ -411,8 +454,9 @@ export class IngestComponent implements OnInit {
           console.log('selectedCollection:', this.collection, selectedCollection);
           this.systemService.selectedCollections.setValue(selectedCollection);
           this.systemService.collection = this.collection;          
-          this.systemService.ragFiles = await this.mediaService.ls(true);          
+          await this.systemService.refreshFileList(this.mediaService, true);
           console.log('ragFiles:', this.systemService.ragFiles);
+          this.addColState = false;
         } else {
           console.log('collection already exists!:', this.collection)
         }
@@ -427,7 +471,7 @@ export class IngestComponent implements OnInit {
     console.log('change to collection:', this.systemService.collection)
     await this.systemService.saveChunkSettings();
     this.mediaService.loadedIndex = false;    
-    this.systemService.ragFiles = await this.mediaService.ls(true);        
+   await this.systemService.refreshFileList(this.mediaService, true);
   }
 
   collectionRemove = async (ev: any) => {
@@ -451,7 +495,7 @@ export class IngestComponent implements OnInit {
           this.systemService.collection = "general";
           const generalCollection = this.systemService.collections.find(f => f.name === this.systemService.collection).value;
           this.systemService.selectedCollections.setValue(generalCollection);
-          this.systemService.ragFiles = await this.mediaService.ls(true);          
+          await this.systemService.refreshFileList(this.mediaService);
           await this.systemService.saveChunkSettings();
         }
       });

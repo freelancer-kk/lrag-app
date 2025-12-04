@@ -4,7 +4,7 @@
   border: 5px green solid;
   border-style: dashed;
   width: 95%;
-  height: 20%;
+  height: 100px;
   border-radius: 5px;
   display: flex;
   margin-left: 10px;
@@ -23,7 +23,7 @@
 
 .filelistscroll {
   width: 100%;
-  min-height: 20%;
+  min-height: 30%;
 }
 
 ::ng-deep .mat-mdc-dialog-content {
@@ -46,4 +46,10 @@
   /* Optional: Add a background overlay and z-index */
   background: rgba(0, 0, 0, 0.32);
   z-index: 2000;
+}
+
+.fab-flex-container {
+  display: flex;
+  float: left;
+  align-items: flex-end;
 }

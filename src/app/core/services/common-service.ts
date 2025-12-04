@@ -11,6 +11,12 @@ import { signal } from '@angular/core';
 })
 export class CommonService {
   private translate = inject(TranslateService)
+  accept_pp: boolean = false;
+  accept_eua: boolean = false;
+  accept_security: boolean = false; 
+  pp_link: string | undefined;
+  eua_link: string | undefined;
+  security_link: string | undefined;
 
   constructor(
     private bridgeService: BridgeService,
@@ -34,7 +40,7 @@ export class CommonService {
   }
 
   basename = (fullpath: string): string => {    
-    return path.basename(fullpath.replace(/\\/g,'/'));
+    return fullpath ? path.basename(fullpath.replace(/\\/g,'/')) : fullpath;
   }
 
   setEnvValue = (key: string, value: string): Promise<string> => {
@@ -94,12 +100,32 @@ export class CommonService {
     }
   }
 
+  writeAcceptance = async (ev: any = undefined) => {
+    await this.setEnvValue('ACCEPT_PP', this.accept_pp ? "true" : "false");
+    await this.setEnvValue('ACCEPT_EUA', this.accept_eua ? "true" : "false");
+    await this.setEnvValue('ACCEPT_SECURITY', this.accept_security ? "true" : "false");
+    if (this.pp_link) {
+      const pp_parts: string[] = this.pp_link.split('/');
+      await this.setEnvValue('LC_PP', pp_parts[pp_parts.length - 1] );
+    }
+    if (this.eua_link) {
+      const eua_parts: string[] = this.eua_link.split('/');
+      await this.setEnvValue('LC_EUA', eua_parts[eua_parts.length - 1] );
+    }
+    if (this.security_link) {
+      const security_parts: string[] = this.security_link.split('/');
+      await this.setEnvValue('LC_SECURITY', security_parts[security_parts.length - 1] );
+    }
+  }
+
   quitApp = (): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      this.bridgeService.quitApp(10, async () => {
-        resolve();
-      });
-    })
+    return this.writeAcceptance().then(() => {
+      return new Promise((resolve, reject) => {
+        this.bridgeService.quitApp(10, async () => {
+          resolve();
+        });
+      })
+    });
   }
 
   extractNumericalVersionNumberFromString = (version: string): number => {
@@ -152,14 +178,14 @@ const EStatusMap: { [key in EStatus]: string } = {
   [EStatus.upgrading]: 'Upgrading',
   [EStatus.installed]: 'Installed',
   [EStatus.installing]: 'Installing',
-  [EStatus.upgrade_brew]: 'Upgrade via Brew',
-  [EStatus.installed_brew]: 'Install via Brew',
-  [EStatus.upgrading_brew]: 'Upgrading via Brew',
-  [EStatus.installing_brew]: 'Installing via Brew', 
-  [EStatus.upgrade_winget]: 'Upgrade via winget',
-  [EStatus.installed_winget]: 'Install via winget',
-  [EStatus.upgrading_winget]: 'Upgrading via winget',
-  [EStatus.installing_winget]: 'Installing via winget'
+  [EStatus.upgrade_brew]: 'Upgrade',
+  [EStatus.installed_brew]: 'Install',
+  [EStatus.upgrading_brew]: 'Upgrading',
+  [EStatus.installing_brew]: 'Installing', 
+  [EStatus.upgrade_winget]: 'Upgrade',
+  [EStatus.installed_winget]: 'Install',
+  [EStatus.upgrading_winget]: 'Upgrade',
+  [EStatus.installing_winget]: 'Installing'
 };
 
 export class LStatus {

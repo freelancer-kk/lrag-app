@@ -37,7 +37,6 @@ export interface ModelDialogData {
       MatInputModule,
       MatSelectModule,
       MatFormFieldModule,
-      MatToolbar,
       MatIconModule,
       MatChipsModule,
       MatToolbarModule,
@@ -113,6 +112,39 @@ export class DetailComponent implements OnInit {
       }
     })
   }
+
+  switchOCR = async (event: any) => {    
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 1,
+          params: {
+            message: await this.commonService.get('WATCHER_ARE_YOU_SURE')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Dialog result: ${result}`);
+      if (result === true) {            
+        this.ollamaService.useTesseractJS = event.checked;
+        await this.commonService.setEnvValue('USE_TESSERACTJS', this.ollamaService.useTesseractJS ? 'true' : 'false');
+          const dialogRef = this.dialog.open(
+            AlertComponent, {
+              data: {
+                type: 2,
+                params: {
+                  message: await this.commonService.get('WATCHER_CHANGE_DONE')
+                }
+              }
+            });          
+          dialogRef.afterClosed().subscribe(async () => {
+            await this.commonService.quitApp();      
+          });          
+      } else {
+        event.source.checked = !event.checked;
+      }
+    })
+  }
   
   removeModel = async (event: any, index: number) => {
     const dialogRef = this.dialog.open(
@@ -135,7 +167,9 @@ export class DetailComponent implements OnInit {
   writeModelToEnv = (): Promise<void> => {
     return this.commonService.setEnvValue('LLM_MODEL_NAME', this.ollamaService.selectedModel).then((value: any) => {
       return this.commonService.setEnvValue('EMBEDDINGS_MODEL_NAME', this.ollamaService.embeddings_model).then((value: any) => {
-        return this.commonService.writeEnv().then((res: any) => {})
+        return this.commonService.setEnvValue('OCR_MODEL_NAME', this.ollamaService.ocr_model).then((value: any) => {
+          return this.commonService.writeEnv().then((res: any) => {})
+        })
       })
     }) 
   }
@@ -155,7 +189,8 @@ export class DetailComponent implements OnInit {
 
   modelChange = async (event: any, mtype: number) => {
     // Check if model has been already downloaded
-    const fIdx: number = this.ollamaService.availableModels.findIndex(f => f.name === (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model));
+    const fIdx: number = this.ollamaService.availableModels.findIndex(
+      f => f.name === (mtype === 0 ? this.ollamaService.selectedModel : mtype === 1 ? this.ollamaService.embeddings_model : this.ollamaService.ocr_model));
     if (fIdx === -1) {
       let cont: boolean = true;     
        
@@ -171,22 +206,28 @@ export class DetailComponent implements OnInit {
             data: {
               type: 0,
               params: {
-                model: (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model)
+                model: (mtype === 0 ? this.ollamaService.selectedModel : mtype === 1 ? this.ollamaService.embeddings_model : this.ollamaService.ocr_model)
               }
             }
           });
         dialogRef.afterClosed().subscribe(async (result) => {
           console.log(`Dialog result: ${result}`);
           if (result === true) {
-            await this.ollamaService.commandOllama('pull', { model: (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model), stream: true });
+            await this.ollamaService.commandOllama('pull', { model: (
+              mtype === 0 ? this.ollamaService.selectedModel : mtype === 1 ? this.ollamaService.embeddings_model : this.ollamaService.ocr_model
+            ), stream: true });
             await this.writeModelToEnv();
-            this.ollamaService.downloadedLLM = (mtype === 0 ? this.ollamaService.selectedModel : this.ollamaService.embeddings_model);
+            this.ollamaService.downloadedLLM = (
+              mtype === 0 ? this.ollamaService.selectedModel : mtype === 1 ? this.ollamaService.embeddings_model : this.ollamaService.ocr_model
+            );
           } else {
             console.log('reverting:', this.ollamaService.downloadedLLM);
             if (mtype === 0) {
               this.ollamaService.selectedModel = this.ollamaService.downloadedLLM;
-            } else {
+            } if (mtype === 1) {
               this.ollamaService.embeddings_model = this.ollamaService.downloadedEmbeddedLLM;
+            } else {
+              this.ollamaService.ocr_model = this.ollamaService.downloadedOCRLLM; 
             }
           }        
         });
@@ -195,16 +236,20 @@ export class DetailComponent implements OnInit {
           setTimeout(() => {
             this.ollamaService.selectedModel = this.ollamaService.downloadedLLM;
           }, 500);
-        } else {
+        } if (mtype === 1) {
           this.ollamaService.embeddings_model = this.ollamaService.downloadedEmbeddedLLM;
+        } else {
+          this.ollamaService.ocr_model = this.ollamaService.downloadedOCRLLM; 
         }
       }
     } else {
       await this.writeModelToEnv();      
       if (mtype === 0) {
         this.ollamaService.downloadedLLM = this.ollamaService.selectedModel;
-      } else {
+      } if (mtype === 1) {
         this.ollamaService.downloadedEmbeddedLLM = this.ollamaService.embeddings_model;
+      } else {
+        this.ollamaService.downloadedOCRLLM = this.ollamaService.ocr_model; 
       }
     }    
   }

@@ -1,0 +1,25 @@
+<div class="legal">
+  <p>{{ 'PAGES.LEGAL.LEGAL_DESC' | translate }}</p>  
+  <ul>
+    <li>
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(commonService.pp_link)">
+        {{ 'PAGES.LEGAL.PRIVACY_POLICY_LINK' | translate }}
+      </a>
+      <mat-checkbox [(ngModel)]="commonService.accept_pp"></mat-checkbox>      
+    </li>
+    <br/>
+    <li>      
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(commonService.eua_link)">
+        {{ 'PAGES.LEGAL.EUA_POLICY_LINK' | translate }}
+      </a>
+      <mat-checkbox [(ngModel)]="commonService.accept_eua"></mat-checkbox>
+    </li>
+    <br/>
+    <li>      
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(commonService.security_link)">
+        {{ 'PAGES.LEGAL.SECURITY_POLICY_LINK' | translate }}
+      </a>
+      <mat-checkbox [(ngModel)]="commonService.accept_security"></mat-checkbox>
+    </li>    
+  </ul>
+</div>

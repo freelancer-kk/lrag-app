@@ -54,6 +54,8 @@ bootstrapApplication(AppComponent, {
         if (systemService.collection === undefined) {
           systemService.collection = "general";          
         }
+        systemService.ocrPrompt = chunkSettingsStr ? JSON.parse(chunkSettingsStr).ocrPrompt : undefined;
+        systemService.ocr_num_ctx = chunkSettingsStr ? JSON.parse(chunkSettingsStr).ocrNumCtx : undefined;
 
         const insightSettingsStr: string | null = localStorage.getItem('insight-settings');
         systemService.k = insightSettingsStr ? JSON.parse(insightSettingsStr).k : 4;

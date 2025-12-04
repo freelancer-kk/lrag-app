@@ -3,12 +3,12 @@ import { BridgeService } from '../bridge/bridge.service';
 import {FormControl} from '@angular/forms';
 import { ConnectionService, ConnectionState } from 'ng-connection-service';
 import { Subscription, tap } from 'rxjs';
-import { connOptions, EStatus, IChat, IHistory } from '../../../shared/model';
+import { connOptions, EStatus, IHistory } from '../../../shared/model';
 import { OllamaService } from '../ollama-service';
 import { CommonService, LStatus } from '../common-service';
 import { RerankerService } from '../reranker-service';
-import { WatcherService } from '../watcher-service';
 import { SettingsService } from '../settings-service';
+import { MediaService } from '../media/media.service';
 
 
 @Injectable({
@@ -41,7 +41,6 @@ export class SystemService {
   dark: boolean = true;
   docsEmpty: boolean = true;
   osType: any;
-  chatHistory: IChat[] = [];
   brand: string = '';
   chunkSize: number = 512;
   overlap: number = 48;
@@ -56,6 +55,8 @@ export class SystemService {
   selectedCollections = new FormControl(null);
   ragPrompt: string | undefined = undefined;
   userPrompt: string | undefined = undefined;
+  ocrPrompt: string | undefined = undefined;
+  ocr_num_ctx: number | undefined = undefined;
   
   currentState!: ConnectionState;
   subscription = new Subscription();
@@ -71,7 +72,8 @@ export class SystemService {
   kb_link: string | undefined;
   forum_link: string | undefined;
   support_link: string | undefined;
-  register_link: string | undefined;
+  register_link: string | undefined;  
+
   firstTime: boolean = true;
   
   constructor(
@@ -80,8 +82,7 @@ export class SystemService {
     private settingsService: SettingsService,
     private commonService: CommonService,
     private ollamaService: OllamaService,
-    private rerankerService: RerankerService,
-    private watcherService: WatcherService
+    private rerankerService: RerankerService
   ) {}
 
   saveMainHistory = () => {
@@ -113,6 +114,15 @@ export class SystemService {
       ).subscribe()
     );
   }
+  
+  refreshFileList = (mediaService: MediaService, force: boolean = false): Promise<any[]> => {
+    this.ragFiles = [];
+    return mediaService.ls((entries: any[]) => { 
+      entries.forEach(e => {
+        this.ragFiles.push(e);
+      })
+    }, force);    
+  }
 
   destroy = (): void => {
     this.subscription.unsubscribe();
@@ -124,7 +134,9 @@ export class SystemService {
       overlap: this.overlap,
       useSemantic: this.useSemantic,
       localVector: this.localVector,
-      collection: this.collection
+      collection: this.collection,
+      ocrPrompt: this.ocrPrompt,
+      ocrNumCtx: this.ocr_num_ctx
     }))
     console.log(localStorage.getItem('chunk-settings'));
   }
@@ -141,7 +153,7 @@ export class SystemService {
 
   setOverallStatus = (): EStatus => {
     if (this.ollamaService.status.get() === EStatus.running) {
-      if (this.modelStatus.get() === EStatus.running && this.watcherService.status.get() === EStatus.running && this.rerankerService.status.get() === EStatus.running && this.ingestStatus.get() === EStatus.not_running && this.gpuChangeStatus.get() === EStatus.not_running) {
+      if (this.modelStatus.get() === EStatus.running && this.rerankerService.status.get() === EStatus.running && this.ingestStatus.get() === EStatus.not_running && this.gpuChangeStatus.get() === EStatus.not_running) {
         this.mainStatus.update(EStatus.running_healthy);
       } else {
         this.mainStatus.update(EStatus.running_unhealthy);

@@ -1,5 +1,5 @@
-import { Component, NgZone, OnInit, effect, inject } from '@angular/core';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { Component, NgZone, OnInit, effect, inject, ViewChild, Injector, afterNextRender } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { SystemService } from '../core/services/system/system.service';
 import { EStatus, EWho, IGenInfo } from '../shared/model';
@@ -31,6 +31,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { IngestComponent } from '../ingest.component/ingest.component';
 import { DetailComponent } from '../detail/detail.component';
 import { InsightOptionsComponent } from '../insight-options.component/insight-options.component';
+import {CdkTextareaAutosize, TextFieldModule} from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-insights.component',
@@ -54,12 +55,17 @@ import { InsightOptionsComponent } from '../insight-options.component/insight-op
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    TextFieldModule
   ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'
 })
-export class InsightsComponent implements OnInit { 
+export class InsightsComponent implements OnInit {
+  private _injector = inject(Injector);
+  
+  @ViewChild('autosize') autosize: CdkTextareaAutosize | undefined;
+
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
   modelUsage: string = '';
@@ -115,7 +121,20 @@ export class InsightsComponent implements OnInit {
         this.check();
       }      
     })
-  }  
+  }
+
+  triggerResize = () => {
+    // Wait for content to render, then trigger textarea resize.
+    afterNextRender(
+      () => {
+        this.autosize?.resizeToFitContent(true);
+   
+      },
+      {
+        injector: this._injector,
+      },
+    );
+  }
 
   onResize = (event: any) => {
     this.breakpoint = Math.floor(event.target.innerWidth / 300);
@@ -130,17 +149,23 @@ export class InsightsComponent implements OnInit {
     const selectedCollection: any = this.systemService.collections.find(f => f.name === this.systemService.collection).value
     console.log('selected:', selectedCollection);
     this.systemService.selectedCollections.setValue(selectedCollection);
-    this.systemService.ragFiles = await this.mediaService.ls();
+    await this.systemService.refreshFileList(this.mediaService);
   }
 
   check = () => {
-    this.mediaService.ls().then((files: any[]) => {
+    const files: any[] = [];
+    this.mediaService.ls((entries: any[]) => { 
+      entries.forEach((e: any) => {
+        files.push(e);
+      })
+    }).then((files: any[]) => {
       this.systemService.docsEmpty = (files.length === 0)
     })
   }
 
   clearHistory = () => {
-    this.systemService.chatHistory = [];
+    this.ollamaService.resetChatHistory();
+    this.ollamaService.useDocContext = false;
   }
 
   //TODO: When we submit a query perform a ps to get the model usage
@@ -161,7 +186,7 @@ export class InsightsComponent implements OnInit {
         prompt: await this.commonService.get('PAGES.INSIGHT.PROMPT'),
         historyPrompt: await this.commonService.get('PAGES.INSIGHT.HISTORY_PROMPT'),
         contextPrompt: await this.commonService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT'),
-        chatHistory: this.systemService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n'),
+        chatHistory: this.ollamaService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n'),
         max_tokens: 256,
         temperature: 0.7,
         top_p: 0.9,
@@ -178,7 +203,7 @@ export class InsightsComponent implements OnInit {
         options.filter = this.systemService.filter;
       }
 
-      this.systemService.chatHistory.push({
+      this.ollamaService.chatHistory.push({
         who: EWho.User,
         content: question,
         docSources: [],
@@ -187,7 +212,19 @@ export class InsightsComponent implements OnInit {
       this.systemService.insightStatus.update(EStatus.thinking);
       this.streaming = true;
       this.streamedResponse = '';
+      const questionTimeout = setTimeout(async () => {
+        this.dialog.open(
+          AlertComponent, {
+            data: {
+              type: 2,
+              params: {
+                message: await this.commonService.get('PAGES.INSIGHT.QUERY_TOO_LONG_WARNING')
+              }
+            }
+        });        
+      }, 180000)
       const answerResponse: any = await this.systemService.commandInsight('question', options);
+      clearTimeout(questionTimeout);
       const { answer, error, docSources } = answerResponse;
       this.streamedResponse = '';
       this.streaming = false;
@@ -196,7 +233,7 @@ export class InsightsComponent implements OnInit {
       try {
         if (!error) {
           console.log('PUSHING ANSWER:', answer);
-          this.systemService.chatHistory.push({
+          this.ollamaService.chatHistory.push({
             who: EWho.Assistant,
             content: this.generationInfo ? this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count) : this.reformat(answer, 0, 0),
             docSources
@@ -210,12 +247,15 @@ export class InsightsComponent implements OnInit {
             docContext: this.ollamaService.useDocContext,
             ingest: {
               embeddings_model: this.ollamaService.embeddings_model,
+              ocr_model: this.ollamaService.ocr_model,
               chunkSize: this.systemService.chunkSize,
               overlap: this.systemService.overlap,
               separator: this.systemService.separator,
               useSemantic: this.systemService.useSemantic,
               localVector: this.systemService.localVector,
-              collection: this.systemService.collection
+              collection: this.systemService.collection,
+              ocrPrompt: this.systemService.ocrPrompt,
+              ocrNumCtx: this.systemService.ocr_num_ctx
             },
             insight: {
               model: this.ollamaService.selectedModel,                            
@@ -314,7 +354,7 @@ export class InsightsComponent implements OnInit {
     this.clearHistory();
     await this.systemService.saveChunkSettings();
     this.mediaService.loadedIndex = false;    
-    this.systemService.ragFiles = await this.mediaService.ls(true);    
+    await this.systemService.refreshFileList(this.mediaService, true);
   }
 
   addDocuments = async (ev: any) => {
@@ -366,7 +406,7 @@ export class InsightsComponent implements OnInit {
         maxWidth: '95vw',
         maxHeight: '95vh',
         width: '100%',
-        height: '40%',        
+        height: '80%',        
         position: { top: '100px' },
         panelClass: 'full-screen-modal',
         hasBackdrop: false,
@@ -375,5 +415,9 @@ export class InsightsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (result: boolean) => {
       this.isSettingsOpen = false;      
     });    
+  }
+
+  getRemoveMsg = (msg: string): string => {
+    return msg + ' ' + this.systemService.ragFiles.map(e => this.commonService.basename(e.name)).join(', ');
   }
 }

@@ -10,9 +10,15 @@ const mergeKeys: string[] = [
   "GPU_ACCELERATION",
   "OLLAMA_VERSION",
   "IPEX_VERSION",
-  "GHOSTSCRIPT_VERSION",
   "RERANKER_VERSION",
-  "WATCHER_VERSION"
+  "USE_WATCHER",
+  "USE_TESSERACTJS",
+  "ACCEPT_PP",
+  "ACCEPT_EUA",
+  "ACCEPT_SECURITY",
+  "LC_PP",
+  "LC_EUA",
+  "LC_SECURITY"
 ];
 
 const overwriteKeys: string[] = [
@@ -29,9 +35,12 @@ const overwriteKeys: string[] = [
   "FORUM_URL",
   "REGISTRATION_URL",
   "KB_URL",
+  "PRIVACY_POLICY_URL",
+  "EUA_URL",
+  "SECURITY_URL",
   "LICENSE_GET_URL",
   "LICENSE_ACTIVATE_URL",
-  "OLLAMA_KEYS_URL"
+  "OLLAMA_KEYS_URL"  
 ];
 
 export default class DockerEnv {
@@ -44,6 +53,7 @@ export default class DockerEnv {
   dsp: string | undefined;
   ellm: string | undefined;
   llm: string | undefined;
+  ocrllm: string | undefined;
   sourceEnvPath: string;
   kvFile: KeyValueFile | undefined;
   docPathsCB: (licenseKey: string | undefined, docPath: string | undefined, dataPath: string | undefined) => void;
@@ -70,6 +80,7 @@ export default class DockerEnv {
       this.dsp = kv.get('DOC_SOURCE_PATH')?.toString();      
       this.ellm = kv.get('EMBEDDINGS_MODEL_NAME')?.toString();
       this.llm = kv.get('LLM_MODEL_NAME')?.toString();
+      this.ocrllm = kv.get('OCR_MODEL_NAME')?.toString();
       this.kvFile = kv;
       await this.mergeEnvFile();
       await this.overwriteEnvFile();
@@ -78,6 +89,10 @@ export default class DockerEnv {
       this.dsp = path.join(this.userHomePath, 'lrag').replace(new RegExp('\\\\','g'), '\\\\');
       this.ellm = "embeddinggemma:300m";
       this.llm = "gemma3:1b";
+      this.ocrllm = "deepseek-ocr:latest";            
+      // this.ocrllm = "gemma3:4b";
+      // this.ocrllm = "benhaotang/Nanonets-OCR-s:latest";
+      // this.ocrllm = "granite3.2-vision:latest";
       this.generateEnvFile();
       this.kvFile = await parseFile(this.sourceEnvPath);
       const dp: string | undefined = this.kvFile.get('ROOT_DATA_PATH')?.toString();
@@ -128,6 +143,16 @@ export default class DockerEnv {
     this.generateEnvFile();
   }
 
+  setOCRModelName= (ocrllm: string) => {
+    this.ocrllm = ocrllm;
+    this.generateEnvFile();
+  }
+
+  forceTesseractJS = async () => {
+    await this.kvFile?.set('USE_TESSERACTJS', 'true');
+    await this.kvFile?.writeFile();
+  }
+
   getDocSourcePath = (): string => {
     return this.dsp ? this.dsp : this.userDataPath;
   }
@@ -149,6 +174,7 @@ export default class DockerEnv {
     envTemplate = envTemplate.replace(new RegExp('#DOC_ROOT_PATH#','g'), this.dsp ? this.dsp : '');
     envTemplate = envTemplate.replace(new RegExp('#EMBEDDINGS_MODEL_NAME#','g'), this.ellm ? this.ellm : '');
     envTemplate = envTemplate.replace(new RegExp('#LLM_MODEL_NAME#','g'), this.llm ? this.llm : '');
+    envTemplate = envTemplate.replace(new RegExp('#OCR_MODEL_NAME#','g'), this.ocrllm ? this.ocrllm : '');
     envTemplate = envTemplate.replace(new RegExp('#TEMP#','g'), this.userTempPath);
     envTemplate = envTemplate.replace(new RegExp('#USER_DATA_HOME#','g'), this.userDataPath);
     envTemplate = envTemplate.replace(new RegExp('#SEP#','g'), this.sep);    

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CommonService, LStatus } from './common-service';
-import { EStatus } from '../../shared/model';
+import { EStatus, IChat } from '../../shared/model';
 import { SettingsService } from './settings-service';
 
 @Injectable({
@@ -13,20 +13,93 @@ export class OllamaService {
   apiKey: string = '';
   cloudSelected: boolean = false;
   useDocContext: boolean = false;
+  useTesseractJS: boolean = true;
+  chatHistory: IChat[] = [];
   
   availableModels: any[] = [];
   models: any[] = [
-    {value: 'gemma3:1b', viewValue: 'gemma3:1b (<1GB)', thinking: false, cloud: false, memory: 1, description: ''},    
+    {
+      "value": "gemma3:1b",
+      "viewValue": "gemma3:1b - tiny, fast, sacrifices accuracy (<1GB)",
+      "thinking": false,
+      "cloud": false,
+      "memory": 1,
+      "description": "The current, most capable model that runs on a single GPU"
+    },
+    {
+      "value": "granite3-dense:2b",
+      "viewValue": "granite3-dense:2b - small, fast, trade off accuracy (<2GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 2,
+      "description": "The IBM Granite 2B and 8B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
+    },
+    {
+      "value": "llama3-chatqa:8b",
+      "viewValue": "llama3-chatqa:8b - focus on Rag queries (<5GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 5,
+      "description": "A model from NVIDIA based on Llama 3 that excels at conversational question answering (QA) and retrieval-augmented generation (RAG)"
+    },
+    {
+      "value": "deepseek-r1:14b",
+      "viewValue": "deepseek-r1:14b - Reasoning model with great performance (<12GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 9,
+      "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+    },
+    {
+      "value": "deepseek-r1:32b",
+      "viewValue": "deepseek-r1:32b - Reasoning model, performance and accuracy (<22GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 32,
+      "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+    }
   ];
   embedding_models: any[] = [    
     {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, cloud: false, memory: 1, description: 'EmbeddingGemma is a 300M parameter embedding model from Google'},    
   ]
+  ocr_models: any[] = [
+    { value: 'deepseek-ocr:latest', viewValue: 'deepseek-ocr (<8GB)', thinking: false, cloud: false, memory: 8, description: 'DeepSeek OCR is an advanced optical character recognition model designed to extract text from images with high accuracy.',
+      prompt: '<|grounding|>Convert the document to markdown.',
+      params: {
+        "temperature": 0
+      }
+    },
+    { value: 'benhaotang/Nanonets-OCR-s:latest', viewValue: 'nanonets-OCR-s (<5GB)', thinking: false, cloud: false, memory: 5, description: 'Nanonets OCR is a cloud-based optical character recognition model that provides accurate text extraction from images.',
+      prompt: 'Perform Optical Character Recognition (OCR) on the provided image and format all extracted text as a clear, structured Markdown document. Include tables as markdown tables, lists as markdown lists, etc.',
+      params: {}
+    },
+    { value: 'gemma3:4b', viewValue: 'gemma3.4b (<4GB)', thinking: false, cloud: false, memory: 6, description: 'The current, most capable model that runs on a single GPU.',
+      // prompt: 'Convert the image to markdown.',
+      prompt: 'Analyze the text in the provided image. Extract all readable content and present it in a structured Markdown format that is clear, concise, and well-organized.',
+      params: {
+        "temperature": 0.1,
+        "top_p": 0.9,
+        "num_ctx": 128000
+      }
+    },
+    { value: 'granite3.2-vision:latest', viewValue: 'granite3.2-vision (<3GB)', thinking: false, cloud: false, memory: 5, description: 'A compact and efficient vision-language model, specifically designed for visual document understanding, enabling automated content extraction from tables, charts, infographics, plots, diagrams, and more. ',
+      prompt: 'Analyze the text in the provided image. Extract all readable content and present it in a structured Markdown format that is clear, concise, and well-organized.',
+      // prompt: 'Convert the image to markdown.',
+      params: {
+        "temperature": 0,
+        "num_ctx": 16384
+      } 
+    }    
+  ];
+  
   modelsDownloaded: boolean = false;
   manageOllamaExternally: boolean = false;
   selectedModel: string = ''
   embeddings_model: string = '';
   downloadedLLM: string = '';
   downloadedEmbeddedLLM: string = '';
+  ocr_model: string = '';
+  downloadedOCRLLM: string = '';
   
   gpuAcceleration: boolean = true;  
   serviceTimer: any;
@@ -35,6 +108,10 @@ export class OllamaService {
     private commonService: CommonService,
     private settingsService: SettingsService
   ) {}
+
+  resetChatHistory = () => {
+    this.chatHistory = [];    
+  }
 
   getGpuAcceleration = async () => {
     const gpuAccelStr: string = await this.commonService.getEnvValue('GPU_ACCELERATION');    

@@ -302,7 +302,7 @@ export default class SemanticChunking {
     adjustedBreakpoints.forEach((breakpoint) => {
       // Extract the sentences from the current start index to the breakpoint (inclusive)
       const group = sentenceObjectArray.slice(startIdx, breakpoint + 1);
-      const combinedText = group.map((item) => item.sentence).join(" "); // Combine the sentences
+      const combinedText = group.map((item) => item.sentence).join(' '); // Combine the sentences
       chunks.push(combinedText);
 
       startIdx = breakpoint + 1; // Update the start index for the next group

@@ -23,7 +23,8 @@ import { CommonService } from './core/services/common-service';
 import { OllamaService } from './core/services/ollama-service';
 import { EStatus, IStatus } from './shared/model';
 import { RerankerService } from './core/services/reranker-service';
-import { WatcherService } from './core/services/watcher-service';
+
+export const MAX_OCR_WAIT_PAGE: number = 120000;
 
 @Component({
     selector: 'app-root',
@@ -63,6 +64,8 @@ export class AppComponent implements OnInit {
   gpuStatus: EStatus | undefined;
   overallStatus: EStatus | undefined;
 
+  ocrPageTimeout: any;
+
   constructor(
     private electronService: ElectronService,
     private translate: TranslateService,
@@ -73,8 +76,7 @@ export class AppComponent implements OnInit {
     private ngZone: NgZone,
     private mediaService: MediaService,
     public ollamaService: OllamaService,
-    public rerankerService: RerankerService,
-    public watcherService: WatcherService
+    public rerankerService: RerankerService,    
   ) {
     console.log('APP_CONFIG', APP_CONFIG);
 
@@ -111,7 +113,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_ERROR')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
+                await this.systemService.refreshFileList(this.mediaService);
               }                            
             })            
           }
@@ -131,7 +133,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_PREPARE')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
+                await this.systemService.refreshFileList(this.mediaService);
               }                            
             })
           }
@@ -150,7 +152,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_START')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();
+                await this.systemService.refreshFileList(this.mediaService);
               }                            
             })
           }
@@ -169,7 +171,7 @@ export class AppComponent implements OnInit {
                     text: await this.commonService.get('PAGES.INGEST.OCR_DONE')
                   });               
                 }
-                this.systemService.ragFiles = await this.mediaService.ls();                
+                await this.systemService.refreshFileList(this.mediaService);
               }                            
             })
           }
@@ -177,6 +179,128 @@ export class AppComponent implements OnInit {
           case 'ocr-processor-all-complete': {
             this.ngZone.run(async () => {
                 this.systemService.ocrComplete.set(true);              
+            })
+          }
+          break;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })
+
+    this.bridgeService.ocrLocalCallback((ev: any, eventObj: any) => {
+      try {          
+        const { type, data } = eventObj;
+        console.log('type', type, 'data', data);        
+        switch(type) {
+          case 'ocr-local-processor-error': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 1;
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_ERROR');
+                } else {
+                  this.mediaService.docStatus.push({
+                    name: data.localfile,
+                    status: 1,
+                    text: await this.commonService.get('PAGES.INGEST.OCR_ERROR')
+                  });               
+                }
+                await this.systemService.refreshFileList(this.mediaService);
+              }                            
+            })            
+          }
+          break;
+          case 'ocr-local-processor-start': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 2;
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_START');
+                } else {
+                  console.log('ocr-processor-put:', data.localfile);
+                  this.mediaService.docStatus.push({
+                    name: data.localfile,
+                    status: 2,
+                    text: await this.commonService.get('PAGES.INGEST.OCR_START')
+                  });               
+                }
+                await this.systemService.refreshFileList(this.mediaService);
+              }                            
+            })
+          }
+          break;
+          case 'ocr-pdf-to-image-progress': {
+            this.ngZone.run(() => {
+              this.systemService.ingestStatus.update(EStatus.extracting, { percentage: Math.floor(Number(data.counter * 100 / data.total)) })
+            });
+          }
+          break;
+          case 'ocr-local-images-to-local-progress': {
+            this.ngZone.run(() => {
+              const percentage: number = Math.floor(Number(data.counter * 100 / data.total));
+              if (this.ocrPageTimeout) {
+                clearTimeout(this.ocrPageTimeout);
+              }
+              this.ocrPageTimeout = setTimeout(async () => {
+                const dialogRef = this.dialog.open(
+                  AlertComponent, {
+                    data: {
+                      type: 2,
+                      params: {
+                        message: await this.commonService.get('OCR_TIMEOUT')
+                      }
+                    }
+                  });
+                  dialogRef.afterClosed().subscribe(async () => {                    
+                  });                
+              }, MAX_OCR_WAIT_PAGE);
+              this.systemService.ingestStatus.update(EStatus.preparing, { percentage })
+            });
+          }
+          break;
+          case 'ocr-local-processor-finish': {
+            this.ngZone.run(async () => {
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.localfile);
+                if (fIdx > -1) {
+                  this.mediaService.docStatus[fIdx].status = 2;
+                  this.mediaService.docStatus[fIdx].text = await this.commonService.get('PAGES.INGEST.OCR_COMPLETE');
+                } else {
+                  this.mediaService.docStatus.push({
+                    name: data.localfile,
+                    status: 2,
+                    text: await this.commonService.get('PAGES.INGEST.OCR_COMPLETE')
+                  });               
+                }
+                await this.systemService.refreshFileList(this.mediaService);
+              }                            
+            })
+          }
+          break;
+          case 'ocr-local-processor-complete': {
+            this.ngZone.run(async () => {
+              if (this.ocrPageTimeout) {
+                clearTimeout(this.ocrPageTimeout);
+              }
+              if (this.mediaService.docStatus) {
+                this.mediaService.docStatus.push({
+                  name: data.mdlocalfile,
+                  status: 0,
+                  text: await this.commonService.get('PAGES.INGEST.OCR_DONE')
+                });               
+                // }
+                await this.systemService.refreshFileList(this.mediaService, true);
+              }                            
+            })
+          }
+          break;
+          case 'ocr-local-processor-all-complete': {
+            this.ngZone.run(async () => {
+              this.systemService.ocrComplete.set(true);              
+              this.systemService.ingestStatus.update(EStatus.not_running)
             })
           }
           break;
@@ -197,157 +321,31 @@ export class AppComponent implements OnInit {
         // service-prereq-check-notinstalled
         
         switch(type) {
-          case 'after-link-opened': {
-            if (data.serviceName === 'watcher') {
-              if (data.installType === 'ghostscript') {
-                this.watcherService.ghostscriptStatus.update(EStatus.installed)
-              } else {
-                this.watcherService.brewStatus.update(EStatus.installed)
-              }
-              this.forceExit('RESTART_INSTALL', true)
-            }
+          case 'after-link-opened': {            
           }
           break;
           case 'shell-running-exit':
-            this.ngZone.run(async () => {
-              if (data.serviceName === 'watcher') {
-                const { prereq, exitCode, commandIdx } = data;
-                if (exitCode === '0') {
-                  const nextCommand: number = Number.parseInt(commandIdx) + 1;
-                  if (!(await this.watcherService.runShellCommand(nextCommand))) {
-                    // Application needs to be restarted
-                    this.forceExit('RESTART', true);
-                  }
-                } else {
-                  // prereq === 'homebrew' ?
-                    this.watcherService.brewStatus.update(EStatus.error)
-                  //  this.watcherService.ghostscriptStatus.update(EStatus.error)
-                }
-              } 
+            this.ngZone.run(async () => {              
             })
           break;
           case 'brew-running-exit':
-            this.ngZone.run(() => {
-              if (data.serviceName === 'watcher') {
-                const { prereq, exitCode } = data;
-                if (exitCode === '0') {
-                  prereq === 'homebrew' ?
-                    this.watcherService.brewStatus.update(EStatus.installed) :
-                    this.watcherService.ghostscriptStatus.update(EStatus.installed)
-
-                    // Application needs to be restarted
-                    this.forceExit('RESTART', true)
-                } else {
-                  prereq === 'homebrew' ?
-                    this.watcherService.brewStatus.update(EStatus.error) :
-                    this.watcherService.ghostscriptStatus.update(EStatus.error)
-                }
-              } 
+            this.ngZone.run(() => {              
             })
           break;
           case 'winget-running-exit':
-            this.ngZone.run(() => {
-              if (data.serviceName === 'watcher') {
-                const { exitCode } = data;
-                if (exitCode === '0') {
-                    this.watcherService.wingetStatus.update(EStatus.installed)
-                    // Application needs to be restarted
-                    this.forceExit('RESTART', true)
-                } else {
-                    this.watcherService.wingetStatus.update(EStatus.error)
-                }
-              } 
+            this.ngZone.run(() => {              
             })
           break;
           case 'service-prereq-check-stdout':
             this.ngZone.run(() => {
               const { serviceName, prereq, url, brew, winget, version, expectedVersion, shellCommands } = data;            
-              console.log('service-prereq-check-std:', data);                
-              if (serviceName === 'watcher') {
-                if (shellCommands) {
-                  this.watcherService.shellCommands = shellCommands;
-                }
-                if (url) {
-                  this.watcherService.url = url;             
-                }
-                if (brew) {                
-                  this.watcherService.brew = brew;
-                }
-                if (winget) {
-                  this.watcherService.winget = winget;
-                }
-                // if (Number.parseInt(version) >= Number.parseInt(expectedVersion)) {
-                if (Number.parseInt(version)) {
-                  switch (prereq) {
-                    case 'homebrew': {
-                      this.watcherService.brewStatus.update(brew ? EStatus.installed : EStatus.installed)
-                    }
-                    break;
-                    case 'tesseract': {
-                      this.watcherService.wingetStatus.update(EStatus.installed)
-                    }
-                    break;
-                    default: {
-                      this.watcherService.ghostscriptStatus.update(brew ? EStatus.installed : EStatus.installed)
-                    }
-                  }                                    
-                } else {
-                  switch (prereq) {
-                    case 'homebrew': {
-                      this.watcherService.brewStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade)
-                      this.watcherService.status.update(EStatus.not_running);
-                    }
-                    break;
-                    case 'tesseract': {
-                      this.watcherService.wingetStatus.update(EStatus.upgrade_winget);
-                      this.watcherService.clearTT();
-                      this.watcherService.status.update(EStatus.not_running);
-                    }
-                    break;
-                    default: {
-                      this.watcherService.ghostscriptStatus.update(brew ? EStatus.upgrade_brew : EStatus.upgrade)
-                      this.watcherService.status.update(EStatus.not_running);
-                    }
-                  }                  
-                }
-              } 
+              console.log('service-prereq-check-std:', data);                              
             })
           break;
           case 'service-prereq-check-stderr':
             this.ngZone.run(() => {
               const { serviceName, prereq, url, brew, winget, shellCommands } = data;
-              console.log('service-prereq-check-err:', data);
-              if (serviceName === 'watcher') {
-                if (shellCommands) {
-                  this.watcherService.shellCommands = shellCommands;
-                }
-                if (url) {
-                  this.watcherService.url = url;
-                }
-                if (brew) {                
-                  this.watcherService.brew = brew;
-                }
-                if (winget) {
-                  this.watcherService.winget = winget;
-                }
-                this.watcherService.depNotInstalledTimer = setTimeout(() => {
-                  this.watcherService.clearTT();
-                  this.watcherService.clearTimer();
-                  switch (prereq) {
-                    case 'homebrew': {
-                      this.watcherService.brewStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed)
-                    }
-                    break;
-                    case 'tesseract': {
-                      this.watcherService.wingetStatus.update(EStatus.installed_winget);
-                    }
-                    break;
-                    default: {
-                      this.watcherService.ghostscriptStatus.update(brew ? EStatus.installed_brew : EStatus.not_installed)
-                    }
-                  }                                    
-                }, 10000);
-              }
+              console.log('service-prereq-check-err:', data);              
             })
           break;
           case 'service-download-complete': {
@@ -356,8 +354,6 @@ export class AppComponent implements OnInit {
                 this.ollamaService.status.update(EStatus.extracting);
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.extracting);
-              } else if (data.serviceName === 'watcher') {
-                this.watcherService.status.update(EStatus.extracting);
               }
             })
           }
@@ -369,8 +365,6 @@ export class AppComponent implements OnInit {
                 this.ollamaService.status.update(EStatus.downloading, { percentage: data.percentage });                
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.downloading, { percentage: data.percentage });                
-              } else if (data.serviceName === 'watcher') {
-                this.watcherService.status.update(EStatus.downloading, { percentage: data.percentage });                
               }
             })
           }
@@ -387,8 +381,6 @@ export class AppComponent implements OnInit {
                 this.ollamaService.status.update(EStatus.preparing);
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.preparing);
-              } else if (data.serviceName === 'watcher') {
-                this.watcherService.status.update(EStatus.preparing);
               }
             })
           }
@@ -399,8 +391,6 @@ export class AppComponent implements OnInit {
                 this.ollamaService.status.update(EStatus.extracting);
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.extracting);
-              } else if (data.serviceName === 'watcher') {
-                this.watcherService.status.update(EStatus.extracting);
               }
             })
           }
@@ -417,11 +407,6 @@ export class AppComponent implements OnInit {
                 if (data.checksPassed) {                
                   this.rerankerService.startIfNecessary();
                 }                
-              } else if (data.serviceName === 'watcher') {                
-                this.watcherService.status.update(EStatus.downloaded);
-                if (data.checksPassed) {                
-                  this.watcherService.startIfNecessary();
-                }
               }
             })
           }
@@ -435,9 +420,6 @@ export class AppComponent implements OnInit {
               } else if (data.serviceName === 'reranker') {
                 this.rerankerService.status.update(EStatus.installed);
                 this.rerankerService.startIfNecessary();                
-              }  else if (data.serviceName === 'watcher') {
-                this.watcherService.status.update(EStatus.installed);
-                this.watcherService.startIfNecessary();                
               }
             })
           }
@@ -452,8 +434,6 @@ export class AppComponent implements OnInit {
                 this.ollamaService.status.update(EStatus.running);
               } else if (data.serviceName === 'reranker' && (data.ready === true)) {
                 this.rerankerService.status.update(EStatus.running);
-              } else if (data.serviceName === 'watcher' && (data.ready === true)) {
-                this.watcherService.status.update(EStatus.running);
               }              
             })
           }
@@ -474,9 +454,7 @@ export class AppComponent implements OnInit {
             const { serviceName, mode } = data;
             console.log('service-stop:', serviceName, mode);
             this.ngZone.run(() => {
-              if (serviceName === 'watcher' && mode === 1) {                
-                this.watcherService.restartWhenGone();
-              } else if (serviceName === 'reranker' && mode === 1) {                
+              if (serviceName === 'reranker' && mode === 1) {                
                 this.rerankerService.restartWhenGone();
               }
             });
@@ -496,7 +474,7 @@ export class AppComponent implements OnInit {
               this.forceExit();
             })
           }
-          break;          
+          break;
           case 'ollama-pull-start': {
             this.ngZone.run(() => {
               this.systemService.modelStatus.update(EStatus.downloading, 0);
@@ -537,7 +515,7 @@ export class AppComponent implements OnInit {
                     status: 0,
                     text: ''
                   });
-                  console.log('doc statuses:', this.mediaService.docStatus);
+                  // console.log('doc statuses:', this.mediaService.docStatus);
                 }
               }
             })            
@@ -588,7 +566,7 @@ export class AppComponent implements OnInit {
                     status: 0,
                     text: 'embedded'
                   });
-                  console.log('doc statuses:', this.mediaService.docStatus);
+                  // console.log('doc statuses:', this.mediaService.docStatus);
                 }
               }
             })
@@ -676,14 +654,7 @@ export class AppComponent implements OnInit {
   navigateAway = async () => {
     if (this.firstRun) {
       this.firstRun = false;
-      this.systemService.ragFiles = await this.mediaService.ls();
-      /*
-      if (this.mediaService.noOfValidFiles() > 0) {
-        this.router.navigate(['insights']);
-      } else {
-        this.router.navigate(['ingest']);
-      }
-      */
+      await this.systemService.refreshFileList(this.mediaService);      
     }
   }
 
@@ -696,7 +667,8 @@ export class AppComponent implements OnInit {
     localStorage.setItem('theme', JSON.stringify(this.systemService.dark));
   }
 
-  async ngOnInit() {
+  async ngOnInit() {    
+    this.ollamaService.useTesseractJS = (await this.commonService.getEnvValue('USE_TESSERACTJS') === 'true') ? true : false;    
     const apiKey: string = await this.commonService.getEnvValue('OLLAMA_API_KEY');
     if (apiKey && apiKey.length > 50) {
       console.log('APIKEY:', apiKey);
@@ -723,15 +695,23 @@ export class AppComponent implements OnInit {
     this.systemService.forum_link = await this.commonService.getEnvValue('FORUM_URL');
     this.systemService.support_link = await this.commonService.getEnvValue('TICKET_URL');
     this.systemService.register_link = await this.commonService.getEnvValue('REGISTRATION_URL');
+    this.commonService.pp_link = await this.commonService.getEnvValue('PRIVACY_POLICY_URL');
+    this.commonService.eua_link = await this.commonService.getEnvValue('EUA_URL');
+    this.commonService.security_link = await this.commonService.getEnvValue('SECURITY_URL');
+    const lc_pp = await this.commonService.getEnvValue('LC_PP');
+    const lc_eua = await this.commonService.getEnvValue('LC_EUA');
+    const lc_security = await this.commonService.getEnvValue('LC_SECURITY');
+    this.commonService.accept_pp = (await this.commonService.getEnvValue('ACCEPT_PP') === 'true') && this.commonService.pp_link.endsWith(lc_pp) ? true : false;
+    this.commonService.accept_eua = (await this.commonService.getEnvValue('ACCEPT_EUA') === 'true') && this.commonService.eua_link.endsWith(lc_eua)? true : false;
+    this.commonService.accept_security = (await this.commonService.getEnvValue('ACCEPT_SECURITY') === 'true') && this.commonService.security_link.endsWith(lc_security) ? true : false;
     
     setTimeout(() => {
       this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
       /*
       * Comment out since only necessary for reload
       */
-      this.ollamaService.startOnTimer();
-      this.watcherService.startIfNecessary();
-      this.rerankerService.startIfNecessary();          
+      // this.ollamaService.startOnTimer();
+      // this.rerankerService.startIfNecessary();          
     }, 400)   
   }
 
@@ -754,7 +734,7 @@ export class AppComponent implements OnInit {
       if (this.ollamaService.selectedModel === '') {
         await this.commonService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
           console.log('environment check model llm:', value);
-          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1 && this.ollamaService.models.findIndex(f => f.value === value) > -1) { 
+          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1) { 
             this.ollamaService.selectedModel = value;
             this.ollamaService.downloadedLLM = value;
           } else {
@@ -775,6 +755,18 @@ export class AppComponent implements OnInit {
           }
         })
       }
+      if (this.ollamaService.ocr_model === '') {
+        await this.commonService.getEnvValue('OCR_MODEL_NAME').then((value: string) => {
+          console.log('environment check ocr llm:', value);
+          if (this.ollamaService.availableModels.findIndex(f => f.name === value) > -1) {
+            this.ollamaService.ocr_model = value;
+            this.ollamaService.downloadedOCRLLM = value;
+          } else {
+            this.ollamaService.ocr_model = this.ollamaService.ocr_models[0].value;
+            this.ollamaService.downloadedOCRLLM = this.ollamaService.ocr_models[0].value;
+          }
+        })
+      }
       console.log('pullModelsIfNecessary:getAvailableLLMs()');
       const responseE: any = await this.ollamaService.pull(this.ollamaService.embedding_models[0].value);
       if (responseE !== 'pulled') {
@@ -783,7 +775,13 @@ export class AppComponent implements OnInit {
       const responseM: any = await this.ollamaService.pull(this.ollamaService.models[0].value);
       if (responseM !== 'pulled') {
         this.systemService.modelStatus.update(EStatus.downloading);
-      }      
+      }
+      if (!this.ollamaService.useTesseractJS) {
+        const responseO: any = await this.ollamaService.pull(this.ollamaService.ocr_models[0].value);
+        if (responseO !== 'pulled') {
+          this.systemService.modelStatus.update(EStatus.downloading);
+        }            
+      }
       this.firstTime = false;
       this.systemService.modelStatus.update(EStatus.running);
       this.systemService.hasBasicSetup = true;     

@@ -2,6 +2,7 @@
   "DARK": "Dunkel",
   "DOWNLOAD": "Herunterladen",
   "CANCEL": "Stornieren",
+  "ADD": "Hinzufügen",
   "OK": "Ok",
   "WARNING": "Warnung",
   "PAUSE": "Pause",
@@ -18,8 +19,11 @@
   "GPU_ACCEL": "GPU -Beschleunigung",
   "GPU_ACCEL_TIP": "Diese Funktion funktioniert normalerweise, wenn Sie Probleme haben, insbesondere mit Intel integrierten GPUs, diese ausschalten",
   "GPU_ARE_YOU_SURE": "Umschalten der GPU -Beschleunigungseinstellung, sind Sie sicher?",
+  "WATCHER_ARE_YOU_SURE": "OCR-Einstellung umschalten, sind Sie sicher?",
+  "WATCHER_CHANGE_DONE": "OCR-Einstellung abgeschlossen. Die Anwendung wird beendet. Bitte starten Sie neu",
   "GPU_CHANGE_RESTART": "GPU-Beschleunigungseinstellung abgeschlossen. Die Anwendung wird beendet. Bitte starten Sie neu. Am besten starten Sie Ihren PC neu, nachdem Sie diese Einstellung geändert haben",
   "RATING_TOO_LOW": "Ihre PC -LAG -Bewertung ist sehr niedrig. ",
+  "OCR_TIMEOUT": "Es sieht so aus, als ob der Modellprozess auf Ihrem PC überlastet ist. Wir empfehlen, die Anwendung zu schließen. Starten Sie neu und passen Sie die OCR-Einstellungen an",
   "APP": {
     "TITLE": "LRag",
     "VERSION": "1.0.0",
@@ -125,7 +129,7 @@
         "TITLE": "Upgrade auf Pro",
         "LINE1": "Zugang zu unserem Support-Ticketsystem, das von erfahrenen Mitarbeitern betreut wird",
         "LINE2": "Zugriff auf mehrere Sammlungen, erweiterte Optionen zum Einbetten, semantisches Chunking und Prompt-Tuning",
-        "LINE3": "Zugang zu spezialisierten, anspruchsvollen, domänenspezifischen und Cloud Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw. (in Kürze erhältlich)",
+        "LINE3": "Zugang zu spezialisierten, anspruchsvollen, domänenspezifischen, deepseek ocr und Cloud Modellen, z. B. mit Schwerpunkt auf Recht, Finanzen usw. (in Kürze erhältlich)",
         "LINE4": "Regelmäßige Modellaktualisierungen und Zugriff auf multimodale Modelle, Bilder, Videos usw. (kommt später)"
       },
       "GO_PROPLUS": {
@@ -157,11 +161,16 @@
       "REFRESH_LLM_TIP": "Laden Sie Updates für zuvor heruntergeladene Modelle herunter",
       "CLOUD": "Cloud-Optionen",
       "API_KEY": "Ollama-API-Schlüssel",
-      "ACTIVATE": "Bestätigen",
+      "ACTIVATE": "Satz",
       "EXIT_AFTER_ACTIVATION": "Ollama-API-Schlüsselsatz. Die Anwendung wird beendet und muss neu gestartet werden",
       "GET_OLLAMA_KEY": "Schlüssel Holen",
-      "EMBEDDED_MODEL": "Einbettungsmodell",
-      "MODEL_ACCURACY": "Größere Modelle bieten eine bessere Genauigkeit"
+      "EMBEDDED_MODEL": "Andere Modelle",
+      "MODEL_ACCURACY": "Größere Modelle bieten eine bessere Genauigkeit",
+      "USE_WATCHER": "Standard-OCR",
+      "USE_WATCHER_TIP": "Verwenden Sie die Standard-OCR-Verarbeitung für gescannte Dokumente. Weniger genau als modellbasierte OCR, aber schneller",
+      "OCR_MODEL_SELECT": "OCR-Modell",
+      "OCR_PROMPT": "Optimieren Sie die OCR-Eingabeaufforderung",
+      "OCR_PROMPT_TIP": "Optimieren Sie optional die OCR-Eingabeaufforderung, die für die optische Erkennung Ihrer gescannten Dokumente verantwortlich ist. Lassen Sie das Feld leer, um die Standardeinstellung zu verwenden"
     },
     "INGEST": {
       "TITLE": "Einbetten",
@@ -213,7 +222,8 @@
       "COLLECTION_NAME_TIP": "Fügen Sie eine neue Sammlung hinzu, indem Sie ihr einen Namen geben",
       "COLLECTION_NAME_ERROR": "Sammlungsname zu kurz, mindestens 8 Zeichen",
       "CREATE_ARE_YOU_SURE": "Sammlung erstellen",
-      "REMOVE_COLLECTION_ARE_YOU_SURE": "Sammlung entfernen"
+      "REMOVE_COLLECTION_ARE_YOU_SURE": "Sammlung entfernen",
+      "OCR_COMPLETE": "Ende der OCR-Konvertierung"
     },
     "INSIGHT": {
       "TITLE": "Chatten",
@@ -231,6 +241,8 @@
       "LLM_ERROR": "Konversationskette fehlgeschlagen ...",
       "RUNNING_TIP": "Abhängig von Ihrem PC variiert die Verarbeitungszeit für Ihre Frage",
       "OPTIONS": "Optionen",
+      "SEARCH": "Abrufbezogen",
+      "PROMPT_OPTS": "OCR und Eingabeaufforderung bezogen",
       "K_SIZE": "Anzahl der Ergebnisse",
       "K_SIZE_TIP": "Um eine Frage zu beantworten, möchten Sie in der Regel die Top 4 -Ergebnisse aus Ihren Dokumenten vornehmen. In bestimmten Fällen müssen Sie jedoch möglicherweise diesen Wert ändern, z. B. während der Analyse einer großen Anzahl von Transaktionen",
       "FILTER": "Filter",
@@ -246,12 +258,15 @@
       "FILES": "Unterlagen",
       "MODEL_MANAGE_TIP": "Verwalten Sie das für den Chat verwendete Modell, ändern Sie das Modell, optimieren Sie Eingabeaufforderungen usw.",
       "MODEL": "Modell",
-      "MODEL_SETTINGS_TIP": "Passen Sie Modelleinstellungen wie Kontextgröße, k-Größe, Filterung usw. an"
+      "MODEL_SETTINGS_TIP": "Passen Sie Modelleinstellungen wie Kontextgröße, k-Größe, Filterung usw. an",
+      "OCR_CONTEXT_SIZE": "OCR-Kontextgröße",
+      "OCR_CONTEXT_SIZE_TIP": "Passen Sie optional die OCR-Kontextgröße an, um sie optimal an die Dokumente anzupassen, die Sie per OCR erfassen möchten. Auf 0 setzen, um die Standardeinstellung zu verwenden",
+      "DOC_REMOVE_CONTEXT_TIP": "Angehängte Dokumente entfernen",
+      "QUERY_TOO_LONG_WARNING": "Die Bearbeitung Ihrer Frage dauert sehr lange. Möglicherweise ist Ihr PC überlastet. Beenden Sie die Anwendung und versuchen Sie es erneut mit einer genaueren Frage"
     },
     "HELP": {
-      "TITLE": "Uber",
-      "WHAT_IS_LRAG_TITLE": "Uber LRag",
-      "WHAT_IS_LRAG": "LRag (Local Retrieval Augmented Generation) is a 100% local solution that runs on your PC, allowing you to enjoy AI Insights on your private documents. Your personal data or documents never leaves the confines of your PC.",
+      "TITLE": "HELP",
+      "DESC": "Über die folgenden Links erhalten Sie Zugriff auf unser Forum und unsere Wissensdatenbank",
       "USEFUL_LINKS": "Useful Links",
       "KB_LINK": "Knowledge Base",
       "FORUM_LINK": "Öffentliches Forum",
@@ -269,6 +284,14 @@
       "GPU": "LRag versucht, die Verarbeitung nach Möglichkeit mit Ihrer GPU zu beschleunigen. ",
       "EMAIL_SUPPORT_TITLE": "Unterstützung",
       "EMAIL_SUPPORT": "Begrenzte E -Mail -Support - support@divm.com"
+    },
+    "LEGAL": {
+      "TITLE": "Legal",
+      "LEGAL": "Datenschutz, EUA und Sicherheit",
+      "LEGAL_DESC": "Bitte lesen Sie die Richtlinien und aktivieren Sie die Kontrollkästchen, um die Anwendung nutzen zu können",
+      "PRIVACY_POLICY_LINK": "Datenschutzrichtlinie",
+      "EUA_POLICY_LINK": "Endbenutzer-Lizenzvereinbarung",
+      "SECURITY_POLICY_LINK": "Sicherheitsrichtlinie"
     }
   }
 }

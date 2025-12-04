@@ -34,52 +34,38 @@
 </mat-toolbar>
 <mat-sidenav-container class="app-container" autosize>
 	<mat-sidenav #sidenav [class]="isExpanded ? 'menu-sidenav' : 'menu-sidenav-narrow'" mode="side" opened="true">
-    <mat-nav-list>
-			<a mat-list-item [routerLink]="'home'">
+    <mat-nav-list>      
+      <a mat-list-item [routerLink]="'home'">
         @if (isExpanded) {
           <span>{{ 'PAGES.HOME.TITLE' | translate }}</span>        
         }
-				<mat-icon matListItemIcon>home</mat-icon>
-			</a>
-      <!--
-      <a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'ingest'">
-        @if (isExpanded) {
-          <span>{{ 'PAGES.INGEST.TITLE' | translate }}</span>        
-        }
-				<mat-icon matListItemIcon>model_training</mat-icon>
+        <mat-icon matListItemIcon>home</mat-icon>
       </a>
-      -->
-			<a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'insights'">
-        @if (isExpanded) {
-          <span>{{ 'PAGES.INSIGHT.TITLE' | translate }}</span>        
-        }
-				<mat-icon matListItemIcon>question_answer</mat-icon>
-      </a>
-      <!--
-      <a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'detail'">
-        @if (isExpanded) {
-          <span>{{ 'PAGES.DETAIL.TITLE' | translate }}</span>        
-        }
-				<mat-icon matListItemIcon>psychology</mat-icon>
-      </a>
-      -->
-      <a [disabled]="!systemService.hasBasicSetup" mat-list-item [routerLink]="'settings'">
-        @if (isExpanded) {
-          <span>{{ 'PAGES.SETTINGS.TITLE' | translate }}</span>        
-        }
-				<mat-icon matListItemIcon>upgrade</mat-icon>
-      </a>			      
-      <a mat-list-item [routerLink]="'help'">
-        @if (isExpanded) {
-          <span>{{ 'PAGES.HELP.TITLE' | translate }}</span>        
-        }
-				<mat-icon matListItemIcon>help</mat-icon>
-      </a>
+      @if (systemService.hasBasicSetup && commonService.accept_pp && commonService.accept_eua && commonService.accept_security) {  
+        <a mat-list-item [routerLink]="'insights'">
+          @if (isExpanded) {
+            <span>{{ 'PAGES.INSIGHT.TITLE' | translate }}</span>        
+          }
+          <mat-icon matListItemIcon>question_answer</mat-icon>
+        </a>
+        <a mat-list-item [routerLink]="'settings'">
+          @if (isExpanded) {
+            <span>{{ 'PAGES.SETTINGS.TITLE' | translate }}</span>        
+          }
+          <mat-icon matListItemIcon>upgrade</mat-icon>
+        </a>			      
+        <a mat-list-item [routerLink]="'help'">
+          @if (isExpanded) {
+            <span>{{ 'PAGES.HELP.TITLE' | translate }}</span>        
+          }
+          <mat-icon matListItemIcon>help</mat-icon>
+        </a>        
+      }
       <a mat-list-item (click)="appExit($event)">
         @if (isExpanded) {
           <span>{{ 'EXIT' | translate }}</span>        
         }
-				<mat-icon matListItemIcon>exit_to_app</mat-icon>
+        <mat-icon matListItemIcon>exit_to_app</mat-icon>
       </a>
     </mat-nav-list>     
 	</mat-sidenav>

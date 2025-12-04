@@ -1,42 +1,95 @@
 <mat-dialog-content> 
 <mat-accordion>
-  <mat-expansion-panel [expanded]="true">
-    <mat-expansion-panel-header>
-    <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
-    <mat-panel-description>        
-    </mat-panel-description>
+  @if (ollamaService.useDocContext) {  
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
+      <mat-panel-description>
+        {{ 'PAGES.INSIGHT.SEARCH' | translate }}
+      </mat-panel-description>
+      </mat-expansion-panel-header>
+      @if (settingsService.isActivePro()) {
+        <div class="onerow">
+          <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
+          <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="8" max="2048" step="1" showTickMarks discrete>
+            <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
+          </mat-slider>
+          <span class="spacer"></span>
+          <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.k = 8">
+            {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
+          </button>
+        </div>
+        <div class="onerow">
+          <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
+          <mat-slider [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" min="2048" max="10240" step="32" showTickMarks discrete>
+            <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
+          </mat-slider>
+          <span class="spacer"></span>
+          <button [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.numCtx = 2048">
+            {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
+          </button>
+        </div>
+      }
+      <div class="onerow">
+        <mat-form-field class="half-width">
+          <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>
+          <input matInput [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.filter">      
+        </mat-form-field>
+        <span class="spacer"></span>
+        <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.filter = undefined">
+          {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
+        </button>
+      </div>
+    </mat-expansion-panel>
+  }
+  @if (!ollamaService.useTesseractJS || (settingsService.isActivePro() && ollamaService.useDocContext)) {
+    <mat-expansion-panel expanded="false">
+      <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
+      <mat-panel-description>
+        {{ 'PAGES.INSIGHT.PROMPT_OPTS' | translate }}
+      </mat-panel-description>
     </mat-expansion-panel-header> 
-    <div class="onerow">
-      <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="8" max="2048" step="1" showTickMarks discrete>
-        <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
-      </mat-slider>
-      <span class="spacer"></span>
-      <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.k = 8">
-        {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
-      </button>
-    </div>
-    <div class="onerow">
-      <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
-      <mat-slider [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" min="2048" max="10240" step="32" showTickMarks discrete>
-        <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
-      </mat-slider>
-      <span class="spacer"></span>
-      <button [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.numCtx = 2048">
-        {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
-      </button>
-    </div>
-    <div class="onerow">
-      <mat-form-field class="half-width">
-        <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>
-        <input matInput [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.filter">      
-      </mat-form-field>
-      <span class="spacer"></span>
-      <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.filter = undefined">
-        {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
-      </button>
-    </div>
-  </mat-expansion-panel>        
+      @if (!ollamaService.useTesseractJS) {  
+        <div class="onerow">
+            <mat-label [matTooltip]="'PAGES.INSIGHT.OCR_CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.OCR_CONTEXT_SIZE' | translate }}&nbsp;(k)</mat-label>&nbsp;
+            <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="0" max="4096" step="32" showTickMarks discrete>
+              <input matSliderThumb [(ngModel)]="systemService.ocr_num_ctx" [value]="systemService.ocr_num_ctx">
+            </mat-slider>
+            <span class="spacer"></span>
+            <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.ocr_num_ctx = 0">
+              {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
+            </button>
+        </div>
+        <div class="onerow">
+          <mat-form-field class="full-width">
+            <mat-label [matTooltip]="'PAGES.DETAIL.OCR_PROMPT_TIP' | translate">{{ 'PAGES.DETAIL.OCR_PROMPT' | translate }}</mat-label>
+            <textarea cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveChunkSettings()" matInput type="text" [(ngModel)]="systemService.ocrPrompt">{{ systemService.ocrPrompt }}</textarea>
+          </mat-form-field>                        
+        </div>
+      }
+      @if (settingsService.isActivePro() && ollamaService.useDocContext) {
+        <div class="onerow">
+          <mat-form-field class="full-width">
+            <mat-label [matTooltip]="'PAGES.DETAIL.RAG_PROMPT_TIP' | translate">{{ 'PAGES.DETAIL.RAG_PROMPT' | translate }}</mat-label>
+            <textarea cdkTextareaAutosize
+            #autosize1="cdkTextareaAutosize"
+            [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
+          </mat-form-field>                        
+        </div>
+        <div class="onerow">
+          <mat-form-field class="full-width">
+            <mat-label [matTooltip]="'PAGES.DETAIL.USER_PROMPT_TIP'| translate">{{ 'PAGES.DETAIL.USER_PROMPT' | translate }}</mat-label>
+            <textarea cdkTextareaAutosize
+            #autosize2="cdkTextareaAutosize"
+            [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
+          </mat-form-field>                        
+        </div>
+      }
+    </mat-expansion-panel>           
+  }
 </mat-accordion>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

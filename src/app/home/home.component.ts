@@ -19,11 +19,11 @@ import {Clipboard} from '@angular/cdk/clipboard';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MediaService } from '../core/services';
 import { SplashComponent } from '../splash.component/splash.component';
+import { LegalComponent } from '../legal.component/legal.component';
 import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
 import { CommonService } from '../core/services/common-service';
 import { RerankerService } from '../core/services/reranker-service';
-import { WatcherService } from '../core/services/watcher-service';
 
 @Component({
     selector: 'app-home',
@@ -43,7 +43,8 @@ import { WatcherService } from '../core/services/watcher-service';
       MatChipsModule,
       MatTooltipModule,
       MatSlideToggleModule,
-      SplashComponent 
+      SplashComponent,
+      LegalComponent
     ]
 })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -68,7 +69,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     public systemService: SystemService,
     public ollamaService: OllamaService,
     public rerankerService: RerankerService,
-    public watcherService: WatcherService,
     private clipboard: Clipboard,
     private mediaService: MediaService
   ) {    
@@ -203,10 +203,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.systemService.collections.findIndex(f => this.commonService.basename(f.value) === this.systemService.history[index].ingest.collection) > -1) {
       this.systemService.collection = this.systemService.history[index].ingest.collection;
       this.mediaService.loadedIndex = false;
-      this.systemService.ragFiles = await this.mediaService.ls(true); 
+      await this.systemService.refreshFileList(this.mediaService, true);
     }
     if (this.ollamaService.availableModels.findIndex(f => f.name === this.systemService.history[index].ingest.embeddings_model) > -1) {
       this.ollamaService.embeddings_model = this.systemService.history[index].ingest.embeddings_model;
+    }
+    if (this.ollamaService.availableModels.findIndex(f => f.name === this.systemService.history[index].ingest.ocr_model) > -1) {
+      this.ollamaService.ocr_model = this.systemService.history[index].ingest.ocr_model;
     }
     this.systemService.localVector = this.systemService.history[index].ingest.localVector;
     this.systemService.overlap = this.systemService.history[index].ingest.overlap;
@@ -222,7 +225,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.systemService.numCtx = this.systemService.history[index].insight.numCtx;
     this.systemService.question = this.systemService.history[index].question;
 
-    this.systemService.chatHistory = [];
+    this.ollamaService.resetChatHistory();
     this._snackBar.open(await this.commonService.get('PAGES.HOME.RESTORE_SETTINGS'), 'OK', {
       duration: 2500
     });
