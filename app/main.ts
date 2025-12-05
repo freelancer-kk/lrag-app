@@ -304,7 +304,7 @@ try {
         log.info('main:ready-to-show');
         log.info('main:starting services if already installed:');   
 
-        process.exit(1);
+        // process.exit(1);
         ollamaService.startIfInstalled();
         rerankerService.startIfInstalled();   
         browserWin.show();

@@ -72,11 +72,14 @@ export default class Quantum {
   runTest = async (ins: string): Promise<void> => {
     const plaintext: Uint8Array = encoder.encode(ins);
     if (this.cryptoKey) {
-      const { encapsulatedSecret, ciphertext } = await this.suite.Seal(this.cryptoKey.publicKey, plaintext);
+
+      const ciphertext = await this.encrypt(plaintext);
       log.info('Sealed!');
-      const decrypted: Uint8Array = await this.suite.Open(this.cryptoKey.privateKey, encapsulatedSecret, ciphertext);
-      log.info('ins:', ins);
-      log.info('outs:', decoder.decode(decrypted));
+      if (ciphertext) {
+        const decrypted: Uint8Array | undefined = await this.decrypt(ciphertext);
+        log.info('ins:', ins);
+        log.info('outs:', decoder.decode(decrypted));
+      }
     }
   }
 
