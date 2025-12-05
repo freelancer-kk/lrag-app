@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import log from 'electron-log/main';
 import { safeStorage } from 'electron';
 import * as HPKE from 'hpke'
-import { KEM_ML_KEM_768, KDF_SHAKE256, AEAD_ChaCha20Poly1305 } from '@panva/hpke-noble'
+import { KEM_ML_KEM_512, KDF_SHAKE256, AEAD_ChaCha20Poly1305 } from '@panva/hpke-noble'
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -13,16 +13,23 @@ export interface IHPKEKey {
   privateKey: HPKE.Key;
 }
 
+export interface ISenderSetup {
+  encapsulatedSecret: Uint8Array;
+  ctx: HPKE.SenderContext 
+}
+
 export default class Quantum {
   encryptionAvailable: boolean = false;
   suite: HPKE.CipherSuite; 
   privateKeyPath: string;
   publicKeyPath: string;
   cryptoKey: IHPKEKey | undefined;
+  senderContext: ISenderSetup | undefined;
+  recipientContext: HPKE.RecipientContext | undefined;
   
   constructor(configPath: string) {
     this.suite = new HPKE.CipherSuite(
-      KEM_ML_KEM_768, KDF_SHAKE256, AEAD_ChaCha20Poly1305
+      KEM_ML_KEM_512, KDF_SHAKE256, AEAD_ChaCha20Poly1305
     );
 
     this.privateKeyPath = path.join(configPath, 'lrag-key.pem');
@@ -36,6 +43,9 @@ export default class Quantum {
     }
 
     this.cryptoKey = await this.loadKemKeyPair(this.privateKeyPath, this.publicKeyPath);
+
+    this.senderContext = await this.suite.SetupSender(this.cryptoKey.publicKey);
+    this.recipientContext = await this.suite.SetupRecipient(this.cryptoKey.privateKey, this.senderContext.encapsulatedSecret);
     
     log.info("ENCRYPTION:", this.encryptionAvailable);
   }
@@ -68,5 +78,13 @@ export default class Quantum {
       log.info('ins:', ins);
       log.info('outs:', decoder.decode(decrypted));
     }
+  }
+
+  encrypt = (text: Uint8Array): Promise<Uint8Array> | undefined => {
+    return this.senderContext?.ctx.Seal(text);
+  }
+
+  decrypt = (text: Uint8Array): Promise<Uint8Array> | undefined => {
+    return this.recipientContext?.Open(text);
   }
 }
