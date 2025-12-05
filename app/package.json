@@ -63,7 +63,6 @@
     "pureimage": "^0.4.18",
     "rxjs": "^7.8.2",
     "sparse-bitfield": "^3.0.3",
-    "ssh2-sftp-client": "^12.0.1",
     "systeminformation": "^5.27.8",
     "tesseract.js": "^6.0.1",
     "text-loader": "0.0.1",
@@ -81,7 +80,6 @@
     "@types/csv-parse": "^1.1.12",
     "@types/node": "^24.10.1",
     "@types/pdf-parse": "^1.1.5",
-    "@types/ssh2-sftp-client": "^9.0.5",
     "@types/tesseract.js": "^0.0.2",
     "@types/uuid": "^10.0.0",
     "@types/word-extractor": "^1.0.6"

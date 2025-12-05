@@ -308,43 +308,7 @@ export default class LangchainService {
       return docs;
     }
   }
-
-  /*
-  OCRWatcherDocs = async (loaded_docs: Document[], doc_path: string): Promise<boolean> => {
-    let hasOCRTasks: boolean = false;
-    const file_names: string[] = fs.readdirSync(doc_path);
-    const loaded_doc_names: string[] = [];
-    for await (const ld of loaded_docs) {
-      if (loaded_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
-        loaded_doc_names.push(ld.metadata.source);
-      }
-    }
-
-    for await (const fn of file_names) {
-      if (loaded_doc_names.findIndex(ldn => path.basename(ldn) === fn) === -1) {
-        if (fn.endsWith('pdf') || fn.endsWith('PDF')) {
-          // file has not been loaded mark it for OCR processing
-          log.info('OCR:REQUEST:put:', path.join(doc_path, fn));
-          
-          this.ocrProcessor?.put(
-            path.join(doc_path, fn),
-            path.basename(fn)
-          )          
-          hasOCRTasks = true;          
-        } else {
-          log.info('OCR ignoring non pdf:', fn);
-          this.emit( { type: 'langchain-run-ocr-ignore', data: { name: fn } });
-        }
-      }
-    }
-    if (hasOCRTasks) {
-      this.emit( { type: 'langchain-run-has-ocr', data: {} });
-    }
-
-    return hasOCRTasks;
-  }
-  */
-
+  
   OCRDocs = async (ocrobj: any, loaded_docs: Document[], doc_path: string, ocrProcessor: OCRllmProcessor | OCRJSProcessor): Promise<boolean> => {
     await this.ocrLLMProcessor.init(ocrobj);
     
@@ -430,13 +394,7 @@ export default class LangchainService {
         } else {
           this.emit( { type: 'langchain-run-warning', data: { message: 'nothing embedded' } });
           return { status: 'warning', message: 'nothing to process' };
-        }
-      /*
-      } else {
-        this.emit( { type: 'langchain-run-warning', data: { message: 'document(s) loaded but not processed, empty or latest was incompatible' } });
-        return { status: 'warning', message: 'document(s) loaded but not processed, empty or latest was incompatible' };
-      }
-      */
+        }      
       } else {
         await this.setStatusForLoadedDocs(docs);
         this.emit( { type: 'langchain-run-warning', data: { message: 'nothing embedded' } });
