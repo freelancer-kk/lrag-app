@@ -25,7 +25,7 @@
   "main": "app/main.js",
   "private": true,
   "scripts": {
-    "postinstall": "electron-builder install-app-deps && patch-package && npm run patch:img",
+    "postinstall": "electron-builder install-app-deps && patch-package",
     "ng": "ng",
     "start": "npm-run-all -p electron:serve ng:serve",
     "ng:serve": "ng serve -c web",
@@ -162,6 +162,7 @@
     "node-polyfill-webpack-plugin": "4.1.0",
     "npm-run-all": "4.1.5",
     "playwright": "^1.55.0",
+    "shx": "0.4.0",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
     "wait-on": "8.0.5",

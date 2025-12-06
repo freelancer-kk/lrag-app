@@ -1,0 +1,8 @@
+npm update @langchain/community @langchain/core langchain
+npm update @langchain/ollama hnswlib-node
+npm install @langchain/textsplitters
+npm install @langchain/classic
+git config --global core.longpaths true
+
+cp node_modules/@langchain/classic/dist/stores/doc
+
