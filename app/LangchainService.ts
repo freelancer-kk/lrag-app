@@ -132,7 +132,10 @@ export default class LangchainService {
 
   loadVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean | undefined> => {
     try {
-      this.vectorStore = await HNSWLib.load(path.join(this.db_path, collection), this.embeddings);        
+      this.vectorStore = await HNSWLib.load(path.join(this.db_path, collection), this.embeddings, (s: string) => { 
+        log.info('loadVectorStore:', s.length);
+        return s; 
+      });        
       this.vectorStoreType = vectorStoreType;        
       this.hasAddedDocs = true;
       return true;
@@ -147,7 +150,7 @@ export default class LangchainService {
   saveVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean | undefined> => {
     if (this.vectorStore) {
       try {
-        await (this.vectorStore as HNSWLib).save(path.join(this.db_path, collection));
+        await (this.vectorStore as HNSWLib).save(path.join(this.db_path, collection), (s: string) => { return s; });
         return true;
       } catch (e) {
         log.error(e);
