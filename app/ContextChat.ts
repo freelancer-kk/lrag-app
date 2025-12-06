@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import LangchainService, { EVectorStoreType } from "./LangchainService"
+import LangchainService from "./LangchainService"
 import OllamaService from "./OllamaService"
 import { ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
 import { StringOutputParser } from "@langchain/core/output_parsers"
@@ -88,11 +88,7 @@ export default class ContextChat {
           },
           filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
           k: (options.k / 2)
-        };
-        if (this.langchainService.vectorStoreType === EVectorStoreType.Memory) {
-          log.info('USING MEMORY VECTOR!');
-          retrieverParams.searchType = "mmr";
-        }
+        };        
       } else {
         log.info('getSimilarityAnswer:', options.filter, options.k);
         retrieverParams = {
@@ -124,13 +120,11 @@ export default class ContextChat {
         });
         let docs: Document[] = documents as Document[];
 
-        if (this.langchainService.vectorStoreType !== EVectorStoreType.Memory) {          
-          this.emit({ type: 'reranking', data: { total: docs.length } });
-          const reranked_docs: Document[] | undefined = await this.rerankerService.rerank(options.question, docs);
-          if (reranked_docs && reranked_docs.length > 0) {
-            docs = reranked_docs;
-          }
-        }
+        this.emit({ type: 'reranking', data: { total: docs.length } });
+        const reranked_docs: Document[] | undefined = await this.rerankerService.rerank(options.question, docs);
+        if (reranked_docs && reranked_docs.length > 0) {
+          docs = reranked_docs;
+        }        
 
         for await (const doc of docs) {
           const name: string = path.basename(doc.metadata.source);
