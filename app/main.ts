@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage, screen, Tray } from 'electron';
+import { app, BrowserWindow, nativeImage, screen, Tray, safeStorage } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
@@ -90,7 +90,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     useTesseractJS = await dockerEnv.getKeyValue('USE_TESSERACTJS')?.toLowerCase() === 'true' ? true : false;
   }
   log.info('Use Tesseract Service:', useTesseractJS);
-  
+  quantum.useEncryption = await dockerEnv.getKeyValue('QUANTUM_ENC')?.toLowerCase() === 'true' ? true : false;
 
   await systemInfo.getGraphics().then(async (graphics: Systeminformation.GraphicsData) => {
     log.info('graphics:', graphics.controllers.map(v => v.vendor));
@@ -148,7 +148,8 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
       docPath ? docPath : path.join(userDataPath, 'docs'),
       path.join(appDataPath, 'lrag-app', 'lrag'),
       useTesseractJS ? ocrJSProcessor : undefined,
-      ocrLlmProcessor
+      ocrLlmProcessor,
+      quantum
     );
     langchainService.register(win?.webContents);
   
@@ -274,11 +275,12 @@ try {
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {            
-    setTimeout(async () => {      
+    setTimeout(async () => {   
       quantum = new Quantum(configPath);
+      quantum.encryptionAvailable = safeStorage.isEncryptionAvailable();    
       await quantum.init();
       await quantum.runTest('this is my message in');
-
+      
       calcAssetsFolderPath();
 
       if (isLinux) {

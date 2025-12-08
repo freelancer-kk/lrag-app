@@ -66,9 +66,9 @@ export default class ContextChat {
     }
     
     try {
-      await this.ollamaService.unloadLastUsedModel();
-      
+      await this.ollamaService.unloadLastUsedModel();      
       this.ollamaService.setLastUsedModel(options.model);
+      
       const ollamaOptions: OllamaInput = {
         baseUrl: options.baseUrl,
         model: options.model,

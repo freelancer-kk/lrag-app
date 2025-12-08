@@ -18,6 +18,7 @@ import OCRJSProcessor from './OCRJSProcessor';
 import { v4 as uuidv4 } from 'uuid';
 import log from 'electron-log/main';
 import OCRllmProcessor from './OCRllmProcessor';
+import Quantum from './Quantum';
 
 export enum EVectorStoreType {
   HNSWLib,
@@ -36,10 +37,19 @@ export default class LangchainService {
   vectorStoreType: EVectorStoreType | undefined;
   ocrJSProcessor: OCRJSProcessor | undefined;
   ocrLLMProcessor: OCRllmProcessor;
+  quantum: Quantum;
   uuid: string;
   baseUrl: string;
 
-  constructor(doc_path: string, db_dir: string, ocrJSProcessor: OCRJSProcessor | undefined, ocrLLMProcessor: OCRllmProcessor, baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
+  constructor(
+    doc_path: string,
+    db_dir: string,
+    ocrJSProcessor: OCRJSProcessor | undefined,
+    ocrLLMProcessor: OCRllmProcessor,
+    quantum: Quantum,
+    baseUrl: string = "http://localhost:11434",
+    model: string = "embeddinggemma:300m"
+) {
     this.doc_path = doc_path;
     this.root_doc_path = doc_path;
     mkdirSync(path.join(db_dir, 'hnsw'), { recursive: true });
@@ -56,8 +66,9 @@ export default class LangchainService {
     
     this.semanticChunking = new SemanticChunking(baseUrl, model);
 
-    this.ocrJSProcessor = ocrJSProcessor; 
-    this.ocrLLMProcessor = ocrLLMProcessor;         
+    this.ocrJSProcessor = ocrJSProcessor;
+    this.ocrLLMProcessor = ocrLLMProcessor;
+    this.quantum = quantum;
           
     this.uuid = uuidv4();
 
@@ -132,10 +143,17 @@ export default class LangchainService {
 
   loadVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean | undefined> => {
     try {
-      this.vectorStore = await HNSWLib.load(path.join(this.db_path, collection), this.embeddings, (s: string) => { 
-        log.info('loadVectorStore:', s.length);
-        return s; 
-      });        
+      this.vectorStore = await HNSWLib.load(path.join(this.db_path, collection), this.embeddings,
+        async (s: string) => {
+          log.info('loadVectorStore:', s.length);
+          try {
+            return this.quantum.useEncryption ? await this.quantum.decrypt(s) : s;
+          } catch (e) {
+            log.error(e);
+            return s;
+          }
+        }
+      );        
       this.vectorStoreType = vectorStoreType;        
       this.hasAddedDocs = true;
       return true;
@@ -150,7 +168,15 @@ export default class LangchainService {
   saveVectorStore = async (vectorStoreType: EVectorStoreType, collection: string): Promise<boolean | undefined> => {
     if (this.vectorStore) {
       try {
-        await (this.vectorStore as HNSWLib).save(path.join(this.db_path, collection), (s: string) => { return s; });
+        await (this.vectorStore as HNSWLib).save(path.join(this.db_path, collection),
+        async (s: string) => { 
+          try {
+            return this.quantum.useEncryption ? await this.quantum.encrypt(s) : s;
+          } catch (e) {
+            log.error(e);
+            return s;
+          }
+        });
         return true;
       } catch (e) {
         log.error(e);
