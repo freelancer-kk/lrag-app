@@ -12,7 +12,8 @@ src/**/*.js
 app/*.js
 .env
 scripts/.env
-lrag-key*
+*.ikm
+encap/*
 
 # dependencies
 node_modules

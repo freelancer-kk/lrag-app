@@ -279,7 +279,7 @@ try {
       quantum = new Quantum(configPath);
       quantum.encryptionAvailable = safeStorage.isEncryptionAvailable();    
       await quantum.init();
-      await quantum.runTest('this is my message in');
+      // await quantum.runTest('this is my message in');
       
       calcAssetsFolderPath();
 
