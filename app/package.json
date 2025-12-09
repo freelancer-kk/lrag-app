@@ -9,7 +9,8 @@
   "main": "main.js",
   "private": true,
   "scripts": {
-    "postinstall": "npm run copy-patch1 && npm run copy-patch2 && patch-package",
+    "postinstall:windows": "npm run copy-patch1 && npm run copy-patch2 && patch-package && patch-package --patch-dir=patches-windows",
+    "postinstall:mac": "npm run copy-patch1 && npm run copy-patch2 && patch-package && patch-package --patch-dir=patches-mac",
     "copy-patch1": "shx cp in_memory.d.cts node_modules/@langchain/classic/dist/stores/doc",
     "copy-patch2": "shx cp in_memory.d.ts node_modules/@langchain/classic/dist/stores/doc"
   },
