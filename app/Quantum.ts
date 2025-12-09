@@ -18,9 +18,7 @@ export default class Quantum {
   suite: HPKE.CipherSuite; 
   ikmKeyPath: string;
   encapDirPath: string;
-  b64encapSec: string | undefined;
   keyPair: HPKE.KeyPair | undefined;
-  senderContext: ISenderSetup | undefined;
   useEncryption: boolean = false;
   aad: Uint8Array = encoder.encode('metadata');
   
@@ -45,17 +43,7 @@ export default class Quantum {
       this.keyPair = await this.loadKemKeyPair();      
     }
 
-    // await this.setupContexts();
-    
     log.info("ENCRYPTION:", this.encryptionAvailable);
-  }
-
-  setupContexts = async (): Promise<void> => {
-    if (this.keyPair) {
-      this.senderContext = await this.suite.SetupSender(this.keyPair.publicKey);
-      this.b64encapSec = Buffer.from(this.senderContext.encapsulatedSecret).toString('base64');
-      // this.recipientContext = await this.suite.SetupRecipient(this.keyPair, this.senderContext.encapsulatedSecret);
-    }
   }
 
   generateAndSaveKemKeyPair = (): Promise<HPKE.KeyPair> => {
@@ -85,37 +73,6 @@ export default class Quantum {
     }
   }
 
-  encryptBin = (bin: Uint8Array): Promise<Uint8Array | undefined> => {
-    if (this.senderContext) {
-      return this.senderContext.ctx.Seal(bin, this.aad)
-        .then((value: Uint8Array) => {
-          return this.hashUint8Array(value).then((hash: string) => {
-            if (this.b64encapSec) {
-              fs.writeFileSync(path.join(this.encapDirPath, hash + '.bin'), this.b64encapSec, 'utf-8');
-              // log.info('encrypt:hash:', hash, 'sec:', this.b64encapSec);
-              return value;
-            }
-          });          
-        });
-    } else {
-      return Promise.resolve(undefined)
-    }
-  }
-
-  decryptBin = (bin: Uint8Array): Promise<Uint8Array | undefined> => {
-    return this.hashUint8Array(bin).then((hash: string) => {
-      const encapsec: string = fs.readFileSync(path.join(this.encapDirPath, hash + '.bin'), 'utf-8');
-      // log.info('decrypt:hash:', hash, 'sec:', encapsec);
-      if (this.keyPair) {
-        return this.suite.SetupRecipient(this.keyPair, Buffer.from(encapsec, 'base64')).then((recipientContext: HPKE.RecipientContext) => {
-          return recipientContext.Open(bin, this.aad).then((value: Uint8Array) => {
-            return value;
-          });
-        })          
-      }  
-    })
-  }
-
   hashUint8Array = (data: Uint8Array): Promise<string> => {
     // Node.js Buffers extend Uint8Array, so no conversion is needed.
     const buffer: Buffer = Buffer.from(data); 
@@ -133,7 +90,7 @@ export default class Quantum {
             return this.hashUint8Array(value).then((hash: string) => {
               const b64encapsec: string = Buffer.from(senderSetup.encapsulatedSecret).toString('base64');
               fs.writeFileSync(path.join(this.encapDirPath, hash + '.bin'), b64encapsec, 'utf-8');
-              log.info('encrypt:encapsec:', b64encapsec);
+              // log.info('encrypt:encapsec:', b64encapsec);
               return Buffer.from(value).toString('base64');              
             });          
           });
@@ -147,7 +104,7 @@ export default class Quantum {
     const inArray: Uint8Array = Buffer.from(bin, 'base64');
     return this.hashUint8Array(inArray).then((hash: string) => {
       const encapsec: string = fs.readFileSync(path.join(this.encapDirPath, hash + '.bin'), 'utf-8');
-      log.info('decrypt:encapsec:', encapsec);
+      // log.info('decrypt:encapsec:', encapsec);
       if (this.keyPair) {
         return this.suite.SetupRecipient(this.keyPair, Buffer.from(encapsec, 'base64')).then((recipientContext: HPKE.RecipientContext) => {
           return recipientContext.Open(inArray, this.aad).then((value: Uint8Array) => {
