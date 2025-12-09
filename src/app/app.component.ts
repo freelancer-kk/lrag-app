@@ -669,6 +669,7 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {    
     this.ollamaService.useTesseractJS = (await this.commonService.getEnvValue('USE_TESSERACTJS') === 'true') ? true : false;    
+    this.systemService.useQuantum = (await this.commonService.getEnvValue('QUANTUM_ENC') === 'true') ? true : false;    
     const apiKey: string = await this.commonService.getEnvValue('OLLAMA_API_KEY');
     if (apiKey && apiKey.length > 50) {
       console.log('APIKEY:', apiKey);
@@ -710,8 +711,8 @@ export class AppComponent implements OnInit {
       /*
       * Comment out since only necessary for reload
       */
-      // this.ollamaService.startOnTimer();
-      // this.rerankerService.startIfNecessary();          
+      this.ollamaService.startOnTimer();
+      this.rerankerService.startIfNecessary();          
     }, 400)   
   }
 

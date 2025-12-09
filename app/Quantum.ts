@@ -19,10 +19,8 @@ export default class Quantum {
   ikmKeyPath: string;
   encapDirPath: string;
   b64encapSec: string | undefined;
-  senderKeyPair: HPKE.KeyPair | undefined;
-  recipientKeyPair: HPKE.KeyPair | undefined;
+  keyPair: HPKE.KeyPair | undefined;
   senderContext: ISenderSetup | undefined;
-  recipientContext: HPKE.RecipientContext | undefined;
   useEncryption: boolean = false;
   aad: Uint8Array = encoder.encode('metadata');
   
@@ -42,39 +40,21 @@ export default class Quantum {
   init = async () => {
     if (!fs.existsSync(this.ikmKeyPath)) {
       log.info("NEW KEY:", this.encryptionAvailable);  
-      this.senderKeyPair = await this.generateAndSaveKemKeyPair();
-      this.recipientKeyPair = await this.loadKemKeyPair();
+      this.keyPair = await this.generateAndSaveKemKeyPair();      
     } else {      
-      this.senderKeyPair = await this.loadKemKeyPair();
-      this.recipientKeyPair = await this.loadKemKeyPair();
+      this.keyPair = await this.loadKemKeyPair();      
     }
 
-    const pk1 = await this.suite.SerializePublicKey(this.senderKeyPair.publicKey);
-    const pk2 = await this.suite.SerializePublicKey(this.recipientKeyPair.publicKey);
-
-    log.info(
-      'Public keys match:',
-      pk1.every((byte, i) => byte === pk2[i]),
-    ) 
-
-    const pv1 = await this.suite.SerializePrivateKey(this.senderKeyPair.privateKey);
-    const pv2 = await this.suite.SerializePrivateKey(this.recipientKeyPair.privateKey);
-
-    log.info(
-      'Private keys match:',
-      pv1.every((byte, i) => byte === pv2[i]),
-    ) 
-
-    await this.setupContexts();
+    // await this.setupContexts();
     
     log.info("ENCRYPTION:", this.encryptionAvailable);
   }
 
   setupContexts = async (): Promise<void> => {
-    if (this.senderKeyPair && this.recipientKeyPair) {
-      this.senderContext = await this.suite.SetupSender(this.recipientKeyPair.publicKey);
+    if (this.keyPair) {
+      this.senderContext = await this.suite.SetupSender(this.keyPair.publicKey);
       this.b64encapSec = Buffer.from(this.senderContext.encapsulatedSecret).toString('base64');
-      this.recipientContext = await this.suite.SetupRecipient(this.recipientKeyPair, this.senderContext.encapsulatedSecret);
+      // this.recipientContext = await this.suite.SetupRecipient(this.keyPair, this.senderContext.encapsulatedSecret);
     }
   }
 
@@ -91,7 +71,7 @@ export default class Quantum {
   }
 
   runTest = async (ins: string): Promise<void> => {
-    if (this.senderKeyPair && this.recipientKeyPair) {
+    if (this.keyPair) {
 
       const ciphertext = await this.encrypt(ins);
       log.info('Sealed!');
@@ -124,19 +104,15 @@ export default class Quantum {
 
   decryptBin = (bin: Uint8Array): Promise<Uint8Array | undefined> => {
     return this.hashUint8Array(bin).then((hash: string) => {
-      if (this.recipientContext) {
-        const encapsec: string = fs.readFileSync(path.join(this.encapDirPath, hash + '.bin'), 'utf-8');
-        // log.info('decrypt:hash:', hash, 'sec:', encapsec);
-        if (this.recipientKeyPair) {
-          return this.suite.SetupRecipient(this.recipientKeyPair, Buffer.from(encapsec, 'base64')).then((recipientContext: HPKE.RecipientContext) => {
-            return recipientContext.Open(bin, this.aad).then((value: Uint8Array) => {
-              return value;
-            });
-          })          
-        }
-      } else {
-        return Promise.resolve(undefined)
-      }                
+      const encapsec: string = fs.readFileSync(path.join(this.encapDirPath, hash + '.bin'), 'utf-8');
+      // log.info('decrypt:hash:', hash, 'sec:', encapsec);
+      if (this.keyPair) {
+        return this.suite.SetupRecipient(this.keyPair, Buffer.from(encapsec, 'base64')).then((recipientContext: HPKE.RecipientContext) => {
+          return recipientContext.Open(bin, this.aad).then((value: Uint8Array) => {
+            return value;
+          });
+        })          
+      }  
     })
   }
 
@@ -150,17 +126,18 @@ export default class Quantum {
   }
 
   encrypt = (text: string): Promise<string | undefined> => {
-    if (this.senderContext) {
-      return this.senderContext.ctx.Seal(encoder.encode(text), this.aad)
-        .then((value: Uint8Array) => {
-          return this.hashUint8Array(value).then((hash: string) => {
-            if (this.b64encapSec) {
-              fs.writeFileSync(path.join(this.encapDirPath, hash + '.bin'), this.b64encapSec, 'utf-8');
-              // log.info('encrypt:hash:', hash, 'sec:', this.b64encapSec);
-              return Buffer.from(value).toString('base64');
-            }
-          });          
-        });
+    if (this.keyPair) {
+      return this.suite.SetupSender(this.keyPair.publicKey).then((senderSetup: ISenderSetup) => {
+        return senderSetup.ctx.Seal(encoder.encode(text), this.aad)
+          .then((value: Uint8Array) => {
+            return this.hashUint8Array(value).then((hash: string) => {
+              const b64encapsec: string = Buffer.from(senderSetup.encapsulatedSecret).toString('base64');
+              fs.writeFileSync(path.join(this.encapDirPath, hash + '.bin'), b64encapsec, 'utf-8');
+              log.info('encrypt:encapsec:', b64encapsec);
+              return Buffer.from(value).toString('base64');              
+            });          
+          });
+      });
     } else {
       return Promise.resolve(undefined)
     }
@@ -169,19 +146,15 @@ export default class Quantum {
   decrypt = (bin: string): Promise<string | undefined> => {
     const inArray: Uint8Array = Buffer.from(bin, 'base64');
     return this.hashUint8Array(inArray).then((hash: string) => {
-      if (this.recipientContext) {
-        const encapsec: string = fs.readFileSync(path.join(this.encapDirPath, hash + '.bin'), 'utf-8');
-        // log.info('decrypt:hash:', hash, 'sec:', encapsec);
-        if (this.recipientKeyPair) {
-          return this.suite.SetupRecipient(this.recipientKeyPair, Buffer.from(encapsec, 'base64')).then((recipientContext: HPKE.RecipientContext) => {
-            return recipientContext.Open(inArray, this.aad).then((value: Uint8Array) => {
-              return decoder.decode(value);
-            });
-          })          
-        }
-      } else {
-        return Promise.resolve(undefined)
-      }                
+      const encapsec: string = fs.readFileSync(path.join(this.encapDirPath, hash + '.bin'), 'utf-8');
+      log.info('decrypt:encapsec:', encapsec);
+      if (this.keyPair) {
+        return this.suite.SetupRecipient(this.keyPair, Buffer.from(encapsec, 'base64')).then((recipientContext: HPKE.RecipientContext) => {
+          return recipientContext.Open(inArray, this.aad).then((value: Uint8Array) => {
+            return decoder.decode(value);
+          });
+        })          
+      }    
     })                     
   }
 

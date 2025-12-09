@@ -126,9 +126,6 @@ export default class LRagFiles {
           case "rm": {
             log.info('LRagFiles:', callbackId, command, params.name);
             try {
-              if (this.quantum.useEncryption) {
-                await this.quantum.removeBin(Buffer.from(fs.readFileSync(params.name, 'utf-8'), 'binary'));
-              }
               fs.rmSync(params.name, {
                 recursive: true,
                 force: true,

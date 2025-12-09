@@ -359,7 +359,7 @@ export default class LangchainService {
     );
     log.info('langchain:loaded:', uniqueDocs.length);
     for await (const doc of uniqueDocs) {
-      log.info(doc.metadata.source, '=>', doc.pageContent.substring(20));
+      log.info(doc.metadata.source, '=>', doc.pageContent.substring(0, 20));
       this.emit( { type: 'langchain-run-doc', data: { id: doc.id, source: path.basename(doc.metadata.source), metadata: doc.metadata } });
     }
     return uniqueDocs;      

@@ -395,13 +395,16 @@ export class IngestComponent implements OnInit {
           const fIdx: number = this.systemService.ragFiles.findIndex(r => r.name === doc);
           if (fIdx > -1) {
             await this.mediaService.remove(this.systemService.ragFiles[fIdx].name);
-            this.systemService.ragFiles.splice(fIdx, 1);            
+            this.systemService.ragFiles.splice(fIdx, 1);
           }
         }
         await this.systemService.refreshFileList(this.mediaService, true);
+        /*
+        // NOT REQUIRED since we filter for only selected documents
         if (this.systemService.ragFiles.length > 0) {
           this.startIngestion();
         }
+        */
       }
     });    
   }
@@ -499,5 +502,38 @@ export class IngestComponent implements OnInit {
           await this.systemService.saveChunkSettings();
         }
       });
+  }
+
+  switchQuantum = async (event: any) => {    
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 1,
+          params: {
+            message: await this.commonService.get('QUANTUM_ARE_YOU_SURE')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Dialog result: ${result}`);
+      if (result === true) {            
+        this.systemService.useQuantum = event.checked;
+        await this.commonService.setEnvValue('QUANTUM_ENC', this.systemService.useQuantum ? 'true' : 'false');
+          const dialogRef = this.dialog.open(
+            AlertComponent, {
+              data: {
+                type: 2,
+                params: {
+                  message: await this.commonService.get('QUANTUM_CHANGE_DONE')
+                }
+              }
+            });          
+          dialogRef.afterClosed().subscribe(async () => {
+            await this.commonService.quitApp();      
+          });          
+      } else {
+        event.source.checked = !event.checked;
+      }
+    })
   }
 }

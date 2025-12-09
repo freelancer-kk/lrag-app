@@ -56,6 +56,16 @@ export default class ContextChat {
     }) 
   }  
 
+  applyDocFilter = (doc: Document, options: any, nf: ((d: Document, o: any) => boolean) | undefined): boolean => {
+    const sourceName: string = doc.metadata.source.replace(/\\/g, '/').replace(/\/\//g, '/');
+    // log.info('applyDocFilter:', sourceName, 'included', options.fileNames.includes(sourceName));
+    if (nf) {
+      return options.fileNames.includes(sourceName) && nf(doc, options);
+    } else {
+      return options.fileNames.includes(sourceName);
+    }
+  }
+
   applyFilter = (doc: Document, options: any): boolean => {
     return doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1;
   }
@@ -78,121 +88,115 @@ export default class ContextChat {
       log.info('Ollama connection:options:', ollamaOptions);
       this.ollamaLlm = new Ollama(ollamaOptions);
 
-      let vectorStoreRetriever;
-      let retrieverParams: any;
-      if (options.mmr) {
-        log.info('getMMRAnswer:', options.filter, options.k);
-        retrieverParams = {
-          searchKwargs: {
-            fetchK: options.k,
-          },
-          filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
-          k: (options.k / 2)
-        };        
-      } else {
-        log.info('getSimilarityAnswer:', options.filter, options.k);
-        retrieverParams = {
-          filter: options.filter ? (doc: Document) => this.applyFilter(doc, options) : undefined,
-          k: options.k,
-        };
-      }
-      const docSources: string[] = [];
-
-      vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever(retrieverParams);
-        
-      if (vectorStoreRetriever && this.langchainService.hasAddedDocs && options.useDocContext) {
-        log.info('INSIGHT: WITH DOC CONTEXT!')
-
-        const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
-          {contextPrompt}
-          chatHistory: {chatHistory}
-          question: {userQuestion}  
-        `);
-        const contextQuestionChain = contextualizedQuestionPrompt
-          .pipe(this.ollamaLlm)
-          .pipe(new StringOutputParser())
-          .pipe(vectorStoreRetriever);
-
-        const documents = await contextQuestionChain.invoke({
-          contextPrompt: options.contextPrompt,
-          chatHistory: options.chatHistory,
-          userQuestion: options.question
-        });
-        let docs: Document[] = documents as Document[];
-
-        this.emit({ type: 'reranking', data: { total: docs.length } });
-        const reranked_docs: Document[] | undefined = await this.rerankerService.rerank(options.question, docs);
-        if (reranked_docs && reranked_docs.length > 0) {
-          docs = reranked_docs;
-        }        
-
-        for await (const doc of docs) {
-          const name: string = path.basename(doc.metadata.source);
-          if (!docSources.includes(name)) {
-            docSources.push(name);
-          }
-        }
-        
-        const combinedDocs: string = combineDocuments(docs);
-        log.info('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
-
-        const questionTemplate = PromptTemplate.fromTemplate(`
-            {prompt}
-            <context>
-            {context}
-            </context>
-
-            question: {userQuestion}
-        `)
-
-        const answerChain = questionTemplate
-          .pipe(this.ollamaLlm)
-          .pipe(new StringOutputParser());
-        
-        const ref = this;
-        const llmResponse: IterableReadableStream<string> = await answerChain.stream({
-          prompt: options.prompt,
-          context: combinedDocs,
-          userQuestion: options.question
-        }, {
-          callbacks: [
-            {
-              handleLLMEnd(output) {
-                // log.info('handleLLMEnd:', JSON.stringify(output, null, 2));
-                ref.emit({ type: 'chat-chunk-metadata', data: output });
-              },
+      let isStandardChat: boolean = true;
+      if (this.langchainService.hasAddedDocs && options.useDocContext) {
+        let vectorStoreRetriever;
+        let retrieverParams: any;
+        if (options.mmr) {
+          log.info('getMMRAnswer:', options.filter, options.k);
+          retrieverParams = {
+            searchKwargs: {
+              fetchK: options.k,
             },
-          ],
-        });
-
-        /*
-        for await (const event of answerChain.streamEvents({
-          prompt: options.prompt,
-          context: combinedDocs,
-          userQuestion: options.question
-        }, {
-          version: "v2"
-        })) {
-          log.info(event);
+            filter: (doc: Document) => options.filter ? this.applyDocFilter(doc, options, this.applyFilter) : this.applyDocFilter(doc, options, undefined),
+            k: (options.k / 2)
+          };        
+        } else {
+          log.info('getSimilarityAnswer:', options.filter, options.k);
+          retrieverParams = {
+            filter: (doc: Document) => options.filter ? this.applyDocFilter(doc, options, this.applyFilter) : this.applyDocFilter(doc, options, undefined),
+            k: options.k,
+          };
         }
-          */
+        const docSources: string[] = [];
+        vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever(retrieverParams);      
 
-        let finalAnswer: AIMessageChunk | undefined;
-        for await (const chunk of llmResponse) {
-          if (finalAnswer) {
-            finalAnswer = concat(finalAnswer, new AIMessageChunk(chunk));
-          } else {
-            finalAnswer = new AIMessageChunk(chunk);
+        if (vectorStoreRetriever) {
+          isStandardChat = false;
+
+          log.info('INSIGHT: WITH DOC CONTEXT!')
+
+          const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
+            {contextPrompt}
+            chatHistory: {chatHistory}
+            question: {userQuestion}  
+          `);
+          const contextQuestionChain = contextualizedQuestionPrompt
+            .pipe(this.ollamaLlm)
+            .pipe(new StringOutputParser())
+            .pipe(vectorStoreRetriever);
+
+          const documents = await contextQuestionChain.invoke({
+            contextPrompt: options.contextPrompt,
+            chatHistory: options.chatHistory,
+            userQuestion: options.question
+          });
+          let docs: Document[] = documents as Document[];
+
+          this.emit({ type: 'reranking', data: { total: docs.length } });
+          const reranked_docs: Document[] | undefined = await this.rerankerService.rerank(options.question, docs);
+          if (reranked_docs && reranked_docs.length > 0) {
+            docs = reranked_docs;
+          }        
+
+          for await (const doc of docs) {
+            const name: string = path.basename(doc.metadata.source);
+            if (!docSources.includes(name)) {
+              docSources.push(name);
+            }
           }
-          // log.info('chat-chunk', chunk);
-          this.emit({ type: 'chat-chunk', data: chunk });
+          
+          const combinedDocs: string = combineDocuments(docs);
+          log.info('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
+
+          const questionTemplate = PromptTemplate.fromTemplate(`
+              {prompt}
+              <context>
+              {context}
+              </context>
+
+              question: {userQuestion}
+          `)
+
+          const answerChain = questionTemplate
+            .pipe(this.ollamaLlm)
+            .pipe(new StringOutputParser());
+          
+          const ref = this;
+          const llmResponse: IterableReadableStream<string> = await answerChain.stream({
+            prompt: options.prompt,
+            context: combinedDocs,
+            userQuestion: options.question
+          }, {
+            callbacks: [
+              {
+                handleLLMEnd(output) {
+                  // log.info('handleLLMEnd:', JSON.stringify(output, null, 2));
+                  ref.emit({ type: 'chat-chunk-metadata', data: output });
+                },
+              },
+            ],
+          });
+
+          let finalAnswer: AIMessageChunk | undefined;
+          for await (const chunk of llmResponse) {
+            if (finalAnswer) {
+              finalAnswer = concat(finalAnswer, new AIMessageChunk(chunk));
+            } else {
+              finalAnswer = new AIMessageChunk(chunk);
+            }
+            // log.info('chat-chunk', chunk);
+            this.emit({ type: 'chat-chunk', data: chunk });
+          }
+          log.info(finalAnswer?.usage_metadata)
+          return {
+            answer: finalAnswer?.content.toString(),
+            docSources
+          }
         }
-        log.info(finalAnswer?.usage_metadata)
-        return {
-          answer: finalAnswer?.content.toString(),
-          docSources
-        }
-      } else {
+      } 
+      
+      if (isStandardChat) {
         log.info('INSIGHT: NO DOC CONTEXT!')
 
         const questionTemplate = PromptTemplate.fromTemplate(`
@@ -224,7 +228,7 @@ export default class ContextChat {
         log.info(finalAnswer?.usage_metadata)
         return {
           answer: finalAnswer?.content.toString(),
-          docSources
+          docSources: []
         }
       }
     } catch (e: any) {
