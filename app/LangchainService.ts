@@ -188,6 +188,11 @@ export default class LangchainService {
   deleteVectorStore = async (vectorStoreType: EVectorStoreType, collection: string) => {
     if (this.vectorStore) {
       try {
+        if (this.quantum.useEncryption) {
+          // Delete associated encap files
+          const dataFile: string = path.join(this.db_path, collection, 'docstore.json');
+          await this.quantum.remove(fs.readFileSync(dataFile, 'utf-8'));
+        }
         await (this.vectorStore as HNSWLib).delete({ directory: path.join(this.db_path, collection) });
       } catch (e) {
         log.error(e);
@@ -251,60 +256,64 @@ export default class LangchainService {
     const dirEnts: fs.Dirent[] = fs.readdirSync(this.doc_path, { withFileTypes: true });
     const loaders: any[] = [];
     for await (const dirent of dirEnts) {
-      if (dirent.isFile()) {
-        const fullpath: string = path.join(dirent.parentPath, dirent.name);
-        log.info('langchain:load:', fullpath);
-        const fileBuffer = fs.readFileSync(fullpath);
-        const blob: Blob = new Blob([fileBuffer]);
-        switch(path.extname(dirent.name)) {
-          case ".json": {
-            loaders.push({ fullpath, loader: new JSONLoader(blob, "/texts")})
-          }
-          break;
-          case ".jsonl": {
-            loaders.push({ fullpath, loader: new JSONLinesLoader(blob, "/html")})
-          }
-          break;
-          case ".txt": 
-          case ".md":
-          case ".xml": {
-            loaders.push({ fullpath, loader: new TextLoader(blob)})
-          }
-          break;
-          case ".csv": {
-            loaders.push({ fullpath, loader: new CSVLoader(blob, {
-              separator: params.separator
-            })})
-          }
-          break;
-          case ".xls":
-          case ".xlsm": {
-            loaders.push({ fullpath, loader: new CSVLoader(blob)})
-          }
-          break;
-          case ".pdf": {
-            loaders.push({ fullpath, loader: new PDFLoader(blob, {
-              splitPages: true,
-              parsedItemSeparator: ""  
-            })})
-          }
-          break;
-          case ".pptx":
-          case ".ppt": {
-            loaders.push({ fullpath, loader: new PPTXLoader(blob)})
-          }
-          break;
-          case ".docx":
-          case ".doc": {
-            loaders.push({ fullpath, loader: new DocxLoader(blob)})
-          }
-          break;          
-          default: {
-            log.info('langchain:load:ignoring:file:', dirent.name);    
-          }
+      const fullpath: string = path.join(dirent.parentPath, dirent.name);
+      try {
+        if (dirent.isFile()) {
+          log.info('langchain:load:', fullpath);
+          const fileBuffer = fs.readFileSync(fullpath, 'utf-8');
+          const blob: Blob = new Blob([fileBuffer]);        
+          switch(path.extname(dirent.name)) {
+            case ".json": {
+              loaders.push({ fullpath, loader: new JSONLoader(blob, "/texts")})
+            }
+            break;
+            case ".jsonl": {
+              loaders.push({ fullpath, loader: new JSONLinesLoader(blob, "/html")})
+            }
+            break;
+            case ".txt": 
+            case ".md":
+            case ".xml": {
+              loaders.push({ fullpath, loader: new TextLoader(blob)})
+            }
+            break;
+            case ".csv": {
+              loaders.push({ fullpath, loader: new CSVLoader(blob, {
+                separator: params.separator
+              })})
+            }
+            break;
+            case ".xls":
+            case ".xlsm": {
+              loaders.push({ fullpath, loader: new CSVLoader(blob)})
+            }
+            break;
+            case ".pdf": {
+              loaders.push({ fullpath, loader: new PDFLoader(blob, {
+                splitPages: true,
+                parsedItemSeparator: ""  
+              })})
+            }
+            break;
+            case ".pptx":
+            case ".ppt": {
+              loaders.push({ fullpath, loader: new PPTXLoader(blob)})
+            }
+            break;
+            case ".docx":
+            case ".doc": {
+              loaders.push({ fullpath, loader: new DocxLoader(blob)})
+            }
+            break;          
+            default: {
+              log.info('langchain:load:ignoring:file:', dirent.name);    
+            }
+          }          
+        } else {
+          log.info('langchain:load:ignoring:entry:', dirent.name);
         }        
-      } else {
-        log.info('langchain:load:ignoring:entry:', dirent.name);
+      } catch (fe) {
+        fs.writeFileSync(fullpath, '', 'utf-8');
       }
     }
     /*
@@ -339,6 +348,7 @@ export default class LangchainService {
     for await (const ll of loaders) {
       docs = docs.concat((await ll.loader.load()).map((d: Document) => {
         d.metadata.source = ll.fullpath;
+        fs.writeFileSync(ll.fullpath, '', 'utf-8');
         return d;
       }));
     }

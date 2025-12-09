@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
+import Quantum from './Quantum';
 
 export interface IFileBit {
   fullPath: string;
@@ -9,12 +10,14 @@ export interface IFileBit {
 }
 
 export default class LRagFiles {
+  quantum: Quantum;
   docPath: string;
   dataPath: string;
   writingFiles: IFileBit[] = [];
   
-  constructor(docPath: string | undefined, dataPath: string | undefined) {
+  constructor(quantum: Quantum, docPath: string | undefined, dataPath: string | undefined) {    
     log.info('LRagFiles:constructor:')
+    this.quantum = quantum;
     if (docPath) {
       this.docPath = docPath;
       if (!fs.existsSync(this.docPath)) {
@@ -95,36 +98,7 @@ export default class LRagFiles {
                 error: fullPath + ' not found',
                 success: false
               };
-            }
-            /*    
-            response = await (new Promise((resolve, reject) => {
-              try {
-                fs.appendFile(
-                  fullPath,
-                  Buffer.from(params.chunk),
-                  {
-                    encoding: 'binary',
-                  },
-                  (err) => {
-                    if (err) {
-                      reject({
-                        error: err,
-                        success: false
-                      });
-                    }
-                    resolve({
-                      success: true
-                    });                    
-                  }
-                )                
-              } catch (e) {
-                reject({
-                  error: e,
-                  success: false
-                });
-              }              
-            }));
-            */
+            }            
           }
           break;
           case "ls": {
@@ -152,6 +126,9 @@ export default class LRagFiles {
           case "rm": {
             log.info('LRagFiles:', callbackId, command, params.name);
             try {
+              if (this.quantum.useEncryption) {
+                await this.quantum.removeBin(Buffer.from(fs.readFileSync(params.name, 'utf-8'), 'binary'));
+              }
               fs.rmSync(params.name, {
                 recursive: true,
                 force: true,
@@ -166,30 +143,7 @@ export default class LRagFiles {
               }
             }
           }
-          break;
-          case "cleanData": {
-            log.info('LRagFiles:clean:removing:', callbackId, this.dataPath);
-            try {
-              fs.rmSync(this.dataPath, {
-                recursive: true,
-                force: true
-              });
-              fs.rmSync(this.docPath, {
-                recursive: true,
-                force: true
-              });
-              fs.mkdirSync(this.docPath, { recursive: true });
-              response = {
-                success: true
-              }
-            } catch (e) {
-              response = {
-                error: e,
-                success: false
-              }
-            }
-          }
-          break;
+          break;          
         }
         event.reply(
           'reply', 

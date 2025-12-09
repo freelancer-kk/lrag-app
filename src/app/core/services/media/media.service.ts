@@ -260,10 +260,4 @@ export class MediaService {
       // console.log(value);
     })
   }
-
-  cleanData = (): Promise<any> => {
-    return this.systemService.lragfiles('cleanData', {}).then((value: any) => {
-      // console.log(value);
-    })
-  }
 }

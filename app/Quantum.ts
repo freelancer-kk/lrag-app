@@ -105,12 +105,39 @@ export default class Quantum {
     }
   }
 
-  encryptbin = (bin: Uint8Array): Promise<Uint8Array> | undefined => {
-    return this.senderContext?.ctx.Seal(bin);
+  encryptBin = (bin: Uint8Array): Promise<Uint8Array | undefined> => {
+    if (this.senderContext) {
+      return this.senderContext.ctx.Seal(bin, this.aad)
+        .then((value: Uint8Array) => {
+          return this.hashUint8Array(value).then((hash: string) => {
+            if (this.b64encapSec) {
+              fs.writeFileSync(path.join(this.encapDirPath, hash + '.bin'), this.b64encapSec, 'utf-8');
+              // log.info('encrypt:hash:', hash, 'sec:', this.b64encapSec);
+              return value;
+            }
+          });          
+        });
+    } else {
+      return Promise.resolve(undefined)
+    }
   }
 
-  decryptbin = (bin: Uint8Array): Promise<Uint8Array> | undefined => {
-    return this.recipientContext?.Open(bin);
+  decryptBin = (bin: Uint8Array): Promise<Uint8Array | undefined> => {
+    return this.hashUint8Array(bin).then((hash: string) => {
+      if (this.recipientContext) {
+        const encapsec: string = fs.readFileSync(path.join(this.encapDirPath, hash + '.bin'), 'utf-8');
+        // log.info('decrypt:hash:', hash, 'sec:', encapsec);
+        if (this.recipientKeyPair) {
+          return this.suite.SetupRecipient(this.recipientKeyPair, Buffer.from(encapsec, 'base64')).then((recipientContext: HPKE.RecipientContext) => {
+            return recipientContext.Open(bin, this.aad).then((value: Uint8Array) => {
+              return value;
+            });
+          })          
+        }
+      } else {
+        return Promise.resolve(undefined)
+      }                
+    })
   }
 
   hashUint8Array = (data: Uint8Array): Promise<string> => {
@@ -156,5 +183,18 @@ export default class Quantum {
         return Promise.resolve(undefined)
       }                
     })                     
+  }
+
+  remove = (bin: string): Promise<void> => {
+    const inArray: Uint8Array = Buffer.from(bin, 'base64');
+    return this.hashUint8Array(inArray).then((hash: string) => {
+      return fs.unlinkSync(path.join(this.encapDirPath, hash + '.bin'));
+    });
+  }
+
+  removeBin = (bin: Uint8Array): Promise<void> => {
+    return this.hashUint8Array(bin).then((hash: string) => {
+      return fs.unlinkSync(path.join(this.encapDirPath, hash + '.bin'));
+    });
   }
 }

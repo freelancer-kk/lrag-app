@@ -94,7 +94,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
 
   await systemInfo.getGraphics().then(async (graphics: Systeminformation.GraphicsData) => {
     log.info('graphics:', graphics.controllers.map(v => v.vendor));
-    lragFiles = new LRagFiles(docPath, dataPath);
+    lragFiles = new LRagFiles(quantum, docPath, dataPath);
     lragFiles.register();
 
     const gpuAccelerationStr: string | undefined = await dockerEnv.getKeyValue('GPU_ACCELERATION');
