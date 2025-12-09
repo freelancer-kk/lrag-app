@@ -1,5 +1,5 @@
 diff --git a/node_modules/@langchain/core/dist/vectorstores.d.cts b/node_modules/@langchain/core/dist/vectorstores.d.cts
-index 4a8e0a8..9ca195e 100644
+index 4a8e0a8..6a3c8a1 100644
 --- a/node_modules/@langchain/core/dist/vectorstores.d.cts
 +++ b/node_modules/@langchain/core/dist/vectorstores.d.cts
 @@ -623,10 +623,11 @@ declare abstract class SaveableVectorStore extends VectorStore {
@@ -11,7 +11,7 @@ index 4a8e0a8..9ca195e 100644
     * @abstract
     */
 -  abstract save(directory: string): Promise<void>;
-+  abstract save(directory: string, encrypter: (s: string) => string): Promise<void>;
++  abstract save(directory: string, encrypter: (s: any) => void): Promise<void>;
    /**
     * Loads a vector store instance from the specified directory, using the
     * provided embeddings to ensure compatibility.
@@ -24,12 +24,12 @@ index 4a8e0a8..9ca195e 100644
     * constructed from the saved data.
     */
 -  static load(_directory: string, _embeddings: EmbeddingsInterface): Promise<SaveableVectorStore>;
-+  static load(_directory: string, _embeddings: EmbeddingsInterface, decrypter: (s: string) => string): Promise<SaveableVectorStore>;
++  static load(_directory: string, _embeddings: EmbeddingsInterface, decrypter: (s: any) => void): Promise<SaveableVectorStore>;
  }
  //#endregion
  export { MaxMarginalRelevanceSearchOptions, SaveableVectorStore, VectorStore, VectorStoreInterface, VectorStoreRetriever, VectorStoreRetrieverInput, VectorStoreRetrieverInterface, VectorStoreRetrieverMMRSearchKwargs };
 diff --git a/node_modules/@langchain/core/dist/vectorstores.d.ts b/node_modules/@langchain/core/dist/vectorstores.d.ts
-index 4f7ff0b..82d25b5 100644
+index 4f7ff0b..912b5cb 100644
 --- a/node_modules/@langchain/core/dist/vectorstores.d.ts
 +++ b/node_modules/@langchain/core/dist/vectorstores.d.ts
 @@ -624,9 +624,10 @@ declare abstract class SaveableVectorStore extends VectorStore {
@@ -40,7 +40,7 @@ index 4f7ff0b..82d25b5 100644
     * @abstract
     */
 -  abstract save(directory: string): Promise<void>;
-+  abstract save(directory: string, encrypter: (s: string) => string): Promise<void>;
++  abstract save(directory: string, encrypter: (s: any) => void): Promise<void>;
    /**
     * Loads a vector store instance from the specified directory, using the
     * provided embeddings to ensure compatibility.
@@ -53,7 +53,7 @@ index 4f7ff0b..82d25b5 100644
     * constructed from the saved data.
     */
 -  static load(_directory: string, _embeddings: EmbeddingsInterface): Promise<SaveableVectorStore>;
-+  static load(_directory: string, _embeddings: EmbeddingsInterface, decrypter: (s: string) => string): Promise<SaveableVectorStore>;
++  static load(_directory: string, _embeddings: EmbeddingsInterface, decrypter: (s: any) => void): Promise<SaveableVectorStore>;
  }
  //#endregion
  export { MaxMarginalRelevanceSearchOptions, SaveableVectorStore, VectorStore, VectorStoreInterface, VectorStoreRetriever, VectorStoreRetrieverInput, VectorStoreRetrieverInterface, VectorStoreRetrieverMMRSearchKwargs };

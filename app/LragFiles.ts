@@ -3,9 +3,15 @@ import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
 
+export interface IFileBit {
+  fullPath: string;
+  data: Buffer;
+}
+
 export default class LRagFiles {
   docPath: string;
   dataPath: string;
+  writingFiles: IFileBit[] = [];
   
   constructor(docPath: string | undefined, dataPath: string | undefined) {
     log.info('LRagFiles:constructor:')
@@ -46,6 +52,10 @@ export default class LRagFiles {
             if (fs.existsSync(fullPath)) {
               fs.unlinkSync(fullPath);
             }
+            this.writingFiles.push({
+              fullPath,
+              data: Buffer.from([])
+            })
             response = {
               fullPath
             }
@@ -54,12 +64,39 @@ export default class LRagFiles {
           case "end": {
             log.info('LRagFiles:', callbackId, command);
             log.info('written:', fullPath);
-            response = {
-              fullPath
-            }
+            const fIdx = this.writingFiles.findIndex(f => f.fullPath === fullPath);
+            if (fIdx > -1) {
+              fs.writeFileSync(fullPath, this.writingFiles[fIdx].data, 'binary');
+              this.writingFiles.splice(fIdx, 1);
+              response = {
+                fullPath
+              }
+            } else {
+              response = {
+                error: fullPath + ' not found',
+                success: false
+              }
+            }            
           }
           break;
           case "chunk": {
+            log.info('writing:', fullPath, params.chunk.length);
+            const fIdx = this.writingFiles.findIndex(f => f.fullPath === fullPath);
+            if (fIdx > -1) {
+              this.writingFiles[fIdx].data = Buffer.concat([
+                this.writingFiles[fIdx].data,
+                Buffer.from(params.chunk)
+              ]);
+              response = {
+                success: true
+              };
+            } else {
+              response = {
+                error: fullPath + ' not found',
+                success: false
+              };
+            }
+            /*    
             response = await (new Promise((resolve, reject) => {
               try {
                 fs.appendFile(
@@ -79,7 +116,7 @@ export default class LRagFiles {
                       success: true
                     });                    
                   }
-                )
+                )                
               } catch (e) {
                 reject({
                   error: e,
@@ -87,6 +124,7 @@ export default class LRagFiles {
                 });
               }              
             }));
+            */
           }
           break;
           case "ls": {
