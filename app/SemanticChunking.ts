@@ -1,7 +1,7 @@
 import natural from "natural";
 import * as math from "mathjs";
 import { quantile } from "d3-array";
-import { RecursiveCharacterTextSplitter, RecursiveCharacterTextSplitterParams } from "langchain/text_splitter";
+import { RecursiveCharacterTextSplitter, RecursiveCharacterTextSplitterParams } from "@langchain/textsplitters";
 import { OllamaEmbeddings } from "@langchain/ollama";
 import { Document } from "@langchain/core/documents";
 import log from 'electron-log/main';

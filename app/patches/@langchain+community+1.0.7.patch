@@ -1,0 +1,104 @@
+diff --git a/node_modules/@langchain/community/dist/vectorstores/hnswlib.cjs b/node_modules/@langchain/community/dist/vectorstores/hnswlib.cjs
+index 8a87a10..88c3973 100644
+--- a/node_modules/@langchain/community/dist/vectorstores/hnswlib.cjs
++++ b/node_modules/@langchain/community/dist/vectorstores/hnswlib.cjs
+@@ -133,16 +133,17 @@ var HNSWLib = class HNSWLib extends __langchain_core_vectorstores.SaveableVector
+ 	* Method to save the vector store to a directory. It saves the HNSW
+ 	* index, the arguments, and the document store to the directory.
+ 	* @param directory The directory to which to save the vector store.
++	* @param encrypter Encryption callback method before saving.
+ 	* @returns A Promise that resolves when the vector store has been saved.
+ 	*/
+-	async save(directory) {
++	async save(directory, encrypter = (s) => { return s; }) {
+ 		const fs = await import("node:fs/promises");
+ 		const path = await import("node:path");
+ 		await fs.mkdir(directory, { recursive: true });
+ 		await Promise.all([
+ 			this.index.writeIndex(path.join(directory, "hnswlib.index")),
+-			await fs.writeFile(path.join(directory, "args.json"), JSON.stringify(this.args)),
+-			await fs.writeFile(path.join(directory, "docstore.json"), JSON.stringify(Array.from(this.docstore._docs.entries())))
++			await fs.writeFile(path.join(directory, "args.json"), JSON.stringify(this.args), "utf-8"),
++			await fs.writeFile(path.join(directory, "docstore.json"), await encrypter(JSON.stringify(Array.from(this.docstore._docs.entries()))), "utf-8")
+ 		]);
+ 	}
+ 	/**
+@@ -151,14 +152,21 @@ var HNSWLib = class HNSWLib extends __langchain_core_vectorstores.SaveableVector
+ 	* then creates a new HNSWLib instance with these values.
+ 	* @param directory The directory from which to load the vector store.
+ 	* @param embeddings The embeddings to be used by the HNSWLib instance.
++	* @param decrypter Decryption callback method before loading.
+ 	* @returns A Promise that resolves to a new HNSWLib instance.
+ 	*/
+-	static async load(directory, embeddings) {
++	static async load(directory, embeddings, decrypter = (s) => { return s; }) {
+ 		const fs = await import("node:fs/promises");
+ 		const path = await import("node:path");
+-		const args = JSON.parse(await fs.readFile(path.join(directory, "args.json"), "utf8"));
++		const args = JSON.parse(await fs.readFile(path.join(directory, "args.json"), "utf-8"));
+ 		const index = await HNSWLib.getHierarchicalNSW(args);
+-		const [docstoreFiles] = await Promise.all([fs.readFile(path.join(directory, "docstore.json"), "utf8").then(JSON.parse), index.readIndex(path.join(directory, "hnswlib.index"))]);
++		const [docstoreFiles] = await Promise.all(
++			[
++				fs.readFile(path.join(directory, "docstore.json"), "utf-8")
++				.then(async (value) => { return JSON.parse(await decrypter(value)) }),
++				index.readIndex(path.join(directory, "hnswlib.index"))
++			]
++		);
+ 		args.docstore = new require_stores_doc_in_memory.in_memory_exports.SynchronousInMemoryDocstore(new Map(docstoreFiles));
+ 		args.index = index;
+ 		return new HNSWLib(embeddings, args);
+diff --git a/node_modules/@langchain/community/dist/vectorstores/hnswlib.d.cts b/node_modules/@langchain/community/dist/vectorstores/hnswlib.d.cts
+index 30b5ea8..ca9dac8 100644
+--- a/node_modules/@langchain/community/dist/vectorstores/hnswlib.d.cts
++++ b/node_modules/@langchain/community/dist/vectorstores/hnswlib.d.cts
+@@ -82,18 +82,20 @@ declare class HNSWLib extends SaveableVectorStore {
+    * Method to save the vector store to a directory. It saves the HNSW
+    * index, the arguments, and the document store to the directory.
+    * @param directory The directory to which to save the vector store.
++   * @param encrypter Encryption callback method before saving.
+    * @returns A Promise that resolves when the vector store has been saved.
+    */
+-  save(directory: string): Promise<void>;
++  save(directory: string, encrypter: (s: any) => void): Promise<void>;
+   /**
+    * Static method to load a vector store from a directory. It reads the
+    * HNSW index, the arguments, and the document store from the directory,
+    * then creates a new HNSWLib instance with these values.
+    * @param directory The directory from which to load the vector store.
+    * @param embeddings The embeddings to be used by the HNSWLib instance.
++   * @param decrypter Decryption callback before loading.
+    * @returns A Promise that resolves to a new HNSWLib instance.
+    */
+-  static load(directory: string, embeddings: EmbeddingsInterface): Promise<HNSWLib>;
++  static load(directory: string, embeddings: EmbeddingsInterface, decrypter: (s: any) => void): Promise<HNSWLib>;
+   /**
+    * Static method to create a new HNSWLib instance from texts and metadata.
+    * It creates a new Document instance for each text and metadata, then
+diff --git a/node_modules/@langchain/community/dist/vectorstores/hnswlib.d.ts b/node_modules/@langchain/community/dist/vectorstores/hnswlib.d.ts
+index 5e09d7e..e698cfd 100644
+--- a/node_modules/@langchain/community/dist/vectorstores/hnswlib.d.ts
++++ b/node_modules/@langchain/community/dist/vectorstores/hnswlib.d.ts
+@@ -82,18 +82,20 @@ declare class HNSWLib extends SaveableVectorStore {
+    * Method to save the vector store to a directory. It saves the HNSW
+    * index, the arguments, and the document store to the directory.
+    * @param directory The directory to which to save the vector store.
++   * @param encrypter Encryption callback method before saving.
+    * @returns A Promise that resolves when the vector store has been saved.
+    */
+-  save(directory: string): Promise<void>;
++  save(directory: string, encrypter: (s: any) => void): Promise<void>;
+   /**
+    * Static method to load a vector store from a directory. It reads the
+    * HNSW index, the arguments, and the document store from the directory,
+    * then creates a new HNSWLib instance with these values.
+    * @param directory The directory from which to load the vector store.
+    * @param embeddings The embeddings to be used by the HNSWLib instance.
++   * @param decrypter Decryption callback before loading.
+    * @returns A Promise that resolves to a new HNSWLib instance.
+    */
+-  static load(directory: string, embeddings: EmbeddingsInterface): Promise<HNSWLib>;
++  static load(directory: string, embeddings: EmbeddingsInterface, decrypter: (s: any) => void): Promise<HNSWLib>;
+   /**
+    * Static method to create a new HNSWLib instance from texts and metadata.
+    * It creates a new Document instance for each text and metadata, then

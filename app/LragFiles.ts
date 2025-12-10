@@ -2,13 +2,22 @@ import { ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
+import Quantum from './Quantum';
+
+export interface IFileBit {
+  fullPath: string;
+  data: Buffer;
+}
 
 export default class LRagFiles {
+  quantum: Quantum;
   docPath: string;
   dataPath: string;
+  writingFiles: IFileBit[] = [];
   
-  constructor(docPath: string | undefined, dataPath: string | undefined) {
+  constructor(quantum: Quantum, docPath: string | undefined, dataPath: string | undefined) {    
     log.info('LRagFiles:constructor:')
+    this.quantum = quantum;
     if (docPath) {
       this.docPath = docPath;
       if (!fs.existsSync(this.docPath)) {
@@ -46,6 +55,10 @@ export default class LRagFiles {
             if (fs.existsSync(fullPath)) {
               fs.unlinkSync(fullPath);
             }
+            this.writingFiles.push({
+              fullPath,
+              data: Buffer.from([])
+            })
             response = {
               fullPath
             }
@@ -54,39 +67,38 @@ export default class LRagFiles {
           case "end": {
             log.info('LRagFiles:', callbackId, command);
             log.info('written:', fullPath);
-            response = {
-              fullPath
-            }
+            const fIdx = this.writingFiles.findIndex(f => f.fullPath === fullPath);
+            if (fIdx > -1) {
+              fs.writeFileSync(fullPath, this.writingFiles[fIdx].data, 'binary');
+              this.writingFiles.splice(fIdx, 1);
+              response = {
+                fullPath
+              }
+            } else {
+              response = {
+                error: fullPath + ' not found',
+                success: false
+              }
+            }            
           }
           break;
           case "chunk": {
-            response = await (new Promise((resolve, reject) => {
-              try {
-                fs.appendFile(
-                  fullPath,
-                  Buffer.from(params.chunk),
-                  {
-                    encoding: 'binary',
-                  },
-                  (err) => {
-                    if (err) {
-                      reject({
-                        error: err,
-                        success: false
-                      });
-                    }
-                    resolve({
-                      success: true
-                    });                    
-                  }
-                )
-              } catch (e) {
-                reject({
-                  error: e,
-                  success: false
-                });
-              }              
-            }));
+            log.info('writing:', fullPath, params.chunk.length);
+            const fIdx = this.writingFiles.findIndex(f => f.fullPath === fullPath);
+            if (fIdx > -1) {
+              this.writingFiles[fIdx].data = Buffer.concat([
+                this.writingFiles[fIdx].data,
+                Buffer.from(params.chunk)
+              ]);
+              response = {
+                success: true
+              };
+            } else {
+              response = {
+                error: fullPath + ' not found',
+                success: false
+              };
+            }            
           }
           break;
           case "ls": {
@@ -128,30 +140,7 @@ export default class LRagFiles {
               }
             }
           }
-          break;
-          case "cleanData": {
-            log.info('LRagFiles:clean:removing:', callbackId, this.dataPath);
-            try {
-              fs.rmSync(this.dataPath, {
-                recursive: true,
-                force: true
-              });
-              fs.rmSync(this.docPath, {
-                recursive: true,
-                force: true
-              });
-              fs.mkdirSync(this.docPath, { recursive: true });
-              response = {
-                success: true
-              }
-            } catch (e) {
-              response = {
-                error: e,
-                success: false
-              }
-            }
-          }
-          break;
+          break;          
         }
         event.reply(
           'reply', 

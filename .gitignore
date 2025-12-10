@@ -12,6 +12,9 @@ src/**/*.js
 app/*.js
 .env
 scripts/.env
+*.ikm
+encap/*
+app/scripts/encap/*
 
 # dependencies
 node_modules

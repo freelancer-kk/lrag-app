@@ -36,8 +36,8 @@ export default class OCRllmProcessor {
       this.lastocrmodel = ocrobj.model;
 
       await this.ollamaService.unloadLastUsedModel();
-
       this.ollamaService.setLastUsedModel(ocrobj.model);
+      
       const ollamaOptions: OllamaInput = {
           ...{
             baseUrl: 'http://127.0.0.1:11434',

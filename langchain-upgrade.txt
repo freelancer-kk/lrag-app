@@ -1,0 +1,8 @@
+npm update @langchain/community @langchain/core langchain
+npm update @langchain/ollama hnswlib-node
+npm install @langchain/textsplitters
+npm install @langchain/classic
+git config --global core.longpaths true
+
+npm install --save decamelize@6.0.1
+

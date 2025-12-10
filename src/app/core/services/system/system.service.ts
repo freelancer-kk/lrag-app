@@ -49,6 +49,7 @@ export class SystemService {
   numCtx: number = 2048;
   separator: string = ';';
   useSemantic: boolean = false;
+  useQuantum: boolean = false;
   localVector: boolean = false;
   collection: string = 'general';
   collections: any[] = [];

@@ -78,13 +78,11 @@
             {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
           </button>
         </div>
-        <!--
         <div class="onerow">
-          <mat-slide-toggle [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" [checked]="systemService.localVector" [matTooltip]="'PAGES.INGEST.USE_LOCAL_VECTOR_TIP' | translate" [(ngModel)]="systemService.localVector">
-          {{ 'PAGES.INGEST.USE_LOCAL_VECTOR' | translate }}
+          <mat-slide-toggle [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" [checked]="systemService.useQuantum" [matTooltip]="'PAGES.INGEST.USE_QUANTUM_TIP' | translate" [(ngModel)]="systemService.useQuantum" (change)="switchQuantum($event)">
+          {{ 'PAGES.INGEST.USE_QUANTUM' | translate }}
           </mat-slide-toggle>  
         </div>
-        -->
         <div class="onerow">
           <mat-slide-toggle [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" [checked]="systemService.useSemantic" [matTooltip]="'PAGES.INGEST.USE_SEMANTIC_TIP' | translate" [(ngModel)]="systemService.useSemantic">
           {{ 'PAGES.INGEST.USE_SEMANTIC' | translate }}
@@ -186,7 +184,7 @@
     <button matButton [disabled]="systemService.ragFiles.length === 0 || (!(overallStatus === EStatus.running_healthy && docsHealthy() && !hasOCR))" [mat-dialog-close]="true" cdkFocusInitial>{{ 'ADD' | translate }}</button>
     <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
     <div class="fab-flex-container">
-      <button matFab [disabled]="!hasChecked() || overallStatus !== EStatus.running_healthy" aria-label="Clear" (click)="removeChecked($event)">
+      <button matFab [disabled]="!hasChecked() || systemService.ragFiles.length === 0 || overallStatus !== EStatus.running_healthy" aria-label="Clear" (click)="removeChecked($event)">
         <mat-icon>delete</mat-icon>
       </button>
     </div>  

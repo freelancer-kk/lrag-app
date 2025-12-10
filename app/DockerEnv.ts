@@ -18,7 +18,8 @@ const mergeKeys: string[] = [
   "ACCEPT_SECURITY",
   "LC_PP",
   "LC_EUA",
-  "LC_SECURITY"
+  "LC_SECURITY",
+  "QUANTUM_ENC"
 ];
 
 const overwriteKeys: string[] = [

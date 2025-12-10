@@ -197,7 +197,8 @@ export class InsightsComponent implements OnInit {
         think: this.ollamaService.getThinkingForModel(this.ollamaService.selectedModel),
         k: isCSVUseCase ? 2048  : this.systemService.k,
         mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
-        numCtx: isCSVUseCase ? 10240 : this.systemService.numCtx
+        numCtx: isCSVUseCase ? 10240 : this.systemService.numCtx,
+        fileNames: this.systemService.ragFiles.map(e => e.name.replace(/\\/g, '/').replace(/\/\//g, '/'))
       };
       if (this.systemService.filter) {
         options.filter = this.systemService.filter;
@@ -244,7 +245,7 @@ export class InsightsComponent implements OnInit {
             a_expanded: false,
             question,
             answer,
-            docContext: this.ollamaService.useDocContext,
+            docContext: this.ollamaService.useDocContext,            
             ingest: {
               embeddings_model: this.ollamaService.embeddings_model,
               ocr_model: this.ollamaService.ocr_model,
