@@ -1,12 +1,12 @@
 import { ipcMain } from 'electron';
 import { TextLoader } from "@langchain/classic/document_loaders/fs/text";
 import { JSONLoader, JSONLinesLoader } from "@langchain/classic/document_loaders/fs/json";
-// import { DirectoryLoader, UnknownHandling } from "@langchain/classic/document_loaders/fs/directory";
+
 import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { PPTXLoader } from "@langchain/community/document_loaders/fs/pptx";
 import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
-import { RecursiveCharacterTextSplitter, RecursiveCharacterTextSplitterParams, MarkdownTextSplitter, MarkdownTextSplitterParams } from "@langchain/textsplitters";
+import { RecursiveCharacterTextSplitter, RecursiveCharacterTextSplitterParams } from "@langchain/textsplitters";
 import { OllamaEmbeddings } from "@langchain/ollama";
 import { Document } from "@langchain/core/documents";
 import { mkdirSync } from 'fs';
@@ -316,33 +316,7 @@ export default class LangchainService {
         fs.writeFileSync(fullpath, '', 'utf-8');
       }
     }
-    /*
-    const loader: DirectoryLoader = new DirectoryLoader(
-      this.doc_path,
-      {
-        ".json": (path) => new JSONLoader(path, "/texts"),
-        ".jsonl": (path) => new JSONLinesLoader(path, "/html"),
-        ".txt": (path) => new TextLoader(path),
-        ".md": (path) => new TextLoader(path),
-        ".xml": (path) => new TextLoader(path),
-        ".csv": (path) => new CSVLoader(path, {
-          separator: params.separator
-        }),
-        ".xlsm": (path) => new CSVLoader(path),
-        ".xls": (path) => new CSVLoader(path),
-        ".pdf": (path) => new PDFLoader(path, {
-          splitPages: true,
-          parsedItemSeparator: ""  
-        }),
-        ".ppt": (path) => new PPTXLoader(path),
-        ".pptx": (path) => new PPTXLoader(path),
-        ".doc": (path) => new DocxLoader(path),
-        ".docx": (path) => new DocxLoader(path),
-      },
-      true,
-      UnknownHandling.Warn          
-    )
-    */
+    
     let docs: Document[] = [];
     log.info('langchain:loaders:', loaders.length);
     for await (const ll of loaders) {

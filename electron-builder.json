@@ -6,12 +6,18 @@
   },
   "files": [
     "**/*",
+    "!quantum-scripts",
     "!**/*.ts",
     "!*.map",
     "!package.json",
     "!package-lock.json",
     {
       "from": "../dist",
+      "filter": ["**/*"]
+    },
+    {
+      "from": "node_modules/@langchain/core/dist/node_modules/.pnpm",
+      "to": "node_modules/@langchain/core/dist/node_modules/.pnpm",
       "filter": ["**/*"]
     }    
   ],

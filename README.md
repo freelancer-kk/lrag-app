@@ -1,5 +1,6 @@
 # lrag-app
 
+"node_modules/@langchain/core/dist/node_modules/.pnpm/**/*",
 
 ### langchain doc file loader install
 ```
