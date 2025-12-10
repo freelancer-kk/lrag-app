@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage, screen, Tray, safeStorage } from 'electron';
+import { app, BrowserWindow, nativeImage, screen, Tray } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
@@ -277,7 +277,6 @@ try {
   app.on('ready', () => {            
     setTimeout(async () => {   
       quantum = new Quantum(configPath);
-      quantum.encryptionAvailable = safeStorage.isEncryptionAvailable();    
       await quantum.init();
       // await quantum.runTest('this is my message in');
       
