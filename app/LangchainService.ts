@@ -260,36 +260,36 @@ export default class LangchainService {
       try {
         if (dirent.isFile()) {
           log.info('langchain:load:', fullpath);
-          const fileBuffer = fs.readFileSync(fullpath, 'utf-8');
-          const blob: Blob = new Blob([fileBuffer]);        
+          // const fileBuffer = fs.readFileSync(fullpath);
+          // const blob: Blob = new Blob([fileBuffer]);        
           switch(path.extname(dirent.name)) {
             case ".json": {
-              loaders.push({ fullpath, loader: new JSONLoader(blob, "/texts")})
+              loaders.push({ fullpath, loader: new JSONLoader(fullpath, "/texts")})
             }
             break;
             case ".jsonl": {
-              loaders.push({ fullpath, loader: new JSONLinesLoader(blob, "/html")})
+              loaders.push({ fullpath, loader: new JSONLinesLoader(fullpath, "/html")})
             }
             break;
             case ".txt": 
             case ".md":
             case ".xml": {
-              loaders.push({ fullpath, loader: new TextLoader(blob)})
+              loaders.push({ fullpath, loader: new TextLoader(fullpath)})
             }
             break;
             case ".csv": {
-              loaders.push({ fullpath, loader: new CSVLoader(blob, {
+              loaders.push({ fullpath, loader: new CSVLoader(fullpath, {
                 separator: params.separator
               })})
             }
             break;
             case ".xls":
             case ".xlsm": {
-              loaders.push({ fullpath, loader: new CSVLoader(blob)})
+              loaders.push({ fullpath, loader: new CSVLoader(fullpath)})
             }
             break;
             case ".pdf": {
-              loaders.push({ fullpath, loader: new PDFLoader(blob, {
+              loaders.push({ fullpath, loader: new PDFLoader(fullpath, {
                 splitPages: true,
                 parsedItemSeparator: ""  
               })})
@@ -297,12 +297,12 @@ export default class LangchainService {
             break;
             case ".pptx":
             case ".ppt": {
-              loaders.push({ fullpath, loader: new PPTXLoader(blob)})
+              loaders.push({ fullpath, loader: new PPTXLoader(fullpath)})
             }
             break;
             case ".docx":
             case ".doc": {
-              loaders.push({ fullpath, loader: new DocxLoader(blob)})
+              loaders.push({ fullpath, loader: new DocxLoader(fullpath)})
             }
             break;          
             default: {
