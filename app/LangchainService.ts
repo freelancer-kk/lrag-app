@@ -313,18 +313,26 @@ export default class LangchainService {
           log.info('langchain:load:ignoring:entry:', dirent.name);
         }        
       } catch (fe) {
+        log.error(fe);
         fs.writeFileSync(fullpath, '', 'utf-8');
+        this.emit( { type: 'langchain-run-doc-error', data: { source: path.basename(fullpath), error: JSON.stringify(fe) } });
       }
     }
     
     let docs: Document[] = [];
     log.info('langchain:loaders:', loaders.length);
     for await (const ll of loaders) {
-      docs = docs.concat((await ll.loader.load()).map((d: Document) => {
-        d.metadata.source = ll.fullpath;
+      await ll.loader.load().then((ldocs: Document[]) => {
+        docs = docs.concat(ldocs).map((d: Document) => {
+          d.metadata.source = ll.fullpath;
+          fs.writeFileSync(ll.fullpath, '', 'utf-8');
+          return d;
+        })
+      }).catch((reason: any) => {
+        log.error(reason);
         fs.writeFileSync(ll.fullpath, '', 'utf-8');
-        return d;
-      }));
+        this.emit( { type: 'langchain-run-doc-error', data: { source: path.basename(ll.fullpath), error: JSON.stringify(reason) } });
+      }) 
     }
     
     const uniqueDocs: Document[] = docs.reduce(
@@ -384,13 +392,15 @@ export default class LangchainService {
     const loaded_doc_names: string[] = [];
     for await (const ld of loaded_docs) {
       if (loaded_doc_names.findIndex(f => f === ld.metadata.source) === -1) {
-        loaded_doc_names.push(ld.metadata.source);
+        loaded_doc_names.push(ld.metadata.source);        
       }
     }
 
     for await (const fn of file_names) {
       if (loaded_doc_names.findIndex(ldn => path.basename(ldn) === fn) === -1) {
-        if (fn.endsWith('pdf') || fn.endsWith('PDF')) {
+        const ts: number = fs.statSync(path.join(doc_path, fn)).size;
+        // log.info('OCRDocs:check:', path.join(doc_path, fn), ts);        
+        if ((fn.endsWith('pdf') || fn.endsWith('PDF')) && ts > 0) {
           // file has not been loaded convert to md
           log.info('OCR:convert:', path.join(doc_path, fn));
           ocrProcessor.put(path.join(doc_path, fn))           

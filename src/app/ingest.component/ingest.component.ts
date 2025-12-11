@@ -217,7 +217,15 @@ export class IngestComponent implements OnInit {
           snackBarRef.onAction().subscribe(() => {
          
           });      
-        }        
+        } else if ((result && result.status === 'warning')) {
+          this.systemService.ingestStatus.update(EStatus.warning);
+          const snackBarRef2 = this._snackBar.open(await this.commonService.get('PAGES.INGEST.WARNING') + ' ' + result.message, 'OK',
+          { panelClass: ['ingest-snackbar-positioning'] });
+          // await this.systemService.refreshFileList(this.mediaService);
+          snackBarRef2.onAction().subscribe(() => {
+            this.systemService.ingestStatus.update(EStatus.not_running);
+          });      
+        }
       }).catch(async (e) => {
         this.isUploading = false;
         console.error('ingest error:', e);      

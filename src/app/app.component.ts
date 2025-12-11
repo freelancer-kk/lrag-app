@@ -521,6 +521,28 @@ export class AppComponent implements OnInit {
             })            
           }
           break;
+          /*
+          case 'langchain-run-doc-error': {
+            this.ngZone.run(async () => {              
+              if (this.mediaService.docStatus) {
+                const fIdx: number = this.mediaService.docStatus.findIndex(f => f.name === data.source);
+                if (fIdx > -1) {
+                  console.log('doc:error:fIdx', data.source, data.error);
+                  this.mediaService.docStatus[fIdx].text = data.error;              
+                  this.mediaService.docStatus[fIdx].status = 1;
+                } else {
+                  console.log('doc:error:new', data.source, data.error);
+                  this.mediaService.docStatus.push({
+                    name: data.source,
+                    status: 1,
+                    text: data.error
+                  });
+                }
+              }
+            });
+          }
+          break;
+          */
           case 'langchain-run-has-ocr': {
             this.ngZone.run(() => {
               this.systemService.hasOCR.set(true);
