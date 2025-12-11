@@ -120,23 +120,25 @@
         "LICENSE_TYPE": "License Type",
         "LICENSE_DETAILS": "License Details",
         "LICENSE_STATUS": "Status",
-        "PURCHASE": "Purchase",
+        "UPGRADE": "Upgrade",
+        "AFFILIATE": "Affliate discounts only apply when purchasing a 12 Month license",
         "OR": "or",
-        "LICENSE_EMAIL_MESSAGE": "After payment, license key will be emailed",
+        "LICENSE_EMAIL_MESSAGE": "License key will be emailed after payment",
         "UPGRADE_PRO_3": "3 Months",
         "UPGRADE_PRO_6": "6 Months",
         "UPGRADE_PRO_12": "12 Months",
         "ACTIVATE_PRO": "Activate",
+        "BENEFITS": "Benefits",
         "GO_PRO": {
-          "TITLE": "Upgrade To Pro",
+          "TITLE": "To Pro",
           "LINE1": "Access to our support ticketing system run by expert agents",
           "LINE2": "Access to multiple collections, advanced options for embedding, semantic chunking and prompt tuning",
           "LINE3": "Access to specialised, sophisticated, domain specific, deepseek ocr and cloud models e.g focussing on Law, Finance etc. (coming soon)",
           "LINE4": "Regular model updates and access to multi modal models, images, video etc. (coming later)"
         },
         "GO_PROPLUS": {
-          "TITLE": "Upgrade To Pro Plus (coming later)",
-          "LINE1": "Connect to external provides such as Anthropic, Gemini, Groq and OpenAI",
+          "TITLE": "To Pro Plus (coming later)",
+          "LINE1": "Connect to external providers such as Anthropic, Gemini, Groq and OpenAI",
           "LINE2": "MCP and Agent integrations",
           "LINE3": "SLA support turnaround"
         }

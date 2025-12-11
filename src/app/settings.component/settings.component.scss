@@ -4,3 +4,17 @@
   width: 100%;  
   font-family: Roboto;
 }
+
+.smallItalics {
+  display: flex;
+  float: right;
+  font-size: 0.6rem;
+  font-style: italic;
+}
+
+.smallLeftItalics {
+  display: flex;
+  float: left;
+  font-size: 0.6rem;
+  font-style: italic;
+}

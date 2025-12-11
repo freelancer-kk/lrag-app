@@ -44,45 +44,69 @@
   </mat-card-content>
 </mat-card>
 <br/>
-<mat-card class="settings-card" appearance="outlined">
-  <mat-card-content>
+<mat-accordion>
+  <mat-expansion-panel [expanded]="settingsService.license.licenseType === ELT.FREE">
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'PAGES.SETTINGS.UPGRADE' | translate }}</mat-panel-title>
+      <mat-panel-description>
+        {{ 'PAGES.SETTINGS.GO_PRO.TITLE' | translate }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
     <div class="onerow">
-      {{ 'PAGES.SETTINGS.GO_PRO.TITLE' | translate }}
+      <span class="smallLeftItalics">
+        {{ 'PAGES.SETTINGS.AFFILIATE' | translate }}               
+      </span>
     </div>
-    <ul>
-      <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE1' | translate }}</li>
-      <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE2' | translate }}</li>
-      <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE3' | translate }}</li>
-      <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE4' | translate }}</li>
-    </ul>
     <div class="onerow">
-      {{ 'PAGES.SETTINGS.PURCHASE' | translate }}
-      &nbsp;<button matButton="filled" (click)="upgradePro($event, 3)">
+      <button matButton="filled" (click)="upgradePro($event, 3)">
         {{ 'PAGES.SETTINGS.UPGRADE_PRO_3' | translate }}
-      </button>&nbsp;
-      {{ 'PAGES.SETTINGS.OR' | translate }}
-      &nbsp;<button matButton="filled" (click)="upgradePro($event, 6)">
+      </button>
+      <span class="spacer"></span>
+      <button matButton="filled" (click)="upgradePro($event, 6)">
         {{ 'PAGES.SETTINGS.UPGRADE_PRO_6' | translate }}
-      </button>&nbsp;
-      {{ 'PAGES.SETTINGS.OR' | translate }}
-      &nbsp;<button matButton="filled" (click)="upgradePro($event, 12)">
+      </button>
+      <span class="spacer"></span>
+      <button matButton="filled" (click)="upgradePro($event, 12)">
         {{ 'PAGES.SETTINGS.UPGRADE_PRO_12' | translate }}
-      </button>&nbsp;-&nbsp;{{ 'PAGES.SETTINGS.LICENSE_EMAIL_MESSAGE' | translate }}      
+      </button>
     </div>
-  </mat-card-content>
-</mat-card>
-<br/>
-<mat-card class="settings-card" appearance="outlined">
-  <mat-card-content>    
-    <div class="onerow">
-      {{ 'PAGES.SETTINGS.GO_PROPLUS.TITLE' | translate }}      
-    </div>
-    <!--
+    <span class="smallItalics">
+      {{ 'PAGES.SETTINGS.LICENSE_EMAIL_MESSAGE' | translate }}               
+    </span>
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title></mat-panel-title>
+      <mat-panel-description>
+        {{ 'PAGES.SETTINGS.BENEFITS' | translate }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+      <ul>
+        <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE1' | translate }}</li>
+        <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE2' | translate }}</li>
+        <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE3' | translate }}</li>
+        <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE4' | translate }}</li>
+      </ul>        
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ 'PAGES.SETTINGS.UPGRADE' | translate }}</mat-panel-title>
+      <mat-panel-description>
+        {{ 'PAGES.SETTINGS.GO_PROPLUS.TITLE' | translate }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>    
+  </mat-expansion-panel>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title></mat-panel-title>
+      <mat-panel-description>
+        {{ 'PAGES.SETTINGS.BENEFITS' | translate }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
     <ul>
       <li>{{ 'PAGES.SETTINGS.GO_PROPLUS.LINE1' | translate }}</li>
       <li>{{ 'PAGES.SETTINGS.GO_PROPLUS.LINE2' | translate }}</li>
       <li>{{ 'PAGES.SETTINGS.GO_PROPLUS.LINE3' | translate }}</li>
-    </ul>
-    -->
-  </mat-card-content>
-</mat-card>
+    </ul>            
+  </mat-expansion-panel>
+</mat-accordion>
