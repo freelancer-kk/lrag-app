@@ -36,11 +36,13 @@
       <mat-label>{{fileProgress}}%</mat-label>
     </div>
   }
+  <!--
   <div class="dropzone">
   <ngx-file-drop 
     accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt,.json,.xml,.md"
     dropZoneClassName="dropzone"
     (onFileDrop)="dropped($event)"
+    directory="false"
     [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running || systemService.ragFiles.length >= systemService.MAX_FILES"
     >
       <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
@@ -56,6 +58,7 @@
       </ng-template>    
     </ngx-file-drop>
   </div>
+  -->
   @if (settingsService.isActivePro()) {
     <mat-accordion>
       <mat-expansion-panel expanded="false">
@@ -102,7 +105,7 @@
     </mat-accordion>
     <div class="onerow">
       <button [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running" matIconButton (click)="addColState = !addColState">
-        <mat-icon>{{ addColState ? 'remove' : 'add' }}</mat-icon>
+        <mat-icon>{{ addColState ? 'backspace' : 'add_card' }}</mat-icon>
       </button>
       <span class="spacer"></span>      
       @if (addColState) {
@@ -180,12 +183,28 @@
       </mat-grid-list>
     </div>
   </mat-dialog-content>
-  <mat-dialog-actions align="end">    
-    <button matButton [disabled]="systemService.ragFiles.length === 0 || (!(overallStatus === EStatus.running_healthy && docsHealthy() && !hasOCR))" [mat-dialog-close]="true" cdkFocusInitial>{{ 'ADD' | translate }}</button>
-    <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+  <mat-dialog-actions>
     <div class="fab-flex-container">
+      <div class="dropzone">
+        <ngx-file-drop 
+        accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt,.json,.xml,.md"
+        dropZoneClassName="dropzone"
+        (onFileDrop)="dropped($event)"
+        [directory]="false"
+        [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running || systemService.ragFiles.length >= systemService.MAX_FILES"
+        >
+          <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+            <button matFab [disabled]="!(overallStatus === EStatus.running_healthy && ingestStatus === EStatus.not_running && systemService.ragFiles.length < systemService.MAX_FILES)" aria-label="Clear" (click)="openFileSelector()">
+              <mat-icon>note_add</mat-icon>
+            </button>
+          </ng-template>    
+        </ngx-file-drop>
+      </div>      
       <button matFab [disabled]="!hasChecked() || systemService.ragFiles.length === 0 || overallStatus !== EStatus.running_healthy" aria-label="Clear" (click)="removeChecked($event)">
         <mat-icon>delete</mat-icon>
       </button>
-    </div>  
+    </div>
+    <span class="spacer"></span>
+    <button matButton [disabled]="systemService.ragFiles.length === 0 || (!(overallStatus === EStatus.running_healthy && docsHealthy() && !hasOCR))" [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
+    <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" mat-dialog-close>{{ 'CANCEL' | translate }}</button>      
   </mat-dialog-actions>
