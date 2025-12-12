@@ -206,7 +206,7 @@ export class IngestComponent implements OnInit {
         }, 2000);
         await this.mediaService.saveIndex();
         if ((result && result.status === 'completed')) {
-          await this.systemService.refreshFileList(this.mediaService, true);
+          await this.systemService.refreshFileList(this.mediaService, true);          
           this.systemService.ingestStatus.update(EStatus.not_running);          
           this.ollamaService.resetChatHistory();
           const snackBarRef = this._snackBar.open(
@@ -214,8 +214,10 @@ export class IngestComponent implements OnInit {
             duration: 10000,
             panelClass: ['ingest-snackbar-positioning']
           });
-          snackBarRef.onAction().subscribe(() => {
-         
+          this.systemService.commandIngest('blank', {
+            collection: this.systemService.collection
+          });          
+          snackBarRef.onAction().subscribe(() => {            
           });      
         } else if ((result && result.status === 'warning')) {
           this.systemService.ingestStatus.update(EStatus.warning);

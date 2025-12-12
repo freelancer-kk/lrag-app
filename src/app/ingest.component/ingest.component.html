@@ -199,11 +199,11 @@
             </button>
           </ng-template>    
         </ngx-file-drop>
-      </div>      
-      <button matFab [disabled]="!hasChecked() || systemService.ragFiles.length === 0 || overallStatus !== EStatus.running_healthy" aria-label="Clear" (click)="removeChecked($event)">
-        <mat-icon>delete</mat-icon>
-      </button>
+      </div>            
     </div>
+    <button matFab [disabled]="!hasChecked() || systemService.ragFiles.length === 0 || overallStatus !== EStatus.running_healthy" aria-label="Clear" (click)="removeChecked($event)">
+      <mat-icon>delete</mat-icon>
+    </button>
     <span class="spacer"></span>
     <button matButton [disabled]="systemService.ragFiles.length === 0 || (!(overallStatus === EStatus.running_healthy && docsHealthy() && !hasOCR))" [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
     <button matButton [disabled]="!(overallStatus === EStatus.running_healthy && docsHealthy())" mat-dialog-close>{{ 'CANCEL' | translate }}</button>      

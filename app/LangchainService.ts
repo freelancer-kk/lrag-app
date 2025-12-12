@@ -81,11 +81,11 @@ export default class LangchainService {
     this.ocrJSProcessor?.register(webContents);
     this.ocrLLMProcessor.register(webContents);
     ipcMain.on('ingest', async (event: any, arg: any) => {
-      const { callbackId, command, params }= arg;
-      log.info('LangchainService:', callbackId, command, params)
+      const { callbackId, command, params }= arg;      
       let response: any = {}
       switch (command) {
         case "start": {
+          log.debug('LangchainService:', callbackId, command, params)
           this.doc_path = path.join(this.root_doc_path, params.collection);
           response = await this.run(params);          
         }
@@ -104,6 +104,11 @@ export default class LangchainService {
         break;        
         case "reset": {
           response = await this.resetVectorStore(params.collection);
+        }
+        break;
+        case "blank": {
+          this.doc_path = path.join(this.root_doc_path, params.collection);
+          response = await this.blankDocuments();
         }
         break;
         case "indexed": {
@@ -252,6 +257,26 @@ export default class LangchainService {
     return this.vectorStore;
   }
 
+  blankDocuments = async (): Promise<boolean> => {
+    const dirEnts: fs.Dirent[] = fs.readdirSync(this.doc_path, { withFileTypes: true });
+    for await (const dirent of dirEnts) {
+      if (dirent.isFile()) {
+        const fullpath: string = path.join(dirent.parentPath, dirent.name);
+        fs.writeFileSync(fullpath, '', 'utf-8');      
+      }
+    }
+    return true;
+  }
+
+  runLoader = (ll: any): Promise<Document[]> => {
+    return ll.loader.load().then((ldocs: Document[]) => {            
+      return ldocs.map(v => { v.metadata.source = ll.fullpath; return v; });
+    }).catch((reason: any) => {
+      log.error(reason);
+      this.emit( { type: 'langchain-run-doc-error', data: { source: path.basename(ll.fullpath), error: JSON.stringify(reason) } });        
+    });     
+  }    
+
   load = async (params: any): Promise<Document[]> => {
     const dirEnts: fs.Dirent[] = fs.readdirSync(this.doc_path, { withFileTypes: true });
     const loaders: any[] = [];
@@ -262,7 +287,7 @@ export default class LangchainService {
           log.info('langchain:load:', fullpath);
           // const fileBuffer = fs.readFileSync(fullpath);
           // const blob: Blob = new Blob([fileBuffer]);        
-          switch(path.extname(dirent.name)) {
+          switch(path.extname(dirent.name).toLowerCase()) {
             case ".json": {
               loaders.push({ fullpath, loader: new JSONLoader(fullpath, "/texts")})
             }
@@ -314,32 +339,27 @@ export default class LangchainService {
         }        
       } catch (fe) {
         log.error(fe);
-        fs.writeFileSync(fullpath, '', 'utf-8');
         this.emit( { type: 'langchain-run-doc-error', data: { source: path.basename(fullpath), error: JSON.stringify(fe) } });
       }
     }
     
     let docs: Document[] = [];
-    log.info('langchain:loaders:', loaders.length);
-    for await (const ll of loaders) {
-      await ll.loader.load().then((ldocs: Document[]) => {
-        docs = docs.concat(ldocs).map((d: Document) => {
-          d.metadata.source = ll.fullpath;
-          fs.writeFileSync(ll.fullpath, '', 'utf-8');
-          return d;
-        })
-      }).catch((reason: any) => {
-        log.error(reason);
-        fs.writeFileSync(ll.fullpath, '', 'utf-8');
-        this.emit( { type: 'langchain-run-doc-error', data: { source: path.basename(ll.fullpath), error: JSON.stringify(reason) } });
-      }) 
-    }
     
+    await Promise.all(loaders.map(lm => this.runLoader(lm))).then(async (multiDocs: Document[][]) => {
+      for await (const mdl of multiDocs) {
+        docs = docs.concat(mdl);
+      }
+    })
+
+    log.info('langchain:parsed', docs.length);
     const uniqueDocs: Document[] = docs.reduce(
-      (acc: Document[], cur: Document) => (acc.findIndex(f => f.metadata.source === cur.metadata.source && f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur]),
+      (acc: Document[], cur: Document) => {
+        // log.info(cur.pageContent.substring(0,10));
+        return (acc.findIndex(f => f.metadata.source === cur.metadata.source && f.pageContent === cur.pageContent) > -1 ? acc : [...acc, cur])
+      },
       [],
     );
-    log.info('langchain:loaded:', uniqueDocs.length);
+    log.info('langchain:deduped:', uniqueDocs.length);
     for await (const doc of uniqueDocs) {
       log.info(doc.metadata.source, '=>', doc.pageContent.substring(0, 20));
       this.emit( { type: 'langchain-run-doc', data: { id: doc.id, source: path.basename(doc.metadata.source), metadata: doc.metadata } });

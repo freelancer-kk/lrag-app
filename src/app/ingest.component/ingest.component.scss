@@ -1,18 +1,5 @@
 @import '../../assets/gstyle.css';
 
-.dropzone {
-  border: none;
-  width: 50%;
-  margin-top: 8px;
-  margin-right: 5px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  z-index: 1000;
-}
-
 .progress {
   width: 100%;
   display: flex;
@@ -47,8 +34,23 @@
   z-index: 2000;
 }
 
+.dropzone {
+  border: 2px greenyellow;
+  border-style: dashed;
+  width: 80px;
+  height: 80px;
+  margin-right: 5px;  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  z-index: 1000;
+}
+
 .fab-flex-container {
   display: flex;
   float: left;
+  justify-content: center;
   align-items: flex-start;
+  align-content: center;
 }
