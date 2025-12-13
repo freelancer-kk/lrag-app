@@ -59,7 +59,7 @@
         </mat-select>
       </mat-form-field>
     </div>
-    @if (systemService.totalMainMemory > 12) {
+    @if (systemService.totalMainMemory > 12 && systemService.getVram() > 12) {
       <mat-slide-toggle [disabled]="overallStatus !== EStatus.running_healthy || this.systemService.insightStatus.get() !== EStatus.not_running" [matTooltip]="'PAGES.DETAIL.USE_WATCHER_TIP' | translate" [checked]="ollamaService.useTesseractJS" (change)="switchOCR($event)">
         {{ 'PAGES.DETAIL.USE_WATCHER' | translate }}
       </mat-slide-toggle>
@@ -70,7 +70,7 @@
           <mat-label>{{ 'PAGES.DETAIL.OCR_MODEL_SELECT' | translate }}</mat-label>
           <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.ocr_model" (selectionChange)="modelChange($event, 2)">
             @for (entry of ollamaService.ocr_models; track $index) {
-              <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4) || systemService.getVram() < 12" [value]="entry.value">{{ entry.viewValue }}</mat-option>
+              <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4)" [value]="entry.value">{{ entry.viewValue }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
