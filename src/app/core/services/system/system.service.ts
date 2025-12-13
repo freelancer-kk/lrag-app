@@ -117,12 +117,24 @@ export class SystemService {
   }
   
   refreshFileList = (mediaService: MediaService, force: boolean = false): Promise<any[]> => {
-    this.ragFiles = [];
+    // this.ragFiles = [];
     return mediaService.ls((entries: any[]) => { 
       entries.forEach(e => {
-        this.ragFiles.push(e);
+        const fIdx: number = this.ragFiles.findIndex(f => f.name === e.name);
+        if (fIdx > -1) {
+          this.ragFiles[fIdx] = e;
+        } else {
+          this.ragFiles.push(e);  
+        }
       })
-    }, force);    
+    }, force).then((fileList: any[]) => {
+      for (let i = this.ragFiles.length - 1; i >= 0; i--) {
+        if (fileList.findIndex(e => e.name === this.ragFiles[i].name) === -1) {
+          this.ragFiles.splice(i, 1);
+        }
+      }
+      return fileList;
+    })    
   }
 
   destroy = (): void => {
