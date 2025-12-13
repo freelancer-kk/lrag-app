@@ -175,6 +175,7 @@ export default class LangchainService {
       try {
         await (this.vectorStore as HNSWLib).save(path.join(this.db_path, collection),
         async (s: string) => { 
+          log.info('savingVectorStore:', s.length);
           try {
             return this.quantum.useEncryption ? await this.quantum.encrypt(s) : s;
           } catch (e) {
@@ -273,7 +274,8 @@ export default class LangchainService {
       return ldocs.map(v => { v.metadata.source = ll.fullpath; return v; });
     }).catch((reason: any) => {
       log.error(reason);
-      this.emit( { type: 'langchain-run-doc-error', data: { source: path.basename(ll.fullpath), error: JSON.stringify(reason) } });        
+      this.emit( { type: 'langchain-run-doc-error', data: { source: path.basename(ll.fullpath), error: JSON.stringify(reason) } });
+      return [];
     });     
   }    
 
@@ -282,8 +284,9 @@ export default class LangchainService {
     const loaders: any[] = [];
     for await (const dirent of dirEnts) {
       const fullpath: string = path.join(dirent.parentPath, dirent.name);
+      const ts: number = fs.statSync(fullpath).size;
       try {
-        if (dirent.isFile()) {
+        if (dirent.isFile() && ts>0) {
           log.info('langchain:load:', fullpath);
           // const fileBuffer = fs.readFileSync(fullpath);
           // const blob: Blob = new Blob([fileBuffer]);        
@@ -335,7 +338,7 @@ export default class LangchainService {
             }
           }          
         } else {
-          log.info('langchain:load:ignoring:entry:', dirent.name);
+          log.info('langchain:load:ignoring:entry:probably already embedded', dirent.name);
         }        
       } catch (fe) {
         log.error(fe);
@@ -456,7 +459,7 @@ export default class LangchainService {
             baseUrl: this.baseUrl
         });
         log.info('embeddings:', params.embeddings, this.baseUrl);
-        await this.resetVectorStore(params.collection);          
+        // await this.resetVectorStore(params.collection);          
         this.emit( { type: 'langchain-run-splitting', data: { documents: docs.length } });
         let chunks: Document[] = [];
         
