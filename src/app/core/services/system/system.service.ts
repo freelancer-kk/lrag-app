@@ -10,7 +10,6 @@ import { RerankerService } from '../reranker-service';
 import { SettingsService } from '../settings-service';
 import { MediaService } from '../media/media.service';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -281,6 +280,10 @@ export class SystemService {
         });
       });
     })    
+  }
+
+  getVram = (): number => {
+    return this.gpu && this.gpu.vram ? this.gpu.vram : 0;
   }
 
   getTotalMemory = (): Promise<any> => {
