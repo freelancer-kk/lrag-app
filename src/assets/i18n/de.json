@@ -122,6 +122,7 @@
       "LICENSE_STATUS": "Status",
       "UPGRADE": "Upgrade",
       "AFFILIATE": "Affiliate-Rabatte gelten nur beim Kauf einer 12-Monats-Lizenz",
+      "TEST_SANDBOX": "**Im Testmodus verwenden Sie bitte für Zahlungen die Kreditkarte 4242 4242 4242 4242, Ablaufdatum 34/12, CVC 111 ***",
       "OR": "oder",
       "LICENSE_EMAIL_MESSAGE": "Der Lizenzschlüssel wird nach der Zahlung per E-Mail verschickt",
       "UPGRADE_PRO_3": "3 Monaten",

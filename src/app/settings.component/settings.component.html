@@ -58,6 +58,11 @@
       </span>
     </div>
     <div class="onerow">
+      <span class="smallLeftItalics">
+        {{ 'PAGES.SETTINGS.TEST_SANDBOX' | translate }}               
+      </span>
+    </div>
+    <div class="onerow">
       <button matButton="filled" (click)="upgradePro($event, 3)">
         {{ 'PAGES.SETTINGS.UPGRADE_PRO_3' | translate }}
       </button>
@@ -88,6 +93,7 @@
         <li>{{ 'PAGES.SETTINGS.GO_PRO.LINE4' | translate }}</li>
       </ul>        
   </mat-expansion-panel>
+  <!--
   <mat-expansion-panel>
     <mat-expansion-panel-header>
       <mat-panel-title>{{ 'PAGES.SETTINGS.UPGRADE' | translate }}</mat-panel-title>
@@ -109,4 +115,5 @@
       <li>{{ 'PAGES.SETTINGS.GO_PROPLUS.LINE3' | translate }}</li>
     </ul>            
   </mat-expansion-panel>
+  -->
 </mat-accordion>

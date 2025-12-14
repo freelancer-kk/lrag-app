@@ -122,6 +122,7 @@
         "LICENSE_STATUS": "Status",
         "UPGRADE": "Upgrade",
         "AFFILIATE": "Affliate discounts only apply when purchasing a 12 Month license",
+        "TEST_SANDBOX": "**IN TEST MODE, please use the credit card 4242 4242 4242 4242, expiry 12/34, cvc 111 *** for payments",
         "OR": "or",
         "LICENSE_EMAIL_MESSAGE": "License key will be emailed after payment",
         "UPGRADE_PRO_3": "3 Months",
