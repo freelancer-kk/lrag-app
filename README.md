@@ -77,5 +77,3 @@ It is highly recommended to seek professional legal advice to tailor these requi
 
 # Data privacy / security video
 https://www.youtube.com/watch?v=tsrkB9I7m80
-
-c2f7696291bb41d38c939739143f2125.ayZklbZXy39z-EJ6nzKgRyrL
