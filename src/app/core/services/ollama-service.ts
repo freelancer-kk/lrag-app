@@ -268,7 +268,7 @@ export class OllamaService {
     }, 10000);
   }  
 
-  startServicesIfNecessary = async (mecb: () => void = () => {}) => {    
+  startServicesIfNecessary = async (osType: any, mecb: () => void = () => {}) => {    
     // Check if ollama is running
     console.log('startServicesIfNecessary:ollama');
     if (this.manageOllamaExternally === true) {
@@ -278,6 +278,13 @@ export class OllamaService {
         this.setOllamaCheckTimer();
         console.log('SHOWING OLLAMA MANUAL WARNING:', this.manageOllamaExternally);
         mecb();
+      }
+    } else if (osType && osType.isMac === true) {
+      console.log('startServicesIfNecessary:ollama:mac - starting on timer');
+      const { isReady } = await this.commandOllama('isReady');
+      if (isReady === false) {    
+        // Attempt to start ollama
+        await this.startOnTimer(mecb);        
       }
     }
   }
