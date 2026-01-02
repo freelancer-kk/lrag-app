@@ -530,7 +530,8 @@ export default class DepService {
   }
 
   startIfInstalled = () => {
-    if (this.installed) {
+    const targetExec: string = path.join(this.execDir, this.executable);
+    if (this.installed || fs.existsSync(targetExec)) {
       log.info('sending:start:event:', this.serviceName)
       this.emit({ 
         type: 'service-installed-updated-done',
