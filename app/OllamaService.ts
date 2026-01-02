@@ -65,8 +65,9 @@ export default class OllamaService {
       }
     } else if (isMac) {
       log.info('ollama choice: darwin');
+      execDir = '/usr/local/bin';
       urls = [darwin_dl];      
-      ollamaExecutable = 'ollama.app';      
+      ollamaExecutable = 'ollama';      
     }
     
     this.serviceInstance = new DepService(

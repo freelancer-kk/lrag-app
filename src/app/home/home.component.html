@@ -25,7 +25,7 @@
             &nbsp;<span class="small">({{ ollamaService.servicePID }})</span>
           }
           <span class="spacer"></span>            
-          <mat-slide-toggle [disabled]="!this.systemService.osType || (this.systemService.osType && this.systemService.osType.isMac)" [checked]="ollamaService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
+          <mat-slide-toggle [disabled]="!this.systemService.osType" [checked]="ollamaService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
           {{ 'PAGES.HOME.MANAGE_EXTERNALLY' | translate }}
           </mat-slide-toggle>  
           <div [class]="ollamaService.status.getC()">  

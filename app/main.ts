@@ -42,6 +42,7 @@ let ocrLlmProcessor: OCRllmProcessor;
 let ocrJSProcessor: OCRJSProcessor;
 let licenseService: LicenseService;
 let useTesseractJS: boolean = false;
+let managedExternally: boolean = false;
 let quantum: Quantum;
 
 log.initialize();
@@ -133,7 +134,9 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
       );
       ollamaService.register(win?.webContents);
       const managed_externally: string | undefined = dockerEnv.getKeyValue('MANAGE_EXTERNAL');
-      if ((isWindows === true || isLinux === true) && (managed_externally?.toLowerCase() === 'false')) {
+      managedExternally = managed_externally?.toLowerCase() === 'true' ? true : false;
+      log.info('Ollama manage externally:', managed_externally, managedExternally);
+      if ((isWindows === true || isLinux === true) && (managedExternally === false)) {
         await ollamaService.install();
       }      
     }
@@ -306,7 +309,9 @@ try {
         log.info('main:starting services if already installed:');   
 
         // process.exit(1);
-        ollamaService.startIfInstalled();
+        if (managedExternally === false) {
+          ollamaService.startIfInstalled();
+        }
         rerankerService.startIfInstalled();   
         browserWin.show();
       })      

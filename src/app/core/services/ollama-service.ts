@@ -263,12 +263,20 @@ export class OllamaService {
     if (this.serviceTimer) {
       clearInterval(this.serviceTimer);
     }
+    let cnt = 0;
     this.serviceTimer = setInterval(async () => {
       await this.checkIsReady();
-    }, 10000);
+      cnt++;
+      if (cnt >= 6) {
+        clearInterval(this.serviceTimer);
+        // Warning have you installed ollama?
+        console.log('setOllamaCheckTimer:timeout:set status not_running')
+        this.status.update(EStatus.not_installed);
+      }
+    }, 5000);
   }  
 
-  startServicesIfNecessary = async (mecb: () => void = () => {}) => {    
+  startServicesIfNecessary = async (osType: any, mecb: () => void = () => {}) => {    
     // Check if ollama is running
     console.log('startServicesIfNecessary:ollama');
     if (this.manageOllamaExternally === true) {
@@ -279,11 +287,23 @@ export class OllamaService {
         console.log('SHOWING OLLAMA MANUAL WARNING:', this.manageOllamaExternally);
         mecb();
       }
+    } else {
+      this.setOllamaCheckTimer();
     }
+    /*
+    else if (osType && osType.isMac === true) {
+      console.log('startServicesIfNecessary:ollama:mac - starting on timer');
+      const { isReady } = await this.commandOllama('isReady');
+      if (isReady === false) {    
+        // Attempt to start ollama
+        await this.startOnTimer(mecb);        
+      }
+    }
+    */
   }
 
   startOnTimer = async (mecb: () => void = () => {}) => {
-    console.log('ollama:calling start!');
+    console.log('ollama:calling start on timer!');
     await this.start();
     // this.status.update(EStatus.running);
     this.setOllamaCheckTimer();

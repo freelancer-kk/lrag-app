@@ -700,9 +700,11 @@ export class AppComponent implements OnInit {
     await this.ollamaService.getGpuAcceleration();    
     this.systemService.osType = await this.systemService.getOSType();
     await this.ollamaService.getManagedExternally();
+    /*
     if (this.systemService.osType && (this.systemService.osType.isMac === true)) { 
       this.ollamaService.manageOllamaExternally = true; 
     };
+    */
     console.log('osType:', this.systemService.osType, this.ollamaService.manageOllamaExternally);
     this.systemService.cpu = await this.systemService.getCpu();
     this.systemService.gpu = await this.systemService.getGpu();
@@ -729,7 +731,7 @@ export class AppComponent implements OnInit {
     this.commonService.accept_security = (await this.commonService.getEnvValue('ACCEPT_SECURITY') === 'true') && this.commonService.security_link.endsWith(lc_security) ? true : false;
     
     setTimeout(() => {
-      this.ollamaService.startServicesIfNecessary(this.toastOllamaNotRunning);
+      this.ollamaService.startServicesIfNecessary(this.systemService.osType, this.toastOllamaNotRunning);
       /*
       * Comment out since only necessary for reload
       */

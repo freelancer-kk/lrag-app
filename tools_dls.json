@@ -1,8 +1,8 @@
 {
-  "OLLAMA_VERSION": "0.13.3", 
-  "DARWIN_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.13.3/Ollama-darwin.zip",
-  "ROCM_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.13.3/ollama-windows-amd64-rocm.zip",
-  "DEFAULT_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.13.3/ollama-windows-amd64.zip",
+  "OLLAMA_VERSION": "0.13.5", 
+  "DARWIN_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.13.5/Ollama-darwin.zip",
+  "ROCM_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.13.5/ollama-windows-amd64-rocm.zip",
+  "DEFAULT_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.13.5/ollama-windows-amd64.zip",
   "IPEX_VERSION": "2.2.0",
   "IPEX_DOWNLOAD_LINK": "https://github.com/ipex-llm/ipex-llm/releases/download/v2.2.0/ollama-ipex-llm-2.2.0-win.zip",
   "RERANKER_VERSION": "1.0.0",
