@@ -24,6 +24,7 @@ import { OllamaService } from '../core/services/ollama-service';
 import { EStatus } from '../shared/model';
 import { CommonService } from '../core/services/common-service';
 import { RerankerService } from '../core/services/reranker-service';
+import { SettingsService } from '../core/services/settings-service';
 
 @Component({
     selector: 'app-home',
@@ -69,6 +70,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     public systemService: SystemService,
     public ollamaService: OllamaService,
     public rerankerService: RerankerService,
+    public settingsService: SettingsService,
     private clipboard: Clipboard,
     private mediaService: MediaService
   ) {    
@@ -199,11 +201,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.ollamaService.useDocContext = this.systemService.history[index].docContext;
     if (this.systemService.collections.length === 0) {
       this.systemService.collections = await this.mediaService.getCollections();
-    }
-    if (this.systemService.collections.findIndex(f => this.commonService.basename(f.value) === this.systemService.history[index].ingest.collection) > -1) {
-      this.systemService.collection = this.systemService.history[index].ingest.collection;
-      this.mediaService.loadedIndex = false;
-      await this.systemService.refreshFileList(this.mediaService, true);
+    } 
+    if (this.settingsService.isActivePro()) {
+      if (this.systemService.collections.findIndex(f => this.commonService.basename(f.value) === this.systemService.history[index].ingest.collection) > -1) {
+        this.systemService.collection = this.systemService.history[index].ingest.collection;
+        this.mediaService.loadedIndex = false;
+        await this.systemService.refreshFileList(this.mediaService, true);
+      }
+    } else {
+      this.ollamaService.useDocContext = false;
     }
     if (this.ollamaService.availableModels.findIndex(f => f.name === this.systemService.history[index].ingest.embeddings_model) > -1) {
       this.ollamaService.embeddings_model = this.systemService.history[index].ingest.embeddings_model;
