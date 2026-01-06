@@ -73,7 +73,18 @@
         }
       </mat-expansion-panel>        
     </mat-accordion>
-    @if (systemService.hasBasicSetup && commonService.accept_pp && commonService.accept_eua && commonService.accept_security) {
+    <mat-accordion>
+      <mat-expansion-panel #legal [expanded]="systemService.hasBasicSetup && !(commonService.accept_pp && commonService.accept_eua && commonService.accept_security)" (afterCollapse)="commonService.writeAcceptance($event)">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ 'PAGES.LEGAL.TITLE' | translate }}</mat-panel-title>
+          <mat-panel-description>
+            {{ 'PAGES.LEGAL.LEGAL' | translate }}
+          </mat-panel-description>          
+        </mat-expansion-panel-header>
+        <app-legal></app-legal>
+      </mat-expansion-panel>      
+    </mat-accordion>    
+    @if (systemService.hasBasicSetup && commonService.accept_pp && commonService.accept_eua && commonService.accept_security && settingsService.isActivePro()) {
     <mat-accordion>
       <mat-expansion-panel [(expanded)]="systemService.historyExpanded">
         <mat-expansion-panel-header>
@@ -161,6 +172,8 @@
           </div>
       </mat-expansion-panel>
     </mat-accordion>
+    }    
+    <!--
     <mat-accordion>
       <mat-expansion-panel expanded="false">
         <mat-expansion-panel-header>
@@ -186,17 +199,6 @@
         <nxt-json-view #disks [data]="systemService.disks"></nxt-json-view>
       </mat-expansion-panel>
     </mat-accordion>    
-    }
-    <mat-accordion>
-      <mat-expansion-panel #legal [expanded]="systemService.hasBasicSetup && !(commonService.accept_pp && commonService.accept_eua && commonService.accept_security)" (afterCollapse)="commonService.writeAcceptance($event)">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{ 'PAGES.LEGAL.TITLE' | translate }}</mat-panel-title>
-          <mat-panel-description>
-            {{ 'PAGES.LEGAL.LEGAL' | translate }}
-          </mat-panel-description>          
-        </mat-expansion-panel-header>
-        <app-legal></app-legal>
-      </mat-expansion-panel>      
-    </mat-accordion>    
+    -->
   </mat-card-content>  
 </mat-card>

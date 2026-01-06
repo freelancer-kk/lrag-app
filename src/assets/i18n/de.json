@@ -109,7 +109,7 @@
       "RESTORE_SETTINGS": "Einstellungen und Frage von diesem Lauf werden wiederhergestellt!",
       "RESTORE_TIP": "Möglicherweise möchten Sie die Einstellungen und Fragen für eine Abfrage wiederherstellen, die Sie in der Vergangenheit ausgeführt haben. Dadurch werden die erweiterten Einbettungs-, Einblick- und Modelleinstellungen wiederhergestellt",
       "BOOTSTRAP": "Startup",
-      "BOOTSTRAP_DESC": "Über LRag",
+      "BOOTSTRAP_DESC": "Information",
       "RESTART_SERVICE": "Starten Sie den Dienst ggf. neu",
       "CLICK_TO_INSTALL": "Klicken Sie unten, um Informationen zum Installieren/Aktualisieren von Abhängigkeiten zu erhalten"
     },

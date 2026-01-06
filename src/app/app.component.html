@@ -11,7 +11,9 @@
   <span class="spacer"></span>
   @if (!(
         (overallStatus === EStatus.running_healthy) ||
-        (overallStatus === EStatus.running_unhealthy) 
+        (overallStatus === EStatus.running_unhealthy) || 
+        (overallStatus === EStatus.downloading) || 
+        (overallStatus === EStatus.extracting)
       )) {
     <div [class]="systemService.mainStatus.getC()">
       <mat-spinner diameter="30"></mat-spinner>
@@ -39,33 +41,33 @@
         @if (isExpanded) {
           <span>{{ 'PAGES.HOME.TITLE' | translate }}</span>        
         }
-        <mat-icon matListItemIcon>home</mat-icon>
+        <mat-icon matListItemIcon [matTooltip]="'PAGES.HOME.TITLE' | translate">home</mat-icon>
       </a>
       @if (systemService.hasBasicSetup && commonService.accept_pp && commonService.accept_eua && commonService.accept_security) {  
         <a mat-list-item [routerLink]="'insights'">
           @if (isExpanded) {
             <span>{{ 'PAGES.INSIGHT.TITLE' | translate }}</span>        
           }
-          <mat-icon matListItemIcon>question_answer</mat-icon>
+          <mat-icon matListItemIcon [matTooltip]="'PAGES.INSIGHT.TITLE' | translate">question_answer</mat-icon>
+        </a>
+        <a mat-list-item [routerLink]="'help'">
+          @if (isExpanded) {
+            <span>{{ 'PAGES.HELP.TITLE' | translate }}</span>        
+          }
+          <mat-icon matListItemIcon [matTooltip]="'PAGES.HELP.TITLE' | translate">help</mat-icon>
         </a>
         <a mat-list-item [routerLink]="'settings'">
           @if (isExpanded) {
             <span>{{ 'PAGES.SETTINGS.TITLE' | translate }}</span>        
           }
-          <mat-icon matListItemIcon>upgrade</mat-icon>
-        </a>			      
-        <a mat-list-item [routerLink]="'help'">
-          @if (isExpanded) {
-            <span>{{ 'PAGES.HELP.TITLE' | translate }}</span>        
-          }
-          <mat-icon matListItemIcon>help</mat-icon>
+          <mat-icon matListItemIcon [matTooltip]="'PAGES.SETTINGS.TITLE' | translate">upgrade</mat-icon>
         </a>        
       }
       <a mat-list-item (click)="appExit($event)">
         @if (isExpanded) {
           <span>{{ 'EXIT' | translate }}</span>        
         }
-        <mat-icon matListItemIcon>exit_to_app</mat-icon>
+        <mat-icon matListItemIcon [matTooltip]="'EXIT' | translate">exit_to_app</mat-icon>
       </a>
     </mat-nav-list>     
 	</mat-sidenav>

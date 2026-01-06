@@ -170,6 +170,10 @@ export class SystemService {
       } else {
         this.mainStatus.update(EStatus.running_unhealthy);
       }     
+    } else if (this.modelStatus.get() === EStatus.downloading || this.rerankerService.status.get() === EStatus.downloading || this.ingestStatus.get() === EStatus.downloading || this.ollamaService.status.get() === EStatus.downloading) {      
+      this.mainStatus.update(EStatus.downloading);
+    } else if (this.ollamaService.status.get() === EStatus.extracting) {
+      this.mainStatus.update(EStatus.extracting);      
     } else {
       this.mainStatus.update(EStatus.not_running);
     }
