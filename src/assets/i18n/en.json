@@ -28,7 +28,7 @@
   "OCR_TIMEOUT": "It looks like the model process is overloaded on your PC, We recommend closing the application. Restart and fine tune the OCR settings",
   "APP": {
     "TITLE": "LRag",
-    "VERSION": "1.0.0",
+    "VERSION": "1.0.1",
     "DOCKER_WARNING": "LRag requires Docker on your PC. Please start Docker if installed.",
     "DOCKER_DOWNLOAD": "Install Docker from this official link",
     "DOCKER_DESKTOP": "Docker Desktop",
@@ -83,7 +83,7 @@
         "VRAM": "VRAM",
         "STATUS": "Status",
         "DETAIL": "Service",
-        "DETAIL_DESC": "Status of services",
+        "DETAIL_DESC": "Status",
         "YOUR_PC": "Your PC",
         "TECHNICAL_DETAILS": "Technical Details",
         "LLM": "Model Process",

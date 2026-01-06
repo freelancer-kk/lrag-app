@@ -28,7 +28,7 @@
   "OCR_TIMEOUT": "Es sieht so aus, als ob der Modellprozess auf Ihrem PC überlastet ist. Wir empfehlen, die Anwendung zu schließen. Starten Sie neu und passen Sie die OCR-Einstellungen an",
   "APP": {
     "TITLE": "LRag",
-    "VERSION": "1.0.0",
+    "VERSION": "1.0.1",
     "DOCKER_WARNING": "LRag benötigt Docker auf Ihrem PC. ",
     "DOCKER_DOWNLOAD": "Installieren Sie Docker aus diesem offiziellen Link",
     "DOCKER_DESKTOP": "Docker Desktop",
@@ -83,7 +83,7 @@
       "VRAM": "Vram",
       "STATUS": "Status",
       "DETAIL": "Service",
-      "DETAIL_DESC": "Status der Dienste",
+      "DETAIL_DESC": "Status",
       "YOUR_PC": "Ihr PC",
       "TECHNICAL_DETAILS": "Technische Details",
       "LLM": "Modellprozess",

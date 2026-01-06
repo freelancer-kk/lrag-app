@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('gpu', {static: true}) gpu!: JsonViewComponent;
   @ViewChild('mem', {static: true}) mem!: JsonViewComponent;
   @ViewChild('disks', {static: true}) disks!: JsonViewComponent;
-  @ViewChild('splash', {static: true}) splash!: MatExpansionPanel;
+  // @ViewChild('splash', {static: true}) splash!: MatExpansionPanel;
   private translate = inject(TranslateService);
 
   EStatus: typeof EStatus = EStatus;
@@ -93,18 +93,22 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.disks.expandTo(2);
       }
       */
+     /*
      if (this.systemService.startShow() === false) {
       this.splash.expanded = false;
      }
+      */
     })
   }
 
   async ngOnInit() {
     setTimeout(async () => {
+      /*
       if (this.systemService.appVersionChange || this.systemService.servicesDownloading) {
         this.splash.expanded = true;
         await this.startShow(undefined);
       }
+      */
     }, 5000)
   }
 

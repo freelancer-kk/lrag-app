@@ -77,3 +77,12 @@ It is highly recommended to seek professional legal advice to tailor these requi
 
 # Data privacy / security video
 https://www.youtube.com/watch?v=tsrkB9I7m80
+
+# Change verison
+To change the version number e.g 1.2.0
+Update en.json/de.json VERSION tag
+Update package.json and app/package.json VERSION tag
+Update update.json entries with new versions or change existing links
+Update src/assets/template.env with VERSION tag
+build and release
+update update.json to NAS ftp

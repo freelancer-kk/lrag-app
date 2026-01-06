@@ -239,7 +239,7 @@ export class InsightsComponent implements OnInit {
             content: this.generationInfo ? this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count) : this.reformat(answer, 0, 0),
             docSources
           });
-          this.systemService.history.unshift({
+          this.systemService.history.push({
             when: new Date(),
             q_expanded: false,
             a_expanded: false,
@@ -323,7 +323,7 @@ export class InsightsComponent implements OnInit {
   }
 
   rate = async (ev: any, index: number, rating: number) => {
-    console.log('rate:', index);
+    console.log('rate:', index-1);
     this.systemService.history[index-1].assessment = rating;
     this.systemService.saveMainHistory();
     this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.RATING_THANKS'), 'OK', {
