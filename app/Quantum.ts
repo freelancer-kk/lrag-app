@@ -31,7 +31,7 @@ export default class Quantum {
     this.ikmKeyPath = path.join(configPath, 'lrag.ikm');    
     this.encapDirPath = path.join(configPath, 'encap');
     if (!fs.existsSync(this.encapDirPath)) {
-      fs.mkdirSync(this.encapDirPath);
+      fs.mkdirSync(this.encapDirPath, { recursive: true });
     }
   }
 
