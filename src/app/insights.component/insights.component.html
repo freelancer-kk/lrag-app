@@ -31,11 +31,11 @@
     <mat-icon>settings</mat-icon>
   </button>
   }
-  <button [disabled]="isModelOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_MANAGE_TIP' | translate" matIconButton (click)="manageModel($event)">
+  <button #modelTip="matTooltip" [disabled]="isModelOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_MANAGE_TIP' | translate" matIconButton (click)="manageModel($event)">
     <mat-icon>psychology</mat-icon>
   </button>  
   @if (ollamaService.chatHistory.length>0) {                  
-    <button [disabled]="insightStatus === EStatus.thinking" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="this.ollamaService.resetChatHistory()">
+    <button #historyTip="matTooltip" [disabled]="insightStatus === EStatus.thinking" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="this.ollamaService.resetChatHistory()">
       <mat-icon>playlist_remove</mat-icon>
     </button>          
   }  

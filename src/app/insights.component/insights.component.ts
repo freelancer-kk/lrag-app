@@ -13,7 +13,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatListModule} from '@angular/material/list';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MediaService } from '../core/services/media/media.service';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertComponent } from '../alert.component/alert.component';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -65,6 +65,8 @@ export class InsightsComponent implements OnInit {
   private _injector = inject(Injector);
   
   @ViewChild('autosize') autosize: CdkTextareaAutosize | undefined;
+  @ViewChild('modelTip') modelTip: MatTooltip | undefined;
+  @ViewChild('historyTip') historyTip: MatTooltip | undefined;
 
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
@@ -236,6 +238,11 @@ export class InsightsComponent implements OnInit {
       try {
         if (!error) {
           console.log('PUSHING ANSWER:', answer);
+          if (this.systemService.history.length === 0) {
+            setTimeout(() => {
+              this.modelTip?.show();
+            }, 1000);
+          }
           this.ollamaService.chatHistory.push({
             id,
             who: EWho.Assistant,
@@ -282,6 +289,9 @@ export class InsightsComponent implements OnInit {
             if (usage) {
               clearInterval(usageTimer);
               this.modelUsage = usage + ' ';
+            }
+            if (this.ollamaService.chatHistory.length > 4) {
+              this.historyTip?.show();            
             }
           }, 2000);    
         } else {

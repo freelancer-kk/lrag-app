@@ -241,7 +241,7 @@ export default class DepService {
     // log.info('findByProcessName:', this.executable);
     const processes: ProcessInfo[] = await find('name', this.executable + (this.args.length > 0 ? ' ' + this.args.join(' ') : ''));
     if (processes.length === 0) {
-      log.info('Process not running:', this.executable, processes);
+      log.info('Process not running:', this.executable);
       return { 
         servicePID: -1
       }

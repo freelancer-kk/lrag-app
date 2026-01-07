@@ -72,3 +72,10 @@
   /* Sets a minimum height if needed, but margin-top: auto handles vertical alignment */
   /* min-height: 0; is sometimes needed in older flexbox implementations */
 }
+
+.improve-answer {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: gray;
+}

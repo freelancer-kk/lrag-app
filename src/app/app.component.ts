@@ -674,9 +674,10 @@ export class AppComponent implements OnInit {
   }
 
   navigateAway = async () => {
-    if (this.firstRun) {
+    if (this.firstRun && this.commonService.accept_eua && this.commonService.accept_pp && this.commonService.accept_security) {
       this.firstRun = false;
-      await this.systemService.refreshFileList(this.mediaService);      
+      // await this.systemService.refreshFileList(this.mediaService);
+      this.router.navigate(['insights']);
     }
   }
 
