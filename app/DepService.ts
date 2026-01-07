@@ -40,7 +40,7 @@ export default class DepService {
   prerequisites: IPrereq[];
   installPath: string;
   webContents: Electron.WebContents | undefined;
-  servicePID: number[] | undefined;
+  servicePIDs: number[] | undefined;
   isReady: boolean = false;
   processName: string;
   readyCheckFunc: () => Promise<boolean>;
@@ -239,18 +239,18 @@ export default class DepService {
 
   findProcessPID = async (): Promise<any> => {
     // log.info('findByProcessName:', this.executable);
-    const processes: ProcessInfo[] = await find('name', this.executable);
+    const processes: ProcessInfo[] = await find('name', this.executable + (this.args.length > 0 ? ' ' + this.args.join(' ') : ''));
     if (processes.length === 0) {
-      log.error('Cannot find service process:', this.executable, processes);
+      log.info('Process not running:', this.executable, processes);
+      return { 
+        servicePID: -1
+      }
     } else {
       // log.info('findByProcessName:', this.executable, processes, processes[0].pid);
-      this.servicePID = processes.map(v => v.pid);
+      this.servicePIDs = processes.map(v => v.pid);
       return { 
-        servicePID: processes[0].pid
+        servicePID: this.servicePIDs[0]
       }
-    }
-    return { 
-      servicePID: -1
     }
   }
 
@@ -708,18 +708,18 @@ export default class DepService {
   }
 
   stop = async (all: boolean = false, mode: number = 0): Promise<any> => {
-    if (this.servicePID && this.servicePID.length > 0) {
+    if (this.servicePIDs && this.servicePIDs.length > 0) {
       if (all) {
-        for await (const pid of this.servicePID) {
+        for await (const pid of this.servicePIDs) {
           log.info(`DepService:stop:sending terminate signal to ${this.serviceName} - ${pid}!`);
           kill(pid, (error: any) => {
             log.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${pid}`, error);
           });
         }
       } else {
-        log.info(`DepService:stop:sending terminate signal to ${this.serviceName} - ${this.servicePID}!`);
-        kill(this.servicePID[0], (error: any) => {
-          log.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${this.servicePID}`, error);
+        log.info(`DepService:stop:sending terminate signal to ${this.serviceName} - ${this.servicePIDs}!`);
+        kill(this.servicePIDs[0], (error: any) => {
+          log.error(`DepService:stop:error to sending kill to ${this.serviceName} - ${this.servicePIDs}`, error);
         });
       }
       this.emit({ 

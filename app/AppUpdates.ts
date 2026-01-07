@@ -35,7 +35,7 @@ export default class AppUpdates {
       let upgrade: any | undefined = undefined;
       for await (const entry of entries) {
         const version = entry.version.replace(/\./g,'');
-        log.info('comparing:', version, '-', currentVersion);
+        // log.info('comparing:', version, '-', currentVersion);
         if (Number(version) > Number(currentVersion)) {
           upgrade = {
             version: entry.version,
