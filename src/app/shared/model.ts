@@ -68,6 +68,7 @@ export interface IUser {
 }
 
 export interface IChat {
+  id: string,
   who: EWho,
   content: string,
   docSources: string[]
@@ -92,6 +93,7 @@ export const connOptions: ConnectionServiceOptions = {
 }
 
 export interface IHistory {
+  id: string,
   when: Date,
   question: string,
   answer: string,

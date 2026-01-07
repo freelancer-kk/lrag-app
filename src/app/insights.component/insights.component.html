@@ -73,8 +73,8 @@
                 <p class="docsource">- {{ docSource }}</p>
               }
               <small>{{ 'PAGES.INSIGHT.RATE' | translate }}&nbsp;
-              <mat-icon class="smallIcon" (click)="rate($event, $index, 1)">thumb_up</mat-icon>&nbsp;
-              <mat-icon class="smallIcon" (click)="rate($event, $index, -1)">thumb_down</mat-icon>
+              <mat-icon class="smallIcon" (click)="rate($event, entry.id, 1)">thumb_up</mat-icon>&nbsp;
+              <mat-icon class="smallIcon" (click)="rate($event, entry.id, -1)">thumb_down</mat-icon>
               </small>
               <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
           }              

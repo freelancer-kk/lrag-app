@@ -203,8 +203,10 @@ export class InsightsComponent implements OnInit {
       if (this.systemService.filter) {
         options.filter = this.systemService.filter;
       }
+      const id: string = this.commonService.generateUUID();
 
       this.ollamaService.chatHistory.push({
+        id,
         who: EWho.User,
         content: question,
         docSources: [],
@@ -235,11 +237,13 @@ export class InsightsComponent implements OnInit {
         if (!error) {
           console.log('PUSHING ANSWER:', answer);
           this.ollamaService.chatHistory.push({
+            id,
             who: EWho.Assistant,
             content: this.generationInfo ? this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count) : this.reformat(answer, 0, 0),
             docSources
           });
-          this.systemService.history.push({
+          this.systemService.history.unshift({
+            id,
             when: new Date(),
             q_expanded: false,
             a_expanded: false,
@@ -322,13 +326,16 @@ export class InsightsComponent implements OnInit {
     });
   }
 
-  rate = async (ev: any, index: number, rating: number) => {
-    console.log('rate:', index-1);
-    this.systemService.history[index-1].assessment = rating;
-    this.systemService.saveMainHistory();
-    this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.RATING_THANKS'), 'OK', {
-      duration: 2500
-    });
+  rate = async (ev: any, id: string, rating: number) => {
+    console.log('rate:', id);
+    const fIdx: number = this.systemService.history.findIndex(f => f.id === id);
+    if (fIdx > -1) {
+      this.systemService.history[fIdx].assessment = rating;
+      this.systemService.saveMainHistory();
+      this._snackBar.open(await this.commonService.get('PAGES.INSIGHT.RATING_THANKS'), 'OK', {
+        duration: 2500
+      });
+    }
   }
 
   reset = async (event: any) => {
