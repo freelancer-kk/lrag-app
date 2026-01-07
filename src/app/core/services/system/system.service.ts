@@ -173,7 +173,9 @@ export class SystemService {
     } else if (this.modelStatus.get() === EStatus.downloading || this.rerankerService.status.get() === EStatus.downloading || this.ingestStatus.get() === EStatus.downloading || this.ollamaService.status.get() === EStatus.downloading) {      
       this.mainStatus.update(EStatus.downloading);
     } else if (this.ollamaService.status.get() === EStatus.extracting) {
-      this.mainStatus.update(EStatus.extracting);      
+      this.mainStatus.update(EStatus.extracting);
+    } else if (this.ollamaService.status.get() === EStatus.starting) {
+      this.mainStatus.update(EStatus.starting);      
     } else {
       this.mainStatus.update(EStatus.not_running);
     }
