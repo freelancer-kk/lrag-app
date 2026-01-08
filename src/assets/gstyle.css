@@ -107,3 +107,21 @@
   min-width: 100px;
 }
 
+.spinner-container {
+  /* Position the container to cover the entire viewport */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+
+  /* Use Flexbox to center the content */
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+
+  /* Optional: Add a background overlay and z-index */
+  background: rgba(0, 0, 0, 0.32);
+  z-index: 2000;
+}
+

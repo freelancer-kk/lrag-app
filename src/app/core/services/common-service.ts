@@ -17,6 +17,7 @@ export class CommonService {
   pp_link: string | undefined;
   eua_link: string | undefined;
   security_link: string | undefined;
+  isQuitting: boolean = false;
 
   constructor(
     private bridgeService: BridgeService,
@@ -120,6 +121,7 @@ export class CommonService {
 
   quitApp = (): Promise<void> => {
     return this.writeAcceptance().then(() => {
+      this.isQuitting = true;
       return new Promise((resolve, reject) => {
         this.bridgeService.quitApp(10, async () => {
           resolve();
