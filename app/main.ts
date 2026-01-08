@@ -44,6 +44,7 @@ let licenseService: LicenseService;
 let useTesseractJS: boolean = false;
 let managedExternally: boolean = false;
 let quantum: Quantum;
+let isCleanupFinished = false;
 
 log.initialize();
 
@@ -319,10 +320,20 @@ try {
   }); 
 
   app.on("before-quit", async (e) => {
-    log.info("before-quit: abort any transactions ollama may be doing");
-    ollamaService.abort();
-    await ollamaService.stop();
-    await rerankerService.stop();    
+    if (!isCleanupFinished) {
+      e.preventDefault()
+      try {
+        log.info("before-quit: abort any transactions ollama may be doing");
+        ollamaService.abort();
+        await ollamaService.stop();
+        await rerankerService.stop();       
+      } catch (error) {
+        log.error('Cleanup failed:', error);
+      } finally {
+        isCleanupFinished = true;
+        app.quit();
+      }
+    }    
   });
 
   /*
