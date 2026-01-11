@@ -16,6 +16,14 @@
     "description": "The IBM Granite 2B and 8B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
   },
   {
+    "value": "qwen3-vl:2b-thinking",
+    "viewValue": "qwen3-vl:2b-thinking (<2GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 2,
+    "description": "The most powerful vision-language model in the Qwen model family to date. It excels in understanding and generating content that combines both text and images"
+  },
+  {
     "value": "nemotron-mini:4b",
     "viewValue": "nemotron-mini:4b (<3GB)",
     "thinking": true,
@@ -30,6 +38,14 @@
     "cloud": false,
     "memory": 5,
     "description": "A model from NVIDIA based on Llama 3 that excels at conversational question answering (QA) and retrieval-augmented generation (RAG)"
+  },
+  {
+    "value": "qwen3-vl:8b-thinking",
+    "viewValue": "qwen3-vl:8b-thinking (<9GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 8,
+    "description": "The most powerful vision-language model in the Qwen model family to date. It excels in understanding and generating content that combines both text and images"
   },
   {
     "value": "gemma3:12b",

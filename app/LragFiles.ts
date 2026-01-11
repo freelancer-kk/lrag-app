@@ -3,7 +3,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
 import Quantum from './Quantum';
-
+import { Jimp } from 'jimp';
+import mime from 'mime'
 export interface IFileBit {
   fullPath: string;
   data: Buffer;
@@ -69,7 +70,15 @@ export default class LRagFiles {
             log.info('written:', fullPath);
             const fIdx = this.writingFiles.findIndex(f => f.fullPath === fullPath);
             if (fIdx > -1) {
-              fs.writeFileSync(fullPath, this.writingFiles[fIdx].data, 'binary');
+              const extension = path.extname(fullPath).toLowerCase();
+              if (extension === '.png' || extension === '.jpg' || extension === '.jpeg' || extension === '.bmp' || extension === '.tiff' ) {
+                const image = await Jimp.read(this.writingFiles[fIdx].data);
+                image.resize({ w: 1024 });
+                const resizedBuffer = await image.getBuffer(mime.lookup(extension) as any || 'image/jpeg');
+                fs.writeFileSync(fullPath, resizedBuffer, 'binary');
+              } else {
+                fs.writeFileSync(fullPath, this.writingFiles[fIdx].data, 'binary');
+              }
               this.writingFiles.splice(fIdx, 1);
               response = {
                 fullPath

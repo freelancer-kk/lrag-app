@@ -98,7 +98,12 @@ export default class OllamaService {
       this.isIPEX ? availableIPEXVersion: availableVersion,
       versionCB,
       () => {},
-      process.env
+      {
+        ...process.env,
+        ...{
+          OLLAMA_FLASH_ATTENTION: "1"
+        }
+      }
     )
 
     if (this.isIPEX) {

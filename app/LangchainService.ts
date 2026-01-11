@@ -40,6 +40,7 @@ export default class LangchainService {
   quantum: Quantum;
   uuid: string;
   baseUrl: string;
+  images: string[] = [];
 
   constructor(
     doc_path: string,
@@ -263,7 +264,11 @@ export default class LangchainService {
     for await (const dirent of dirEnts) {
       if (dirent.isFile()) {
         const fullpath: string = path.join(dirent.parentPath, dirent.name);
-        fs.writeFileSync(fullpath, '', 'utf-8');      
+        const lc: string = fullpath.toLowerCase();
+        log.info('blanking document:', fullpath);
+        if (!lc.endsWith('.png') && !lc.endsWith('.jpg') && !lc.endsWith('.jpeg') && !lc.endsWith('.tiff') && !lc.endsWith('.bmp')) {
+          fs.writeFileSync(fullpath, '', 'utf-8');
+        }
       }
     }
     return true;
@@ -332,7 +337,16 @@ export default class LangchainService {
             case ".doc": {
               loaders.push({ fullpath, loader: new DocxLoader(fullpath)})
             }
-            break;          
+            break; 
+            case ".jpg":
+            case ".jpeg":
+            case ".png":
+            case ".tiff":
+            case ".bmp": {
+              log.info('langchain:load:ignoring:image:file:', dirent.name);  
+              this.images.push(fullpath);
+            }
+            break;         
             default: {
               log.info('langchain:load:ignoring:file:', dirent.name);    
             }
@@ -443,6 +457,7 @@ export default class LangchainService {
 
   run = async (params: any): Promise<any> => {
     this.emit( { type: 'langchain-run-start', data: {} } );
+    this.images = [];
     return this.load(params).then(async (docs: Document[]) => {
       this.emit( { type: 'langchain-run-loaded', data: { documents: docs.length } });
       log.info('docs:length:', docs.length)
@@ -490,8 +505,14 @@ export default class LangchainService {
           this.emit( { type: 'langchain-run-complete', data: { chunks: chunks.length } });
           return { status: 'completed', documents: chunks.length };
         } else {
-          this.emit( { type: 'langchain-run-warning', data: { message: 'nothing embedded' } });
-          return { status: 'warning', message: 'nothing to process' };
+          if (this.images.length > 0) {
+            this.hasAddedDocs = true;
+            this.emit( { type: 'langchain-run-complete', data: { chunks: chunks.length } });
+            return { status: 'completed', documents: chunks.length };
+          } else {
+            this.emit( { type: 'langchain-run-warning', data: { message: 'nothing embedded' } });
+            return { status: 'warning', message: 'nothing to process' };
+          }
         }      
       } else {
         await this.setStatusForLoadedDocs(docs);

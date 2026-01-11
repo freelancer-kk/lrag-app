@@ -1,17 +1,20 @@
 import { ipcMain } from 'electron'
 import LangchainService from "./LangchainService"
 import OllamaService from "./OllamaService"
-import { ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
+import { ChatPromptTemplate, ImagePromptTemplate, ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
 import { StringOutputParser } from "@langchain/core/output_parsers"
 import { Document } from "@langchain/core/documents";
-import { Ollama, OllamaInput } from "@langchain/ollama";
+import { ChatOllama, Ollama, OllamaInput } from "@langchain/ollama";
 import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
 import DockerEnv from './DockerEnv'
-import { AIMessageChunk } from '@langchain/core/messages'
+import { AIMessageChunk, HumanMessage } from '@langchain/core/messages'
 import { concat } from "@langchain/core/utils/stream";
 import ReRankerService from './RerankerService'
 import log from 'electron-log/main';
 import * as path from 'path';
+import { readFileSync } from 'fs'
+import mime from 'mime'
+// import resizeImageBuffer from 'resize-image-buffer';
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -22,7 +25,7 @@ export default class ContextChat {
   rerankerService: ReRankerService;
   prompt: string = '';
   context: string = ''
-  ollamaLlm: Ollama | undefined;
+  ollamaLlm: ChatOllama | undefined;
   webContents: Electron.WebContents | undefined;
 
   constructor(langchainService: LangchainService, ollamaService: OllamaService, rerankerService: ReRankerService, dockerEnv: DockerEnv) {
@@ -83,10 +86,10 @@ export default class ContextChat {
         baseUrl: options.baseUrl,
         model: options.model,
         numCtx: options.numCtx ? options.numCtx : undefined,
-        headers: this.ollamaService.headers
-      };
+        headers: this.ollamaService.headers        
+      };      
       log.info('Ollama connection:options:', ollamaOptions);
-      this.ollamaLlm = new Ollama(ollamaOptions);
+      this.ollamaLlm = new ChatOllama(ollamaOptions);
 
       let isStandardChat: boolean = true;
       if (this.langchainService.hasAddedDocs && options.useDocContext) {
@@ -113,51 +116,85 @@ export default class ContextChat {
 
         if (vectorStoreRetriever) {
           isStandardChat = false;
-
-          log.info('INSIGHT: WITH DOC CONTEXT!')
-
-          const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
-            {contextPrompt}
-            chatHistory: {chatHistory}
-            question: {userQuestion}  
-          `);
-          const contextQuestionChain = contextualizedQuestionPrompt
-            .pipe(this.ollamaLlm)
-            .pipe(new StringOutputParser())
-            .pipe(vectorStoreRetriever);
-
-          const documents = await contextQuestionChain.invoke({
-            contextPrompt: options.contextPrompt,
-            chatHistory: options.chatHistory,
-            userQuestion: options.question
-          });
-          let docs: Document[] = documents as Document[];
-
-          this.emit({ type: 'reranking', data: { total: docs.length } });
-          const reranked_docs: Document[] | undefined = await this.rerankerService.rerank(options.question, docs);
-          if (reranked_docs && reranked_docs.length > 0) {
-            docs = reranked_docs;
-          }        
-
-          for await (const doc of docs) {
-            const name: string = path.basename(doc.metadata.source);
-            if (!docSources.includes(name)) {
-              docSources.push(name);
-            }
-          }
+          let combinedDocs: string = '';
+          let images: any[] = [];
           
-          const combinedDocs: string = combineDocuments(docs);
-          log.info('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
+          if (options.fileNames && Array.isArray(options.fileNames) && options.fileNames.length > 0) {
+            options.fileNames.forEach((fileName: string) => {
+              const extension = path.extname(fileName).toLowerCase();
+              if ((extension === '.png') || (extension === '.jpg') || (extension === '.jpeg') || (extension === '.tiff') || (extension === '.bmp')) {
+                const imgPath = fileName;
+                const url: string = `data:${mime.lookup(extension)};base64,${readFileSync(imgPath).toString("base64")}`
+                // const url: string = readFileSync(imgPath).toString("base64");
+                log.info('Embedding image in chat from:', imgPath, url.substring(0, 50) + '...');
+                images.push({
+                  type: "image_url",
+                  image_url: { url }
+                });                
+              }
+            });
+          }
 
+          if (images.length > 0 && images.length === options.fileNames.length) {
+            log.info('INSIGHT: WITH DOC CONTEXT ONLY IMAGES!')
+          } else {
+            log.info('INSIGHT: WITH DOC & IMAGES CONTEXT!')
+            const contextualizedQuestionPrompt: PromptTemplate<ParamsFromFString<any>, any> = PromptTemplate.fromTemplate(`
+              {contextPrompt}
+              chatHistory: {chatHistory}
+              question: {userQuestion}  
+            `);
+            const contextQuestionChain = contextualizedQuestionPrompt
+              .pipe(this.ollamaLlm)
+              .pipe(new StringOutputParser())
+              .pipe(vectorStoreRetriever);
+
+            const documents = await contextQuestionChain.invoke({
+              contextPrompt: options.contextPrompt,
+              chatHistory: options.chatHistory,
+              userQuestion: options.question
+            });
+            let docs: Document[] = documents as Document[];
+
+            this.emit({ type: 'reranking', data: { total: docs.length } });
+            const reranked_docs: Document[] | undefined = await this.rerankerService.rerank(options.question, docs);
+            if (reranked_docs && reranked_docs.length > 0) {
+              docs = reranked_docs;
+            }        
+
+            for await (const doc of docs) {
+              const name: string = path.basename(doc.metadata.source);
+              if (!docSources.includes(name)) {
+                docSources.push(name);
+              }
+            }
+            
+            combinedDocs = combineDocuments(docs);
+            log.info('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
+          }
+
+/*
           const questionTemplate = PromptTemplate.fromTemplate(`
               {prompt}
               <context>
-              {context}
+              {context}  
               </context>
 
               question: {userQuestion}
           `)
+*/          
+          
+          const questionTemplate = ChatPromptTemplate.fromMessages([
+            ["system", "{prompt}"],
+            ["user", [
+              { type: "text", text: "context: {context}" },
+              { type: "text", text: "question: {userQuestion}" },
+              ...images
+            ]],
+          ]);
 
+          // log.info('questionTemplate:', questionTemplate);
+          
           const answerChain = questionTemplate
             .pipe(this.ollamaLlm)
             .pipe(new StringOutputParser());

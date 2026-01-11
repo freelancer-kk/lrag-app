@@ -174,9 +174,15 @@
               <div matListItemTitle>
                 {{ commonService.basename(entry.name) }}
               </div>
-              <div matListItemLine [class]="entry.status === 0 ? 'success' : entry.status === 1 ? 'danger' : 'warning'">
-                {{ entry.text }}
-              </div>                            
+              @if (systemService.isImage(entry.name)) {
+                <div matListItemLine [class]="'success'">
+                  {{ 'embedded' }}
+                </div>
+              } @else {
+                <div matListItemLine [class]="entry.status === 0 ? 'success' : entry.status === 1 ? 'danger' : 'warning'">
+                  {{ entry.text }}
+                </div>
+              }
             </mat-list-item>
           </mat-grid-tile>      
         }         
@@ -187,7 +193,7 @@
     <div class="fab-flex-container">
       <div class="dropzone">
         <ngx-file-drop 
-        accept=".pdf,.xlm,.xls,.xlsm,.xlsx,.csv,.doc,.ppt,.txt,.json,.xml,.md"
+        accept=".pdf,.xls,.xlsm,.csv,.doc,.docx,.ppt,.pptx,.txt,.json,.xml,.md,.png,.jpg,.jpeg,.tiff,.bmp"
         dropZoneClassName="dropzone"
         (onFileDrop)="dropped($event)"
         [directory]="false"

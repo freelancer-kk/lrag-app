@@ -1,0 +1,13 @@
+diff --git a/node_modules/jimp/dist/commonjs/index.d.ts b/node_modules/jimp/dist/commonjs/index.d.ts
+index df83860..8ce2e4e 100644
+--- a/node_modules/jimp/dist/commonjs/index.d.ts
++++ b/node_modules/jimp/dist/commonjs/index.d.ts
+@@ -1752,7 +1752,7 @@ export type { BmpColor } from "@jimp/js-bmp";
+ export { HorizontalAlign, VerticalAlign, BlendMode } from "@jimp/core";
+ export type { RawImageData, JimpConstructorOptions, JimpSimpleConstructorOptions, } from "@jimp/core";
+ export type { Bitmap, Edge, RGBAColor, RGBColor } from "@jimp/types";
+-export { loadFont } from "@jimp/plugin-print/load-font";
++// export { loadFont } from "@jimp/plugin-print/load-font";
+ export { measureText, measureTextHeight } from "@jimp/plugin-print";
+ export { diff } from "@jimp/diff";
+ export { intToRGBA, rgbaToInt, colorDiff, limit255, cssColorToHex, } from "@jimp/utils";

@@ -44,6 +44,7 @@
     "generic-pool": "^3.9.0",
     "hnswlib-node": "^3.0.0",
     "hpke": "^1.0.0",
+    "jimp": "^1.6.0",
     "json-loader": "0.5.7",
     "jsonrepair": "3.13.0",
     "key-value-file": "1.0.10",
@@ -68,6 +69,7 @@
     "postgres-date": "^2.1.0",
     "postgres-interval": "^4.0.2",
     "pureimage": "^0.4.18",
+    "resize-image-buffer": "^1.0.0",
     "rxjs": "^7.8.2",
     "sparse-bitfield": "^3.0.3",
     "systeminformation": "^5.27.8",
@@ -85,6 +87,7 @@
   "devDependencies": {
     "@types/adm-zip": "^0.5.7",
     "@types/csv-parse": "^1.1.12",
+    "@types/jimp": "^0.2.1",
     "@types/node": "^24.10.1",
     "@types/pdf-parse": "^1.1.5",
     "@types/tesseract.js": "^0.0.2",

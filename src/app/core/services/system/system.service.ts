@@ -209,9 +209,14 @@ export class SystemService {
     })
   }
 
+  isImage = (filename: string): boolean => {
+    const lowerName = filename.toLowerCase();
+    return lowerName.endsWith('.png') || lowerName.endsWith('.jpg') || lowerName.endsWith('.jpeg') || lowerName.endsWith('.tiff') || lowerName.endsWith('.bmp');
+  }
+
   hasEmbedded = (): boolean => {
     return this.ragFiles.reduce(
-      ((acc: boolean, cur: any) => acc || cur.text === 'embedded')
+      ((acc: boolean, cur: any) => acc || cur.text === 'embedded' || this.isImage(cur.name))
       , false);
   }
   
