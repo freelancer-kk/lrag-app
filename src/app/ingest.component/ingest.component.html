@@ -174,15 +174,9 @@
               <div matListItemTitle>
                 {{ commonService.basename(entry.name) }}
               </div>
-              @if (systemService.isImage(entry.name)) {
-                <div matListItemLine [class]="'success'">
-                  {{ 'embedded' }}
-                </div>
-              } @else {
-                <div matListItemLine [class]="entry.status === 0 ? 'success' : entry.status === 1 ? 'danger' : 'warning'">
-                  {{ entry.text }}
-                </div>
-              }
+              <div matListItemLine [class]="(entry.status === 0 || systemService.isImage(entry.name)) ? 'success' : entry.status === 1 ? 'danger' : 'warning'">
+                {{ systemService.isImage(entry.name) ? 'embedded' : entry.text }}              
+              </div>
             </mat-list-item>
           </mat-grid-tile>      
         }         
