@@ -82,7 +82,7 @@
       }
       @if (streaming) {            
         <tr mat-row>
-            <p>{{ streamedResponse }}</p>
+            <p [innerHTML]="safeHTML(streamedResponse)"></p>
             <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
         </tr>            
       }                   

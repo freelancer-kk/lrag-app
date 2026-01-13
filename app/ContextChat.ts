@@ -1,20 +1,19 @@
 import { ipcMain } from 'electron'
 import LangchainService from "./LangchainService"
 import OllamaService from "./OllamaService"
-import { ChatPromptTemplate, ImagePromptTemplate, ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
+import { ChatPromptTemplate, ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
 import { StringOutputParser } from "@langchain/core/output_parsers"
 import { Document } from "@langchain/core/documents";
-import { ChatOllama, Ollama, OllamaInput } from "@langchain/ollama";
+import { ChatOllama, OllamaInput } from "@langchain/ollama";
 import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
 import DockerEnv from './DockerEnv'
-import { AIMessageChunk, HumanMessage } from '@langchain/core/messages'
+import { AIMessageChunk } from '@langchain/core/messages'
 import { concat } from "@langchain/core/utils/stream";
 import ReRankerService from './RerankerService'
 import log from 'electron-log/main';
 import * as path from 'path';
 import { readFileSync } from 'fs'
 import mime from 'mime'
-// import resizeImageBuffer from 'resize-image-buffer';
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -173,17 +172,6 @@ export default class ContextChat {
             log.info('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
           }
 
-/*
-          const questionTemplate = PromptTemplate.fromTemplate(`
-              {prompt}
-              <context>
-              {context}  
-              </context>
-
-              question: {userQuestion}
-          `)
-*/          
-          
           const questionTemplate = ChatPromptTemplate.fromMessages([
             ["system", "{prompt}"],
             ["user", [
@@ -195,12 +183,12 @@ export default class ContextChat {
 
           // log.info('questionTemplate:', questionTemplate);
           
-          const answerChain = questionTemplate
+          const stringChain = questionTemplate
             .pipe(this.ollamaLlm)
             .pipe(new StringOutputParser());
-          
+
           const ref = this;
-          const llmResponse: IterableReadableStream<string> = await answerChain.stream({
+          const llmResponse: IterableReadableStream<string> = await stringChain.stream({
             prompt: options.prompt,
             context: combinedDocs,
             userQuestion: options.question
@@ -238,7 +226,7 @@ export default class ContextChat {
 
         const questionTemplate = PromptTemplate.fromTemplate(`
             question: {userQuestion}
-        `)
+        `)        
 
         const questionChain = questionTemplate
           .pipe(this.ollamaLlm)
