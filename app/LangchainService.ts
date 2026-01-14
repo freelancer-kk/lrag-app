@@ -293,8 +293,6 @@ export default class LangchainService {
       try {
         if (dirent.isFile() && ts>0) {
           log.info('langchain:load:', fullpath);
-          // const fileBuffer = fs.readFileSync(fullpath);
-          // const blob: Blob = new Blob([fileBuffer]);        
           switch(path.extname(dirent.name).toLowerCase()) {
             case ".json": {
               loaders.push({ fullpath, loader: new JSONLoader(fullpath, "/texts")})
@@ -322,10 +320,12 @@ export default class LangchainService {
             }
             break;
             case ".pdf": {
-              loaders.push({ fullpath, loader: new PDFLoader(fullpath, {
-                splitPages: true,
-                parsedItemSeparator: ""  
-              })})
+              if (!fullpath.toLowerCase().endsWith('_ocr.pdf')) {
+                loaders.push({ fullpath, loader: new PDFLoader(fullpath, {
+                  splitPages: true,
+                  parsedItemSeparator: ""  
+                })})
+              }
             }
             break;
             case ".pptx":
