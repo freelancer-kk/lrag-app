@@ -12,7 +12,7 @@ import { concat } from "@langchain/core/utils/stream";
 import ReRankerService from './RerankerService'
 import log from 'electron-log/main';
 import * as path from 'path';
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import mime from 'mime'
 
 const combineDocuments = (docs: Document[]): string => {
@@ -154,9 +154,15 @@ export default class ContextChat {
               userQuestion: options.question
             });
             let docs: Document[] = documents as Document[];
+        
+            const uniqueDocs = docs.filter((doc, index, self) =>
+              index === self.findIndex((t) => (
+                t.metadata.source === doc.metadata.source && t.pageContent === doc.pageContent
+              ))
+            );
 
             this.emit({ type: 'reranking', data: { total: docs.length } });
-            const reranked_docs: Document[] | undefined = await this.rerankerService.rerank(options.question, docs);
+            const reranked_docs: Document[] | undefined = await this.rerankerService.rerank(options.question, uniqueDocs);
             if (reranked_docs && reranked_docs.length > 0) {
               docs = reranked_docs;
             }        
@@ -169,6 +175,7 @@ export default class ContextChat {
             }
             
             combinedDocs = combineDocuments(docs);
+            // writeFileSync('combinedDocs.txt', combinedDocs);
             log.info('askQuestion:combinedDocs:joining:', docs.length, '=>', combinedDocs.length);
           }
 

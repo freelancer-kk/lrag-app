@@ -201,6 +201,22 @@ export class OllamaService {
     }
   }
 
+  stop = (): Promise<any> => {
+    this.status.update(EStatus.destroy);
+    return this.commonService.commandService(
+      94,
+      this.serviceName,
+      'stop',
+      {
+        mode: 1
+      }
+    );
+  }
+
+  restart = async (ev: any) => {
+    await this.stop();    
+  }
+
   getRunningModelsUsage = async (): Promise<string> => {
     const modelUsage: any = await this.commandOllama('ps');
     for await (const entry of modelUsage.models) {      

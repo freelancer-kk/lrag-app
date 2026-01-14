@@ -240,7 +240,7 @@
       "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie Dokumente einschränken. d.h. Dokumenttypen nicht mischen, z.B. finanziell und medizinisch. Oft ist es am besten, ein einzelnes Dokument zu verwenden. Sie müssen zuvor eingebettete Dokumente entfernen",
       "RESET_ARE_YOU_SURE": "Durch das Zurücksetzen des Kontexts wird der Modelldienst gespült, das Modell neu laden und erneut ausgeladen. Dies kann eine Minute dauern",
       "CONTEXTUAL_PROMPT": "Angesichts eines Chat -Historie und der neuesten Benutzerfrage, die den Kontext im Chat -Verlauf verweisen könnte, formulieren Sie eine eigenständige Frage, die ohne den Chat -History verstanden werden kann. ",
-      "PROMPT": "Sie sind Assistent für Fragen zu Fragen. ",
+      "PROMPT": "Sie sind Assistent für Frage-Antwort-Aufgaben. Benutzen Sie die folgenden abgerufenen Kontextteile, um die Frage zu beantworten. Wenn Sie die Antwort nicht kennen, sagen Sie einfach, dass Sie es nicht wissen. Halten Sie die Antwort möglichst prägnant",
       "HISTORY_PROMPT": "Sie sind Assistent für Frage-Antwort-Aufgaben. Verwenden Sie den folgenden Chatverlauf als Kontext, um die Frage zu beantworten",
       "QUESTION": "Ihre Frage",
       "INITIAL_PROMPT": "Wie kann ich dir helfen?",
