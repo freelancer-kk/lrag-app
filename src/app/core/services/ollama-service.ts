@@ -272,7 +272,7 @@ export class OllamaService {
   getContextLength = (modelName: string): number => {
     const modelEntry: any = this.availableModels.find(m => m.name === modelName);
     if (modelEntry && modelEntry.context_length) {
-      return modelEntry.context_length;
+      return modelEntry.context_length > 32000 ? 32000 : modelEntry.context_length;
     } else {
       return 2048; // Default
     }

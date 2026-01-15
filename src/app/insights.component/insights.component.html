@@ -1,7 +1,7 @@
 <div class="container">
     <div class="top-div">
 <mat-toolbar>
-  <h1 class="title">
+  <h1 class="title" #titleTip="matTooltip" [matTooltip]="useCaseTooltip | translate">
     {{ (ollamaService.useDocContext ? 'PAGES.INSIGHT.MAIN_TITLE' : 'PAGES.INSIGHT.CHAT_TITLE') | translate }}
   </h1>
   <span class="spacer"></span>
@@ -56,7 +56,7 @@
 @if (ollamaService.useDocContext) {
   <div class="onerow">
     <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-    <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete>
+    <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete [displayWith]="formatLabelK">
       <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
     </mat-slider>
     <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.k = 4">      
@@ -64,10 +64,10 @@
     </button>
     <span class="spacer"></span>
     <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
-    <mat-slider [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" min="2048" [max]="ollamaService.getContextLength(ollamaService.selectedModel)" step="64" showTickMarks discrete>
+    <mat-slider [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4096" [max]="ollamaService.getContextLength(ollamaService.selectedModel)" step="64" showTickMarks discrete [displayWith]="formatLabel">
       <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
     </mat-slider>
-    <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" (click)="systemService.numCtx = 2048">
+    <button matIconButton [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.numCtx = 4096">
       <mat-icon>replay</mat-icon>
     </button>
   </div>  
@@ -84,9 +84,7 @@
               <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>              
           }          
           @if (entry.who === 1) {
-              <!--
-              <mat-icon class="copyAss" (click)="copyContent($event, entry.content)">content_copy</mat-icon>
-              -->
+              <mat-icon class="copyAss" (click)="copyContent($event, entry.content)">content_copy</mat-icon>              
               <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
               @for (docSource of entry.docSources; track $index) {
                 <p class="docsource">- {{ docSource }}</p>

@@ -67,6 +67,7 @@ export class InsightsComponent implements OnInit {
   @ViewChild('autosize') autosize: CdkTextareaAutosize | undefined;
   @ViewChild('modelTip') modelTip: MatTooltip | undefined;
   @ViewChild('historyTip') historyTip: MatTooltip | undefined;
+  @ViewChild('titleTip') titleTip: MatTooltip | undefined;
 
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
@@ -80,6 +81,7 @@ export class InsightsComponent implements OnInit {
   isModelOpen = false;
   isSettingsOpen = false;
   breakpoint: number = 4;
+  useCaseTooltip: string = '';
 
   EStatus: typeof EStatus = EStatus;
   
@@ -140,6 +142,31 @@ export class InsightsComponent implements OnInit {
 
   onResize = (event: any) => {
     this.breakpoint = Math.floor(event.target.innerWidth / 300);
+  }
+
+  formatLabel = (value: number): string => {
+    const numberKValue: number = Math.round(value / 1024);
+    if (numberKValue <= 8) {
+      this.useCaseTooltip = 'PAGES.INSIGHT.USE_CASE.TOOLTIP_1';
+    } else if (numberKValue <= 16) {  
+      this.useCaseTooltip = 'PAGES.INSIGHT.USE_CASE.TOOLTIP_2';
+    } else {
+      this.useCaseTooltip = 'PAGES.INSIGHT.USE_CASE.TOOLTIP_3';
+    }
+    this.titleTip?.show();
+    return numberKValue + 'k';    
+  }
+
+  formatLabelK = (value: number): string => {
+    if (value <= 8) {
+      this.useCaseTooltip = 'PAGES.INSIGHT.USE_CASE.TOOLTIP_4';
+    } else if (value <= 64) {  
+      this.useCaseTooltip = 'PAGES.INSIGHT.USE_CASE.TOOLTIP_5';
+    } else {
+      this.useCaseTooltip = 'PAGES.INSIGHT.USE_CASE.TOOLTIP_6';
+    }
+    this.titleTip?.show();
+    return value + '';
   }
   
   async ngOnInit() {
@@ -202,7 +229,7 @@ export class InsightsComponent implements OnInit {
         k: isCSVUseCase ? 2048  : this.systemService.k,
         mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
         // numCtx: !me.cloud ? me.context_length: undefined,
-        numCtx: isCSVUseCase ? 32000 : this.systemService.numCtx,        
+        numCtx: isCSVUseCase ? 32000 : this.ollamaService.isCloud() ? undefined : this.systemService.numCtx,
         fileNames: this.systemService.ragFiles.map(e => e.name.replace(/\\/g, '/').replace(/\/\//g, '/'))        
       };
       

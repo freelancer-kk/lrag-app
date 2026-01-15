@@ -45,7 +45,7 @@ export class SystemService {
   overlap: number = 48;
   filter: string | undefined = undefined;
   k: number = 8;
-  numCtx: number = 2048;
+  numCtx: number = 4096;
   separator: string = ';';
   useSemantic: boolean = false;
   useQuantum: boolean = false;

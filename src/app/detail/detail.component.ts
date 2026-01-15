@@ -164,6 +164,10 @@ export class DetailComponent implements OnInit {
     });
   }
 
+  kTokens = (k: number): string => {
+    return Math.round((k ? k : 1024) / 1024) + 'k';
+  }
+
   writeModelToEnv = (): Promise<void> => {
     return this.commonService.setEnvValue('LLM_MODEL_NAME', this.ollamaService.selectedModel).then((value: any) => {
       return this.commonService.setEnvValue('EMBEDDINGS_MODEL_NAME', this.ollamaService.embeddings_model).then((value: any) => {
