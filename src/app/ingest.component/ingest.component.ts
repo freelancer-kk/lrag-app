@@ -378,8 +378,14 @@ export class IngestComponent implements OnInit {
               this.systemService.ragFiles.splice(fIdx, 1);            
             }
           }
-          await this.systemService.refreshFileList(this.mediaService, true);
-          this.startIngestion();
+          await this.systemService.refreshFileList(this.mediaService, true).then((values: any[]) => {
+            console.log('refreshed ragFiles:', this.systemService.ragFiles);
+            if (this.systemService.ragFiles.length > 0) {
+              this.startIngestion();
+            } else {
+              this.mediaService.deleteIndex();
+            }
+          });
         }
         this.systemService.selectedDocuments.setValue('');
       });    
@@ -408,7 +414,14 @@ export class IngestComponent implements OnInit {
             this.systemService.ragFiles.splice(fIdx, 1);
           }
         }
-        await this.systemService.refreshFileList(this.mediaService, true);
+        await this.systemService.refreshFileList(this.mediaService, true).then((values: any[]) => {
+            console.log('refreshed ragFiles:', this.systemService.ragFiles);
+            if (this.systemService.ragFiles.length > 0) {
+              this.startIngestion();
+            } else {
+              this.mediaService.deleteIndex();
+            }
+          });
         /*
         // NOT REQUIRED since we filter for only selected documents
         if (this.systemService.ragFiles.length > 0) {
