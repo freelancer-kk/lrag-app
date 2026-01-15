@@ -180,6 +180,8 @@ export class InsightsComponent implements OnInit {
       const question: string = this.systemService.question;
       this.systemService.question = '';            
 
+      const me: any = this.ollamaService.getModelByName(this.ollamaService.selectedModel);
+
       const options: any = {
         baseUrl: this.ollamaService.isCloud() ? "https://ollama.com": "http://localhost:11434",
         useDocContext: this.ollamaService.useDocContext,
@@ -199,14 +201,11 @@ export class InsightsComponent implements OnInit {
         think: this.ollamaService.getThinkingForModel(this.ollamaService.selectedModel),
         k: isCSVUseCase ? 2048  : this.systemService.k,
         mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
-        numCtx: isCSVUseCase ? 32000 : this.systemService.numCtx,
+        // numCtx: !me.cloud ? me.context_length: undefined,
+        numCtx: isCSVUseCase ? 32000 : this.systemService.numCtx,        
         fileNames: this.systemService.ragFiles.map(e => e.name.replace(/\\/g, '/').replace(/\/\//g, '/'))        
       };
-      if (this.ollamaService.selectedModel.toLowerCase().includes('qwen')) {
-        if (this.systemService.numCtx < 16000) {
-          options.numCtx = 16000;
-        }
-      }
+      
       if (this.systemService.filter) {
         options.filter = this.systemService.filter;
       }

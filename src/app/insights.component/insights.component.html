@@ -52,7 +52,26 @@
     }
   </mat-form-field>
 }
-</div>     
+</div>
+@if (ollamaService.useDocContext) {
+  <div class="onerow">
+    <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
+    <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete>
+      <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
+    </mat-slider>
+    <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.k = 4">      
+      <mat-icon>replay</mat-icon>
+    </button>
+    <span class="spacer"></span>
+    <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
+    <mat-slider [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" min="2048" [max]="ollamaService.getContextLength(ollamaService.selectedModel)" step="64" showTickMarks discrete>
+      <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
+    </mat-slider>
+    <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" (click)="systemService.numCtx = 2048">
+      <mat-icon>replay</mat-icon>
+    </button>
+  </div>  
+}
 <div #chatDiv id="chatDiv" class="bottom-div">
 @if (overallStatus === EStatus.running_healthy) {
   <div class="full-width-height">

@@ -8,28 +8,6 @@
         {{ 'PAGES.INSIGHT.SEARCH' | translate }}
       </mat-panel-description>
       </mat-expansion-panel-header>
-      @if (settingsService.isActivePro()) {
-        <div class="onerow">
-          <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-          <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="8" max="2048" step="1" showTickMarks discrete>
-            <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
-          </mat-slider>
-          <span class="spacer"></span>
-          <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.k = 8">
-            {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
-          </button>
-        </div>
-        <div class="onerow">
-          <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
-          <mat-slider [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" min="2048" max="32000" step="64" showTickMarks discrete>
-            <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
-          </mat-slider>
-          <span class="spacer"></span>
-          <button [disabled]="overallStatus !== EStatus.running_healthy ||insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.numCtx = 2048">
-            {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
-          </button>
-        </div>
-      }
       <div class="onerow">
         <mat-form-field class="half-width">
           <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>

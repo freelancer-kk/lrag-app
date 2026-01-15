@@ -5,6 +5,7 @@
     "thinking": false,
     "cloud": false,
     "memory": 1,
+    "input": "Text",
     "description": "embeddingGemma is a 300M parameter embedding model from Google"
   },
   {
@@ -13,6 +14,7 @@
     "thinking": false,
     "cloud": false,
     "memory": 1,
+    "input": "Text",
     "description": "nomic-embed-text-v2-moe is a multilingual MoE text embedding model that excels at multilingual retrieval. It supports 100+ languages with strong performance across all supported languages."
   },
   {
@@ -21,6 +23,7 @@
     "thinking": false,
     "cloud": false,
     "memory": 1,
+    "input": "Text",
     "description": "FlagEmbedding can map any text to a low-dimensional dense vector which can be used for tasks like retrieval, classification, clustering, or semantic search. And it also can be used in vector databases for LLMs."
   }
 ]

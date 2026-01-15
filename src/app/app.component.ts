@@ -502,7 +502,9 @@ export class AppComponent implements OnInit {
           case 'ollama-pull-done': {
             this.ngZone.run(() => {
               this.systemService.modelStatus.update(EStatus.running);
-              this.ollamaService.getAvailableLLMs();
+              this.ollamaService.getAvailableLLMs().then(() => {
+                this.ollamaService.getAllModelDetails();
+              })
             })            
           }
           break;
@@ -657,6 +659,7 @@ export class AppComponent implements OnInit {
         if (ollamaService.servicePID === -1) {
           this.ollamaService.findProcess();
         }
+        console.log('models:', this.ollamaService.availableModels);        
         this.navigateAway();
       }
     })
@@ -755,8 +758,10 @@ export class AppComponent implements OnInit {
 
   pullModelsIfNecessary = async () => {
     try {
-      await this.ollamaService.getAvailableLLMs();      
-      console.log('available models:', this.ollamaService.availableModels);
+      await this.ollamaService.getAvailableLLMs().then(() => {
+        this.ollamaService.getAllModelDetails();
+      })    
+      // console.log('available models:', this.ollamaService.availableModels);
       if (this.ollamaService.selectedModel === '') {
         await this.commonService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {
           console.log('environment check model llm:', value);

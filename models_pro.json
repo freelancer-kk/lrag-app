@@ -5,6 +5,7 @@
     "thinking": false,
     "cloud": false,
     "memory": 1,
+    "input": "Text",
     "description": "The current, most capable model that runs on a single GPU"
   },
   {
@@ -13,6 +14,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 2,
+    "input": "Text",
     "description": "The IBM Granite 2B and 8B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
   },
   {
@@ -21,6 +23,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 2,
+    "input": "Text,Image",
     "description": "The most powerful vision-language model in the Qwen model family to date. It excels in understanding and generating content that combines both text and images"
   },
   {
@@ -29,6 +32,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 3,
+    "input": "Text",
     "description": "A commercial-friendly small language model by NVIDIA optimized for roleplay, RAG QA, and function calling"
   },
   {
@@ -37,6 +41,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 5,
+    "input": "Text",
     "description": "A model from NVIDIA based on Llama 3 that excels at conversational question answering (QA) and retrieval-augmented generation (RAG)"
   },
   {
@@ -45,6 +50,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 8,
+    "input": "Text,Image",
     "description": "The most powerful vision-language model in the Qwen model family to date. It excels in understanding and generating content that combines both text and images"
   },
   {
@@ -53,6 +59,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 8,
+    "input": "Text,Image",
     "description": "The current, most capable model that runs on a single GPU"
   },
   {
@@ -61,6 +68,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 10,
+    "input": "Text",
     "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
   },
   {
@@ -69,6 +77,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 32,
+    "input": "Text",
     "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
   },
   {
@@ -77,6 +86,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 9,
+    "input": "Text",
     "description": "Fine-tuned Llama 2 model to answer medical questions based on an open source medical dataset"
   },
   {
@@ -85,6 +95,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 18,
+    "input": "Text",
     "description": "Finance-Llama-8B is a fine-tuned Llama 3.1 8B model trained on 500k examples for tasks like QA, reasoning, sentiment, and NER. It supports multi-turn dialogue and is ideal for financial assistants"
   },
   {
@@ -93,6 +104,7 @@
     "thinking": true,
     "cloud": false,
     "memory": 9,
+    "input": "Text",
     "description": "Large instructional language model suitable for the legal field"
   },
   {
@@ -101,6 +113,7 @@
     "thinking": true,
     "cloud": true,
     "memory": 4,
+    "input": "Text",
     "description": "Kimi K2 Thinking, Moonshot AI's best open-source thinking model"
   },
   {
@@ -109,6 +122,16 @@
     "thinking": true,
     "cloud": true,
     "memory": 4,
-    "description": "DeepSeek-V3.1-Terminus is a hybrid model that supports both thinking mode and non-thinking mode"
+    "input": "Text",
+    "description": "DeepSeek-V3.1-Terminus is a hybrid model that supports both thinking mode and non-thinking model"
+  },
+  {
+    "value": "qwen3-vl:235b-cloud",
+    "viewValue": "qwen3-vl:235b-cloud (~)",
+    "thinking": true,
+    "cloud": true,
+    "memory": 4,
+    "input": "Text,Image",
+    "description": "Qwen3-VL is the most powerful vision-language model in the Qwen family to date. It excels in understanding and generating content that combines both text and images"
   }
 ]

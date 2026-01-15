@@ -5,6 +5,7 @@
     "thinking": false,
     "cloud": false,
     "memory": 1,
+    "input": "Text",
     "description": "embeddingGemma is a 300M parameter embedding model from Google"
   }
 ]

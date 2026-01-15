@@ -74,7 +74,7 @@ export class CommonService {
   commandService = (id = 90, serviceName: string, command: string, options: any = {}): Promise<any> => {
     return new Promise((resolve, reject) => { 
       this.bridgeService.service(id, serviceName, command, options, async (data: any) => {
-        console.log('service command response:', command, options, data);
+        // console.log('service command response:', command, options, data);
         resolve(data);
       });
     });
