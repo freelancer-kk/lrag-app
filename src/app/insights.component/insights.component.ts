@@ -82,6 +82,7 @@ export class InsightsComponent implements OnInit {
   isSettingsOpen = false;
   breakpoint: number = 4;
   useCaseTooltip: string = '';
+  showTip: boolean = false;
 
   EStatus: typeof EStatus = EStatus;
   
@@ -144,6 +145,14 @@ export class InsightsComponent implements OnInit {
     this.breakpoint = Math.floor(event.target.innerWidth / 300);
   }
 
+  onFocusTip = () => {
+    this.showTip = true;
+  }
+
+  onBlurTip = () => {
+    this.showTip = false;
+  }
+
   formatLabel = (value: number): string => {
     const numberKValue: number = Math.round(value / 1024);
     if (numberKValue <= 8) {
@@ -153,7 +162,9 @@ export class InsightsComponent implements OnInit {
     } else {
       this.useCaseTooltip = 'PAGES.INSIGHT.USE_CASE.TOOLTIP_3';
     }
-    this.titleTip?.show();
+    if (this.showTip) {
+      this.titleTip?.show();
+    }
     return numberKValue + 'k';    
   }
 
@@ -165,7 +176,9 @@ export class InsightsComponent implements OnInit {
     } else {
       this.useCaseTooltip = 'PAGES.INSIGHT.USE_CASE.TOOLTIP_6';
     }
-    this.titleTip?.show();
+    if (this.showTip) {
+      this.titleTip?.show();
+    }
     return value + '';
   }
   
@@ -427,7 +440,7 @@ export class InsightsComponent implements OnInit {
       console.log(`Ingest result: ${result}`);
       if (!result) {
         this.ollamaService.useDocContext = false;
-      }
+      }      
     });    
   }
 

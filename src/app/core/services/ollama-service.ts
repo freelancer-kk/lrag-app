@@ -289,7 +289,11 @@ export class OllamaService {
           console.error(ne);
           this.availableModels[index].context_length = 4096;
         }
-        this.models.find((m: any) => m.value === modelEntry.name).context_length = this.availableModels[index].context_length;
+        try {
+          this.models.find((m: any) => m.value === modelEntry.name).context_length = this.availableModels[index].context_length;
+        } catch (ne2) {
+          console.error(ne2);
+        }
         // console.log('getAllModelDetails:model_info:', modelEntry.name, modelDetails.model_info);
       }
     )});

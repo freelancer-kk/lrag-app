@@ -156,7 +156,7 @@ export class SystemService {
   saveInsightSettings = () => {
     localStorage.setItem('insight-settings', JSON.stringify({
       k: this.k,
-      filter: this.filter,
+//      filter: this.filter,
       numCtx: this.numCtx,
       ragPrompt: this.ragPrompt,
       userPrompt: this.userPrompt

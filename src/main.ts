@@ -59,7 +59,7 @@ bootstrapApplication(AppComponent, {
 
         const insightSettingsStr: string | null = localStorage.getItem('insight-settings');
         systemService.k = insightSettingsStr ? JSON.parse(insightSettingsStr).k : 4;
-        systemService.filter = insightSettingsStr ? JSON.parse(insightSettingsStr).filter : undefined;
+        // systemService.filter = insightSettingsStr ? JSON.parse(insightSettingsStr).filter : undefined;
         systemService.numCtx = insightSettingsStr ? JSON.parse(insightSettingsStr).numCtx : undefined;
         systemService.ragPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).ragPrompt : undefined;
         systemService.userPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).userPrompt : undefined;

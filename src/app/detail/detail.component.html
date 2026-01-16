@@ -19,7 +19,7 @@
       <mat-label>{{ 'PAGES.DETAIL.MODEL_SELECT' | translate }}</mat-label>
       <mat-select [disabled]="overallStatus !== EStatus.running_healthy" [(value)]="ollamaService.selectedModel" (selectionChange)="modelChange($event, 0)">
         @for (entry of ollamaService.models; track $index) {
-          <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4) && !entry.cloud" [value]="entry.value">{{ entry.viewValue }} - max context {{ this.kTokens(entry.context_length) }} tokens</mat-option>
+          <mat-option [matTooltip]="entry.description" [disabled]="entry.memory > (systemService.totalMainMemory-4) && !entry.cloud" [value]="entry.value">{{ entry.viewValue }}</mat-option>
         }
       </mat-select>
     </mat-form-field>      
@@ -112,7 +112,7 @@
       <table mat-table class="model_table">
         <tr mat-header-row>
           <td class="underline" mat-col>
-            {{ 'PAGES.DETAIL.MODEL_NAME' | translate }}            
+            {{ 'PAGES.DETAIL.MODEL_NAME' | translate }}       
           </td>
           <td class="underline" mat-col>
             @if (
@@ -127,6 +127,9 @@
           <td class="underline" mat-col>
             {{ 'PAGES.DETAIL.MODEL_SIZE' | translate }}
           </td>
+          <td class="underline" mat-col>
+            {{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}
+          </td>
           @if (settingsService.isActivePro()) {      
           <td class="underline" mat-col>
             {{ 'PAGES.DETAIL.MODEL_CLOUD' | translate }}
@@ -137,9 +140,9 @@
           <tr mat-row>
             <td class="centercol" mat-col>
               <button [matTooltip]="entry.description" matButton (click)="openModelDetails($event, entry.name)">
-                {{ entry.name }}
+                {{ entry.name }} ({{ entry.input }})
               </button>
-            </td>
+            </td>            
             <td mat-col>
               @if (
                 ollamaService.status.get() === EStatus.running && 
@@ -167,6 +170,9 @@
             </td>
             <td mat-col>
               {{ entry.size ? entry.size + ' MB' : '&infin;' }}
+            </td>
+            <td mat-col>
+              {{ this.kTokens(entry.context_length) }}
             </td>
             @if (settingsService.isActivePro()) {
             <td mat-col>

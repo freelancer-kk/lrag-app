@@ -1,7 +1,7 @@
 <div class="container">
-    <div class="top-div">
+<div class="top-div">
 <mat-toolbar>
-  <h1 class="title" #titleTip="matTooltip" [matTooltip]="useCaseTooltip | translate">
+  <h1 class="title" #titleTip="matTooltip" [matTooltipDisabled]="!ollamaService.useDocContext" [matTooltip]="useCaseTooltip | translate">
     {{ (ollamaService.useDocContext ? 'PAGES.INSIGHT.MAIN_TITLE' : 'PAGES.INSIGHT.CHAT_TITLE') | translate }}
   </h1>
   <span class="spacer"></span>
@@ -22,18 +22,18 @@
     <mat-icon>note_add</mat-icon>
   </button>
   } @else {
-  <button [disabled]="isDocsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="getRemoveMsg('PAGES.INSIGHT.DOC_REMOVE_CONTEXT_TIP' | translate)" matIconButton (click)="ollamaService.useDocContext = false">
+  <button [disabled]="isDocsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="getRemoveMsg('PAGES.INSIGHT.DOC_REMOVE_CONTEXT_TIP' | translate)" matIconButton (click)="systemService.filter = ''; ollamaService.useDocContext = false">
     <mat-icon>folder_delete</mat-icon>
-  </button>
-  }
-  @if (ollamaService.useDocContext || !ollamaService.useTesseractJS) {
-  <button [disabled]="isSettingsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_SETTINGS_TIP' | translate" matIconButton (click)="openSettings($event)">
-    <mat-icon>settings</mat-icon>
   </button>
   }
   <button #modelTip="matTooltip" [disabled]="isModelOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_MANAGE_TIP' | translate" matIconButton (click)="manageModel($event)">
     <mat-icon>psychology</mat-icon>
-  </button>  
+  </button>
+  @if ((ollamaService.useDocContext || !ollamaService.useTesseractJS) && settingsService.isActivePro()) {
+  <button [disabled]="isSettingsOpen || overallStatus !== EStatus.running_healthy || insightStatus !== EStatus.not_running" [matTooltip]="'PAGES.INSIGHT.MODEL_SETTINGS_TIP' | translate" matIconButton (click)="openSettings($event)">
+    <mat-icon>adjust</mat-icon>
+  </button>
+  }  
   @if (ollamaService.chatHistory.length>0) {                  
     <button #historyTip="matTooltip" [disabled]="insightStatus === EStatus.thinking" [matTooltip]="'PAGES.INSIGHT.CLEAR_HISTORY_TIP' | translate" matIconButton (click)="this.ollamaService.resetChatHistory()">
       <mat-icon>playlist_remove</mat-icon>
@@ -54,23 +54,46 @@
 }
 </div>
 @if (ollamaService.useDocContext) {
-  <div class="onerow">
-    <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-    <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete [displayWith]="formatLabelK">
-      <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k">
-    </mat-slider>
-    <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.k = 4">      
-      <mat-icon>replay</mat-icon>
-    </button>
+  <mat-accordion>
+      <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+      <mat-panel-title><mat-icon>settings</mat-icon></mat-panel-title>
+      <mat-panel-description>
+        {{ 'PAGES.INSIGHT.SEARCH' | translate }}
+      </mat-panel-description>
+      </mat-expansion-panel-header>
+  <div class="smallonerow">
+    <div class="vertrow">
+      <div class="onerow">
+        <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
+        <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete [displayWith]="formatLabelK">
+          <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k" (focus)="onFocusTip()" (blur)="onBlurTip()">
+        </mat-slider>
+        <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.k = 4">      
+          <mat-icon>replay</mat-icon>
+        </button>
+      </div>
+      <div class="onerow">
+        <mat-form-field class="small-width">
+          <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>
+          <input matInput [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.filter">
+        </mat-form-field>
+        <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.filter = undefined">
+          <mat-icon>replay</mat-icon>
+        </button>
+      </div>
+    </div>    
     <span class="spacer"></span>
     <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
     <mat-slider [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4096" [max]="ollamaService.getContextLength(ollamaService.selectedModel)" step="64" showTickMarks discrete [displayWith]="formatLabel">
-      <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx">
+      <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx" (focus)="onFocusTip()" (blur)="onBlurTip()">
     </mat-slider>
     <button matIconButton [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.numCtx = 4096">
       <mat-icon>replay</mat-icon>
     </button>
-  </div>  
+  </div>
+        </mat-expansion-panel>
+  </mat-accordion>  
 }
 <div #chatDiv id="chatDiv" class="bottom-div">
 @if (overallStatus === EStatus.running_healthy) {

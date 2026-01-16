@@ -1,5 +1,6 @@
 <mat-dialog-content> 
 <mat-accordion>
+  <!--
   @if (ollamaService.useDocContext) {  
     <mat-expansion-panel [expanded]="true">
       <mat-expansion-panel-header>
@@ -20,8 +21,9 @@
       </div>
     </mat-expansion-panel>
   }
+    -->
   @if (!ollamaService.useTesseractJS || (settingsService.isActivePro() && ollamaService.useDocContext)) {
-    <mat-expansion-panel expanded="false">
+    <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>
       <mat-panel-title>{{ 'PAGES.INSIGHT.OPTIONS' | translate }}</mat-panel-title>
       <mat-panel-description>

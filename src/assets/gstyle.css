@@ -6,6 +6,23 @@
   font-family: Roboto;
 }
 
+::ng-deep .smallonerow {
+  display: flex;
+  flex-direction: row; 
+  padding: 5px;
+  font-size: 0.7em;
+  align-items: center;
+  font-family: Roboto;
+}
+
+::ng-deep .vertrow {
+  display: flex;
+  flex-direction: column; 
+  padding: 5px;
+  align-items: center;
+  font-family: Roboto;
+}
+
 ::ng-deep .chip {
   display: flex;
   flex-direction: row;  
@@ -60,6 +77,10 @@
 
 .half-width {
   width: 50%;
+}
+
+.small-width {
+  width: 80%;
 }
 
 .vertscroll {
