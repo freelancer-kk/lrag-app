@@ -285,6 +285,7 @@ export class OllamaService {
         const archName: string = modelDetails.model_info["general.architecture"];
         try {
           this.availableModels[index].context_length = Number(modelDetails.model_info[archName + '.context_length']);
+          console.log('context-length:', modelEntry.name, this.availableModels[index].context_length);
         } catch (ne) {
           console.error(ne);
           this.availableModels[index].context_length = 4096;
