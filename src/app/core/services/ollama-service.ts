@@ -105,6 +105,7 @@ export class OllamaService {
   downloadedEmbeddedLLM: string = '';
   ocr_model: string = '';
   downloadedOCRLLM: string = '';
+  showRequests: any[] = [];
   
   gpuAcceleration: boolean = true;  
   serviceTimer: any;
@@ -279,28 +280,30 @@ export class OllamaService {
   }
 
   getAllModelDetails = (): any => {
-    this.availableModels.forEach((modelEntry: any, index: number) => {
-      this.show(modelEntry.name, index).then((modelDetails: any) => {
-        this.availableModels[index].model_info = modelDetails.model_info;
-        const archName: string = modelDetails.model_info["general.architecture"];
-        try {
-          this.availableModels[index].context_length = Number(modelDetails.model_info[archName + '.context_length']);
-          console.log('context-length:', modelEntry.name, this.availableModels[index].context_length);
-        } catch (ne) {
-          console.error(ne);
-          this.availableModels[index].context_length = 4096;
-        }
-        try {
-          this.models.find((m: any) => m.value === modelEntry.name).context_length = this.availableModels[index].context_length;
-        } catch (ne2) {
-          console.error(ne2);
-        }
-        // console.log('getAllModelDetails:model_info:', modelEntry.name, modelDetails.model_info);
+    this.availableModels.sort((a: any, b: any) => a.name.localeCompare(b.name)).forEach((modelEntry: any, index: number) => {
+      if (this.showRequests.findIndex(f => f === modelEntry.name) === -1) {
+        this.showRequests.push(modelEntry.name);
+        this.show(modelEntry.name, index).then((modelDetails: any) => {
+          this.availableModels[index].model_info = modelDetails.model_info;
+          const archName: string = modelDetails.model_info["general.architecture"];
+          try {
+            this.availableModels[index].context_length = Number(modelDetails.model_info[archName + '.context_length']);
+            console.log('context-length:', modelEntry.name, this.availableModels[index].context_length);
+          } catch (ne) {
+            console.error(ne);
+            this.availableModels[index].context_length = 4096;
+          }
+          try {
+            this.models.find((m: any) => m.value === modelEntry.name).context_length = this.availableModels[index].context_length;
+          } catch (ne2) {
+            console.error(ne2);
+          }
+          // console.log('getAllModelDetails:model_info:', modelEntry.name, modelDetails.model_info);
+        });
       }
-    )});
+    })
   }   
   
-
   filteredAvailableModels = (): any[] => {
     return this.availableModels.filter(v => (v.modelType === 'llm'));
   }

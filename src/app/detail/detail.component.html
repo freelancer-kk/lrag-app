@@ -119,7 +119,7 @@
                 ollamaService.status.get() === EStatus.running && 
                 systemService.modelStatus.get() === EStatus.running
               ) {
-            <button [matTooltip]="'PAGES.DETAIL.REFRESH_LLM_TIP' | translate" matButton (click)="updateAllModels($event)">
+            <button [matTooltip]="'PAGES.DETAIL.REFRESH_LLM_TIP' | translate" matIconButton (click)="updateAllModels($event)">
               <mat-icon class="warning">refresh</mat-icon>
             </button>
             }
@@ -148,7 +148,7 @@
                 ollamaService.status.get() === EStatus.running && 
                 systemService.modelStatus.get() === EStatus.running
               ) {
-              <button matButton (click)="updateModel($event, entry.name)">
+              <button matIconButton (click)="updateModel($event, entry.name)">
                 <mat-icon class="warning">refresh</mat-icon>
               </button>
               }
@@ -158,12 +158,11 @@
                 !entry.name.startsWith('embedding') &&
                 !entry.name.startsWith('gemma3:1b') &&
                 !entry.name.startsWith('granite3.2-vision') &&
-                !entry.name.startsWith('') &&
                 entry.name !== ollamaService.selectedModel &&
                 entry.name !== ollamaService.embeddings_model &&
                 entry.name !== ollamaService.ocr_model
               ) {
-                <button matButton (click)="removeModel($event, $index)">
+                <button matIconButton (click)="removeModel($event, $index)">
                   <mat-icon class="danger">cancel</mat-icon>
                 </button>
               }              
