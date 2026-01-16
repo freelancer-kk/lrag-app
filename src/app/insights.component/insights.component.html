@@ -85,7 +85,7 @@
     </div>    
     <span class="spacer"></span>
     <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
-    <mat-slider [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4096" [max]="ollamaService.getContextLength(ollamaService.selectedModel)" step="64" showTickMarks discrete [displayWith]="formatLabel">
+    <mat-slider [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4096" [max]="this.getMaxContextTokens()" step="64" showTickMarks discrete [displayWith]="formatLabel">
       <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx" (focus)="onFocusTip()" (blur)="onBlurTip()">
     </mat-slider>
     <button matIconButton [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.numCtx = 4096">

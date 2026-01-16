@@ -57,6 +57,7 @@ export class SystemService {
   userPrompt: string | undefined = undefined;
   ocrPrompt: string | undefined = undefined;
   ocr_num_ctx: number | undefined = undefined;
+  max_ctx_tokens: number = 4096;
   
   currentState!: ConnectionState;
   subscription = new Subscription();
@@ -291,6 +292,14 @@ export class SystemService {
         });
       });
     })    
+  }
+
+  setMaxCtxTokens = (model_weight_size: number): void => {
+    console.log('setting max_ctx_tokens with model weight size:', this.gpu.vram, this.totalMainMemory, model_weight_size/1024);
+    const availableMem: number = this.gpu.vram + this.totalMainMemory - 3 - (model_weight_size / 1024);
+    // const availableMem: number = 8 - 2 - (model_weight_size / 1024);
+    const kv_cost_per_token_gb: number = 0.0005; // 0.5 MB per 1000 tokens
+    this.max_ctx_tokens = Math.floor(availableMem / kv_cost_per_token_gb);    
   }
 
   getVram = (): number => {

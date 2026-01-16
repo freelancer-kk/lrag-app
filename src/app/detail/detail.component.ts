@@ -191,6 +191,11 @@ export class DetailComponent implements OnInit {
     })
   };
 
+  setCtx = async () => {
+    this.systemService.setMaxCtxTokens(this.ollamaService.getModelByName(this.ollamaService.selectedModel).size);
+    console.log('max_ctx_tokens set to:', this.systemService.max_ctx_tokens);
+  }
+
   modelChange = async (event: any, mtype: number) => {
     // Check if model has been already downloaded
     const fIdx: number = this.ollamaService.availableModels.findIndex(
@@ -224,10 +229,12 @@ export class DetailComponent implements OnInit {
             this.ollamaService.downloadedLLM = (
               mtype === 0 ? this.ollamaService.selectedModel : mtype === 1 ? this.ollamaService.embeddings_model : this.ollamaService.ocr_model
             );
+            this.setCtx();
           } else {
             console.log('reverting:', this.ollamaService.downloadedLLM);
             if (mtype === 0) {
               this.ollamaService.selectedModel = this.ollamaService.downloadedLLM;
+              this.setCtx();
             } if (mtype === 1) {
               this.ollamaService.embeddings_model = this.ollamaService.downloadedEmbeddedLLM;
             } else {
@@ -239,6 +246,7 @@ export class DetailComponent implements OnInit {
         if (mtype === 0) {
           setTimeout(() => {
             this.ollamaService.selectedModel = this.ollamaService.downloadedLLM;
+            this.setCtx();
           }, 500);
         } if (mtype === 1) {
           this.ollamaService.embeddings_model = this.ollamaService.downloadedEmbeddedLLM;
@@ -250,6 +258,7 @@ export class DetailComponent implements OnInit {
       await this.writeModelToEnv();      
       if (mtype === 0) {
         this.ollamaService.downloadedLLM = this.ollamaService.selectedModel;
+        this.setCtx();
       } if (mtype === 1) {
         this.ollamaService.downloadedEmbeddedLLM = this.ollamaService.embeddings_model;
       } else {
