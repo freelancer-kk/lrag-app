@@ -248,7 +248,7 @@
       "LLM_ERROR": "Konversationskette fehlgeschlagen ...",
       "RUNNING_TIP": "Abhängig von Ihrem PC variiert die Verarbeitungszeit für Ihre Frage",
       "OPTIONS": "Optionen",
-      "SEARCH": "Genauigkeitseinstellungen",
+      "SEARCH": "Leistungs-/Genauigkeitseinstellungen",
       "PROMPT_OPTS": "OCR und Eingabeaufforderung bezogen",
       "K_SIZE": "Anzahl der Ergebnisse",
       "K_SIZE_TIP": "Um eine Frage zu beantworten, möchten Sie in der Regel die Top 4 -Ergebnisse aus Ihren Dokumenten vornehmen. In bestimmten Fällen müssen Sie jedoch möglicherweise diesen Wert ändern, z. B. während der Analyse einer großen Anzahl von Transaktionen",

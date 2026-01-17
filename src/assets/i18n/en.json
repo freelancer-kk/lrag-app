@@ -248,7 +248,7 @@
         "LLM_ERROR": "Conversational chain failed ...",
         "RUNNING_TIP": "Depending on your PC the processing time for your question will vary",
         "OPTIONS": "Options",
-        "SEARCH": "Accuracy Settings",
+        "SEARCH": "Performance/Accuracy Settings",
         "PROMPT_OPTS":"OCR & Prompt related",
         "K_SIZE": "No. of results",
         "K_SIZE_TIP": "To answer a question, typically you would want to find the top 4 results from your documents. However in certain cases you may need to increase this value e.g during analysis of a large number of transactions or finding a large list of items. Increasing this value will increase the processing time and may reduce accuracy",
