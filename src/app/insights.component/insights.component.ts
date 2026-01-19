@@ -192,8 +192,8 @@ export class InsightsComponent implements OnInit {
     console.log('selected:', selectedCollection);
     this.systemService.selectedCollections.setValue(selectedCollection);
     await this.systemService.refreshFileList(this.mediaService);
-    this.systemService.setMaxCtxTokens(this.ollamaService.getModelByName(this.ollamaService.selectedModel).size);
-    console.log('max_ctx_tokens set to:', this.systemService.max_ctx_tokens);
+    this.systemService.setMaxCtxTokens(this.ollamaService.getModelByName(this.ollamaService.selectedModel).size, this.ollamaService.getModelByName(this.ollamaService.selectedModel).parameter_count);
+    console.log('max_ctx_tokens set to:', this.systemService.slow_max_ctx_tokens, this.systemService.fast_max_ctx_tokens);
   }
 
   check = () => {
@@ -209,7 +209,7 @@ export class InsightsComponent implements OnInit {
   
   getMaxContextTokens = (): number => {
     const llmCtxLength: number = this.ollamaService.getContextLength(this.ollamaService.selectedModel);
-    return llmCtxLength > this.systemService.max_ctx_tokens ? this.systemService.max_ctx_tokens : llmCtxLength;
+    return llmCtxLength > this.systemService.fast_max_ctx_tokens ? this.systemService.fast_max_ctx_tokens : llmCtxLength;
   }
 
   clearHistory = () => {

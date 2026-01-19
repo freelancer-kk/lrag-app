@@ -273,9 +273,9 @@ export class OllamaService {
   getContextLength = (modelName: string): number => {
     const modelEntry: any = this.availableModels.find(m => m.name === modelName);
     if (modelEntry && modelEntry.context_length) {
-      return modelEntry.context_length > 32000 ? 32000 : modelEntry.context_length;
+      return modelEntry.context_length;
     } else {
-      return 2048; // Default
+      return 4096; // Default
     }
   }
 
@@ -286,9 +286,11 @@ export class OllamaService {
         this.show(modelEntry.name, index).then((modelDetails: any) => {
           this.availableModels[index].model_info = modelDetails.model_info;
           const archName: string = modelDetails.model_info["general.architecture"];
+          const parameterCount: number = modelDetails.model_info["general.parameter_count"];
           try {
             this.availableModels[index].context_length = Number(modelDetails.model_info[archName + '.context_length']);
-            console.log('context-length:', modelEntry.name, this.availableModels[index].context_length);
+            this.availableModels[index].parameter_count = parameterCount;
+            console.log('context-length:', modelEntry.name, this.availableModels[index].context_length, parameterCount);
           } catch (ne) {
             console.error(ne);
             this.availableModels[index].context_length = 4096;

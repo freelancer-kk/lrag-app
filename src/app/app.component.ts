@@ -739,8 +739,8 @@ export class AppComponent implements OnInit {
       /*
       * Comment out since only necessary for reload
       */
-      // this.ollamaService.startOnTimer();
-      // this.rerankerService.startIfNecessary();          
+      this.ollamaService.startOnTimer();
+      this.rerankerService.startIfNecessary();          
     }, 400)   
   }
 

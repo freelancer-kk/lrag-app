@@ -192,8 +192,8 @@ export class DetailComponent implements OnInit {
   };
 
   setCtx = async () => {
-    this.systemService.setMaxCtxTokens(this.ollamaService.getModelByName(this.ollamaService.selectedModel).size);
-    console.log('max_ctx_tokens set to:', this.systemService.max_ctx_tokens);
+    this.systemService.setMaxCtxTokens(this.ollamaService.getModelByName(this.ollamaService.selectedModel).size, this.ollamaService.getModelByName(this.ollamaService.selectedModel).parameter_count);
+    console.log('max_ctx_tokens set to:', this.systemService.slow_max_ctx_tokens, this.systemService.fast_max_ctx_tokens);
   }
 
   modelChange = async (event: any, mtype: number) => {

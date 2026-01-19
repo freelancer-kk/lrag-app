@@ -254,7 +254,7 @@
         "K_SIZE_TIP": "To answer a question, typically you would want to find the top 4 results from your documents. However in certain cases you may need to increase this value e.g during analysis of a large number of transactions or finding a large list of items. Increasing this value will increase the processing time and may reduce accuracy",
         "FILTER": "Filter",
         "FILTER_TIP": "Models cannot process large volumes of data as part of their context: Use a filter to limit the results for analysis for accuracy",
-        "CONTEXT_SIZE": "Input Size (Tokens)",
+        "CONTEXT_SIZE": "Input/Output Size (Tokens)",
         "CONTEXT_SIZE_TIP": "The context size depends on your PC GPU/VRAM. Larger context sizes allow for more data to be processed but require more powerful hardware. Adjust according to your PC capabilities. If you find results are missing this could be due to a too small context size. Maximum context sizes are also model dependant. Use a model with larger max context size if necessary. Cloud models typically have much larger context sizes",
         "FILTER_REQUIRED": "Your use case is CSV with potentially a high transaction volume, you must specify a filter under options"        ,
         "COPY_CONTENT": "Copied content to clipboard",

@@ -57,7 +57,8 @@ export class SystemService {
   userPrompt: string | undefined = undefined;
   ocrPrompt: string | undefined = undefined;
   ocr_num_ctx: number | undefined = undefined;
-  max_ctx_tokens: number = 4096;
+  slow_max_ctx_tokens: number = 4096;
+  fast_max_ctx_tokens: number = 4096;
   
   currentState!: ConnectionState;
   subscription = new Subscription();
@@ -294,12 +295,15 @@ export class SystemService {
     })    
   }
 
-  setMaxCtxTokens = (model_weight_size: number): void => {
-    console.log('setting max_ctx_tokens with model weight size:', this.gpu.vram, this.totalMainMemory, model_weight_size/1024);
-    const availableMem: number = this.gpu.vram + this.totalMainMemory - 3 - (model_weight_size / 1024);
-    // const availableMem: number = 8 - 2 - (model_weight_size / 1024);
-    const kv_cost_per_token_gb: number = 0.0005; // 0.5 MB per 1000 tokens
-    this.max_ctx_tokens = Math.floor(availableMem / kv_cost_per_token_gb);    
+  setMaxCtxTokens = (sizeMB: number, parameter_count: number): void => {  
+    const availableMem: number = this.gpu.vram + this.totalMainMemory - 3.5 - (sizeMB / 1024);    
+    let kv_cost_per_ktoken_gb: number = 0.3; // 0.3 GB per 1000 tokens (>12B model)
+    if (parameter_count <= 9000000000) {
+      kv_cost_per_ktoken_gb = 0.2; // 0.2 GB per 1000 tokens (<9B model)
+    }
+    console.log('setting max_ctx_tokens with model weight size:', this.gpu.vram, this.totalMainMemory, sizeMB, parameter_count, 'availableMem', availableMem);
+    this.slow_max_ctx_tokens = Math.floor(availableMem / kv_cost_per_ktoken_gb) * 1000;
+    this.fast_max_ctx_tokens = Math.floor((this.gpu.vram - sizeMB/1024 - 0.5) / kv_cost_per_ktoken_gb) * 1000;
   }
 
   getVram = (): number => {
