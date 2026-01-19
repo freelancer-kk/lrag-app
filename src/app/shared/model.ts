@@ -74,16 +74,10 @@ export interface IChat {
   docSources: string[]
 }
 
-export interface IGenInfo {
-  model: string,
-  created_at: number,
-  done: boolean,
-  total_duration: number,
-  load_duration: number,
-  prompt_eval_count: number,
-  prompt_eval_duration: number,
-  eval_count: number,
-  eval_duration: number
+export interface ITokenUsage {
+  completionTokens: number,
+  promptTokens: number,
+  totalTokens: number
 }
 
 export const connOptions: ConnectionServiceOptions = {
@@ -95,6 +89,7 @@ export const connOptions: ConnectionServiceOptions = {
 export interface IHistory {
   id: string,
   when: Date,
+  duration: number
   question: string,
   answer: string,
   docContext: boolean,
@@ -120,7 +115,7 @@ export interface IHistory {
   }
   q_expanded: boolean,
   a_expanded: boolean,  
-  genInfo?: IGenInfo,
+  genInfo?: ITokenUsage,
   assessment: number
 }
 

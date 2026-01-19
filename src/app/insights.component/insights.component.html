@@ -42,7 +42,7 @@
 </mat-toolbar>
 @if (overallStatus === EStatus.running_healthy) {
   <mat-form-field class="full-width">
-    <mat-label>{{ 'PAGES.INSIGHT.QUESTION' | translate }}</mat-label>
+    <mat-label>{{ duration > 0 ? ('PAGES.INSIGHT.DURATION' | translate) + ' ' + (duration / 1000).toFixed(0) + 's' : ('PAGES.INSIGHT.QUESTION' | translate) }}</mat-label>
     <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize"
     [disabled]="insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.question">{{ systemService.question }}</textarea>
     @if (systemService.question && systemService.question.length>0 && insightStatus !== EStatus.thinking) {

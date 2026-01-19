@@ -202,7 +202,7 @@ export default class ContextChat {
           }, {
             callbacks: [
               {
-                handleLLMEnd(output) {
+                handleChainEnd(output) {
                   // log.info('handleLLMEnd:', JSON.stringify(output, null, 2));
                   ref.emit({ type: 'chat-chunk-metadata', data: output });
                 },

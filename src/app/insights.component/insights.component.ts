@@ -2,7 +2,7 @@ import { Component, NgZone, OnInit, effect, inject, ViewChild, Injector, afterNe
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { SystemService } from '../core/services/system/system.service';
-import { EStatus, EWho, IGenInfo } from '../shared/model';
+import { EStatus, EWho, ITokenUsage } from '../shared/model';
 import {MatInputModule} from '@angular/material/input';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
@@ -74,7 +74,7 @@ export class InsightsComponent implements OnInit {
   modelUsage: string = '';
   streaming: boolean = false;
   streamedResponse: string = '';
-  generationInfo: IGenInfo | undefined;
+  generationInfo: ITokenUsage | undefined;
   overallStatus: EStatus | undefined;
   insightStatus: EStatus | undefined;
   isDocsOpen = false;
@@ -83,6 +83,7 @@ export class InsightsComponent implements OnInit {
   breakpoint: number = 4;
   useCaseTooltip: string = '';
   showTip: boolean = false;
+  duration: number = 0;
 
   EStatus: typeof EStatus = EStatus;
   
@@ -104,8 +105,8 @@ export class InsightsComponent implements OnInit {
       this.ngZone.run(() => {
         switch (type) {
           case 'chat-chunk-metadata': {
-            this.generationInfo = data.generations[0][0].generationInfo as IGenInfo;
-            console.log('generationInfo:', this.generationInfo);            
+            this.generationInfo = data.llmOutput.tokenUsage as ITokenUsage;
+            console.log('generationInfo:', this);            
           }
           break;
           case 'chat-chunk': {
@@ -268,6 +269,11 @@ export class InsightsComponent implements OnInit {
       this.systemService.insightStatus.update(EStatus.thinking);
       this.streaming = true;
       this.streamedResponse = '';
+      const startTime: number = Date.now();
+      this.duration = 0;
+      const showTimer = setInterval(() => {
+        this.duration = Date.now() - startTime;        
+      }, 2000);
       const questionTimeout = setTimeout(async () => {
         this.dialog.open(
           AlertComponent, {
@@ -280,6 +286,7 @@ export class InsightsComponent implements OnInit {
         });        
       }, 180000)
       const answerResponse: any = await this.systemService.commandInsight('question', options);
+      clearInterval(showTimer);
       clearTimeout(questionTimeout);
       const { answer, error, docSources } = answerResponse;
       this.streamedResponse = '';
@@ -297,13 +304,14 @@ export class InsightsComponent implements OnInit {
           this.ollamaService.chatHistory.push({
             id,
             who: EWho.Assistant,
-            // content: this.generationInfo ? this.reformat(answer, this.generationInfo.prompt_eval_count, this.generationInfo.eval_count) : this.reformat(answer, 0, 0),
-            content: answer,
+            content: this.generationInfo ? this.reformat(answer, this.generationInfo.promptTokens, this.generationInfo.completionTokens) : this.reformat(answer, 0, 0),
+            // content: answer,
             docSources
           });
           this.systemService.history.unshift({
             id,
-            when: new Date(),
+            when: new Date(startTime),
+            duration: this.duration,
             q_expanded: false,
             a_expanded: false,
             question,
@@ -332,6 +340,7 @@ export class InsightsComponent implements OnInit {
             genInfo: this.generationInfo,
             assessment: 0
           })
+          this.duration = 0;
           this.systemService.saveMainHistory();
           this.scrollToBottom();
 

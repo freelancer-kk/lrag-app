@@ -236,6 +236,7 @@
         "TITLE": "Chat",
         "MAIN_TITLE": "Document Chat",
         "CHAT_TITLE": "Chat",
+        "DURATION": "Duration",
         "INSIGHT_STATUS": "Chat status",
         "RESET_CONTEXT_TIP": "Improve results by limiting documents. i.e Do not mix document types, e.g. financial and medical. Using a single document is often best. You will have to remove previously embedded documents",
         "RESET_ARE_YOU_SURE": "Resetting the context will flush the model service, reload and rerun the model, this may take a minute",

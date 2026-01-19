@@ -236,6 +236,7 @@
       "TITLE": "Chatten",
       "MAIN_TITLE": "Dokumenten-Chat",
       "CHAT_TITLE": "Chat",
+      "DURATION": "Dauer",
       "INSIGHT_STATUS": "Chat status",
       "RESET_CONTEXT_TIP": "Verbessern Sie die Ergebnisse, indem Sie Dokumente einschränken. d.h. Dokumenttypen nicht mischen, z.B. finanziell und medizinisch. Oft ist es am besten, ein einzelnes Dokument zu verwenden. Sie müssen zuvor eingebettete Dokumente entfernen",
       "RESET_ARE_YOU_SURE": "Durch das Zurücksetzen des Kontexts wird der Modelldienst gespült, das Modell neu laden und erneut ausgeladen. Dies kann eine Minute dauern",
