@@ -49,14 +49,3 @@ mat-slider {
   position: relative;
   z-index: 1;
 }
-
-::ng-deep .installhint {
-  display: flex;
-  flex-direction: row; 
-  padding: 5px;
-  align-items: center;
-  color: yellow;
-  font-style: italic;
-  font-weight: bold;
-  font-size: 0.8rem;
-}
