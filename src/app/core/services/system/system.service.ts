@@ -296,7 +296,7 @@ export class SystemService {
   }
 
   setMaxCtxTokens = (sizeMB: number, parameter_count: number): void => {  
-    const availableMem: number = this.gpu.vram + this.totalMainMemory - 3.5 - (sizeMB / 1024);    
+    const availableMem: number = this.gpu.vram + this.totalMainMemory - 4 - (sizeMB / 1024);    
     let kv_cost_per_ktoken_gb: number = 0.3; // 0.3 GB per 1000 tokens (>12B model)
     if (parameter_count <= 9000000000) {
       kv_cost_per_ktoken_gb = 0.2; // 0.2 GB per 1000 tokens (<9B model)
@@ -304,6 +304,9 @@ export class SystemService {
     console.log('setting max_ctx_tokens with model weight size:', this.gpu.vram, this.totalMainMemory, sizeMB, parameter_count, 'availableMem', availableMem);
     this.slow_max_ctx_tokens = Math.floor(availableMem / kv_cost_per_ktoken_gb) * 1000;
     this.fast_max_ctx_tokens = Math.floor((this.gpu.vram - sizeMB/1024 - 0.5) / kv_cost_per_ktoken_gb) * 1000;
+    if (this.gpu.vram === 0) { 
+      this.fast_max_ctx_tokens = this.slow_max_ctx_tokens;
+    }
   }
 
   getVram = (): number => {
