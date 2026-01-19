@@ -304,7 +304,7 @@ export class SystemService {
     console.log('setting max_ctx_tokens with model weight size:', this.gpu.vram, this.totalMainMemory, sizeMB, parameter_count, 'availableMem', availableMem);
     this.slow_max_ctx_tokens = Math.floor(availableMem / kv_cost_per_ktoken_gb) * 1000;
     this.fast_max_ctx_tokens = Math.floor((this.gpu.vram - sizeMB/1024 - 0.5) / kv_cost_per_ktoken_gb) * 1000;
-    if (this.gpu.vram < 6) { 
+    if (this.gpu.vram < 4) { 
       this.fast_max_ctx_tokens = this.slow_max_ctx_tokens;
     }
   }
