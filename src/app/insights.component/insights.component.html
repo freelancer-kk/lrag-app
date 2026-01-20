@@ -1,7 +1,7 @@
 <div class="container">
 <div class="top-div">
 <mat-toolbar>
-  <h1 class="title" #titleTip="matTooltip" [matTooltipDisabled]="!ollamaService.useDocContext" [matTooltip]="useCaseTooltip | translate">
+  <h1 class="title" #titleTip="matTooltip" [matTooltipDisabled]="!showTip" [matTooltip]="useCaseTooltip | translate">
     {{ (ollamaService.useDocContext ? 'PAGES.INSIGHT.MAIN_TITLE' : 'PAGES.INSIGHT.CHAT_TITLE') | translate }}
   </h1>
   <span class="spacer"></span>
@@ -42,7 +42,7 @@
 </mat-toolbar>
 @if (overallStatus === EStatus.running_healthy) {
   <mat-form-field class="full-width">
-    <mat-label>{{ duration > 0 ? ('PAGES.INSIGHT.DURATION' | translate) + ' ' + (duration / 1000).toFixed(0) + 's' : ('PAGES.INSIGHT.QUESTION' | translate) }}</mat-label>
+    <mat-label>{{ systemService.duration > 0 ? ('PAGES.INSIGHT.DURATION' | translate) + ' ' + (systemService.duration / 1000).toFixed(0) + 's' : ('PAGES.INSIGHT.QUESTION' | translate) }}</mat-label>
     <textarea cdkTextareaAutosize #autosize="cdkTextareaAutosize"
     [disabled]="insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.question">{{ systemService.question }}</textarea>
     @if (systemService.question && systemService.question.length>0 && insightStatus !== EStatus.thinking) {
@@ -69,7 +69,7 @@
     <div class="vertrow">
       <div class="onerow">
         <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-        <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete [displayWith]="formatLabelK">
+        <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete [displayWith]="formatLabelK" (focus)="onFocusTip()" (blur)="onBlurTip()">
           <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k" (focus)="onFocusTip()" (blur)="onBlurTip()">
         </mat-slider>
         <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.k = 4">      
@@ -88,7 +88,7 @@
     </div>    
     <span class="spacer"></span>
     <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
-    <mat-slider [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4096" [max]="this.getMaxContextTokens()" step="64" showTickMarks discrete [displayWith]="formatLabel">
+    <mat-slider [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4096" [max]="this.getMaxContextTokens()" step="64" showTickMarks discrete [displayWith]="formatLabel" (focus)="onFocusTip()" (blur)="onBlurTip()">
       <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx" (focus)="onFocusTip()" (blur)="onBlurTip()">
     </mat-slider>
     <button matIconButton [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.numCtx = 4096">

@@ -83,8 +83,7 @@ export class InsightsComponent implements OnInit {
   breakpoint: number = 4;
   useCaseTooltip: string = '';
   showTip: boolean = false;
-  duration: number = 0;
-
+  
   EStatus: typeof EStatus = EStatus;
   
   constructor(
@@ -105,8 +104,12 @@ export class InsightsComponent implements OnInit {
       this.ngZone.run(() => {
         switch (type) {
           case 'chat-chunk-metadata': {
-            this.generationInfo = data.llmOutput.tokenUsage as ITokenUsage;
-            console.log('generationInfo:', this);            
+            // console.log('llmEndData:', data);
+            try {
+              this.generationInfo = data.llmOutput.tokenUsage as ITokenUsage;
+            } catch (e) {
+              console.error('Error parsing generation info:', e);
+            }
           }
           break;
           case 'chat-chunk': {
@@ -270,9 +273,9 @@ export class InsightsComponent implements OnInit {
       this.streaming = true;
       this.streamedResponse = '';
       const startTime: number = Date.now();
-      this.duration = 0;
+      this.systemService.duration = 0;
       const showTimer = setInterval(() => {
-        this.duration = Date.now() - startTime;        
+        this.systemService.duration = Date.now() - startTime;        
       }, 2000);
       const questionTimeout = setTimeout(async () => {
         this.dialog.open(
@@ -292,10 +295,10 @@ export class InsightsComponent implements OnInit {
       this.streamedResponse = '';
       this.streaming = false;
       this.systemService.insightStatus.update(EStatus.running);
-      console.log('answerResponse:', answerResponse);
+      // console.log('answerResponse:', answerResponse);
       try {
         if (!error) {
-          console.log('PUSHING ANSWER:', answer);
+          // console.log('PUSHING ANSWER:', answer);
           if (this.systemService.history.length === 0) {
             setTimeout(() => {
               this.modelTip?.show();
@@ -304,14 +307,14 @@ export class InsightsComponent implements OnInit {
           this.ollamaService.chatHistory.push({
             id,
             who: EWho.Assistant,
-            content: this.generationInfo ? this.reformat(answer, this.generationInfo.promptTokens, this.generationInfo.completionTokens) : this.reformat(answer, 0, 0),
+            content: this.generationInfo ? this.reformat(answer, this.generationInfo.promptTokens, this.generationInfo.completionTokens, this.systemService.duration) : this.reformat(answer, 0, 0, this.systemService.duration),
             // content: answer,
             docSources
           });
           this.systemService.history.unshift({
             id,
             when: new Date(startTime),
-            duration: this.duration,
+            duration: this.systemService.duration,
             q_expanded: false,
             a_expanded: false,
             question,
@@ -340,7 +343,7 @@ export class InsightsComponent implements OnInit {
             genInfo: this.generationInfo,
             assessment: 0
           })
-          this.duration = 0;
+          this.systemService.duration = 0;
           this.systemService.saveMainHistory();
           this.scrollToBottom();
 
@@ -368,7 +371,7 @@ export class InsightsComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustHtml(unsafe);
   }
 
-  reformat = (answer: string, input_tokens: number, output_tokens: number): string => {
+  reformat = (answer: string, input_tokens: number, output_tokens: number, duration: number): string => {
     // Look for 'answer:' and add 2 line seps
     const fIdx: number = answer.toLowerCase().indexOf('</think>');
     if (fIdx > -1) {
@@ -380,7 +383,7 @@ export class InsightsComponent implements OnInit {
       console.log('splicing answer');
       answer = answer.substring(0, fIdx1) + '<br><br>' + answer.substring(fIdx1);
     }
-    return answer + '<br><br> <small><I>tokens:' + input_tokens + ' in / ' + output_tokens + " out<I></small>";
+    return answer + '<br><br> <small><I>tokens:' + input_tokens + ' in / ' + output_tokens + ' out<I> (' + (duration / 1000).toFixed(0) +'s)</small>';
   }
 
   scrollToBottom = () => {

@@ -77,6 +77,7 @@ export class SystemService {
   register_link: string | undefined;  
 
   firstTime: boolean = true;
+  duration: number = 0;
   
   constructor(
     private bridgeService: BridgeService,
