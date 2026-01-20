@@ -4,7 +4,7 @@ import OllamaService from "./OllamaService"
 import { ChatPromptTemplate, ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
 import { StringOutputParser } from "@langchain/core/output_parsers"
 import { Document } from "@langchain/core/documents";
-import { ChatOllama, OllamaInput } from "@langchain/ollama";
+import { ChatOllama, ChatOllamaInput, OllamaInput } from "@langchain/ollama";
 import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
 import DockerEnv from './DockerEnv'
 import { AIMessageChunk } from '@langchain/core/messages'
@@ -14,10 +14,14 @@ import log from 'electron-log/main';
 import * as path from 'path';
 import { readFileSync, writeFileSync } from 'fs'
 import mime from 'mime'
+import { BaseCallbackHandler } from "@langchain/core/callbacks/base";
+import { ChainValues } from '@langchain/core/utils/types'
+import { LLMResult } from '@langchain/core/outputs'
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
 }
+
 export default class ContextChat {
   langchainService: LangchainService;
   ollamaService: OllamaService;
@@ -81,16 +85,31 @@ export default class ContextChat {
       await this.ollamaService.unloadLastUsedModel();      
       this.ollamaService.setLastUsedModel(options.model);
       
-      const ollamaOptions: OllamaInput = {
+      const ollamaOptions: ChatOllamaInput = {
         baseUrl: options.baseUrl,
         model: options.model,
         numCtx: options.numCtx ? options.numCtx : undefined,
-        headers: this.ollamaService.headers        
+        headers: this.ollamaService.headers,
+        metadata: { 
+          includeUsage: true,          
+        },
+        streaming: true,
       };      
       log.info('Ollama connection:options:', ollamaOptions);
       this.ollamaLlm = new ChatOllama(ollamaOptions);
 
       let isStandardChat: boolean = true;
+      const ref = this;
+      
+      class TokenUsageHandler extends BaseCallbackHandler {
+        name = "TokenUsageHandler";
+
+        handleLLMEnd(output: LLMResult, runId: string, parentRunId?: string, tags?: string[], extraParams?: Record<string, unknown>) {
+          log.info('handleLLMEnd:', JSON.stringify(output.llmOutput, null, 2));
+          ref.emit({ type: 'chat-chunk-metadata', data: output });
+        }
+      }
+
       if (this.langchainService.hasAddedDocs && options.useDocContext) {
         let vectorStoreRetriever;
         let retrieverParams: any;
@@ -112,7 +131,7 @@ export default class ContextChat {
         }
         const docSources: string[] = [];
         vectorStoreRetriever = this.langchainService.getSearchableVectorStore()?.asRetriever(retrieverParams);      
-
+          
         if (vectorStoreRetriever) {
           isStandardChat = false;
           let combinedDocs: string = '';
@@ -194,20 +213,12 @@ export default class ContextChat {
             .pipe(this.ollamaLlm)
             .pipe(new StringOutputParser());
 
-          const ref = this;
           const llmResponse: IterableReadableStream<string> = await stringChain.stream({
             prompt: options.prompt,
             context: combinedDocs,
             userQuestion: options.question
           }, {
-            callbacks: [
-              {
-                handleChainEnd(output) {
-                  // log.info('handleLLMEnd:', JSON.stringify(output, null, 2));
-                  ref.emit({ type: 'chat-chunk-metadata', data: output });
-                },
-              },
-            ],
+            callbacks: [new TokenUsageHandler()],
           });
 
           let finalAnswer: AIMessageChunk | undefined;
@@ -242,9 +253,7 @@ export default class ContextChat {
         const llmResponse: IterableReadableStream<string> = await questionChain.stream({
           userQuestion: options.question
         }, {
-          metadata: {
-            include_usage: true,
-          }
+          callbacks: [new TokenUsageHandler()],
         });
 
         let finalAnswer: AIMessageChunk | undefined;
