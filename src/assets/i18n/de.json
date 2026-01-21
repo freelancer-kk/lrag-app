@@ -163,6 +163,8 @@
       "USER_PROMPT": "Passen Sie die USER-Eingabeaufforderung an",
       "RAG_PROMPT_TIP": "Optimieren Sie optional die RAG-Eingabeaufforderung, die für die Neuformulierung Ihrer Frage verantwortlich ist, um eine bessere Verarbeitung zu ermöglichen. Passen Sie dies nur bei Bedarf an",
       "USER_PROMPT_TIP": "Optimieren Sie optional die USER-Eingabeaufforderung, die für die Verarbeitung Ihrer Frage nach dem Abruf der zugehörigen Dokumentdaten verantwortlich ist",
+      "CHAT_PROMPT": "Optimieren Sie die Chat-Eingabeaufforderung (NUR {question}-Variable unterstützt)",
+      "CHAT_PROMPT_TIP": "Optimieren Sie optional die Chat-Eingabeaufforderung, die für die Konversationsbeantwortung Ihrer Fragen zuständig ist",
       "REFRESH_LLM_TIP": "Laden Sie Updates für zuvor heruntergeladene Modelle herunter",
       "CLOUD": "Cloud-Optionen",
       "API_KEY": "Ollama-API-Schlüssel",

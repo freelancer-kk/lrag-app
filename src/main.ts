@@ -63,11 +63,15 @@ bootstrapApplication(AppComponent, {
         systemService.numCtx = insightSettingsStr ? JSON.parse(insightSettingsStr).numCtx : undefined;
         systemService.ragPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).ragPrompt : undefined;
         systemService.userPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).userPrompt : undefined;
-        if (systemService.ragPrompt === undefined) {
+        systemService.chatPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).chatPrompt : undefined;
+        if (systemService.ragPrompt === undefined || systemService.ragPrompt === '') {
           systemService.ragPrompt = await commonService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT')
         }
-        if (systemService.userPrompt === undefined) {
+        if (systemService.userPrompt === undefined || systemService.userPrompt === '') {
           systemService.userPrompt = await commonService.get('PAGES.INSIGHT.PROMPT')
+        }
+        if (systemService.chatPrompt === undefined) {
+          systemService.chatPrompt = '{prompt}';
         }
         const historyStr: string | null  = localStorage.getItem('history');
         if (historyStr) {

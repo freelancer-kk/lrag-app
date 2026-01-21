@@ -240,19 +240,23 @@ export default class ContextChat {
       } 
       
       if (isStandardChat) {
-        log.info('INSIGHT: NO DOC CONTEXT!')
-
-        const questionTemplate = PromptTemplate.fromTemplate(`
-            question: {userQuestion}
-        `)        
+        const questionTemplate = PromptTemplate.fromTemplate(options.chatPrompt)        
 
         const questionChain = questionTemplate
           .pipe(this.ollamaLlm)
           .pipe(new StringOutputParser())
         
-        const llmResponse: IterableReadableStream<string> = await questionChain.stream({
-          userQuestion: options.question
-        }, {
+        let replaceVars: any = {
+          prompt: options.question
+        }
+        if (options.chatPrompt !== '{prompt}') {
+          replaceVars = {
+            question: options.question
+          }
+        }       
+
+        log.info('INSIGHT: NO DOC CONTEXT!', options.chatPrompt, replaceVars)
+        const llmResponse: IterableReadableStream<string> = await questionChain.stream(replaceVars, {
           callbacks: [new TokenUsageHandler()],
         });
 

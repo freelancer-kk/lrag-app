@@ -37,9 +37,9 @@
               <input matSliderThumb [(ngModel)]="systemService.ocr_num_ctx" [value]="systemService.ocr_num_ctx">
             </mat-slider>
             <span class="spacer"></span>
-            <button [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matButton="filled" (click)="systemService.ocr_num_ctx = 0">
-              {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
-            </button>
+            <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.ocr_num_ctx = 0">
+              <mat-icon>replay</mat-icon>
+            </button>            
         </div>
         <div class="onerow">
           <mat-form-field class="full-width">
@@ -47,7 +47,10 @@
             <textarea cdkTextareaAutosize
             #autosize="cdkTextareaAutosize"
             [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveChunkSettings()" matInput type="text" [(ngModel)]="systemService.ocrPrompt">{{ systemService.ocrPrompt }}</textarea>
-          </mat-form-field>                        
+          </mat-form-field>
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.ocrPrompt = ''">
+            <mat-icon>replay</mat-icon>
+          </button>            
         </div>
       }
       @if (settingsService.isActivePro() && ollamaService.useDocContext) {
@@ -57,7 +60,10 @@
             <textarea cdkTextareaAutosize
             #autosize1="cdkTextareaAutosize"
             [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
-          </mat-form-field>                        
+          </mat-form-field>
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="resetRag($event)">
+            <mat-icon>replay</mat-icon>
+          </button>                                  
         </div>
         <div class="onerow">
           <mat-form-field class="full-width">
@@ -65,7 +71,23 @@
             <textarea cdkTextareaAutosize
             #autosize2="cdkTextareaAutosize"
             [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
-          </mat-form-field>                        
+          </mat-form-field>
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="resetUser($event)">
+            <mat-icon>replay</mat-icon>
+          </button>              
+        </div>
+      }
+      @if (settingsService.isActivePro() && !ollamaService.useDocContext) {
+        <div class="onerow">
+          <mat-form-field class="full-width">
+            <mat-label [matTooltip]="'PAGES.DETAIL.CHAT_PROMPT_TIP' | translate">{{ 'PAGES.DETAIL.CHAT_PROMPT' | translate }}</mat-label>
+            <textarea cdkTextareaAutosize
+            #autosize1="cdkTextareaAutosize"
+            [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.chatPrompt">{{ systemService.chatPrompt }}</textarea>
+          </mat-form-field>
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.chatPrompt='{prompt}'">
+            <mat-icon>replay</mat-icon>
+          </button>                  
         </div>
       }
     </mat-expansion-panel>           

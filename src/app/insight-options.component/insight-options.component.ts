@@ -14,6 +14,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { SettingsService } from '../core/services/settings-service';
 import { OllamaService } from '../core/services/ollama-service';
 import {CdkTextareaAutosize, TextFieldModule} from '@angular/cdk/text-field';
+import {  MatIconModule } from '@angular/material/icon';
+import { CommonService } from '../core/services/common-service';
 
 @Component({
   selector: 'app-insight-options.component',
@@ -23,6 +25,7 @@ import {CdkTextareaAutosize, TextFieldModule} from '@angular/cdk/text-field';
     MatToolbarModule,
     MatTooltipModule,
     FormsModule,
+    MatIconModule,
     MatSliderModule,
     MatExpansionModule,
     FormsModule,
@@ -48,6 +51,7 @@ export class InsightOptionsComponent {
 
   constructor(
     public ollamaService: OllamaService,
+    private commonService: CommonService,
     public systemService: SystemService,
     public settingsService: SettingsService
   ) {
@@ -70,5 +74,13 @@ export class InsightOptionsComponent {
         injector: this._injector,
       },
     );
+  }
+
+  resetRag = async (ev: any) => {
+    this.systemService.ragPrompt = await this.commonService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT')
+  }
+
+  resetUser = async (ev: any) => {
+    this.systemService.userPrompt = await this.commonService.get('PAGES.INSIGHT.PROMPT')
   }
 }

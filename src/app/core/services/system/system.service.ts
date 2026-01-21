@@ -54,6 +54,7 @@ export class SystemService {
   collections: any[] = [];
   selectedCollections = new FormControl(null);
   ragPrompt: string | undefined = undefined;
+  chatPrompt: string | undefined = undefined;
   userPrompt: string | undefined = undefined;
   ocrPrompt: string | undefined = undefined;
   ocr_num_ctx: number | undefined = undefined;
@@ -162,7 +163,8 @@ export class SystemService {
 //      filter: this.filter,
       numCtx: this.numCtx,
       ragPrompt: this.ragPrompt,
-      userPrompt: this.userPrompt
+      userPrompt: this.userPrompt,
+      chatPrompt: this.chatPrompt
     }))
   }
 
