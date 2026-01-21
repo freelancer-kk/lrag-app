@@ -45,13 +45,13 @@
     "description": "A model from NVIDIA based on Llama 3 that excels at conversational question answering (QA) and retrieval-augmented generation (RAG)"
   },
   {
-    "value": "sqlcoder:7b",
-    "viewValue": "sqlcoder:7b (<5GB)",
+    "value": "mannix/defog-llama3-sqlcoder-8b",
+    "viewValue": "defog-llama3-sqlcoder-8b (<5GB)",
     "thinking": true,
     "cloud": false,
     "memory": 5,
     "input": "Text",
-    "description": "SQLCoder is a code completion model fined-tuned on StarCoder for SQL generation tasks"
+    "description": "A capable language model for text to SQL generation for Postgres, Redshift and Snowflake that is on-par with the most capable generalist frontier models. It is fine-tuned from Llama 3 8B"
   },
   {
     "value": "qwen3-vl:8b-thinking",
