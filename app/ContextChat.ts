@@ -4,7 +4,7 @@ import OllamaService from "./OllamaService"
 import { ChatPromptTemplate, ParamsFromFString, PromptTemplate } from "@langchain/core/prompts"
 import { StringOutputParser } from "@langchain/core/output_parsers"
 import { Document } from "@langchain/core/documents";
-import { ChatOllama, ChatOllamaInput, OllamaInput } from "@langchain/ollama";
+import { ChatOllama, ChatOllamaInput } from "@langchain/ollama";
 import { IterableReadableStream } from '@langchain/core/dist/utils/stream'
 import DockerEnv from './DockerEnv'
 import { AIMessageChunk } from '@langchain/core/messages'
@@ -12,11 +12,11 @@ import { concat } from "@langchain/core/utils/stream";
 import ReRankerService from './RerankerService'
 import log from 'electron-log/main';
 import * as path from 'path';
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync } from 'fs'
 import mime from 'mime'
 import { BaseCallbackHandler } from "@langchain/core/callbacks/base";
-import { ChainValues } from '@langchain/core/utils/types'
 import { LLMResult } from '@langchain/core/outputs'
+import { tool } from '@langchain/core/dist/tools'
 
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -76,6 +76,31 @@ export default class ContextChat {
     return doc.pageContent.toLowerCase().indexOf(options.filter.toLowerCase()) > -1;
   }
 
+  processToolResults = async (data: string, url: string): Promise<any> => {
+    try {
+      const body: any = {
+        data,
+      }
+      
+      const response: any = await (await fetch(
+        url,
+        {
+          signal: AbortSignal.timeout(60000),
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body)
+        }
+      )).text();
+      
+      return response;
+    } catch (e) {
+      log.error(e);
+      return e;
+    }    
+  }
+
   getAnswer = async (options: any): Promise<any> => {
     if (!this.ollamaService.isReady() || !this.ollamaService.ollama || !this.rerankerService.isReady()) {
       return Promise.resolve({ error: 'Services not ready ' + this.ollamaService.isReady() + ':' + (this.ollamaService.ollama !== undefined) + ':' + this.rerankerService.isReady() });
@@ -93,13 +118,15 @@ export default class ContextChat {
         metadata: { 
           includeUsage: true,          
         },
-        streaming: true,
+        streaming: options.streaming,
+        temperature: options.temperature        
       };      
       log.info('Ollama connection:options:', ollamaOptions);
       this.ollamaLlm = new ChatOllama(ollamaOptions);
 
       let isStandardChat: boolean = true;
       const ref = this;
+      let toolResult: any = undefined;
       
       class TokenUsageHandler extends BaseCallbackHandler {
         name = "TokenUsageHandler";
@@ -231,10 +258,16 @@ export default class ContextChat {
             // log.info('chat-chunk', chunk);
             this.emit({ type: 'chat-chunk', data: chunk });
           }
-          log.info(finalAnswer?.usage_metadata)
+
+          if (options.toolPrompt && options.toolPrompt.trim().length > 0) {
+            log.info('Processing tool prompt...', options.toolPrompt);
+            toolResult = await this.processToolResults(finalAnswer?.content.toString() || '', options.toolPrompt);
+          }
+          
           return {
             answer: finalAnswer?.content.toString(),
-            docSources
+            docSources,
+            toolResult
           }
         }
       } 
@@ -270,10 +303,16 @@ export default class ContextChat {
           // log.info('chat-chunk', chunk);
           this.emit({ type: 'chat-chunk', data: chunk });
         }
-        log.info(finalAnswer?.usage_metadata)
+        
+        if (options.toolPrompt && options.toolPrompt.trim().length > 0) {
+          log.info('Processing tool prompt...', options.toolPrompt);
+          toolResult = await this.processToolResults(finalAnswer?.content.toString() || '', options.toolPrompt);
+        }
+          
         return {
           answer: finalAnswer?.content.toString(),
-          docSources: []
+          docSources: [],
+          toolResult
         }
       }
     } catch (e: any) {

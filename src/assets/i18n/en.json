@@ -165,6 +165,8 @@
         "USER_PROMPT_TIP": "Optionally tune the USER prompt that is responsible for processing your question after retrieval of the related document data",
         "CHAT_PROMPT": "Tune the Chat prompt (ONLY {question} variable supported)",
         "CHAT_PROMPT_TIP": "Optionally tune the Chat prompt that is responsible for answering your questions in a conversational manner",
+        "TOOL_PROMPT": "Tune the Tool prompt",
+        "TOOL_PROMPT_TIP": "Optionally tune the Tool prompt that is responsible for processing your answers to questions when using tools in the future",
         "REFRESH_LLM_TIP": "Download updates for previously downloaded models",
         "CLOUD": "Cloud Options",
         "API_KEY": "Ollama API Key",

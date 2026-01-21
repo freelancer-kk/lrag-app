@@ -51,7 +51,10 @@
     "cloud": false,
     "memory": 5,
     "input": "Text",
-    "description": "A capable language model for text to SQL generation for Postgres, Redshift and Snowflake that is on-par with the most capable generalist frontier models. It is fine-tuned from Llama 3 8B"
+    "description": "A capable language model for text to SQL generation for Postgres, Redshift and Snowflake that is on-par with the most capable generalist frontier models. It is fine-tuned from Llama 3 8B",
+    "params": {
+      "temperature": 0
+    }
   },
   {
     "value": "qwen3-vl:8b-thinking",

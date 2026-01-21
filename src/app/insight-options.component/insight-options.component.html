@@ -90,6 +90,19 @@
           </button>                  
         </div>
       }
+      @if (settingsService.isActivePro()) {
+        <div class="onerow">
+          <mat-form-field class="full-width">
+            <mat-label [matTooltip]="'PAGES.DETAIL.TOOL_PROMPT_TIP' | translate">{{ 'PAGES.DETAIL.TOOL_PROMPT' | translate }}</mat-label>
+            <textarea cdkTextareaAutosize
+            #autosize1="cdkTextareaAutosize"
+            [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.toolPrompt">{{ systemService.toolPrompt }}</textarea>
+          </mat-form-field>
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.toolPrompt=''">
+            <mat-icon>replay</mat-icon>
+          </button>                  
+        </div>
+      }
     </mat-expansion-panel>           
   }
 </mat-accordion>

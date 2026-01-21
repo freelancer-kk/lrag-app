@@ -92,6 +92,7 @@ export interface IHistory {
   duration: number
   question: string,
   answer: string,
+  toolResult: string | undefined,
   docContext: boolean,
   ingest: {
     embeddings_model: string

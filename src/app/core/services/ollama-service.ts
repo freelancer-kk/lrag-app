@@ -267,7 +267,7 @@ export class OllamaService {
   }
 
   getModelByName = (modelName: string): any => {
-    return this.availableModels.find(m => m.name === modelName);
+    return this.availableModels.find(m => m.name === modelName || m.name.replace(/:latest$/, '') === modelName);
   }
 
   getContextLength = (modelName: string): number => {

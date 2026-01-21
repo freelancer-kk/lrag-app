@@ -64,6 +64,7 @@ bootstrapApplication(AppComponent, {
         systemService.ragPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).ragPrompt : undefined;
         systemService.userPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).userPrompt : undefined;
         systemService.chatPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).chatPrompt : undefined;
+        systemService.toolPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).toolPrompt : undefined;
         if (systemService.ragPrompt === undefined || systemService.ragPrompt === '') {
           systemService.ragPrompt = await commonService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT')
         }
@@ -72,6 +73,9 @@ bootstrapApplication(AppComponent, {
         }
         if (systemService.chatPrompt === undefined) {
           systemService.chatPrompt = '{prompt}';
+        }
+        if (systemService.toolPrompt === undefined) {
+          systemService.toolPrompt = '';
         }
         const historyStr: string | null  = localStorage.getItem('history');
         if (historyStr) {

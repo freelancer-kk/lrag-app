@@ -182,7 +182,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (expand) {
           htmlTextElement.innerHTML = this.systemService.history[index].answer.substring(0, 60) + '...';
         } else {
-          htmlTextElement.innerHTML = this.systemService.history[index].answer;
+          htmlTextElement.innerHTML = this.systemService.history[index].answer + '<br><br>' + this.systemService.history[index].toolResult;
         }
         this.systemService.history[index].a_expanded = !expand;
       }

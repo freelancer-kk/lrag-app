@@ -199,7 +199,8 @@ export class DetailComponent implements OnInit {
   modelChange = async (event: any, mtype: number) => {
     // Check if model has been already downloaded
     const fIdx: number = this.ollamaService.availableModels.findIndex(
-      f => f.name === (mtype === 0 ? this.ollamaService.selectedModel : mtype === 1 ? this.ollamaService.embeddings_model : this.ollamaService.ocr_model));
+      f => (f.name === (mtype === 0 ? this.ollamaService.selectedModel : mtype === 1 ? this.ollamaService.embeddings_model : this.ollamaService.ocr_model)) ||
+           (f.name.replace(/:latest$/, '') === (mtype === 0 ? this.ollamaService.selectedModel : mtype === 1 ? this.ollamaService.embeddings_model : this.ollamaService.ocr_model)));
     if (fIdx === -1) {
       let cont: boolean = true;     
        

@@ -241,15 +241,15 @@ export class InsightsComponent implements OnInit {
         prompt: this.systemService.userPrompt || await this.commonService.get('PAGES.INSIGHT.PROMPT'),
         contextPrompt: this.systemService.ragPrompt || await this.commonService.get('PAGES.INSIGHT.CONTEXTUAL_PROMPT'),
         chatPrompt: this.systemService.chatPrompt || '{prompt}',
+        toolPrompt: this.systemService.toolPrompt || '',
         historyPrompt: await this.commonService.get('PAGES.INSIGHT.HISTORY_PROMPT'),
         chatHistory: this.ollamaService.chatHistory.map(f => f.who === EWho.Assistant ? 'Assistant: ' + f.content : 'User: ' + f.content).join('\n'),
-        max_tokens: 256,
-        temperature: 0.7,
+        temperature: me && me.params && me.params.temperature ? me.params.temperature : 0.7,
         top_p: 0.9,
         frequency_penalty: 0,
         presence_penalty: 0,
         stop: ["\n"],
-        stream: true,        
+        streaming: true,        
         think: this.ollamaService.getThinkingForModel(this.ollamaService.selectedModel),
         k: isCSVUseCase ? 2048  : this.systemService.k,
         mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
@@ -292,11 +292,11 @@ export class InsightsComponent implements OnInit {
       const answerResponse: any = await this.systemService.commandInsight('question', options);
       clearInterval(showTimer);
       clearTimeout(questionTimeout);
-      const { answer, error, docSources } = answerResponse;
+      const { answer, error, docSources, toolResult } = answerResponse;
       this.streamedResponse = '';
       this.streaming = false;
       this.systemService.insightStatus.update(EStatus.running);
-      // console.log('answerResponse:', answerResponse);
+      // console.log('toolResult:', toolResult);
       try {
         if (!error) {
           // console.log('PUSHING ANSWER:', answer);
@@ -308,7 +308,7 @@ export class InsightsComponent implements OnInit {
           this.ollamaService.chatHistory.push({
             id,
             who: EWho.Assistant,
-            content: this.generationInfo ? this.reformat(answer, this.generationInfo.promptTokens, this.generationInfo.completionTokens, this.systemService.duration) : this.reformat(answer, 0, 0, this.systemService.duration),
+            content: this.generationInfo ? this.reformat(answer, this.generationInfo.promptTokens, this.generationInfo.completionTokens, this.systemService.duration, toolResult) : this.reformat(answer, 0, 0, this.systemService.duration, toolResult),
             // content: answer,
             docSources
           });
@@ -320,6 +320,7 @@ export class InsightsComponent implements OnInit {
             a_expanded: false,
             question,
             answer,
+            toolResult,
             docContext: this.ollamaService.useDocContext,            
             ingest: {
               embeddings_model: this.ollamaService.embeddings_model,
@@ -348,12 +349,16 @@ export class InsightsComponent implements OnInit {
           this.systemService.saveMainHistory();
           this.scrollToBottom();
 
-          // Get the model usage  
+          // Get the model usage
+          let usageTriedCount: number = 0;
           const usageTimer = setInterval(async () => {
-            const usage = await this.ollamaService.getRunningModelsUsage();
-            if (usage) {
+            const usage: string = await this.ollamaService.getRunningModelsUsage();
+            console.log('usage:', usage);
+            if (usage && usage !== '' || usageTriedCount > 4) {
               clearInterval(usageTimer);
               this.modelUsage = usage + ' ';
+            } else {
+              usageTriedCount++;
             }
             if (this.ollamaService.chatHistory.length > 4) {
               this.historyTip?.show();            
@@ -372,7 +377,7 @@ export class InsightsComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustHtml(unsafe);
   }
 
-  reformat = (answer: string, input_tokens: number, output_tokens: number, duration: number): string => {
+  reformat = (answer: string, input_tokens: number, output_tokens: number, duration: number, toolResult: string | undefined = undefined): string => {
     // Look for 'answer:' and add 2 line seps
     const fIdx: number = answer.toLowerCase().indexOf('</think>');
     if (fIdx > -1) {
@@ -384,7 +389,7 @@ export class InsightsComponent implements OnInit {
       console.log('splicing answer');
       answer = answer.substring(0, fIdx1) + '<br><br>' + answer.substring(fIdx1);
     }
-    return answer + '<br><br> <small><I>tokens:' + input_tokens + ' in / ' + output_tokens + ' out<I> (' + (duration / 1000).toFixed(0) +'s)</small>';
+    return answer + (toolResult ? '<br><br> ' + toolResult : '') + '<br><br> <small><I>tokens:' + input_tokens + ' in / ' + output_tokens + ' out<I> (' + (duration / 1000).toFixed(0) +'s)</small>';
   }
 
   scrollToBottom = () => {
