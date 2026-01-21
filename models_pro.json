@@ -45,6 +45,15 @@
     "description": "A model from NVIDIA based on Llama 3 that excels at conversational question answering (QA) and retrieval-augmented generation (RAG)"
   },
   {
+    "value": "sqlcoder:7b",
+    "viewValue": "sqlcoder:7b (<5GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 5,
+    "input": "Text",
+    "description": "SQLCoder is a code completion model fined-tuned on StarCoder for SQL generation tasks"
+  },
+  {
     "value": "qwen3-vl:8b-thinking",
     "viewValue": "qwen3-vl:8b-thinking (<9GB)",
     "thinking": true,
