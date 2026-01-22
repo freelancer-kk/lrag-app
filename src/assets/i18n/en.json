@@ -283,7 +283,8 @@
           "TOOLTIP_4": "Few retrieved documents, faster responses. Ideal for concise answers.",
           "TOOLTIP_5": "Moderate document retrieval, balanced context and speed. Suitable for detailed queries.",
           "TOOLTIP_6": "High document retrieval, richer context but slower responses. Best for in-depth analysis."
-        }
+        },
+        "FEEDBACK_REQUIRED": "Please help us improve LRag by providing feedback"
       },
       "HELP": {
         "TITLE": "Help",
@@ -292,6 +293,7 @@
         "KB_LINK": "Knowledge Base",
         "FORUM_LINK": "Public Forum",
         "SUPPORT_LINK": "Raise a ticket (PRO & PRO+ only)",
+        "FEEDBACK_LINK": "Provide Feedback",
         "REGISTER_LINK": "Newsletter",
         "ACCURACY_TITLE": "How good is LRag?",
         "ACCURACY": "LRag uses your prompt and documents' contents as context for the corresponding model. It is limited in accuracy, especially if you are mixing questions and documents across different domains e.g asking about accounts and then immediately asking health questions whilst mixing the documents. The best approach is to embed documents first, ask your questions and then to remove those docs and add your health docs and then ask questions about health. This will allow the model context to reset between domains",

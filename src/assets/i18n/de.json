@@ -284,7 +284,8 @@
           "TOOLTIP_4": "Wenige abgerufene Dokumente, schnellere Antworten. Ideal für prägnante Antworten.",
           "TOOLTIP_5": "Moderate Dokumentensuche, ausgewogener Kontext und Geschwindigkeit. Für Detailabfragen geeignet.",
           "TOOLTIP_6": "Hoher Dokumentenabruf, umfangreicherer Kontext, aber langsamere Antworten. Am besten für eine detaillierte Analyse geeignet."
-        }
+        },
+        "FEEDBACK_REQUIRED": "Bitte helfen Sie uns, LRag zu verbessern, indem Sie uns Feedback geben"
     },
     "HELP": {
       "TITLE": "HELP",
@@ -293,6 +294,7 @@
       "KB_LINK": "Knowledge Base",
       "FORUM_LINK": "Öffentliches Forum",
       "SUPPORT_LINK": "Ticket erstellen (nur PRO & PRO+)",
+      "FEEDBACK_LINK": "Geben Sie Feedback",
       "REGISTER_LINK": "Newsletter",
       "ACCURACY_TITLE": "Wie gut ist LRag?",
       "ACCURACY": "LRag verwendet den Inhalt der Eingabeaufforderung und Dokumente als Kontext für das entsprechende Modell. Es ist in der Genauigkeit begrenzt, insbesondere wenn Sie Fragen und Dokumente in verschiedenen Bereichen mischen, z. B. Fragen zu Konten und dann sofort Fragen zu Gesundheitsfragen beim Mischen der Dokumente. Der beste Ansatz besteht darin, zuerst Dokumente aufzunehmen, Ihre Fragen zu stellen und diese Dokumente zu entfernen und Ihre Gesundheitsdokumente hinzuzufügen und dann Fragen zur Gesundheit zu stellen. Dadurch kann der Modellkontext zwischen Domänen zurückgesetzt werden",

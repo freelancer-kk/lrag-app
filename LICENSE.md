@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 Kabir Nazmul Khaleque
+Copyright (c) 2026 Kabir Nazmul Khaleque
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -77,6 +77,7 @@ export class SystemService {
   forum_link: string | undefined;
   support_link: string | undefined;
   register_link: string | undefined;  
+  feedback_link: string | undefined;  
 
   firstTime: boolean = true;
   duration: number = 0;

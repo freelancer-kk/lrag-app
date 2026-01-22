@@ -27,5 +27,15 @@
   <mat-dialog-actions align="end">
     <button matButton [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>    
   </mat-dialog-actions>
+} @else if (data.type === 3) {
+  <h2 mat-dialog-title>{{ 'QUESTION' | translate }}</h2>
+  <mat-dialog-content class="mat-typography">
+    <h3>{{ 'STATEMENT' | translate }}</h3>
+    <p>{{ data.params.message }}</p>    
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button matButton [mat-dialog-close]="true" cdkFocusInitial>{{ 'OK' | translate }}</button>
+    <button matButton mat-dialog-close>{{ 'CANCEL' | translate }}</button>
+  </mat-dialog-actions>
 }
 

@@ -41,7 +41,8 @@ const overwriteKeys: string[] = [
   "SECURITY_URL",
   "LICENSE_GET_URL",
   "LICENSE_ACTIVATE_URL",
-  "OLLAMA_KEYS_URL"  
+  "OLLAMA_KEYS_URL",
+  "FEEDBACK_URL"
 ];
 
 export default class DockerEnv {

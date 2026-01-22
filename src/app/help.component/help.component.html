@@ -6,6 +6,12 @@
   <h3>{{ 'PAGES.HELP.USEFUL_LINKS' | translate }}</h3>
   <ul>
     <li>
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.feedback_link)">
+        {{ 'PAGES.HELP.FEEDBACK_LINK' | translate }}
+      </a>
+    </li>
+    <br/>
+    <li>
       <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.kb_link)">
         {{ 'PAGES.HELP.KB_LINK' | translate }}
       </a>
@@ -27,7 +33,7 @@
       <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.support_link)">
         {{ 'PAGES.HELP.SUPPORT_LINK' | translate }}
       </a>
-    </li>    
+    </li>        
   </ul>
-  <p>&copy; Copyright K.N.Khaleque 2025 All rights reserved</p>
+  <p>&copy; Copyright K.N.Khaleque 2026 All rights reserved</p>
 </div>

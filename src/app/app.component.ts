@@ -724,6 +724,7 @@ export class AppComponent implements OnInit {
     this.systemService.forum_link = await this.commonService.getEnvValue('FORUM_URL');
     this.systemService.support_link = await this.commonService.getEnvValue('TICKET_URL');
     this.systemService.register_link = await this.commonService.getEnvValue('REGISTRATION_URL');
+    this.systemService.feedback_link = await this.commonService.getEnvValue('FEEDBACK_URL');
     this.commonService.pp_link = await this.commonService.getEnvValue('PRIVACY_POLICY_URL');
     this.commonService.eua_link = await this.commonService.getEnvValue('EUA_URL');
     this.commonService.security_link = await this.commonService.getEnvValue('SECURITY_URL');

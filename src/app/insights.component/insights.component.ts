@@ -357,6 +357,27 @@ export class InsightsComponent implements OnInit {
             if (usage && usage !== '' || usageTriedCount > 4) {
               clearInterval(usageTimer);
               this.modelUsage = usage + ' ';
+              setTimeout(async () => {
+                const feedbackGiven: string = await this.commonService.getEnvValue('FEEDBACK_GIVEN');
+                if (feedbackGiven !== 'true') {
+                  const dialogRef =this.dialog.open(
+                    AlertComponent, {
+                      data: {
+                        type: 3,
+                        params: {
+                          message: await this.commonService.get('PAGES.INSIGHT.FEEDBACK_REQUIRED')
+                        }
+                      }
+                  });
+                  dialogRef.afterClosed().subscribe(async (result: boolean) => {
+                    console.log(`Dialog result: ${result}`);
+                    if (result === true) {
+                      await this.commonService.setEnvValue('FEEDBACK_GIVEN', 'true');
+                      this.commonService.openExternal(this.systemService.feedback_link);
+                    }
+                  });
+                }                
+              }, 10000);
             } else {
               usageTriedCount++;
             }
