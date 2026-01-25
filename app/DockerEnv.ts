@@ -23,6 +23,7 @@ const mergeKeys: string[] = [
 ];
 
 const overwriteKeys: string[] = [
+  "YOUTUBE_GALLERY_URL",
   "TOOLS_DLS_FILE",
   "RERANK_SERVICE",
   "REMOTE_LLM_SERVICE",

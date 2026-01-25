@@ -12,6 +12,12 @@
     </li>
     <br/>
     <li>
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.youtube_gallery_link)">
+        {{ 'PAGES.HELP.YOUTUBE_GALLERY_URL' | translate }}
+      </a>
+    </li>
+    <br/>
+    <li>
       <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.kb_link)">
         {{ 'PAGES.HELP.KB_LINK' | translate }}
       </a>
