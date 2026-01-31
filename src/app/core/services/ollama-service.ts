@@ -28,13 +28,13 @@ export class OllamaService {
       "description": "The current, most capable model that runs on a single GPU"
     },
     {
-      "value": "granite3-dense:2b",
-      "viewValue": "granite3-dense:2b - small, fast, trade off accuracy (<2GB)",
+      "value": "granite3.1-dense:2b",
+      "viewValue": "granite3.1-dense:2b - small, fast, trade off accuracy (<2GB)",
       "thinking": true,
       "cloud": false,
       "memory": 2,
       "input": "Text",
-      "description": "The IBM Granite 2B and 8B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
+      "description": "The IBM Granite 2B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
     },
     {
       "value": "llama3-chatqa:8b",
@@ -149,7 +149,7 @@ export class OllamaService {
 
   fetchModelList = async () => {
     if (!this.modelsDownloaded) {
-      let url: string = await this.commonService.getEnvValue('MODELS_FILE' + (this.settingsService.isActivePro() ? '_PRO' : ''), 82)
+      let url: string = (await this.commonService.getEnvValue('MODELS_FILE' + (this.settingsService.isActivePro() ? '_PRO' : ''), 82)) + '?t=' + new Date().getTime();
       console.log('init:model file url:', url)            
       this.modelsDownloaded = true;
       this.models = await (await fetch(
@@ -159,7 +159,7 @@ export class OllamaService {
         }
       )).json();
 
-      url = await this.commonService.getEnvValue('EMBEDDED_MODELS_FILE' + (this.settingsService.isActivePro() ? '_PRO' : ''), 83)
+      url = await this.commonService.getEnvValue('EMBEDDED_MODELS_FILE' + (this.settingsService.isActivePro() ? '_PRO' : ''), 83) + '?t=' + new Date().getTime();
       console.log('init:embedded file url:', url)
       this.embedding_models = await (await fetch(
         url,
@@ -287,6 +287,8 @@ export class OllamaService {
           this.availableModels[index].model_info = modelDetails.model_info;
           const archName: string = modelDetails.model_info["general.architecture"];
           const parameterCount: number = modelDetails.model_info["general.parameter_count"];
+          this.availableModels[index].capabilities = modelDetails['capabilities'] || [];
+          // console.log('capabilities:', modelEntry.name, this.availableModels[index].capabilities);
           try {
             this.availableModels[index].context_length = Number(modelDetails.model_info[archName + '.context_length']);
             this.availableModels[index].parameter_count = parameterCount;

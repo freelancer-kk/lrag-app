@@ -153,6 +153,7 @@
       "OLLAMA_STATUS": "Modell",
       "MODEL_STATUS": "Status",
       "MODEL_NAME": "Modellname",
+      "MODEL_TYPE": "Unterstützte Eingabe",
       "MODEL_SIZE": "Rohmodellgröße",
       "MODEL_USAGE": "Verwendung",
       "MODEL_CLOUD": "Standort des Modells",

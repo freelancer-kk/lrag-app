@@ -115,6 +115,9 @@
             {{ 'PAGES.DETAIL.MODEL_NAME' | translate }}       
           </td>
           <td class="underline" mat-col>
+            {{ 'PAGES.DETAIL.MODEL_TYPE' | translate }}       
+          </td>
+          <td class="underline" mat-col>
             @if (
                 ollamaService.status.get() === EStatus.running && 
                 systemService.modelStatus.get() === EStatus.running
@@ -140,9 +143,12 @@
           <tr mat-row>
             <td class="centercol" mat-col>
               <button [matTooltip]="entry.description" matButton (click)="openModelDetails($event, entry.name)">
-                {{ entry.name }} ({{ entry.input }})
+                {{ entry.name }} ({{ entry.capabilities && entry.capabilities.join(',') }})
               </button>
-            </td>            
+            </td>
+            <td mat-col>
+              {{ entry.input }}
+            </td>
             <td mat-col>
               @if (
                 ollamaService.status.get() === EStatus.running && 

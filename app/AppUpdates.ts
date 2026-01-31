@@ -52,6 +52,7 @@ export default class AppUpdates {
         }
       }
     } catch (e) {
+      log.info('AppUpdates:check:error');
       log.error(e);      
     }
   }

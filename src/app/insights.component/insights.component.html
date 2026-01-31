@@ -110,11 +110,11 @@
               <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>              
           }          
           @if (entry.who === 1) {
-              <mat-icon class="copyAss" (click)="copyContent($event, entry.content)">content_copy</mat-icon>              
-              <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>
+              <mat-icon class="copyAss" (click)="copyContent($event, entry.content)">content_copy</mat-icon>
+              <p style="display: block" [innerHTML]="safeHTML(entry.content)"></p>              
               @for (docSource of entry.docSources; track $index) {
                 <p class="docsource">- {{ docSource }}</p>
-              }
+              }              
               <small>{{ 'PAGES.INSIGHT.RATE' | translate }}&nbsp;
               <mat-icon class="smallIcon" (click)="rate($event, entry.id, 1)">thumb_up</mat-icon>&nbsp;
               <mat-icon class="smallIcon" (click)="rate($event, entry.id, -1)">thumb_down</mat-icon>
@@ -125,8 +125,8 @@
       }
       @if (streaming) {            
         <tr mat-row>
-            <p [innerHTML]="safeHTML(streamedResponse)"></p>
-            <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
+          <p [innerHTML]="safeHTML(streamedResponse)"></p>          
+          <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
         </tr>            
       }                   
     </table>

@@ -249,7 +249,8 @@ export class InsightsComponent implements OnInit {
         frequency_penalty: 0,
         presence_penalty: 0,
         stop: ["\n"],
-        streaming: true,        
+        streaming: true,
+        capabilities: me.capabilities || [],
         think: this.ollamaService.getThinkingForModel(this.ollamaService.selectedModel),
         k: isCSVUseCase ? 2048  : this.systemService.k,
         mmr: this.systemService.k < 30 && !isCSVUseCase ? true : undefined,
@@ -289,6 +290,7 @@ export class InsightsComponent implements OnInit {
             }
         });        
       }, 180000)
+            
       const answerResponse: any = await this.systemService.commandInsight('question', options);
       clearInterval(showTimer);
       clearTimeout(questionTimeout);
