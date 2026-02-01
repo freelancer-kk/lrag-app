@@ -41,9 +41,9 @@
       -->   
     }
   </div>
-  @if (settingsService.isActivePro()) {
   <mat-accordion>
-  <mat-expansion-panel>
+  @if (settingsService.isActivePro()) {
+    <mat-expansion-panel>
     <mat-expansion-panel-header>
     <mat-panel-title>{{ 'PAGES.DETAIL.EMBEDDED_MODEL' | translate }}</mat-panel-title>
     <mat-panel-description>        
@@ -77,6 +77,7 @@
       </div>  
     }
   </mat-expansion-panel>
+  }
   <mat-expansion-panel [expanded]="ollamaService.cloudSelected">
     <mat-expansion-panel-header>
     <mat-panel-title>{{ 'PAGES.DETAIL.CLOUD' | translate }}</mat-panel-title>
@@ -85,7 +86,7 @@
   </mat-expansion-panel-header> 
     <div class="onerow">
       <mat-form-field class="half-width">
-        <mat-label>{{ 'PAGES.DETAIL.API_KEY' | translate }}</mat-label>      
+        <mat-label [matTooltip]=" 'PAGES.DETAIL.API_KEY_TIP' | translate">{{ 'PAGES.DETAIL.API_KEY' | translate }}</mat-label>      
         <input matInput 
           [disabled]="overallStatus !== EStatus.running_healthy" 
           type="text" 
@@ -105,7 +106,6 @@
     </div>  
   </mat-expansion-panel>  
   </mat-accordion>
-  }
 <mat-dialog-content>      
   @if (showModelList) {
     <div class="vertscroll">

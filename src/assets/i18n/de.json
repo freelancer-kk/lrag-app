@@ -22,7 +22,7 @@
   "WATCHER_ARE_YOU_SURE": "OCR-Einstellung umschalten, sind Sie sicher?",
   "WATCHER_CHANGE_DONE": "OCR-Einstellung abgeschlossen. Die Anwendung wird beendet. Bitte starten Sie neu",
   "QUANTUM_ARE_YOU_SURE": "Quantum-Verschlüsselungseinstellung umschalten, sind Sie sicher?",
-  "QUANTUM_CHANGE_DONE": "Quanteneinstellung abgeschlossen. Die Anwendung wird beendet. Bitte starten Sie neu",  
+  "QUANTUM_CHANGE_DONE": "Quanteneinstellung abgeschlossen. Die Anwendung wird beendet. Bitte starten Sie neu",
   "GPU_CHANGE_RESTART": "GPU-Beschleunigungseinstellung abgeschlossen. Die Anwendung wird beendet. Bitte starten Sie neu. Am besten starten Sie Ihren PC neu, nachdem Sie diese Einstellung geändert haben",
   "RATING_TOO_LOW": "Ihre PC -LAG -Bewertung ist sehr niedrig. ",
   "OCR_TIMEOUT": "Es sieht so aus, als ob der Modellprozess auf Ihrem PC überlastet ist. Wir empfehlen, die Anwendung zu schließen. Starten Sie neu und passen Sie die OCR-Einstellungen an",
@@ -168,7 +168,6 @@
       "CHAT_PROMPT_TIP": "Optimieren Sie optional die Chat-Eingabeaufforderung, die für die Konversationsbeantwortung Ihrer Fragen zuständig ist",
       "TOOL_PROMPT": "Optimieren Sie die Tool-Eingabeaufforderung",
       "TOOL_PROMPT_TIP": "Optimieren Sie optional die Tool-Eingabeaufforderung, die für die Verarbeitung Ihrer Antworten auf Fragen bei der zukünftigen Verwendung von Tools verantwortlich ist",
-        
       "REFRESH_LLM_TIP": "Laden Sie Updates für zuvor heruntergeladene Modelle herunter",
       "CLOUD": "Cloud-Optionen",
       "API_KEY": "Ollama-API-Schlüssel",
@@ -181,7 +180,8 @@
       "USE_WATCHER_TIP": "Verwenden Sie die Standard-OCR-Verarbeitung für gescannte Dokumente. Weniger genau als modellbasierte OCR, aber schneller",
       "OCR_MODEL_SELECT": "OCR-Modell",
       "OCR_PROMPT": "Optimieren Sie die OCR-Eingabeaufforderung",
-      "OCR_PROMPT_TIP": "Optimieren Sie optional die OCR-Eingabeaufforderung, die für die optische Erkennung Ihrer gescannten Dokumente verantwortlich ist. Lassen Sie das Feld leer, um die Standardeinstellung zu verwenden"
+      "OCR_PROMPT_TIP": "Optimieren Sie optional die OCR-Eingabeaufforderung, die für die optische Erkennung Ihrer gescannten Dokumente verantwortlich ist. Lassen Sie das Feld leer, um die Standardeinstellung zu verwenden",
+      "API_KEY_TIP": "Legen Sie optional einen Ollama-API-Schlüssel fest, um Cloud-Modelle und das Websuchtool zu verwenden. Sie müssen ein Ollama-Konto registrieren, um einen API-Schlüssel zu erhalten"
     },
     "INGEST": {
       "TITLE": "Einbetten",
@@ -279,14 +279,14 @@
       "DOC_REMOVE_CONTEXT_TIP": "Angehängte Dokumente entfernen",
       "QUERY_TOO_LONG_WARNING": "Die Bearbeitung Ihrer Frage dauert sehr lange. Möglicherweise ist Ihr PC überlastet. Beenden Sie die Anwendung und versuchen Sie es erneut mit einer genaueren Frage",
       "USE_CASE": {
-          "TOOLTIP_1": "Zusammenfassungen, einfache Fragen und Antworten, kurzer Kontext.",
-          "TOOLTIP_2": "Längerer Kontext, komplexe Fragen und Antworten, Analyse mehrerer Dokumente. Ihr PC sollte über eine dedizierte GPU und mehr als 16 GB RAM verfügen.",
-          "TOOLTIP_3": "Umfangreiche Analyse, Verarbeitung mehrerer Dokumente. Ihr PC sollte über eine dedizierte GPU mit hohem Speicher und mehr als 32 GB RAM verfügen.",
-          "TOOLTIP_4": "Wenige abgerufene Dokumente, schnellere Antworten. Ideal für prägnante Antworten.",
-          "TOOLTIP_5": "Moderate Dokumentensuche, ausgewogener Kontext und Geschwindigkeit. Für Detailabfragen geeignet.",
-          "TOOLTIP_6": "Hoher Dokumentenabruf, umfangreicherer Kontext, aber langsamere Antworten. Am besten für eine detaillierte Analyse geeignet."
-        },
-        "FEEDBACK_REQUIRED": "Bitte helfen Sie uns, LRag zu verbessern, indem Sie uns Feedback geben"
+        "TOOLTIP_1": "Zusammenfassungen, einfache Fragen und Antworten, kurzer Kontext.",
+        "TOOLTIP_2": "Längerer Kontext, komplexe Fragen und Antworten, Analyse mehrerer Dokumente. Ihr PC sollte über eine dedizierte GPU und mehr als 16 GB RAM verfügen.",
+        "TOOLTIP_3": "Umfangreiche Analyse, Verarbeitung mehrerer Dokumente. Ihr PC sollte über eine dedizierte GPU mit hohem Speicher und mehr als 32 GB RAM verfügen.",
+        "TOOLTIP_4": "Wenige abgerufene Dokumente, schnellere Antworten. Ideal für prägnante Antworten.",
+        "TOOLTIP_5": "Moderate Dokumentensuche, ausgewogener Kontext und Geschwindigkeit. Für Detailabfragen geeignet.",
+        "TOOLTIP_6": "Hoher Dokumentenabruf, umfangreicherer Kontext, aber langsamere Antworten. Am besten für eine detaillierte Analyse geeignet."
+      },
+      "FEEDBACK_REQUIRED": "Bitte helfen Sie uns, LRag zu verbessern, indem Sie uns Feedback geben"
     },
     "HELP": {
       "TITLE": "HELP",
