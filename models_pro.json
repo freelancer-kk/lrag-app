@@ -102,13 +102,13 @@
     "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
   },
   {
-    "value": "medllama2:7b",
-    "viewValue": "medllama2:7b (<10GB)",
+    "value": "meditron:7b",
+    "viewValue": "meditron:7b (<4GB)",
     "thinking": true,
     "cloud": false,
-    "memory": 9,
+    "memory": 4,
     "input": "Text",
-    "description": "Fine-tuned Llama 2 model to answer medical questions based on an open source medical dataset"
+    "description": "Open-source medical large language model adapted from Llama 2 to the medical domain"
   },
   {
     "value": "martain7r/finance-llama-8b:fp16",
