@@ -102,6 +102,15 @@
     "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
   },
   {
+    "value": "qwen-coder:30b",
+    "viewValue": "qwen-coder:30b (<20GB)",
+    "thinking": true,
+    "cloud": false,
+    "memory": 32,
+    "input": "Text",
+    "description": "Qwen-Coder is a large language model optimized for code generation and understanding, with strong performance in multiple programming languages"
+  },
+  {
     "value": "meditron:7b",
     "viewValue": "meditron:7b (<4GB)",
     "thinking": true,
