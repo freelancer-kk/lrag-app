@@ -53,40 +53,41 @@
   </mat-form-field>
 }
 </div>
-@if (ollamaService.useDocContext) {
-  <mat-accordion>
-      <mat-expansion-panel [expanded]="false">
-      <mat-expansion-panel-header>
-      <mat-panel-title><mat-icon>settings</mat-icon></mat-panel-title>
-      <mat-panel-description>
-        {{ 'PAGES.INSIGHT.SEARCH' | translate }}
-      </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div class="installhint">
-        <mat-icon>info</mat-icon>&nbsp;{{ 'PAGES.INSIGHT.CLOSE_OTHER_TIP' | translate }}
-      </div>
-  <div class="smallonerow">
-    <div class="vertrow">
-      <div class="onerow">
-        <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
-        <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete [displayWith]="formatLabelK" (focus)="onFocusTip()" (blur)="onBlurTip()">
-          <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k" (focus)="onFocusTip()" (blur)="onBlurTip()">
-        </mat-slider>
-        <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.k = 4">      
-          <mat-icon>replay</mat-icon>
-        </button>
-      </div>
-      <div class="onerow">
-        <mat-form-field class="small-width">
-          <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>
-          <input matInput [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.filter">
-        </mat-form-field>
-        <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.filter = undefined">
-          <mat-icon>replay</mat-icon>
-        </button>
-      </div>
-    </div>    
-    <span class="spacer"></span>
+<mat-accordion>
+  <mat-expansion-panel [expanded]="false">
+  <mat-expansion-panel-header>
+  <mat-panel-title><mat-icon>settings</mat-icon></mat-panel-title>
+  <mat-panel-description>
+    {{ 'PAGES.INSIGHT.SEARCH' | translate }}
+  </mat-panel-description>
+  </mat-expansion-panel-header>
+    <div class="installhint">
+      <mat-icon>info</mat-icon>&nbsp;{{ 'PAGES.INSIGHT.CLOSE_OTHER_TIP' | translate }}
+    </div>
+    <div class="smallonerow">
+    @if (ollamaService.useDocContext) {
+      <div class="vertrow">
+        <div class="onerow">
+          <mat-label [matTooltip]="'PAGES.INSIGHT.K_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.K_SIZE' | translate }}</mat-label>
+          <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete [displayWith]="formatLabelK" (focus)="onFocusTip()" (blur)="onBlurTip()">
+            <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k" (focus)="onFocusTip()" (blur)="onBlurTip()">
+          </mat-slider>
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.k = 4">      
+            <mat-icon>replay</mat-icon>
+          </button>
+        </div>
+        <div class="onerow">
+          <mat-form-field class="small-width">
+            <mat-label [matTooltip]="'PAGES.INSIGHT.FILTER_TIP' | translate">{{ 'PAGES.INSIGHT.FILTER' | translate }}</mat-label>
+            <input matInput [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" matInput type="text" [(ngModel)]="systemService.filter">
+          </mat-form-field>
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.filter = undefined">
+            <mat-icon>replay</mat-icon>
+          </button>
+        </div>
+      </div>    
+      <span class="spacer"></span>
+      }
     <mat-label [matTooltip]="'PAGES.INSIGHT.CONTEXT_SIZE_TIP' | translate">{{ 'PAGES.INSIGHT.CONTEXT_SIZE' | translate }}</mat-label>
     <mat-slider [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4096" [max]="this.getMaxContextTokens()" step="64" showTickMarks discrete [displayWith]="formatLabel" (focus)="onFocusTip()" (blur)="onBlurTip()">
       <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx" (focus)="onFocusTip()" (blur)="onBlurTip()">
@@ -95,9 +96,8 @@
       <mat-icon>replay</mat-icon>
     </button>
   </div>
-        </mat-expansion-panel>
+  </mat-expansion-panel>
   </mat-accordion>  
-}
 <div #chatDiv id="chatDiv" class="bottom-div">
 @if (overallStatus === EStatus.running_healthy) {
   <div class="full-width-height">

@@ -1,0 +1,20 @@
+diff --git a/node_modules/langchain/dist/agents/middleware/types.d.cts b/node_modules/langchain/dist/agents/middleware/types.d.cts
+index bca6496..4e81918 100644
+--- a/node_modules/langchain/dist/agents/middleware/types.d.cts
++++ b/node_modules/langchain/dist/agents/middleware/types.d.cts
+@@ -6,7 +6,14 @@ import { ClientTool, ServerTool } from "@langchain/core/tools";
+ import { InferInteropZodInput, InferInteropZodOutput, InteropZodDefault, InteropZodObject, InteropZodOptional } from "@langchain/core/utils/types";
+ import { AnnotationRoot, Command, InferStateSchemaUpdate, StateDefinitionInit, StateSchema } from "@langchain/langgraph";
+ import { ToolCall as ToolCall$1 } from "@langchain/core/messages/tool";
+-import { InteropZodToStateDefinition } from "@langchain/langgraph/zod";
++// import { InteropZodToStateDefinition } from "@langchain/langgraph/zod";
++import { InteropZodObjectShape, InteropZodType } from "@langchain/core/utils/types";
++import { BaseChannel } from "@langchain/langgraph/dist/channels/base.cjs";
++
++type ReducedZodChannel<T extends InteropZodType, TReducerSchema extends InteropZodType> = T & {
++  lg_reducer_schema: TReducerSchema;
++};
++type InteropZodToStateDefinition<T extends InteropZodObject, TShape = InteropZodObjectShape<T>> = { [key in keyof TShape]: TShape[key] extends ReducedZodChannel<infer Schema, infer ReducerSchema> ? Schema extends InteropZodType<infer V> ? ReducerSchema extends InteropZodType<infer U> ? BaseChannel<V, U> : never : never : TShape[key] extends InteropZodType<infer V, infer U> ? BaseChannel<V, U> : never };
+ 
+ //#region src/agents/middleware/types.d.ts
+ type PromiseOrValue<T> = T | Promise<T>;

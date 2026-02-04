@@ -12,6 +12,8 @@
     "experimentalDecorators": true,
     "allowJs": true,
     "target": "ES2022",
+    "skipLibCheck": true,
+    "maxNodeModuleJsDepth": 5,
     "typeRoots": [
       "node_modules/@types"
     ],

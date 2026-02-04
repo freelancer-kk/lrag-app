@@ -216,9 +216,9 @@ export class InsightsComponent implements OnInit {
     return llmCtxLength > this.systemService.fast_max_ctx_tokens ? this.systemService.fast_max_ctx_tokens : llmCtxLength;
   }
 
-  clearHistory = () => {
+  clearHistory = async () => {
     this.ollamaService.resetChatHistory();
-    this.ollamaService.useDocContext = false;
+    this.ollamaService.useDocContext = false;    
   }
 
   //TODO: When we submit a query perform a ps to get the model usage

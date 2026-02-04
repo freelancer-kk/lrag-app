@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CommonService, LStatus } from './common-service';
 import { EStatus, IChat } from '../../shared/model';
 import { SettingsService } from './settings-service';
+import { BridgeService } from './bridge/bridge.service';
 
 @Injectable({
   providedIn: 'root'
@@ -111,13 +112,24 @@ export class OllamaService {
   serviceTimer: any;
     
   constructor(
+    private bridgeService: BridgeService,    
     private commonService: CommonService,
     private settingsService: SettingsService
   ) {}
 
   resetChatHistory = () => {
     this.chatHistory = [];    
+    this.commandInsight('clear', {});      
   }
+
+  commandInsight = (command: string, options: any = {}): Promise<any> => {
+    return new Promise((resolve, reject) => { 
+      this.bridgeService.chat(50, command, options, async (data: any) => {
+        // console.log('insight command response:', data);
+        resolve(data);
+      });
+    });
+  }  
 
   getGpuAcceleration = async () => {
     const gpuAccelStr: string = await this.commonService.getEnvValue('GPU_ACCELERATION');    
