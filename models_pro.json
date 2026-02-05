@@ -10,7 +10,7 @@
   },
   {
     "value": "granite4:3b",
-    "viewValue": "granite4:3b - small, fast, trade off accuracy (<4GB)",
+    "viewValue": "granite4:3b (<4GB)",
     "thinking": true,
     "cloud": false,
     "memory": 4,
@@ -19,7 +19,7 @@
   },
   {
     "value": "qwen3-vl:4b-thinking",
-    "viewValue": "qwen3-vl:4b-thinking - A powerful vision-language model (<4GB)",
+    "viewValue": "qwen3-vl:4b-thinking (<4GB)",
     "thinking": true,
     "cloud": false,
     "memory": 4,
