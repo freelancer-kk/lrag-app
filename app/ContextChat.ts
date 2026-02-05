@@ -342,7 +342,7 @@ export default class ContextChat {
             context: combinedDocs,
             userQuestion: options.question
           }
-          log.info('docAnswerTemplate:', replaceVars);
+          // log.info('docAnswerTemplate:', replaceVars);
                   
           // log.info('questionTemplate:', questionTemplate);
 
@@ -403,7 +403,10 @@ export default class ContextChat {
                   finalAnswer = finalAnswer ? finalAnswer.concat(converted) : converted;
                   this.emit({ type: 'chat-chunk', data: useTools && converted ? converted : (isString(converted) ? converted : '') });
                 }
-              }            
+              }                          
+            } else if (chunk && isString(chunk)) {
+              finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
+              this.emit({ type: 'chat-chunk', data: chunk });
             }
           }        
           
@@ -493,6 +496,9 @@ export default class ContextChat {
                 this.emit({ type: 'chat-chunk', data: useTools && converted ? converted : (isString(converted) ? converted : '') });
               }
             }            
+          } else if (chunk && isString(chunk)) {
+            finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
+            this.emit({ type: 'chat-chunk', data: chunk });
           }
         }        
         

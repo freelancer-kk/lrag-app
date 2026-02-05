@@ -9,10 +9,6 @@ npm install --save pdf-parse csv-parse text-loader word-extractor json-loader of
 npm install --save-dev @types/pdf-parse @types/csv-parse @types/word-extractor
 ```
 
-### Ollama API KEY
-b26e8f39b51d47d592c5b24ff503bc83.Tsp1iHL-zqNww8S4ZCz0i2Tm
-
-
 ### Run deepseek OCR
 C:\Users\kabir\AppData\Roaming\ollama\ollama.exe run deepseek-ocr "C:\Users\kabir\OneDrive\Documents\lrag-sample-docs\Law\baubeschreibung.pdf\n<|grounding|>Convert the document to markdown."
 
@@ -82,7 +78,8 @@ https://www.youtube.com/watch?v=tsrkB9I7m80
 To change the version number e.g 1.2.0
 Update en.json/de.json VERSION tag
 Update package.json and app/package.json VERSION tag
-Update update.json entries with new versions or change existing links
 Update src/assets/template.env with VERSION tag
 build and release
+Update update.json entries with new versions or change existing links
+
 update update.json to NAS ftp
