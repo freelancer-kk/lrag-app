@@ -78,6 +78,7 @@ https://www.youtube.com/watch?v=tsrkB9I7m80
 To change the version number e.g 1.2.0
 Update en.json/de.json VERSION tag
 Update package.json and app/package.json VERSION tag
+Update package-lock.json and app/package-lock.json VERSION tag
 Update src/assets/template.env with VERSION tag
 build and release
 Update update.json entries with new versions or change existing links
