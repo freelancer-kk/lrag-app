@@ -108,7 +108,7 @@ export class InsightsComponent implements OnInit {
             try {
               this.generationInfo = data.llmOutput.tokenUsage as ITokenUsage;
             } catch (e) {
-              console.error('Error parsing generation info:', e, data);              
+              // console.error('Error parsing generation info:', e, data);              
             }
           }
           break;

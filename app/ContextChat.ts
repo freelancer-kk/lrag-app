@@ -24,7 +24,7 @@ import { isString } from 'mathjs'
 import { createAgent } from "langchain";
 import { MemorySaver } from "@langchain/langgraph";
 
-const toolPrefixPrompt = "You are a helpful AI assistant with access to tools. When you use a tool, you MUST include the key findings or results from that tool in your final answer to the user. If a tool is not required then respond with a conversational answer to the user question. In all cases be concise and provide sources where applicable.";
+const toolPrefixPrompt = "You are a helpful AI assistant with access to tools. When you use a tool, you MUST include the key findings or results from every tool call in your final answer to the user. If a tool is not required then respond with a conversational answer to the user question. In all cases be concise and provide sources where applicable.";
   
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  

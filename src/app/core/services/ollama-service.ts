@@ -300,6 +300,7 @@ export class OllamaService {
     if (modelEntry && modelEntry.context_length) {
       return modelEntry.context_length;
     } else {
+      // console.warn('getContextLength: context length not found for model:', modelName);
       return 4096; // Default
     }
   }
