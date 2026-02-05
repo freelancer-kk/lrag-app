@@ -24,7 +24,7 @@ import { isString } from 'mathjs'
 import { createAgent } from "langchain";
 import { MemorySaver } from "@langchain/langgraph";
 
-const toolPrefixPrompt = "You are a helpful AI assistant with access to tools. If a tool is not required then respond with a conversational answer to the user question. In all answer be concise and provide sources where applicable.";
+const toolPrefixPrompt = "You are a helpful AI assistant with access to tools. When you use a tool, you MUST include the key findings or results from that tool in your final answer to the user. If a tool is not required then respond with a conversational answer to the user question. In all cases be concise and provide sources where applicable.";
   
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -381,7 +381,7 @@ export default class ContextChat {
                   thread_id: this.sessionId,
                 },
                 callbacks: customCallbacks,
-                streamMode: "values"
+                streamMode: "updates"
               }
             );          
           } else {
@@ -400,27 +400,37 @@ export default class ContextChat {
 
           let finalAnswer: any;
           log.info('llmResponse:', llmResponse);
-          for await (const chunk of llmResponse) {
-            if (chunk && Array.isArray(chunk.messages)) {
-              const msg = chunk.messages[chunk.messages.length - 1];
-              const msgType: string = msg._getType();
-              if (msgType === "ai" && msg.tool_calls?.length > 0) {
-                log.info(`\n[Agent]: I'm going to search for: ${msg.tool_calls[0].args.input}`);
-              } else if (msgType === "tool") {
-                log.info(`\n[Tool]: Search results received.`);
-              } else if (msg.content && msg.content.length > 1) {
-                log.info(`\n[Final Answer]: ${msgType}: ${msg.content}`);
-                
-                if (msgType === 'ai') {
-                  const converter = new Converter();
-                  const converted = `${converter.makeHtml(msg.content)}`; 
-                  finalAnswer = finalAnswer ? finalAnswer.concat(converted) : converted;
-                  this.emit({ type: 'chat-chunk', data: useTools && converted ? converted : (isString(converted) ? converted : '') });
+          for await (const update of llmResponse) {
+            for (const nodeName of Object.keys(update)) {
+              const chunk = update[nodeName];
+              if (chunk && Array.isArray(chunk.messages)) {
+                // const msg = chunk.messages[chunk.messages.length - 1];
+                for await (const msg of chunk.messages) {
+                  const msgType: string = msg._getType();                
+                  log.info('Processing message:', msgType, JSON.stringify(msg).substring(0, 200) + '...');
+                  if (msgType === "ai" && msg.tool_calls?.length > 0) {
+                    log.info(`\n[Agent]: I'm going to search for: ${msg.tool_calls[0].args.input}`);
+                  } else if (msgType === "tool") {
+                    log.info(`\n[Tool]: Search results received.`);
+                  } else if (msg.content && msg.content.length > 1) {
+                    log.info(`\n[Final Answer]: ${msgType}: ${msg.content}`);
+                    
+                    if (msgType === 'ai') {
+                      const converter = new Converter();
+                      const converted = `${converter.makeHtml(msg.content)}`; 
+                      finalAnswer = finalAnswer ? finalAnswer.concat(converted) : converted;
+                      this.emit({ type: 'chat-chunk', data: useTools && converted ? converted : (isString(converted) ? converted : '') });
+                    } else {
+                      log.info('Ignoring msgType:', msgType, 'with content:', msg.content);
+                    }
+                  }            
                 }
-              }                          
-            } else if (chunk && isString(chunk)) {
-              finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
-              this.emit({ type: 'chat-chunk', data: chunk });
+              } else if (chunk && isString(chunk)) {
+                finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
+                this.emit({ type: 'chat-chunk', data: chunk });
+              } else {
+                log.info('Received non-string, non-message chunk:', JSON.stringify(chunk));
+              }
             }
           }        
           
@@ -476,7 +486,7 @@ export default class ContextChat {
                 thread_id: this.sessionId,
               },
               callbacks: customCallbacks,
-              streamMode: "values"
+              streamMode: "updates"
             }
           );          
         } else {
@@ -494,27 +504,37 @@ export default class ContextChat {
         
         let finalAnswer: any;
         log.info('llmResponse:', llmResponse);
-        for await (const chunk of llmResponse) {
-          if (chunk && Array.isArray(chunk.messages)) {
-            const msg = chunk.messages[chunk.messages.length - 1];
-            const msgType: string = msg._getType();
-            if (msgType === "ai" && msg.tool_calls?.length > 0) {
-              log.info(`\n[Agent]: I'm going to search for: ${msg.tool_calls[0].args.input}`);
-            } else if (msgType === "tool") {
-              log.info(`\n[Tool]: Search results received.`);
-            } else if (msg.content && msg.content.length > 1) {
-              log.info(`\n[Final Answer]: ${msgType}: ${msg.content}`);
-              
-              if (msgType === 'ai') {
-                const converter = new Converter();
-                const converted = `${converter.makeHtml(msg.content)}`; 
-                finalAnswer = finalAnswer ? finalAnswer.concat(converted) : converted;
-                this.emit({ type: 'chat-chunk', data: useTools && converted ? converted : (isString(converted) ? converted : '') });
+        for await (const update of llmResponse) {
+          for (const nodeName of Object.keys(update)) {
+            const chunk = update[nodeName];
+            if (chunk && Array.isArray(chunk.messages)) {
+              // const msg = chunk.messages[chunk.messages.length - 1];
+              for await (const msg of chunk.messages) {
+                const msgType: string = msg._getType();                
+                log.info('Processing message:', msgType, JSON.stringify(msg).substring(0, 200) + '...');
+                if (msgType === "ai" && msg.tool_calls?.length > 0) {
+                  log.info(`\n[Agent]: I'm going to search for: ${msg.tool_calls[0].args.input}`);
+                } else if (msgType === "tool") {
+                  log.info(`\n[Tool]: Search results received.`);
+                } else if (msg.content && msg.content.length > 1) {
+                  log.info(`\n[Final Answer]: ${msgType}: ${msg.content}`);
+                  
+                  if (msgType === 'ai') {
+                    const converter = new Converter();
+                    const converted = `${converter.makeHtml(msg.content)}`; 
+                    finalAnswer = finalAnswer ? finalAnswer.concat(converted) : converted;
+                    this.emit({ type: 'chat-chunk', data: useTools && converted ? converted : (isString(converted) ? converted : '') });
+                  } else {
+                    log.info('Ignoring msgType:', msgType, 'with content:', msg.content);
+                  }
+                }            
               }
-            }            
-          } else if (chunk && isString(chunk)) {
-            finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
-            this.emit({ type: 'chat-chunk', data: chunk });
+            } else if (chunk && isString(chunk)) {
+              finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
+              this.emit({ type: 'chat-chunk', data: chunk });
+            } else {
+              log.info('Received non-string, non-message chunk:', JSON.stringify(chunk));
+            }
           }
         }        
         
