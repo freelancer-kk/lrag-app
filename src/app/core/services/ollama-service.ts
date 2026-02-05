@@ -29,13 +29,22 @@ export class OllamaService {
       "description": "The current, most capable model that runs on a single GPU"
     },
     {
-      "value": "granite3.1-dense:2b",
-      "viewValue": "granite3.1-dense:2b - small, fast, trade off accuracy (<2GB)",
+      "value": "granite4:3b",
+      "viewValue": "granite4:3b - small, fast, trade off accuracy (<4GB)",
       "thinking": true,
       "cloud": false,
-      "memory": 2,
+      "memory": 4,
       "input": "Text",
-      "description": "The IBM Granite 2B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
+      "description": "Granite 4 features improved instruction following (IF) and tool-calling capabilities, making them more effective in enterprise applications. These models excel at tasks such as reasoning, coding, and complex text generation."
+    },
+    {
+      "value": "qwen3-vl:4b-thinking",
+      "viewValue": "qwen3-vl:4b-thinking - A powerful vision-language model (<4GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 4,
+      "input": "Text,Image",
+      "description": "The most powerful vision-language model in the Qwen model family to date. It excels in understanding and generating content that combines both text and images"
     },
     {
       "value": "llama3-chatqa:8b",
@@ -194,7 +203,11 @@ export class OllamaService {
   }
 
   isCloud = (): boolean => {
-    return this.models.find(m => m.value === this.selectedModel).cloud;    
+    try {
+      return this.models.find(m => m.value === this.selectedModel).cloud;
+    } catch (e) {
+      return false;
+    }
   }
 
   commandOllama = (command: string, options: any = {}, index: number = 93): Promise<any> => {

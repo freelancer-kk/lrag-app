@@ -120,6 +120,18 @@ export default class ContextChat {
       return e;
     }    
   }
+
+  resizeContextIfNeeded = async (text: string, useTools: boolean): Promise<void> => {
+    if (this.ollamaLlm) {
+      const tokenCount: number = await this.ollamaLlm.getNumTokens(text);
+      if (this.ollamaLlm.numCtx && this.ollamaLlm.numCtx < (tokenCount + (useTools ? 8512 : 512))) {
+        this.ollamaLlm.numCtx = tokenCount + (useTools ? 8512 : 512); // adding buffer
+        log.info('OLLAMA:Resized Ollama context to:', this.ollamaLlm.numCtx);
+      } else {
+        log.info('OLLAMA:Current Ollama context is sufficient:', this.ollamaLlm.numCtx, 'tokens in input:', tokenCount);
+      }
+    }
+  }
   
   getAnswer = async (options: any): Promise<any> => {
     if (!this.ollamaService.isReady() || !this.ollamaService.ollama || !this.rerankerService.isReady()) {
@@ -356,6 +368,7 @@ export default class ContextChat {
 //              checkpointer: this.memory,
             });
             const formattedPrompt: string = await questionTemplate.format(replaceVars);
+            await this.resizeContextIfNeeded(formattedPrompt, useTools);
             llmResponse = await agent.stream(
               { 
                 messages: [
@@ -371,7 +384,8 @@ export default class ContextChat {
                 streamMode: "values"
               }
             );          
-          } else {            
+          } else {
+            await this.resizeContextIfNeeded(await questionTemplate.format(replaceVars), useTools);
             stringChain = questionTemplate
               .pipe(this.ollamaLlm)
               .pipe(new StringOutputParser());
@@ -442,7 +456,7 @@ export default class ContextChat {
         let questionChain: any;
         let llmResponse: IterableReadableStream<string | any>;
         log.info('INSIGHT: NO DOC CONTEXT!', options.chatPrompt, replaceVars);
-
+        
         if (useTools) {          
           log.info('Using tools in context chat');
           const agent = createAgent({
@@ -452,6 +466,7 @@ export default class ContextChat {
             // systemPrompt: toolPrefixPrompt,
           });
           const formattedPrompt: string = await questionTemplate.format(replaceVars);
+          await this.resizeContextIfNeeded(formattedPrompt, useTools);
           llmResponse = await agent.stream(
             { messages: [
               { role: "user", content: formattedPrompt }
@@ -465,6 +480,7 @@ export default class ContextChat {
             }
           );          
         } else {
+          await this.resizeContextIfNeeded(await questionTemplate.format(replaceVars), useTools);
           questionChain = questionTemplate
             .pipe(this.ollamaLlm)
             .pipe(new StringOutputParser());

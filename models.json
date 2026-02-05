@@ -9,13 +9,13 @@
     "description": "The current, most capable model that runs on a single GPU"
   },
   {
-    "value": "granite3.1-dense:2b",
-    "viewValue": "granite3.1-dense:2b - small, fast, trade off accuracy (<2GB)",
+    "value": "granite4:3b",
+    "viewValue": "granite4:3b - small, fast, trade off accuracy (<4GB)",
     "thinking": true,
     "cloud": false,
-    "memory": 2,
+    "memory": 4,
     "input": "Text",
-    "description": "The IBM Granite 2B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
+    "description": "Granite 4 features improved instruction following (IF) and tool-calling capabilities, making them more effective in enterprise applications. These models excel at tasks such as reasoning, coding, and complex text generation."
   },
   {
     "value": "qwen3-vl:4b-thinking",
