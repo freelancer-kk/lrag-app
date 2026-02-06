@@ -114,7 +114,7 @@
           <td class="underline" mat-col>
             {{ 'PAGES.DETAIL.MODEL_NAME' | translate }}       
           </td>
-          <td class="underline" mat-col>
+          <td [matTooltip]="'PAGES.DETAIL.MODEL_TYPE_TIP' | translate" class="underline" mat-col>
             {{ 'PAGES.DETAIL.MODEL_TYPE' | translate }}       
           </td>
           <td class="underline" mat-col>
@@ -143,11 +143,11 @@
           <tr mat-row>
             <td class="centercol" mat-col>
               <button [matTooltip]="entry.description" matButton (click)="openModelDetails($event, entry.name)">
-                {{ entry.name }} ({{ entry.capabilities && entry.capabilities.join(',') }})
+                {{ entry.name }}
               </button>
             </td>
             <td mat-col>
-              {{ entry.input }}
+              {{ entry.capabilities && entry.capabilities.join(',') }}
             </td>
             <td mat-col>
               @if (

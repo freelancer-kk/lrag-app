@@ -301,7 +301,7 @@ export class OllamaService {
           viewValue: mm ? mm.viewValue : em ? em.viewValue : model.name,
           modelType: mm ? 'llm' : em ? 'embedding' : 'unknown',
           input: mm ? mm.input : em ? em.input : 'Text',
-          thinking: mm ? mm.thinking : em ? em.thinking : false,
+          thinking: sd ? sd.capabilities && sd.capabilities.includes('thinking') : false,
           model_info: sd ? sd.model_info : undefined,
           capabilities: sd ? sd.capabilities : undefined,
           context_length: sd ? sd.context_length : undefined,
@@ -339,7 +339,7 @@ export class OllamaService {
           try {
             this.availableModels[index].context_length = Number(modelDetails.model_info[archName + '.context_length']);
             this.availableModels[index].parameter_count = parameterCount;
-            console.log('context-length:', modelEntry.name, this.availableModels[index].context_length, parameterCount);
+            console.log('capabilities:', modelEntry.name, this.availableModels[index].capabilities);
           } catch (ne) {
             console.error(ne);
             this.availableModels[index].context_length = 4096;
