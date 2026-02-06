@@ -21,7 +21,7 @@ export default class SemanticChunking {
   webContents: Electron.WebContents | undefined;
   baseUrl: string;
 
-  constructor(baseUrl: string = "http://localhost:11434", model: string = "embeddinggemma:300m") {
+  constructor(baseUrl: string, model: string = "embeddinggemma:300m") {
     this.baseUrl = baseUrl;
   }
 

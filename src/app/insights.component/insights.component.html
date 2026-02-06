@@ -72,7 +72,7 @@
           <mat-slider [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4" max="2048" step="2" showTickMarks discrete [displayWith]="formatLabelK" (focus)="onFocusTip()" (blur)="onBlurTip()">
             <input matSliderThumb [(ngModel)]="systemService.k" [value]="systemService.k" (focus)="onFocusTip()" (blur)="onBlurTip()">
           </mat-slider>
-          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.k = 4">      
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.k = 4;onBlurTip()">
             <mat-icon>replay</mat-icon>
           </button>
         </div>
@@ -92,7 +92,7 @@
     <mat-slider [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" min="4096" [max]="this.getMaxContextTokens()" step="64" showTickMarks discrete [displayWith]="formatLabel" (focus)="onFocusTip()" (blur)="onBlurTip()">
       <input matSliderThumb [(ngModel)]="systemService.numCtx" [value]="systemService.numCtx" (focus)="onFocusTip()" (blur)="onBlurTip()">
     </mat-slider>
-    <button matIconButton [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.numCtx = 4096">
+    <button matIconButton [disabled]="ollamaService.isCloud() || overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.numCtx = 4096; onBlurTip()">
       <mat-icon>replay</mat-icon>
     </button>
   </div>

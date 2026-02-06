@@ -99,7 +99,8 @@
       "RATING_TIP": "Ihre PC -Bewertung basiert auf CPU, Speicher, GPU und VRAM. ",
       "MANAGE_EXTERNALLY": "Extern verwalten",
       "MANAGE_EXTERNALLY_TIP": "Optional den Modellprozess (Ollama) extern verwalten? Dies ermöglicht eine bessere Kontrolle darüber, wie Sie Ollama auf Ihrem PC verwenden",
-      "EXTERNAL_ARE_YOU_SURE": "Bist du sicher? ",
+      "EXTERNAL_ARE_YOU_SURE": "Bist du sicher? Sie müssen sicherstellen, dass Ollama installiert und gestartet ist, bevor Sie LRag ausführen. Dies erfordert mehr Verwaltung. LRag wird beendet und Sie müssen für diese Option neu starten",
+      "OLLAMA_URL_ARE_YOU_SURE": "Bist du sicher? Wenn Ollama nicht unter dieser URL läuft, funktioniert LRag nicht",
       "QUESTION": "Fragen",
       "ANSWER": "Antworten",
       "STATS": "Statistiken",
@@ -111,7 +112,9 @@
       "BOOTSTRAP": "Startup",
       "BOOTSTRAP_DESC": "Information",
       "RESTART_SERVICE": "Starten Sie den Dienst ggf. neu",
-      "CLICK_TO_INSTALL": "Klicken Sie unten, um Informationen zum Installieren/Aktualisieren von Abhängigkeiten zu erhalten"
+      "CLICK_TO_INSTALL": "Klicken Sie unten, um Informationen zum Installieren/Aktualisieren von Abhängigkeiten zu erhalten",
+      "OLLAMA_URL": "Ollama-Endpunkt",
+      "OLLAMA_URL_TIP": "Geben Sie optional an, wo Ollama ausgeführt wird, wenn es nicht auf Ihrem PC ausgeführt wird"
     },
     "SETTINGS": {
       "TITLE": "Einstellungen",
@@ -293,9 +296,10 @@
       "TITLE": "HELP",
       "DESC": "Über die folgenden Links erhalten Sie Zugriff auf unser Forum und unsere Wissensdatenbank",
       "USEFUL_LINKS": "Useful Links",
+      "EMAIL_LINK": "Kontaktieren Sie den Support",      
       "KB_LINK": "Knowledge Base",
       "FORUM_LINK": "Öffentliches Forum",
-      "SUPPORT_LINK": "Ticket erstellen (nur PRO & PRO+)",
+      "SUPPORT_LINK": "Ticket erstellen",
       "FEEDBACK_LINK": "Geben Sie Feedback",
       "YOUTUBE_GALLERY_URL": "Video Tutorials",
       "REGISTER_LINK": "Newsletter",

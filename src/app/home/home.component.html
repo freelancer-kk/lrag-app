@@ -14,9 +14,6 @@
             &nbsp;<span class="small">({{ ollamaService.servicePID }})</span>
           }
           <span class="spacer"></span>            
-          <mat-slide-toggle [disabled]="!this.systemService.osType" [checked]="ollamaService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
-          {{ 'PAGES.HOME.MANAGE_EXTERNALLY' | translate }}
-          </mat-slide-toggle>  
           <div [class]="ollamaService.status.getC()">  
             @if (ollamaService.status.get() === EStatus.downloading || ollamaService.status.get() === EStatus.starting) {
               <mat-spinner diameter="30"></mat-spinner>
@@ -25,7 +22,24 @@
               <mat-icon>{{ ollamaService.status.getI() }}</mat-icon>
               {{ ollamaService.status.getS() }}
             }            
-          </div>            
+          </div>       
+        </div>
+        <div class="onerow">
+          <mat-slide-toggle [disabled]="!this.systemService.osType" [checked]="ollamaService.manageOllamaExternally" [matTooltip]="'PAGES.HOME.MANAGE_EXTERNALLY_TIP' | translate" (change)="manageExternally($event)">
+          {{ 'PAGES.HOME.MANAGE_EXTERNALLY' | translate }}
+          </mat-slide-toggle>  
+          @if (ollamaService.manageOllamaExternally) {
+            <span class="spacer"></span>
+            <mat-form-field class="half-width">
+              <mat-label [matTooltip]="'PAGES.HOME.OLLAMA_URL_TIP' | translate">{{ 'PAGES.HOME.OLLAMA_URL' | translate }}</mat-label>
+              <textarea cdkTextareaAutosize
+              #autosize="cdkTextareaAutosize"
+              (blur)="saveOllamaURL($event)" matInput type="text" [(ngModel)]="ollamaService.ollama_url">{{ systemService.toolPrompt }}</textarea>
+            </mat-form-field>
+            <button matIconButton (click)="saveOllamaURL({ target: { value: 'http://localhost:11434' }})">
+              <mat-icon>replay</mat-icon>
+            </button>
+          }
         </div>
         <div class="onerow">
           {{ 'PAGES.HOME.RERANKER' | translate }}

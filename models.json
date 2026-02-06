@@ -52,5 +52,23 @@
     "memory": 32,
     "input": "Text",
     "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+  },
+  {
+    "value": "kimi-k2-thinking:cloud",
+    "viewValue": "kimi-k2-thinking:cloud - One of the best open source thinking models (~)",
+    "thinking": true,
+    "cloud": true,
+    "memory": 4,
+    "input": "Text",
+    "description": "Kimi K2 Thinking, Moonshot AI's best open-source thinking model"
+  },
+  {
+    "value": "deepseek-v3.1:671b-cloud",
+    "viewValue": "deepseek-v3.1:671b-cloud - Advanced thinking mode and non-thinking mode (~)",
+    "thinking": true,
+    "cloud": true,
+    "memory": 4,
+    "input": "Text",
+    "description": "DeepSeek-V3.1-Terminus is a hybrid model that supports both thinking mode and non-thinking model"
   }
 ]

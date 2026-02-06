@@ -16,8 +16,10 @@ export class OllamaService {
   useDocContext: boolean = false;
   useTesseractJS: boolean = true;
   chatHistory: IChat[] = [];
+  ollama_url: string = "http://localhost:11434";
   
   availableModels: any[] = [];
+  showDetails: any[] = [];
   models: any[] = [
     {
       "value": "gemma3:1b",
@@ -78,17 +80,22 @@ export class OllamaService {
     {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, cloud: false, memory: 1, "input": "Text",description: 'EmbeddingGemma is a 300M parameter embedding model from Google'},    
   ]
   ocr_models: any[] = [
-    { value: 'deepseek-ocr:latest', viewValue: 'deepseek-ocr (<8GB)', thinking: false, cloud: false, memory: 8, "input": "Text,Image", description: 'DeepSeek OCR is an advanced optical character recognition model designed to extract text from images with high accuracy.',
-      prompt: '<|grounding|>Convert the document to markdown.',
+    { 
+      value: 'glm-ocr:bf16', viewValue: 'glm-ocr:bf16 (<3GB)', thinking: false, cloud: false, memory: 5, "input": "Text,Image", description: 'GLM-OCR is a multimodal OCR model for complex document understanding, built on the GLM-V encoder–decoder architecture',
+      prompt: 'Analyze the text in the provided image. Extract all readable content and present it in a structured Markdown format that is clear, concise, and well-organized.',
       params: {
         "temperature": 0
       }
     },
-    { value: 'benhaotang/Nanonets-OCR-s:latest', viewValue: 'nanonets-OCR-s (<5GB)', thinking: false, cloud: false, memory: 5, "input": "Text,Image", description: 'Nanonets OCR is a cloud-based optical character recognition model that provides accurate text extraction from images.',
-      prompt: 'Perform Optical Character Recognition (OCR) on the provided image and format all extracted text as a clear, structured Markdown document. Include tables as markdown tables, lists as markdown lists, etc.',
-      params: {}
-    },
-    { value: 'gemma3:4b', viewValue: 'gemma3.4b (<4GB)', thinking: false, cloud: false, memory: 6, "input": "Text,Image", description: 'The current, most capable model that runs on a single GPU.',
+    { 
+      value: 'deepseek-ocr:latest', viewValue: 'deepseek-ocr (<8GB)', thinking: false, cloud: false, memory: 8, "input": "Text,Image", description: 'DeepSeek OCR is an advanced optical character recognition model designed to extract text from images with high accuracy.',
+      prompt: '<|grounding|>Convert the document to markdown.',
+      params: {
+        "temperature": 0
+      }
+    },    
+    { 
+      value: 'gemma3:4b', viewValue: 'gemma3.4b (<4GB)', thinking: false, cloud: false, memory: 6, "input": "Text,Image", description: 'The current, most capable model that runs on a single GPU.',
       // prompt: 'Convert the image to markdown.',
       prompt: 'Analyze the text in the provided image. Extract all readable content and present it in a structured Markdown format that is clear, concise, and well-organized.',
       params: {
@@ -97,7 +104,8 @@ export class OllamaService {
         "num_ctx": 128000
       }
     },
-    { value: 'granite3.2-vision:latest', viewValue: 'granite3.2-vision (<3GB)', thinking: false, cloud: false, memory: 5, "input": "Text,Image",description: 'A compact and efficient vision-language model, specifically designed for visual document understanding, enabling automated content extraction from tables, charts, infographics, plots, diagrams, and more. ',
+    { 
+      value: 'granite3.2-vision:latest', viewValue: 'granite3.2-vision (<3GB)', thinking: false, cloud: false, memory: 5, "input": "Text,Image",description: 'A compact and efficient vision-language model, specifically designed for visual document understanding, enabling automated content extraction from tables, charts, infographics, plots, diagrams, and more. ',
       prompt: 'Analyze the text in the provided image. Extract all readable content and present it in a structured Markdown format that is clear, concise, and well-organized.',
       // prompt: 'Convert the image to markdown.',
       params: {
@@ -153,6 +161,10 @@ export class OllamaService {
     console.log('Ollama: Manage External: Service Name:', this.serviceName);
   }
 
+  getOllamaURL = async (): Promise<void> => {
+    this.ollama_url = await this.commonService.getEnvValue('OLLAMA_URL');
+  }
+
   setGpuAcceleration = async () => {
     this.status.update(EStatus.not_running);      
     await this.commonService.setEnvValue('GPU_ACCELERATION', this.gpuAcceleration ? 'true' : 'false')
@@ -189,7 +201,9 @@ export class OllamaService {
         }
       )).json();
       console.log('models downloaded!');
-      this.getAvailableLLMs();
+      this.getAvailableLLMs().then(() => {
+        return this.getAllModelDetails();
+      });
     }
   }
 
@@ -272,10 +286,13 @@ export class OllamaService {
     const value: any = await this.commandOllama('list');
     // console.log('getAvailableLLMs:', value.models);
     if (value && value.models) {
-      this.availableModels = value.models.map((model: any) => {
+      this.availableModels = [];
+
+      for await ( const model of value.models ) {      
         const mm: any = this.models.find(f => f.value === model.name);
         const em: any = this.embedding_models.find(f => f.value === model.name);        
-        return {
+        const sd: any = this.showDetails.find(f => f.name === model.name);        
+        this.availableModels.push({
           name: model.name,
           size: Math.floor(model.size / 1024 / 1000),
           usage: model.usage,
@@ -284,9 +301,13 @@ export class OllamaService {
           viewValue: mm ? mm.viewValue : em ? em.viewValue : model.name,
           modelType: mm ? 'llm' : em ? 'embedding' : 'unknown',
           input: mm ? mm.input : em ? em.input : 'Text',
-          thinking: mm ? mm.thinking : em ? em.thinking : false          
-        }
-      });
+          thinking: mm ? mm.thinking : em ? em.thinking : false,
+          model_info: sd ? sd.model_info : undefined,
+          capabilities: sd ? sd.capabilities : undefined,
+          context_length: sd ? sd.context_length : undefined,
+          parameter_count: sd ? sd.parameter_count : undefined,
+        })
+      }
     }
     // console.log('getAvailableLLMs:', this.availableModels);
   }
@@ -323,12 +344,19 @@ export class OllamaService {
             console.error(ne);
             this.availableModels[index].context_length = 4096;
           }
+          this.showDetails.push({
+            name: modelEntry.name,
+            model_info: this.availableModels[index].model_info,
+            capabilities: this.availableModels[index].capabilities,
+            context_length: this.availableModels[index].context_length,
+            parameter_count: this.availableModels[index].parameter_count
+          })
           try {
             this.models.find((m: any) => m.value === modelEntry.name).context_length = this.availableModels[index].context_length;
           } catch (ne2) {
-            console.error(ne2);
+            console.error('model:', modelEntry.name, ne2);
           }
-          // console.log('getAllModelDetails:model_info:', modelEntry.name, modelDetails.model_info);
+          // console.log('getAllModelDetails:model_info:', modelEntry.name, modelDetails.model_info);          
         });
       }
     })

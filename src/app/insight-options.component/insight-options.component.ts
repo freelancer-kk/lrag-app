@@ -24,7 +24,6 @@ import { CommonService } from '../core/services/common-service';
     MatInputModule,
     MatToolbarModule,
     MatTooltipModule,
-    FormsModule,
     MatIconModule,
     MatSliderModule,
     MatExpansionModule,

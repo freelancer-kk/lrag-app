@@ -234,7 +234,7 @@ export class InsightsComponent implements OnInit {
       const me: any = this.ollamaService.getModelByName(this.ollamaService.selectedModel);
 
       const options: any = {
-        baseUrl: this.ollamaService.isCloud() ? "https://ollama.com": "http://localhost:11434",
+        baseUrl: this.ollamaService.isCloud() ? "https://ollama.com": this.ollamaService.ollama_url,
         useDocContext: this.ollamaService.useDocContext,
         question,
         model: this.ollamaService.selectedModel,

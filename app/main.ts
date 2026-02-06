@@ -102,6 +102,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     const gpuAccelerationStr: string | undefined = await dockerEnv.getKeyValue('GPU_ACCELERATION');
     const gpuAcceleration: boolean = gpuAccelerationStr && gpuAccelerationStr.toLowerCase() === "true" ? true : false;
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
+    const ollama_url: string | undefined = await dockerEnv.getKeyValue('OLLAMA_URL');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
     const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');    
     
@@ -114,6 +115,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
 
     if (darwin_dl && ipex_dl && rocm_dl && default_dl) {
       ollamaService = new OllamaService(
+        ollama_url ? ollama_url : 'http://localhost:11434',
         ollama_api_key,
         ollama_version ? ollama_version : '',
         toolsDLS.OLLAMA_VERSION,
@@ -145,7 +147,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     ocrJSProcessor = new OCRJSProcessor(userTempPath);
     await ocrJSProcessor.start();
 
-    ocrLlmProcessor = new OCRllmProcessor(ollamaService, userTempPath);
+    ocrLlmProcessor = new OCRllmProcessor(ollama_url ? ollama_url : 'http://localhost:11434', ollamaService, userTempPath);
     await ocrLlmProcessor.start();
 
     langchainService = new LangchainService(
@@ -153,7 +155,8 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
       path.join(appDataPath, 'lrag-app', 'lrag'),
       useTesseractJS ? ocrJSProcessor : undefined,
       ocrLlmProcessor,
-      quantum
+      quantum,
+      ollama_url ? ollama_url : 'http://localhost:11434',
     );
     langchainService.register(win?.webContents);
   

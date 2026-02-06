@@ -3,6 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonService } from '../core/services/common-service';
 import { SystemService } from '../core/services';
 import { MatButton } from '@angular/material/button';
+import { SettingsService } from '../core/services/settings-service';
 
 @Component({
   selector: 'app-help.component',
@@ -16,6 +17,7 @@ import { MatButton } from '@angular/material/button';
 export class HelpComponent {
   constructor(
     public commonService: CommonService,
+    public settingsService: SettingsService,
     public systemService: SystemService
   ) {}
 }

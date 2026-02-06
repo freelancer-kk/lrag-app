@@ -100,6 +100,7 @@
         "MANAGE_EXTERNALLY": "Manage Externally",
         "MANAGE_EXTERNALLY_TIP": "Optionally, manage the model process (Ollama) externally? This will allow more control over how you use Ollama on your PC",
         "EXTERNAL_ARE_YOU_SURE": "Are you sure? you will have to make sure Ollama is installed and started before running LRag, requires more management. LRag will exit and you will need to restart for this option",
+        "OLLAMA_URL_ARE_YOU_SURE": "Are you sure? if Ollama is not running on that URL, LRag will not work",
         "QUESTION": "Question",
         "ANSWER": "Answer",
         "STATS": "Statistics",
@@ -111,7 +112,9 @@
         "BOOTSTRAP": "Startup",
         "BOOTSTRAP_DESC": "Information",
         "RESTART_SERVICE": "Restart service if necessary",
-        "CLICK_TO_INSTALL": "Click below for info on how to install/upgrade dependencies"
+        "CLICK_TO_INSTALL": "Click below for info on how to install/upgrade dependencies",
+        "OLLAMA_URL": "Ollama Endpoint",
+        "OLLAMA_URL_TIP": "Optionally specify where Ollama is running, if it is not running your PC"
       },
       "SETTINGS": {
         "TITLE": "Upgrade",
@@ -292,9 +295,10 @@
         "TITLE": "Help",
         "DESC": "The links below provide access our forum and knowledge base",
         "USEFUL_LINKS": "Useful Links",
+        "EMAIL_LINK": "Contact Support",
         "KB_LINK": "Knowledge Base",
         "FORUM_LINK": "Public Forum",
-        "SUPPORT_LINK": "Raise a ticket (PRO & PRO+ only)",
+        "SUPPORT_LINK": "Raise a ticket",
         "FEEDBACK_LINK": "Provide Feedback",
         "YOUTUBE_GALLERY_URL": "Video Tutorials",
         "REGISTER_LINK": "Newsletter",
