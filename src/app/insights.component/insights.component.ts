@@ -107,6 +107,7 @@ export class InsightsComponent implements OnInit {
         switch (type) {
           case 'chat-llm-end': {
             // console.log('llmEndData:', data);
+            this.toolProgress++;
             try {
               if (data.llmOutput && data.llmOutput.tokenUsage) {
                 this.generationInfo = data.llmOutput.tokenUsage as ITokenUsage;
