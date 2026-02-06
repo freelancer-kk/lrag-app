@@ -32,7 +32,7 @@ import { IngestComponent } from '../ingest.component/ingest.component';
 import { DetailComponent } from '../detail/detail.component';
 import { InsightOptionsComponent } from '../insight-options.component/insight-options.component';
 import {CdkTextareaAutosize, TextFieldModule} from '@angular/cdk/text-field';
-
+import {MatBadgeModule} from '@angular/material/badge';
 @Component({
   selector: 'app-insights.component',
   imports: [TranslateModule,
@@ -56,7 +56,8 @@ import {CdkTextareaAutosize, TextFieldModule} from '@angular/cdk/text-field';
     FormsModule,
     ReactiveFormsModule,
     MatSlideToggleModule,
-    TextFieldModule
+    TextFieldModule,
+    MatBadgeModule
   ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'
@@ -83,6 +84,7 @@ export class InsightsComponent implements OnInit {
   breakpoint: number = 4;
   useCaseTooltip: string = '';
   showTip: boolean = false;
+  toolProgress: number = 0;
   
   EStatus: typeof EStatus = EStatus;
   
@@ -103,13 +105,32 @@ export class InsightsComponent implements OnInit {
       // console.log('chat-event:', type);
       this.ngZone.run(() => {
         switch (type) {
-          case 'chat-chunk-metadata': {
+          case 'chat-llm-end': {
             // console.log('llmEndData:', data);
             try {
-              this.generationInfo = data.llmOutput.tokenUsage as ITokenUsage;
+              if (data.llmOutput && data.llmOutput.tokenUsage) {
+                this.generationInfo = data.llmOutput.tokenUsage as ITokenUsage;
+              } else if (data.generations && data.generations[0] && data.generations[0][0] && data.generations[0][0].message && data.generations[0][0].message.kwargs && data.generations[0][0].message.kwargs.usage_metadata) {
+                const { input_tokens, output_tokens, total_tokens } = data.generations[0][0].message.kwargs.usage_metadata;
+                this.generationInfo = {
+                  completionTokens: output_tokens,
+                  promptTokens: input_tokens,
+                  totalTokens: total_tokens
+                } as ITokenUsage;
+              } else {
+                console.warn('chat-chunk-metadata: Could not understand', data);
+              }
             } catch (e) {
               // console.error('Error parsing generation info:', e, data);              
             }
+          }
+          break;
+          case 'chat-tool-start': {
+            this.toolProgress++;
+          }
+          break;
+          case 'chat-tool-end': {
+            this.toolProgress++;
           }
           break;
           case 'chat-chunk': {
@@ -291,6 +312,7 @@ export class InsightsComponent implements OnInit {
         });        
       }, 180000)
             
+      this.toolProgress = 0;
       const answerResponse: any = await this.systemService.commandInsight('question', options);
       clearInterval(showTimer);
       clearTimeout(questionTimeout);

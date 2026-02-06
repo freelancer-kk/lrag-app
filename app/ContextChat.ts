@@ -229,8 +229,8 @@ export default class ContextChat {
         name = "TokenUsageHandler";
 
         handleLLMEnd(output: LLMResult, runId: string, parentRunId?: string, tags?: string[], extraParams?: Record<string, unknown>) {
-          log.info('handleLLMEnd:', JSON.stringify(output.llmOutput, null, 2));
-          ref.emit({ type: 'chat-chunk-metadata', data: output });
+          log.info('handleLLMEnd:', JSON.stringify(output));
+          ref.emit({ type: 'chat-llm-end', data: output });          
         }
       }
 
@@ -239,10 +239,12 @@ export default class ContextChat {
         {
           name: "web_search_tool_handler",
           handleToolStart(tool: Serialized, input: string, runId: string) {
-            log.info(`[Tool Call Started]: ${tool.name} with input ${JSON.stringify(input)}`);            
+            log.info(`[Tool Call Started]: ${tool.name} with input ${JSON.stringify(input)}`);
+            ref.emit({ type: 'chat-tool-start', data: { tool, input } });
           },
           handleToolEnd(output: any, runId: string) {
             log.info(`[Tool Call Ended]: ${tool.name} with output ${output}`);            
+            ref.emit({ type: 'chat-tool-end', data: { tool, output } });
           } 
         }
       ];

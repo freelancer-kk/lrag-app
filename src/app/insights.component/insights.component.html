@@ -13,8 +13,13 @@
     <div [matTooltip]="'PAGES.INSIGHT.RUNNING_TIP' | translate" [class]="systemService.insightStatus.getC()">
       @if (insightStatus !== EStatus.thinking) {
         <mat-icon>{{ systemService.insightStatus.getI() }}</mat-icon>
-      }    
-      {{ systemService.insightStatus.getS() }}      
+      } @else if (insightStatus === EStatus.thinking) {     
+      <div [matBadge]="toolProgress" matBadgeOverlap="false">
+        {{ systemService.insightStatus.getS() }}
+      </div>
+      } @else {
+        {{ systemService.insightStatus.getS() }}
+      }
     </div>
   }
   @if (!ollamaService.useDocContext) {
