@@ -135,8 +135,9 @@ export class InsightsComponent implements OnInit {
           }
           break;
           case 'chat-chunk': {
-            if (response.data) {
-              this.streamedResponse += response.data;
+            if (data) {
+              this.toolProgress++;            
+              this.streamedResponse += data;
               this.scrollToBottom();
             }
           }
