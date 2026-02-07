@@ -216,6 +216,7 @@ async function createWindow(): Promise<BrowserWindow> {
     x: 0,
     y: 0,
     show: false,
+    frame: false,
     width: runType === 2 ? size.width/2 : size.width/2.1,
     height: size.height,
     minWidth: 400, // Optional: Set a minimum width

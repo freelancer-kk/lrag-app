@@ -19,8 +19,19 @@
   width: 55px;
 }
 
+.title-bar {
+  -webkit-app-region: drag;
+  height: 60px;
+  width: 100%;
+}
+
 .main-menu {
   transition: 300ms ease-in-out;
+  -webkit-app-region: no-drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
 }
 
 .rotate180 {
