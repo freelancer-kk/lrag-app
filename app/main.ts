@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage, screen, Tray } from 'electron';
+import { app, Menu, BrowserWindow, nativeImage, screen, Tray } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
@@ -62,6 +62,8 @@ if (serve) {
   } else {
     runType = 2;  
     configPath = path.join(userDataPath, 'config')
+    Menu.setApplicationMenu(null);
+    log.info("MAC: Removing application menu");   
   }
 }
 log.info('APP:RUN:MODE', runType);
@@ -283,6 +285,7 @@ try {
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {            
     setTimeout(async () => {   
+      
       quantum = new Quantum(configPath);
       await quantum.init();
       // await quantum.runTest('this is my message in');

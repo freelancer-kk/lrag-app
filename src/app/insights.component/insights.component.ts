@@ -178,6 +178,7 @@ export class InsightsComponent implements OnInit {
 
   onBlurTip = () => {
     this.showTip = false;
+    this.systemService.saveInsightSettings();
   }
 
   formatLabel = (value: number): string => {
