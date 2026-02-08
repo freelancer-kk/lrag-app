@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, effect, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, inject, effect, ViewChild, OnDestroy, Injector, afterNextRender } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -25,6 +25,9 @@ import { EStatus } from '../shared/model';
 import { CommonService } from '../core/services/common-service';
 import { RerankerService } from '../core/services/reranker-service';
 import { SettingsService } from '../core/services/settings-service';
+import {CdkTextareaAutosize, TextFieldModule} from '@angular/cdk/text-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
     selector: 'app-home',
@@ -45,12 +48,18 @@ import { SettingsService } from '../core/services/settings-service';
       MatTooltipModule,
       MatSlideToggleModule,
       SplashComponent,
-      LegalComponent
+      LegalComponent,
+      MatInputModule,
+      FormsModule,
+      ReactiveFormsModule,    
+      TextFieldModule
     ]
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private _snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
+  private _injector = inject(Injector);
+  @ViewChild('autosize') autosize: CdkTextareaAutosize | undefined;
   @ViewChild('cpu', {static: true}) cpu!: JsonViewComponent;
   @ViewChild('gpu', {static: true}) gpu!: JsonViewComponent;
   @ViewChild('mem', {static: true}) mem!: JsonViewComponent;
@@ -101,6 +110,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     })
   }
 
+  triggerResize = () => {
+    // Wait for content to render, then trigger textarea resize.
+    afterNextRender(
+      () => {
+        this.autosize?.resizeToFitContent(true);        
+      },
+      {
+        injector: this._injector,
+      },
+    );
+  }
+
   async ngOnInit() {
     setTimeout(async () => {
       /*
@@ -137,6 +158,30 @@ export class HomeComponent implements OnInit, OnDestroy {
         await this.commonService.quitApp();
       } else {
         event.source.checked = !event.checked;
+      }
+    })
+  }
+
+  saveOllamaURL = async (event: any) => {
+    const dialogRef = this.dialog.open(
+      AlertComponent, {
+        data: {
+          type: 1,
+          params: {
+            message: await this.commonService.get('PAGES.HOME.OLLAMA_URL_ARE_YOU_SURE')
+          }
+        }
+      });
+    dialogRef.afterClosed().subscribe(async (result) => {
+      console.log(`Dialog result: ${result}`);
+      if (result === true) {            
+        this.ollamaService.ollama_url = event.target.value;
+        await this.commonService.setEnvValue('OLLAMA_URL', this.ollamaService.ollama_url);        
+        this.ollamaService.status.update(EStatus.configuring);
+        await this.commonService.quitApp();
+      } else {
+        this.ollamaService.ollama_url = await this.commonService.getEnvValue('OLLAMA_URL');
+        event.target.value = this.ollamaService.ollama_url;
       }
     })
   }

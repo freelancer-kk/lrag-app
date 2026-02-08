@@ -16,6 +16,7 @@ enum EOCLlmStatus {
 const BATCH_SIZE = 1;
 export default class OCRllmProcessor {
   webContents: Electron.WebContents | undefined;
+  ollama_url: string;
   ollamaService: OllamaService;
   ollamaOCRLlm: Ollama[] = [];
   filesToProcess: any[] = [];
@@ -25,7 +26,8 @@ export default class OCRllmProcessor {
   ollamaOptions: any;
   imageToTextProcessor: ImageToTextProcessor;
   
-  constructor(ollamaService: OllamaService, userTempPath: string) {
+  constructor(ollama_url: string, ollamaService: OllamaService, userTempPath: string) {
+    this.ollama_url = ollama_url;
     this.ollamaService = ollamaService;
     this.imageToTextProcessor = new ImageToTextProcessor(userTempPath, BATCH_SIZE);
   }
@@ -40,7 +42,7 @@ export default class OCRllmProcessor {
       
       const ollamaOptions: OllamaInput = {
           ...{
-            baseUrl: 'http://127.0.0.1:11434',
+            baseUrl: this.ollama_url,
             model: ocrobj.model,
             headers: this.ollamaService.headers ? this.ollamaService.headers : undefined,
             maxConcurrency: BATCH_SIZE            

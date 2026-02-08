@@ -48,7 +48,7 @@ export default class LangchainService {
     ocrJSProcessor: OCRJSProcessor | undefined,
     ocrLLMProcessor: OCRllmProcessor,
     quantum: Quantum,
-    baseUrl: string = "http://localhost:11434",
+    baseUrl: string,
     model: string = "embeddinggemma:300m"
 ) {
     this.doc_path = doc_path;

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage, screen, Tray } from 'electron';
+import { app, Menu, BrowserWindow, nativeImage, screen, Tray } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
@@ -62,6 +62,8 @@ if (serve) {
   } else {
     runType = 2;  
     configPath = path.join(userDataPath, 'config')
+    Menu.setApplicationMenu(null);
+    log.info("MAC: Removing application menu");   
   }
 }
 log.info('APP:RUN:MODE', runType);
@@ -102,6 +104,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     const gpuAccelerationStr: string | undefined = await dockerEnv.getKeyValue('GPU_ACCELERATION');
     const gpuAcceleration: boolean = gpuAccelerationStr && gpuAccelerationStr.toLowerCase() === "true" ? true : false;
     const ollama_version: string | undefined = await dockerEnv.getKeyValue('OLLAMA_VERSION');
+    const ollama_url: string | undefined = await dockerEnv.getKeyValue('OLLAMA_URL');
     const ipex_version: string | undefined = await dockerEnv.getKeyValue('IPEX_VERSION');
     const reranker_version: string | undefined = await dockerEnv.getKeyValue('RERANKER_VERSION');    
     
@@ -114,6 +117,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
 
     if (darwin_dl && ipex_dl && rocm_dl && default_dl) {
       ollamaService = new OllamaService(
+        ollama_url ? ollama_url : 'http://localhost:11434',
         ollama_api_key,
         ollama_version ? ollama_version : '',
         toolsDLS.OLLAMA_VERSION,
@@ -145,7 +149,7 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
     ocrJSProcessor = new OCRJSProcessor(userTempPath);
     await ocrJSProcessor.start();
 
-    ocrLlmProcessor = new OCRllmProcessor(ollamaService, userTempPath);
+    ocrLlmProcessor = new OCRllmProcessor(ollama_url ? ollama_url : 'http://localhost:11434', ollamaService, userTempPath);
     await ocrLlmProcessor.start();
 
     langchainService = new LangchainService(
@@ -153,7 +157,8 @@ const setDocPathsCB = async (licenseKey: string | undefined, docPath: string | u
       path.join(appDataPath, 'lrag-app', 'lrag'),
       useTesseractJS ? ocrJSProcessor : undefined,
       ocrLlmProcessor,
-      quantum
+      quantum,
+      ollama_url ? ollama_url : 'http://localhost:11434',
     );
     langchainService.register(win?.webContents);
   
@@ -211,6 +216,7 @@ async function createWindow(): Promise<BrowserWindow> {
     x: 0,
     y: 0,
     show: false,
+    frame: false,
     width: runType === 2 ? size.width/2 : size.width/2.1,
     height: size.height,
     minWidth: 400, // Optional: Set a minimum width
@@ -280,6 +286,7 @@ try {
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
   app.on('ready', () => {            
     setTimeout(async () => {   
+      
       quantum = new Quantum(configPath);
       await quantum.init();
       // await quantum.runTest('this is my message in');

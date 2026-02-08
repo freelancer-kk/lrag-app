@@ -77,8 +77,8 @@
             <input matSliderThumb [(ngModel)]="systemService.overlap" [value]="systemService.overlap">
           </mat-slider>
           <span class="spacer"></span>  
-          <button [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" matButton="filled" (click)="resetDefaults($event)">
-            {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
+          <button [disabled]="ingestStatus !== EStatus.not_running || overallStatus !== EStatus.running_healthy" matIconButton (click)="resetDefaults($event)">
+            <mat-icon>replay</mat-icon>
           </button>
         </div>
         <div class="onerow">
@@ -97,8 +97,8 @@
             <input matInput [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running" matInput type="text" [(ngModel)]="systemService.separator" [maxLength]="1" [minlength]="1">
           </mat-form-field>
           <span class="spacer"></span>
-          <button [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running" matButton="filled" (click)="systemService.separator = ';'">
-            {{ 'PAGES.INGEST.RESET_CHUNKS' | translate }}
+          <button [disabled]="overallStatus !== EStatus.running_healthy || ingestStatus !== EStatus.not_running" matIconButton (click)="systemService.separator = ';'">
+            <mat-icon>replay</mat-icon>
           </button>
         </div>
       </mat-expansion-panel>        

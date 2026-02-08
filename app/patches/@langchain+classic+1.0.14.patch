@@ -1,0 +1,56 @@
+diff --git a/node_modules/@langchain/classic/dist/stores/doc/in_memory.d.cts b/node_modules/@langchain/classic/dist/stores/doc/in_memory.d.cts
+index 9b2c9f6..fd50cb3 100644
+--- a/node_modules/@langchain/classic/dist/stores/doc/in_memory.d.cts
++++ b/node_modules/@langchain/classic/dist/stores/doc/in_memory.d.cts
+@@ -1,6 +1,5 @@
+ import { Docstore } from "./base.cjs";
+ import { Document } from "@langchain/core/documents";
+-import { BaseStoreInterface } from "@langchain/core/stores";
+ 
+ //#region src/stores/doc/in_memory.d.ts
+ 
+@@ -8,7 +7,7 @@ import { BaseStoreInterface } from "@langchain/core/stores";
+  * Class for storing and retrieving documents in memory asynchronously.
+  * Extends the Docstore class.
+  */
+-declare class InMemoryDocstore extends Docstore implements BaseStoreInterface<string, Document> {
++declare class InMemoryDocstore extends Docstore {
+   _docs: Map<string, Document>;
+   constructor(docs?: Map<string, Document>);
+   /**
+@@ -26,6 +25,7 @@ declare class InMemoryDocstore extends Docstore implements BaseStoreInterface<st
+   mget(keys: string[]): Promise<Document[]>;
+   mset(keyValuePairs: [string, Document][]): Promise<void>;
+   mdelete(_keys: string[]): Promise<void>;
++  // eslint-disable-next-line require-yield
+   yieldKeys(_prefix?: string): AsyncGenerator<string>;
+ }
+ /**
+diff --git a/node_modules/@langchain/classic/dist/stores/doc/in_memory.d.ts b/node_modules/@langchain/classic/dist/stores/doc/in_memory.d.ts
+index 25e406a..0121dcd 100644
+--- a/node_modules/@langchain/classic/dist/stores/doc/in_memory.d.ts
++++ b/node_modules/@langchain/classic/dist/stores/doc/in_memory.d.ts
+@@ -1,6 +1,5 @@
+ import { Docstore } from "./base.js";
+ import { Document } from "@langchain/core/documents";
+-import { BaseStoreInterface } from "@langchain/core/stores";
+ 
+ //#region src/stores/doc/in_memory.d.ts
+ 
+@@ -8,7 +7,7 @@ import { BaseStoreInterface } from "@langchain/core/stores";
+  * Class for storing and retrieving documents in memory asynchronously.
+  * Extends the Docstore class.
+  */
+-declare class InMemoryDocstore extends Docstore implements BaseStoreInterface<string, Document> {
++declare class InMemoryDocstore extends Docstore {
+   _docs: Map<string, Document>;
+   constructor(docs?: Map<string, Document>);
+   /**
+@@ -26,6 +25,7 @@ declare class InMemoryDocstore extends Docstore implements BaseStoreInterface<st
+   mget(keys: string[]): Promise<Document[]>;
+   mset(keyValuePairs: [string, Document][]): Promise<void>;
+   mdelete(_keys: string[]): Promise<void>;
++  // eslint-disable-next-line require-yield
+   yieldKeys(_prefix?: string): AsyncGenerator<string>;
+ }
+ /**

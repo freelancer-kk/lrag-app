@@ -11,7 +11,7 @@ import ReRankerService from './RerankerService'
 import log from 'electron-log/main';
 import * as path from 'path';
 import { readFileSync } from 'fs'
-import mime from 'mime'
+import mime from 'mime';
 import { BaseCallbackHandler } from "@langchain/core/callbacks/base";
 import { LLMResult } from '@langchain/core/outputs'
 import { Ollama, WebFetchResponse, WebSearchResponse } from "ollama";
@@ -21,8 +21,10 @@ import { Serialized } from '@langchain/core/dist/load/serializable'
 import { Callbacks } from '@langchain/core/callbacks/manager'
 import { Converter } from 'showdown';
 import { isString } from 'mathjs'
+import { createAgent } from "langchain";
+import { MemorySaver } from "@langchain/langgraph";
 
-const toolPrefixPrompt = "You are a helpful AI assistant with access to the web_search tool. When a tool is required then respond with <|tool_call|> followed by a JSON list of the tools. If a tool is not required then respond with a conversational answer to the user question."
+const toolPrefixPrompt = "You are a helpful AI assistant with access to tools. When you use a tool, you MUST include the key findings or results from every tool call in your final answer to the user. If a tool is not required then respond with a conversational answer to the user question. In all cases be concise and provide sources where applicable.";
   
 const combineDocuments = (docs: Document[]): string => {
   return docs.map((doc: Document) => `Content: ${doc.pageContent} (Source: ${doc.metadata}`).join('\n\n');  
@@ -36,6 +38,8 @@ export default class ContextChat {
   context: string = ''
   ollamaLlm: ChatOllama | undefined;
   webContents: Electron.WebContents | undefined;
+  memory: MemorySaver | undefined;
+  sessionId: string | undefined;
 
   constructor(langchainService: LangchainService, ollamaService: OllamaService, rerankerService: ReRankerService, dockerEnv: DockerEnv) {
     this.langchainService = langchainService;    
@@ -58,6 +62,16 @@ export default class ContextChat {
       switch (command) {
         case "question": {
           response = await this.getAnswer(params); 
+        }
+        break;
+        case 'clear' : {
+          if (this.memory) {
+            delete this.memory;
+            this.memory = new MemorySaver();
+            log.info('Memory cleared for session:', this.sessionId);
+            this.sessionId = `session-${Date.now()}`;
+          }
+          response = { success: true };
         }
         break;
       }
@@ -106,6 +120,18 @@ export default class ContextChat {
       return e;
     }    
   }
+
+  resizeContextIfNeeded = async (text: string, useTools: boolean): Promise<void> => {
+    if (this.ollamaLlm) {
+      const tokenCount: number = await this.ollamaLlm.getNumTokens(text);
+      if (this.ollamaLlm.numCtx && this.ollamaLlm.numCtx < (tokenCount + (useTools ? 8512 : 512))) {
+        this.ollamaLlm.numCtx = tokenCount + (useTools ? 8512 : 512); // adding buffer
+        log.info('OLLAMA:Resized Ollama context to:', this.ollamaLlm.numCtx);
+      } else {
+        log.info('OLLAMA:Current Ollama context is sufficient:', this.ollamaLlm.numCtx, 'tokens in input:', tokenCount);
+      }
+    }
+  }
   
   getAnswer = async (options: any): Promise<any> => {
     if (!this.ollamaService.isReady() || !this.ollamaService.ollama || !this.rerankerService.isReady()) {
@@ -137,6 +163,12 @@ export default class ContextChat {
       let isStandardChat: boolean = true;
       const ref = this;
       let toolResult: any = undefined;
+
+      if (this.memory === undefined) {
+        log.info('Initializing memory saver for context chat...');
+        this.memory = new MemorySaver(); 
+        this.sessionId = `session-${Date.now()}`;
+      }
       
       const webSearchTool = tool(
         async ({ query }: { query: string }) => {
@@ -197,8 +229,8 @@ export default class ContextChat {
         name = "TokenUsageHandler";
 
         handleLLMEnd(output: LLMResult, runId: string, parentRunId?: string, tags?: string[], extraParams?: Record<string, unknown>) {
-          log.info('handleLLMEnd:', JSON.stringify(output.llmOutput, null, 2));
-          ref.emit({ type: 'chat-chunk-metadata', data: output });
+          log.info('handleLLMEnd:', JSON.stringify(output));
+          ref.emit({ type: 'chat-llm-end', data: output });          
         }
       }
 
@@ -207,10 +239,12 @@ export default class ContextChat {
         {
           name: "web_search_tool_handler",
           handleToolStart(tool: Serialized, input: string, runId: string) {
-            log.info(`[Tool Call Started]: ${tool.name} with input ${JSON.stringify(input)}`);            
+            log.info(`[Tool Call Started]: ${tool.name} with input ${JSON.stringify(input)}`);
+            ref.emit({ type: 'chat-tool-start', data: { tool, input } });
           },
           handleToolEnd(output: any, runId: string) {
             log.info(`[Tool Call Ended]: ${tool.name} with output ${output}`);            
+            ref.emit({ type: 'chat-tool-end', data: { tool, output } });
           } 
         }
       ];
@@ -247,7 +281,7 @@ export default class ContextChat {
               const extension = path.extname(fileName).toLowerCase();
               if ((extension === '.png') || (extension === '.jpg') || (extension === '.jpeg') || (extension === '.tiff') || (extension === '.bmp')) {
                 const imgPath = fileName;
-                const url: string = `data:${mime.lookup(extension)};base64,${readFileSync(imgPath).toString("base64")}`
+                const url: string = `data:${mime.getType(extension.replace('.', ''))};base64,${readFileSync(imgPath).toString("base64")}`
                 // const url: string = readFileSync(imgPath).toString("base64");
                 log.info('Embedding image in chat from:', imgPath, url.substring(0, 50) + '...');
                 images.push({
@@ -316,71 +350,100 @@ export default class ContextChat {
               ]
             ],
           ]);
-          // log.info('questionTemplate:', questionTemplate);
-
-          let stringChain: Runnable<any, string, RunnableConfig<Record<string, any>>> | any;
-          if (useTools) {          
-            log.info('Using tools in context chat');
-            stringChain = questionTemplate
-              .pipe(this.ollamaLlm.bindTools([webSearchTool]))      
-//            .pipe(new StringOutputParser())                      
-          } else {
-            stringChain = questionTemplate
-              .pipe(this.ollamaLlm)
-              .pipe(new StringOutputParser());
-          }
-
+          
           const replaceVars: any = {
             prompt: useTools ? (toolPrefixPrompt + " " + options.prompt) : options.prompt,
             context: combinedDocs,
             userQuestion: options.question
           }
-        
-          log.info('docAnswerTemplate:', replaceVars);
-          const llmResponse: IterableReadableStream<string | any> = await stringChain.stream(
-            replaceVars, 
-            {
-              callbacks: customCallbacks,
-            }
-          );
+          // log.info('docAnswerTemplate:', replaceVars);
+                  
+          // log.info('questionTemplate:', questionTemplate);
 
-          let finalAnswer;
-          for await (const chunk of llmResponse) {
-            finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
-            
-            this.emit({ type: 'chat-chunk', data: useTools && chunk.content ? chunk.content : (isString(chunk) ? chunk : '') });
+          let stringChain: Runnable<any, string, RunnableConfig<Record<string, any>>> | any;
+          let llmResponse: IterableReadableStream<string | any>;
+          if (useTools) {          
+            log.info('Using tools in context chat');
+            const agent = createAgent({
+              model: this.ollamaLlm, 
+              tools: [webSearchTool, webFetchTool],
+//              checkpointer: this.memory,
+            });
+            const formattedPrompt: string = await questionTemplate.format(replaceVars);
+            await this.resizeContextIfNeeded(formattedPrompt, useTools);
+            llmResponse = await agent.stream(
+              { 
+                messages: [
+                  { role: "user", content: formattedPrompt },
+                  { role: "user", content: images }
+                ] 
+              } as any,
+              {
+                configurable: {
+                  thread_id: this.sessionId,
+                },
+                callbacks: customCallbacks,
+                streamMode: "updates"
+              }
+            );          
+          } else {
+            await this.resizeContextIfNeeded(await questionTemplate.format(replaceVars), useTools);
+            stringChain = questionTemplate
+              .pipe(this.ollamaLlm)
+              .pipe(new StringOutputParser());
+          
+            llmResponse = await stringChain.stream(
+              replaceVars, 
+              {
+                callbacks: customCallbacks,
+              }
+            );
           }
 
-          log.info('TOOL CALLS:', finalAnswer.tool_calls);
-          if (useTools && finalAnswer?.tool_calls?.length > 0) {
-            for (const toolCall of finalAnswer.tool_calls) {
-              const toolName: string = toolCall.name;
-              log.info(`\n[Calling Tool]: ${toolName}...`);
-              let toolResults: any;
-              if (toolName === 'web_search') {
-                toolResults = await (webSearchTool as any).invoke(toolCall.args);
-              }
-              if (toolName === 'web_fetch') {
-                toolResults = await (webFetchTool as any).invoke(toolCall.args);
-              }
-              const parsedResults: any = JSON.parse(toolResults);
-              log.info("[Tool Results]:", parsedResults.results);
-              // Append tool result to final answer
-              const converter = new Converter();
-              for (const entry of parsedResults.results) {
-                finalAnswer.content += `${converter.makeHtml(entry.content)}\n\n  (Source: ${entry.url})\n\n`; 
+          let finalAnswer: any;
+          log.info('llmResponse:', llmResponse);
+          for await (const update of llmResponse) {
+            for (const nodeName of Object.keys(update)) {
+              const chunk = update[nodeName];
+              if (chunk && Array.isArray(chunk.messages)) {
+                // const msg = chunk.messages[chunk.messages.length - 1];
+                for await (const msg of chunk.messages) {
+                  const msgType: string = msg._getType();                
+                  log.info('Processing message:', msgType, JSON.stringify(msg).substring(0, 200) + '...');
+                  if (msgType === "ai" && msg.tool_calls?.length > 0) {
+                    log.info(`\n[Agent]: I'm going to search for: ${msg.tool_calls[0].args.input}`);
+                  } else if (msgType === "tool") {
+                    log.info(`\n[Tool]: Search results received.`);
+                  } else if (msg.content && msg.content.length > 1) {
+                    log.info(`\n[Final Answer]: ${msgType}: ${msg.content}`);
+                    
+                    if (msgType === 'ai') {
+                      const converter = new Converter();
+                      const converted = `${converter.makeHtml(msg.content)}`; 
+                      finalAnswer = finalAnswer ? finalAnswer.concat(converted) : converted;
+                      this.emit({ type: 'chat-chunk', data: useTools && converted ? converted : (isString(converted) ? converted : '') });
+                    } else {
+                      log.info('Ignoring msgType:', msgType, 'with content:', msg.content);
+                    }
+                  }            
+                }
+              } else if (chunk && isString(chunk)) {
+                finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
+                this.emit({ type: 'chat-chunk', data: chunk });
+              } else {
+                log.info('Received non-string, non-message chunk:', JSON.stringify(chunk));
               }
             }
-          }  
-
+          }        
+          
           if (options.toolPrompt && options.toolPrompt.trim().length > 0) {
             log.info('Processing tool prompt...', options.toolPrompt);
             toolResult = await this.processToolResults(finalAnswer || '', options.toolPrompt);
-          }          
-          
+          }
+            
           return {
-            answer: useTools && finalAnswer.content ? finalAnswer.content : (isString(finalAnswer) ? finalAnswer : ''),
-            docSources,
+            answer: useTools && finalAnswer && finalAnswer.content ? finalAnswer.content : (isString(finalAnswer) ? finalAnswer : ''),
+            docSources: [],
             toolResult
           }
         }
@@ -392,62 +455,87 @@ export default class ContextChat {
         }
         
         const questionTemplate = PromptTemplate.fromTemplate(options.chatPrompt)
-
-        let questionChain: any;
-        if (useTools) {          
-          log.info('Using tools in context chat');
-          questionChain = questionTemplate
-            .pipe(this.ollamaLlm.bindTools([webSearchTool, webFetchTool]));
-//            .pipe(new StringOutputParser())
-        } else {
-          questionChain = questionTemplate
-            .pipe(this.ollamaLlm)
-            .pipe(new StringOutputParser())
-        }        
-                
         let replaceVars: any = {
           system: useTools ? toolPrefixPrompt : "You are a helpful assistant.",
           prompt: options.question
-        }
+        }        
         if (!options.chatPrompt.endsWith('{prompt}')) {
           replaceVars = {
             question: options.question
           }
         }
 
-        log.info('INSIGHT: NO DOC CONTEXT!', options.chatPrompt, replaceVars)
-        const llmResponse: any = await questionChain.stream(
-          replaceVars, 
-          {
-            callbacks: customCallbacks,
-          }
-        );
-
-        let finalAnswer: any;
-        for await (const chunk of llmResponse) {
-          finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
-          // log.info('chat-chunk', chunk);
-          this.emit({ type: 'chat-chunk', data: useTools && chunk.content ? chunk.content : (isString(chunk) ? chunk : '') });
-        }
+        let questionChain: any;
+        let llmResponse: IterableReadableStream<string | any>;
+        log.info('INSIGHT: NO DOC CONTEXT!', options.chatPrompt, replaceVars);
         
-        log.info('TOOL CALLS:', finalAnswer.tool_calls);
-        if (useTools && finalAnswer?.tool_calls?.length > 0) {
-          for (const toolCall of finalAnswer.tool_calls) {
-            const toolName: string = toolCall.name;
-            log.info(`\n[Calling Tool]: ${toolName}...`);
-            let toolResults: any;
-            if (toolName === 'web_search') {
-              toolResults = await (webSearchTool as any).invoke(toolCall.args);
+        if (useTools) {          
+          log.info('Using tools in context chat');
+          const agent = createAgent({
+            model: this.ollamaLlm, 
+            tools: [webSearchTool, webFetchTool],
+            checkpointer: this.memory,
+            // systemPrompt: toolPrefixPrompt,
+          });
+          const formattedPrompt: string = await questionTemplate.format(replaceVars);
+          await this.resizeContextIfNeeded(formattedPrompt, useTools);
+          llmResponse = await agent.stream(
+            { messages: [
+              { role: "user", content: formattedPrompt }
+            ] } as any,
+            {
+              configurable: {
+                thread_id: this.sessionId,
+              },
+              callbacks: customCallbacks,
+              streamMode: "updates"
             }
-            if (toolName === 'web_fetch') {
-              toolResults = await (webFetchTool as any).invoke(toolCall.args);
+          );          
+        } else {
+          await this.resizeContextIfNeeded(await questionTemplate.format(replaceVars), useTools);
+          questionChain = questionTemplate
+            .pipe(this.ollamaLlm)
+            .pipe(new StringOutputParser());
+          llmResponse = await questionChain.stream(
+            replaceVars,
+            {
+              callbacks: customCallbacks              
             }
-            const parsedResults: any = JSON.parse(toolResults);
-            log.info("[Tool Results]:", parsedResults.results);
-            // Append tool result to final answer
-            const converter = new Converter();
-            for (const entry of parsedResults.results) {
-              finalAnswer.content += `${converter.makeHtml(entry.content)}\n\n  (Source: ${entry.url})\n\n`; 
+          );  
+        }                                        
+        
+        let finalAnswer: any;
+        log.info('llmResponse:', llmResponse);
+        for await (const update of llmResponse) {
+          for (const nodeName of Object.keys(update)) {
+            const chunk = update[nodeName];
+            if (chunk && Array.isArray(chunk.messages)) {
+              // const msg = chunk.messages[chunk.messages.length - 1];
+              for await (const msg of chunk.messages) {
+                const msgType: string = msg._getType();                
+                log.info('Processing message:', msgType, JSON.stringify(msg).substring(0, 200) + '...');
+                if (msgType === "ai" && msg.tool_calls?.length > 0) {
+                  log.info(`\n[Agent]: I'm going to search for: ${msg.tool_calls[0].args.input}`);
+                } else if (msgType === "tool") {
+                  log.info(`\n[Tool]: Search results received.`);
+                } else if (msg.content && msg.content.length > 1) {
+                  log.info(`\n[Final Answer]: ${msgType}: ${msg.content}`);
+                  
+                  if (msgType === 'ai') {
+                    const converter = new Converter();
+                    const converted = `${converter.makeHtml(msg.content)}`; 
+                    finalAnswer = finalAnswer ? finalAnswer.concat(converted) : converted;
+                    this.emit({ type: 'chat-chunk', data: useTools && converted ? converted : (isString(converted) ? converted : '') });
+                  } else {
+                    log.info('Ignoring msgType:', msgType, 'with content:', msg.content);
+                  }
+                }            
+              }
+            } else if (chunk && isString(chunk)) {
+              finalAnswer = finalAnswer ? finalAnswer.concat(chunk) : chunk;
+              this.emit({ type: 'chat-chunk', data: chunk });
+            } else {
+              log.info('Received non-string, non-message chunk:', JSON.stringify(chunk));
             }
           }
         }        
@@ -458,7 +546,7 @@ export default class ContextChat {
         }
           
         return {
-          answer: useTools && finalAnswer.content ? finalAnswer.content : (isString(finalAnswer) ? finalAnswer : ''),
+          answer: useTools && finalAnswer && finalAnswer.content ? finalAnswer.content : (isString(finalAnswer) ? finalAnswer : ''),
           docSources: [],
           toolResult
         }

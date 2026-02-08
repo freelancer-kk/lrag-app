@@ -48,7 +48,7 @@
             #autosize="cdkTextareaAutosize"
             [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveChunkSettings()" matInput type="text" [(ngModel)]="systemService.ocrPrompt">{{ systemService.ocrPrompt }}</textarea>
           </mat-form-field>
-          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.ocrPrompt = ''">
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.ocrPrompt = '';systemService.saveChunkSettings()">
             <mat-icon>replay</mat-icon>
           </button>            
         </div>
@@ -61,7 +61,7 @@
             #autosize1="cdkTextareaAutosize"
             [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.ragPrompt">{{ systemService.ragPrompt }}</textarea>
           </mat-form-field>
-          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="resetRag($event)">
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="resetRag($event);systemService.saveInsightSettings()">
             <mat-icon>replay</mat-icon>
           </button>                                  
         </div>
@@ -72,7 +72,7 @@
             #autosize2="cdkTextareaAutosize"
             [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.userPrompt">{{ systemService.userPrompt }}</textarea>
           </mat-form-field>
-          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="resetUser($event)">
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="resetUser($event);systemService.saveInsightSettings()">
             <mat-icon>replay</mat-icon>
           </button>              
         </div>
@@ -85,7 +85,7 @@
             #autosize1="cdkTextareaAutosize"
             [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.chatPrompt">{{ systemService.chatPrompt }}</textarea>
           </mat-form-field>
-          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.chatPrompt='{prompt}'">
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.chatPrompt='{prompt}';systemService.saveInsightSettings()">
             <mat-icon>replay</mat-icon>
           </button>                  
         </div>
@@ -98,7 +98,7 @@
             #autosize1="cdkTextareaAutosize"
             [disabled]="overallStatus !== EStatus.running_healthy" (blur)="systemService.saveInsightSettings()" matInput type="text" [(ngModel)]="systemService.toolPrompt">{{ systemService.toolPrompt }}</textarea>
           </mat-form-field>
-          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.toolPrompt=''">
+          <button matIconButton [disabled]="overallStatus !== EStatus.running_healthy || insightStatus === EStatus.thinking" (click)="systemService.toolPrompt='';systemService.saveInsightSettings()">
             <mat-icon>replay</mat-icon>
           </button>                  
         </div>

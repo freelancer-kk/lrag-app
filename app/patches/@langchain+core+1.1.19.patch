@@ -1,13 +1,41 @@
 diff --git a/node_modules/@langchain/core/dist/vectorstores.d.cts b/node_modules/@langchain/core/dist/vectorstores.d.cts
-index 4a8e0a8..6a3c8a1 100644
+index 4a8e0a8..edfdf6b 100644
 --- a/node_modules/@langchain/core/dist/vectorstores.d.cts
 +++ b/node_modules/@langchain/core/dist/vectorstores.d.cts
-@@ -623,10 +623,11 @@ declare abstract class SaveableVectorStore extends VectorStore {
-    * determines the structure and format of the saved data.
+@@ -624,9 +624,10 @@ declare abstract class SaveableVectorStore extends VectorStore {
     *
     * @param directory - The directory path where the vector store data
-+   * @param encrypter Encryption callback method before saving.
     * will be saved.
++   * @param encrypter - A function that handles encryption of the data
+    * @abstract
+    */
+-  abstract save(directory: string): Promise<void>;
++  abstract save(directory: string, encrypter: (s: any) => void): Promise<void>;
+   /**
+    * Loads a vector store instance from the specified directory, using the
+    * provided embeddings to ensure compatibility.
+@@ -639,10 +640,11 @@ declare abstract class SaveableVectorStore extends VectorStore {
+    * data will be loaded.
+    * @param _embeddings - An instance of `EmbeddingsInterface` to align
+    * the embeddings with the loaded vector data.
++   * @param decrypter - A function that handles decryption of the data
+    * @returns A promise that resolves to a `SaveableVectorStore` instance
+    * constructed from the saved data.
+    */
+-  static load(_directory: string, _embeddings: EmbeddingsInterface): Promise<SaveableVectorStore>;
++  static load(_directory: string, _embeddings: EmbeddingsInterface, decrypter: (s: any) => void): Promise<SaveableVectorStore>;
+ }
+ //#endregion
+ export { MaxMarginalRelevanceSearchOptions, SaveableVectorStore, VectorStore, VectorStoreInterface, VectorStoreRetriever, VectorStoreRetrieverInput, VectorStoreRetrieverInterface, VectorStoreRetrieverMMRSearchKwargs };
+diff --git a/node_modules/@langchain/core/dist/vectorstores.d.ts b/node_modules/@langchain/core/dist/vectorstores.d.ts
+index 4f7ff0b..8281211 100644
+--- a/node_modules/@langchain/core/dist/vectorstores.d.ts
++++ b/node_modules/@langchain/core/dist/vectorstores.d.ts
+@@ -624,9 +624,10 @@ declare abstract class SaveableVectorStore extends VectorStore {
+    *
+    * @param directory - The directory path where the vector store data
+    * will be saved.
++   * @param encrypter - Encryption callback before saving.
     * @abstract
     */
 -  abstract save(directory: string): Promise<void>;
@@ -20,35 +48,6 @@ index 4a8e0a8..6a3c8a1 100644
     * @param _embeddings - An instance of `EmbeddingsInterface` to align
     * the embeddings with the loaded vector data.
 +   * @param decrypter Decryption callback before loading.
-    * @returns A promise that resolves to a `SaveableVectorStore` instance
-    * constructed from the saved data.
-    */
--  static load(_directory: string, _embeddings: EmbeddingsInterface): Promise<SaveableVectorStore>;
-+  static load(_directory: string, _embeddings: EmbeddingsInterface, decrypter: (s: any) => void): Promise<SaveableVectorStore>;
- }
- //#endregion
- export { MaxMarginalRelevanceSearchOptions, SaveableVectorStore, VectorStore, VectorStoreInterface, VectorStoreRetriever, VectorStoreRetrieverInput, VectorStoreRetrieverInterface, VectorStoreRetrieverMMRSearchKwargs };
-diff --git a/node_modules/@langchain/core/dist/vectorstores.d.ts b/node_modules/@langchain/core/dist/vectorstores.d.ts
-index 4f7ff0b..912b5cb 100644
---- a/node_modules/@langchain/core/dist/vectorstores.d.ts
-+++ b/node_modules/@langchain/core/dist/vectorstores.d.ts
-@@ -624,9 +624,10 @@ declare abstract class SaveableVectorStore extends VectorStore {
-    *
-    * @param directory - The directory path where the vector store data
-    * will be saved.
-+   * @param encrypter Encryption callback method before saving.
-    * @abstract
-    */
--  abstract save(directory: string): Promise<void>;
-+  abstract save(directory: string, encrypter: (s: any) => void): Promise<void>;
-   /**
-    * Loads a vector store instance from the specified directory, using the
-    * provided embeddings to ensure compatibility.
-@@ -639,10 +640,11 @@ declare abstract class SaveableVectorStore extends VectorStore {
-    * data will be loaded.
-    * @param _embeddings - An instance of `EmbeddingsInterface` to align
-    * the embeddings with the loaded vector data.
-+  * @param decrypter Decryption callback before loading.
     * @returns A promise that resolves to a `SaveableVectorStore` instance
     * constructed from the saved data.
     */

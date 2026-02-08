@@ -19,14 +19,14 @@ const mergeKeys: string[] = [
   "LC_PP",
   "LC_EUA",
   "LC_SECURITY",
-  "QUANTUM_ENC"
+  "QUANTUM_ENC",
+  "OLLAMA_URL"
 ];
 
 const overwriteKeys: string[] = [
   "YOUTUBE_GALLERY_URL",
   "TOOLS_DLS_FILE",
   "RERANK_SERVICE",
-  "REMOTE_LLM_SERVICE",
   "UPDATE_INFO_FILE",
   "MODELS_FILE",
   "EMBEDDED_MODELS_FILE",
@@ -43,7 +43,8 @@ const overwriteKeys: string[] = [
   "LICENSE_GET_URL",
   "LICENSE_ACTIVATE_URL",
   "OLLAMA_KEYS_URL",
-  "FEEDBACK_URL"
+  "FEEDBACK_URL",
+  "EMAIL_URL"
 ];
 
 export default class DockerEnv {
@@ -92,9 +93,9 @@ export default class DockerEnv {
       this.dsp = path.join(this.userHomePath, 'lrag').replace(new RegExp('\\\\','g'), '\\\\');
       this.ellm = "embeddinggemma:300m";
       this.llm = "gemma3:1b";
-      this.ocrllm = "deepseek-ocr:latest";            
+      this.ocrllm = "glm-ocr:bf16";      
+      // this.ocrllm = "deepseek-ocr:latest";            
       // this.ocrllm = "gemma3:4b";
-      // this.ocrllm = "benhaotang/Nanonets-OCR-s:latest";
       // this.ocrllm = "granite3.2-vision:latest";
       this.generateEnvFile();
       this.kvFile = await parseFile(this.sourceEnvPath);

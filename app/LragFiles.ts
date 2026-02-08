@@ -74,7 +74,7 @@ export default class LRagFiles {
               if (extension === '.png' || extension === '.jpg' || extension === '.jpeg' || extension === '.bmp' || extension === '.tiff' ) {
                 const image = await Jimp.read(this.writingFiles[fIdx].data);
                 image.resize({ w: 1024 });
-                const resizedBuffer = await image.getBuffer(mime.lookup(extension) as any || 'image/jpeg');
+                const resizedBuffer = await image.getBuffer(mime.getType(extension.replace('.', '')) as any || 'image/jpeg');
                 fs.writeFileSync(fullPath, resizedBuffer, 'binary');
               } else {
                 fs.writeFileSync(fullPath, this.writingFiles[fIdx].data, 'binary');

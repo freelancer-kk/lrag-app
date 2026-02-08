@@ -18,6 +18,7 @@ export default class OllamaService {
   lastUsedModel: string = '';
   
   constructor(
+    ollama_url: string,
     ollama_api_key: string | undefined,
     installedVersion: string,
     availableVersion: string,
@@ -81,7 +82,7 @@ export default class OllamaService {
       urls,
       async (): Promise<boolean> => {
         this.ollama = new Ollama({
-          host: 'http://127.0.0.1:11434',
+          host: ollama_url,
           headers: this.headers,
         });
         try {
@@ -119,7 +120,7 @@ export default class OllamaService {
         [default_dl],
         async (): Promise<boolean> => {
           this.ollama = new Ollama({
-            host: 'http://127.0.0.1:11434',
+            host: ollama_url,
             headers: this.headers,
           });
           try {

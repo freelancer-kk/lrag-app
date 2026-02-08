@@ -15,6 +15,7 @@ scripts/.env
 *.ikm
 encap/*
 app/scripts/encap/*
+llmend.json
 
 # dependencies
 node_modules

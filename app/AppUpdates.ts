@@ -13,9 +13,6 @@ export default class AppUpdates {
 
   init = async () => {
     log.info('AppUpdates:changes in:', this.updateJsonFileURL);
-    setTimeout(async () => {              
-      await this.check();
-    }, 10000);
     setInterval(async () => {              
       await this.check();
     }, 60000);    

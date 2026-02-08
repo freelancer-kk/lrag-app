@@ -56,6 +56,7 @@ export class AppComponent implements OnInit {
   isExpanded: boolean = true;
   dockerConnectInterval: any;
   firstTime: boolean = true;
+  firstCall: boolean = true;
   firstRun: boolean = true;
 
   ollamaStatus: IStatus | undefined;
@@ -500,11 +501,11 @@ export class AppComponent implements OnInit {
           }
           break;
           case 'ollama-pull-done': {
-            this.ngZone.run(() => {
+            this.ngZone.run(async () => {
               this.systemService.modelStatus.update(EStatus.running);
-              this.ollamaService.getAvailableLLMs().then(() => {
-                this.ollamaService.getAllModelDetails();
-              })
+              await this.ollamaService.getAvailableLLMs().then(() => {
+                return this.ollamaService.getAllModelDetails();
+              });
             })            
           }
           break;
@@ -648,8 +649,11 @@ export class AppComponent implements OnInit {
       // console.log('overall status:', this.systemService.overallStatus());
       if (this.overallStatus === EStatus.running_unhealthy) {
         if (this.firstTime && (this.ollamaStatus.status === EStatus.running)) {
-          this.ollamaService.findProcess();
-          this.pullModelsIfNecessary();
+          if (this.firstCall) {
+            this.firstCall = false;            
+            this.ollamaService.findProcess();          
+            this.pullModelsIfNecessary();
+          }
         }
       }
       if (this.overallStatus === EStatus.running_healthy) {
@@ -659,7 +663,7 @@ export class AppComponent implements OnInit {
         if (ollamaService.servicePID === -1) {
           this.ollamaService.findProcess();
         }
-        console.log('models:', this.ollamaService.availableModels);        
+        // console.log('models:', this.ollamaService.availableModels);        
         this.navigateAway();
       }
     })
@@ -703,6 +707,7 @@ export class AppComponent implements OnInit {
     }
     await this.ollamaService.getGpuAcceleration();    
     this.systemService.osType = await this.systemService.getOSType();
+    await this.ollamaService.getOllamaURL();
     await this.ollamaService.getManagedExternally();
     /*
     if (this.systemService.osType && (this.systemService.osType.isMac === true)) { 
@@ -725,6 +730,7 @@ export class AppComponent implements OnInit {
     this.systemService.support_link = await this.commonService.getEnvValue('TICKET_URL');
     this.systemService.register_link = await this.commonService.getEnvValue('REGISTRATION_URL');
     this.systemService.feedback_link = await this.commonService.getEnvValue('FEEDBACK_URL');
+    this.systemService.email_link = await this.commonService.getEnvValue('EMAIL_URL');
     this.systemService.youtube_gallery_link = await this.commonService.getEnvValue('YOUTUBE_GALLERY_URL');
     this.commonService.pp_link = await this.commonService.getEnvValue('PRIVACY_POLICY_URL');
     this.commonService.eua_link = await this.commonService.getEnvValue('EUA_URL');
@@ -759,10 +765,11 @@ export class AppComponent implements OnInit {
   }
 
   pullModelsIfNecessary = async () => {
+    
     try {
       await this.ollamaService.getAvailableLLMs().then(() => {
-        this.ollamaService.getAllModelDetails();
-      })    
+        return this.ollamaService.getAllModelDetails();
+      });
       // console.log('available models:', this.ollamaService.availableModels);
       if (this.ollamaService.selectedModel === '') {
         await this.commonService.getEnvValue('LLM_MODEL_NAME').then((value: string) => {

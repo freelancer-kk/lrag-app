@@ -12,6 +12,12 @@
     </li>
     <br/>
     <li>
+      <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.email_link)">
+        {{ 'PAGES.HELP.EMAIL_LINK' | translate }}
+      </a>
+    </li>
+    <br/>
+    <li>
       <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.youtube_gallery_link)">
         {{ 'PAGES.HELP.YOUTUBE_GALLERY_URL' | translate }}
       </a>
@@ -34,12 +40,14 @@
         {{ 'PAGES.HELP.REGISTER_LINK' | translate }}
       </a>
     </li>
+    @if (settingsService.isActivePro()) {
     <br/>
     <li>
       <a matButton="outlined" class="small" (click)="commonService.openExternal(systemService.support_link)">
         {{ 'PAGES.HELP.SUPPORT_LINK' | translate }}
       </a>
-    </li>        
+    </li>
+    }
   </ul>
   <p>&copy; Copyright K.N.Khaleque 2026 All rights reserved</p>
 </div>

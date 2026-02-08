@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CommonService, LStatus } from './common-service';
 import { EStatus, IChat } from '../../shared/model';
 import { SettingsService } from './settings-service';
+import { BridgeService } from './bridge/bridge.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +16,10 @@ export class OllamaService {
   useDocContext: boolean = false;
   useTesseractJS: boolean = true;
   chatHistory: IChat[] = [];
+  ollama_url: string = "http://localhost:11434";
   
   availableModels: any[] = [];
+  showDetails: any[] = [];
   models: any[] = [
     {
       "value": "gemma3:1b",
@@ -28,13 +31,31 @@ export class OllamaService {
       "description": "The current, most capable model that runs on a single GPU"
     },
     {
-      "value": "granite3.1-dense:2b",
-      "viewValue": "granite3.1-dense:2b - small, fast, trade off accuracy (<2GB)",
+      "value": "granite4:3b",
+      "viewValue": "granite4:3b - small, fast, trade off accuracy (<4GB)",
       "thinking": true,
       "cloud": false,
-      "memory": 2,
+      "memory": 4,
       "input": "Text",
-      "description": "The IBM Granite 2B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing"
+      "description": "Granite 4 features improved instruction following (IF) and tool-calling capabilities, making them more effective in enterprise applications. These models excel at tasks such as reasoning, coding, and complex text generation."
+    },
+    {
+      "value": "qwen3-vl:2b-thinking",
+      "viewValue": "qwen3-vl:2b-thinking - A powerful vision-language model (<3GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 3,
+      "input": "Text,Image",
+      "description": "The most powerful vision-language model in the Qwen model family to date. It excels in understanding and generating content that combines both text and images"
+    },
+    {
+      "value": "qwen3-vl:4b-thinking",
+      "viewValue": "qwen3-vl:4b-thinking - A powerful vision-language model (<4GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 4,
+      "input": "Text,Image",
+      "description": "The most powerful vision-language model in the Qwen model family to date. It excels in understanding and generating content that combines both text and images"
     },
     {
       "value": "llama3-chatqa:8b",
@@ -62,23 +83,46 @@ export class OllamaService {
       "memory": 32,
       "input": "Text",
       "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+    },
+    {
+      "value": "kimi-k2-thinking:cloud",
+      "viewValue": "kimi-k2-thinking:cloud - One of the best open source thinking models (~)",
+      "thinking": true,
+      "cloud": true,
+      "memory": 4,
+      "input": "Text",
+      "description": "Kimi K2 Thinking, Moonshot AI's best open-source thinking model"
+    },
+    {
+      "value": "deepseek-v3.1:671b-cloud",
+      "viewValue": "deepseek-v3.1:671b-cloud - Advanced thinking mode and non-thinking mode (~)",
+      "thinking": true,
+      "cloud": true,
+      "memory": 4,
+      "input": "Text",
+      "description": "DeepSeek-V3.1-Terminus is a hybrid model that supports both thinking mode and non-thinking model"
     }
   ];
   embedding_models: any[] = [    
     {value: 'embeddinggemma:300m', viewValue: 'embeddinggemma:300m (<1GB)', thinking: false, cloud: false, memory: 1, "input": "Text",description: 'EmbeddingGemma is a 300M parameter embedding model from Google'},    
   ]
   ocr_models: any[] = [
-    { value: 'deepseek-ocr:latest', viewValue: 'deepseek-ocr (<8GB)', thinking: false, cloud: false, memory: 8, "input": "Text,Image", description: 'DeepSeek OCR is an advanced optical character recognition model designed to extract text from images with high accuracy.',
-      prompt: '<|grounding|>Convert the document to markdown.',
+    { 
+      value: 'glm-ocr:bf16', viewValue: 'glm-ocr:bf16 (<3GB)', thinking: false, cloud: false, memory: 5, "input": "Text,Image", description: 'GLM-OCR is a multimodal OCR model for complex document understanding, built on the GLM-V encoder–decoder architecture',
+      prompt: 'Analyze the text in the provided image. Extract all readable content and present it in a structured Markdown format that is clear, concise, and well-organized.',
       params: {
         "temperature": 0
       }
     },
-    { value: 'benhaotang/Nanonets-OCR-s:latest', viewValue: 'nanonets-OCR-s (<5GB)', thinking: false, cloud: false, memory: 5, "input": "Text,Image", description: 'Nanonets OCR is a cloud-based optical character recognition model that provides accurate text extraction from images.',
-      prompt: 'Perform Optical Character Recognition (OCR) on the provided image and format all extracted text as a clear, structured Markdown document. Include tables as markdown tables, lists as markdown lists, etc.',
-      params: {}
-    },
-    { value: 'gemma3:4b', viewValue: 'gemma3.4b (<4GB)', thinking: false, cloud: false, memory: 6, "input": "Text,Image", description: 'The current, most capable model that runs on a single GPU.',
+    { 
+      value: 'deepseek-ocr:latest', viewValue: 'deepseek-ocr (<8GB)', thinking: false, cloud: false, memory: 8, "input": "Text,Image", description: 'DeepSeek OCR is an advanced optical character recognition model designed to extract text from images with high accuracy.',
+      prompt: '<|grounding|>Convert the document to markdown.',
+      params: {
+        "temperature": 0
+      }
+    },    
+    { 
+      value: 'gemma3:4b', viewValue: 'gemma3.4b (<4GB)', thinking: false, cloud: false, memory: 6, "input": "Text,Image", description: 'The current, most capable model that runs on a single GPU.',
       // prompt: 'Convert the image to markdown.',
       prompt: 'Analyze the text in the provided image. Extract all readable content and present it in a structured Markdown format that is clear, concise, and well-organized.',
       params: {
@@ -87,7 +131,8 @@ export class OllamaService {
         "num_ctx": 128000
       }
     },
-    { value: 'granite3.2-vision:latest', viewValue: 'granite3.2-vision (<3GB)', thinking: false, cloud: false, memory: 5, "input": "Text,Image",description: 'A compact and efficient vision-language model, specifically designed for visual document understanding, enabling automated content extraction from tables, charts, infographics, plots, diagrams, and more. ',
+    { 
+      value: 'granite3.2-vision:latest', viewValue: 'granite3.2-vision (<3GB)', thinking: false, cloud: false, memory: 5, "input": "Text,Image",description: 'A compact and efficient vision-language model, specifically designed for visual document understanding, enabling automated content extraction from tables, charts, infographics, plots, diagrams, and more. ',
       prompt: 'Analyze the text in the provided image. Extract all readable content and present it in a structured Markdown format that is clear, concise, and well-organized.',
       // prompt: 'Convert the image to markdown.',
       params: {
@@ -111,13 +156,24 @@ export class OllamaService {
   serviceTimer: any;
     
   constructor(
+    private bridgeService: BridgeService,    
     private commonService: CommonService,
     private settingsService: SettingsService
   ) {}
 
   resetChatHistory = () => {
     this.chatHistory = [];    
+    this.commandInsight('clear', {});      
   }
+
+  commandInsight = (command: string, options: any = {}): Promise<any> => {
+    return new Promise((resolve, reject) => { 
+      this.bridgeService.chat(50, command, options, async (data: any) => {
+        // console.log('insight command response:', data);
+        resolve(data);
+      });
+    });
+  }  
 
   getGpuAcceleration = async () => {
     const gpuAccelStr: string = await this.commonService.getEnvValue('GPU_ACCELERATION');    
@@ -130,6 +186,10 @@ export class OllamaService {
     const manageExternalStr: string = await this.commonService.getEnvValue('MANAGE_EXTERNAL');    
     this.manageOllamaExternally = manageExternalStr.toLocaleLowerCase() === 'true' ? true : false;
     console.log('Ollama: Manage External: Service Name:', this.serviceName);
+  }
+
+  getOllamaURL = async (): Promise<void> => {
+    this.ollama_url = await this.commonService.getEnvValue('OLLAMA_URL');
   }
 
   setGpuAcceleration = async () => {
@@ -168,7 +228,9 @@ export class OllamaService {
         }
       )).json();
       console.log('models downloaded!');
-      this.getAvailableLLMs();
+      this.getAvailableLLMs().then(() => {
+        return this.getAllModelDetails();
+      });
     }
   }
 
@@ -182,7 +244,11 @@ export class OllamaService {
   }
 
   isCloud = (): boolean => {
-    return this.models.find(m => m.value === this.selectedModel).cloud;    
+    try {
+      return this.models.find(m => m.value === this.selectedModel).cloud;
+    } catch (e) {
+      return false;
+    }
   }
 
   commandOllama = (command: string, options: any = {}, index: number = 93): Promise<any> => {
@@ -247,10 +313,13 @@ export class OllamaService {
     const value: any = await this.commandOllama('list');
     // console.log('getAvailableLLMs:', value.models);
     if (value && value.models) {
-      this.availableModels = value.models.map((model: any) => {
+      this.availableModels = [];
+
+      for await ( const model of value.models ) {      
         const mm: any = this.models.find(f => f.value === model.name);
         const em: any = this.embedding_models.find(f => f.value === model.name);        
-        return {
+        const sd: any = this.showDetails.find(f => f.name === model.name);        
+        this.availableModels.push({
           name: model.name,
           size: Math.floor(model.size / 1024 / 1000),
           usage: model.usage,
@@ -259,9 +328,13 @@ export class OllamaService {
           viewValue: mm ? mm.viewValue : em ? em.viewValue : model.name,
           modelType: mm ? 'llm' : em ? 'embedding' : 'unknown',
           input: mm ? mm.input : em ? em.input : 'Text',
-          thinking: mm ? mm.thinking : em ? em.thinking : false          
-        }
-      });
+          thinking: sd ? sd.capabilities && sd.capabilities.includes('thinking') : false,
+          model_info: sd ? sd.model_info : undefined,
+          capabilities: sd ? sd.capabilities : undefined,
+          context_length: sd ? sd.context_length : undefined,
+          parameter_count: sd ? sd.parameter_count : undefined,
+        })
+      }
     }
     // console.log('getAvailableLLMs:', this.availableModels);
   }
@@ -275,6 +348,7 @@ export class OllamaService {
     if (modelEntry && modelEntry.context_length) {
       return modelEntry.context_length;
     } else {
+      // console.warn('getContextLength: context length not found for model:', modelName);
       return 4096; // Default
     }
   }
@@ -292,17 +366,24 @@ export class OllamaService {
           try {
             this.availableModels[index].context_length = Number(modelDetails.model_info[archName + '.context_length']);
             this.availableModels[index].parameter_count = parameterCount;
-            console.log('context-length:', modelEntry.name, this.availableModels[index].context_length, parameterCount);
+            console.log('capabilities:', modelEntry.name, this.availableModels[index].capabilities);
           } catch (ne) {
             console.error(ne);
             this.availableModels[index].context_length = 4096;
           }
+          this.showDetails.push({
+            name: modelEntry.name,
+            model_info: this.availableModels[index].model_info,
+            capabilities: this.availableModels[index].capabilities,
+            context_length: this.availableModels[index].context_length,
+            parameter_count: this.availableModels[index].parameter_count
+          })
           try {
             this.models.find((m: any) => m.value === modelEntry.name).context_length = this.availableModels[index].context_length;
           } catch (ne2) {
-            console.error(ne2);
+            console.error('model:', modelEntry.name, ne2);
           }
-          // console.log('getAllModelDetails:model_info:', modelEntry.name, modelDetails.model_info);
+          // console.log('getAllModelDetails:model_info:', modelEntry.name, modelDetails.model_info);          
         });
       }
     })

@@ -3,9 +3,9 @@
     <mat-spinner></mat-spinner>
   </div>
 }
-<mat-toolbar>
+<mat-toolbar class="title-bar">
   <mat-icon class="main-menu" (click)="rotate($event)">keyboard_arrow_right</mat-icon>  
-	<h1>{{ 'APP.TITLE' | translate }}&nbsp;v{{ 'APP.VERSION' | translate }}</h1>&nbsp;
+	<h1>{{ 'APP.TITLE' | translate }}&nbsp;v{{ 'APP.VERSION' | translate }}</h1>&nbsp;(Beta Test)&nbsp;
   <span class="small">{{ systemService.status }}</span>
   @if (systemService.showGetOllama && ollamaService.status.get() !== EStatus.running) {
     &nbsp;
@@ -35,7 +35,7 @@
     </div>
   }
   <span class="spacer"></span>  
-  <mat-slide-toggle [checked]="systemService.dark" (change)="switchTheme($event)">
+  <mat-slide-toggle class="no-drag" [checked]="systemService.dark" (change)="switchTheme($event)">
   {{ 'DARK' | translate }}
   </mat-slide-toggle>  
 </mat-toolbar>
@@ -61,12 +61,14 @@
           }
           <mat-icon matListItemIcon [matTooltip]="'PAGES.HELP.TITLE' | translate">help</mat-icon>
         </a>
+        <!--
         <a mat-list-item [routerLink]="'settings'">
           @if (isExpanded) {
             <span>{{ 'PAGES.SETTINGS.TITLE' | translate }}</span>        
           }
           <mat-icon matListItemIcon [matTooltip]="'PAGES.SETTINGS.TITLE' | translate">upgrade</mat-icon>
-        </a>        
+        </a>
+        -->        
       }
       <a mat-list-item (click)="appExit($event)">
         @if (isExpanded) {
