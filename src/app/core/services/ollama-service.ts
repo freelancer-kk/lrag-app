@@ -40,6 +40,15 @@ export class OllamaService {
       "description": "Granite 4 features improved instruction following (IF) and tool-calling capabilities, making them more effective in enterprise applications. These models excel at tasks such as reasoning, coding, and complex text generation."
     },
     {
+      "value": "qwen3-vl:2b-thinking",
+      "viewValue": "qwen3-vl:2b-thinking - A powerful vision-language model (<3GB)",
+      "thinking": true,
+      "cloud": false,
+      "memory": 3,
+      "input": "Text,Image",
+      "description": "The most powerful vision-language model in the Qwen model family to date. It excels in understanding and generating content that combines both text and images"
+    },
+    {
       "value": "qwen3-vl:4b-thinking",
       "viewValue": "qwen3-vl:4b-thinking - A powerful vision-language model (<4GB)",
       "thinking": true,
@@ -74,6 +83,24 @@ export class OllamaService {
       "memory": 32,
       "input": "Text",
       "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
+    },
+    {
+      "value": "kimi-k2-thinking:cloud",
+      "viewValue": "kimi-k2-thinking:cloud - One of the best open source thinking models (~)",
+      "thinking": true,
+      "cloud": true,
+      "memory": 4,
+      "input": "Text",
+      "description": "Kimi K2 Thinking, Moonshot AI's best open-source thinking model"
+    },
+    {
+      "value": "deepseek-v3.1:671b-cloud",
+      "viewValue": "deepseek-v3.1:671b-cloud - Advanced thinking mode and non-thinking mode (~)",
+      "thinking": true,
+      "cloud": true,
+      "memory": 4,
+      "input": "Text",
+      "description": "DeepSeek-V3.1-Terminus is a hybrid model that supports both thinking mode and non-thinking model"
     }
   ];
   embedding_models: any[] = [    
