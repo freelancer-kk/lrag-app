@@ -650,7 +650,7 @@ export class AppComponent implements OnInit {
       if (this.overallStatus === EStatus.running_unhealthy) {
         if (this.firstTime && (this.ollamaStatus.status === EStatus.running)) {
           if (this.firstCall) {
-            this.firstCall = false;            
+            this.firstCall = false;    
             this.ollamaService.findProcess();          
             this.pullModelsIfNecessary();
           }
@@ -660,10 +660,11 @@ export class AppComponent implements OnInit {
         this.systemService.servicesDownloading = false;
         this.systemService.showGetOllama = false;
         this.systemService.startShow.update(() => false);
+        
         if (ollamaService.servicePID === -1) {
           this.ollamaService.findProcess();
         }
-        // console.log('models:', this.ollamaService.availableModels);        
+        // console.log('models:', this.ollamaService.availableModels);
         this.navigateAway();
       }
     })
@@ -683,7 +684,8 @@ export class AppComponent implements OnInit {
   navigateAway = async () => {
     if (this.firstRun && this.commonService.accept_eua && this.commonService.accept_pp && this.commonService.accept_security) {
       this.firstRun = false;
-      // await this.systemService.refreshFileList(this.mediaService);
+      // await this.systemService.refreshFileList(this.mediaService);      
+      console.log('navigateAway:', this.systemService.numCtx, this.ollamaService.llmCtxLength, this.ollamaService.slow_max_ctx_tokens, this.ollamaService.fast_max_ctx_tokens);
       this.router.navigate(['insights']);
     }
   }
@@ -742,7 +744,7 @@ export class AppComponent implements OnInit {
     this.commonService.accept_eua = (await this.commonService.getEnvValue('ACCEPT_EUA') === 'true') && this.commonService.eua_link.endsWith(lc_eua)? true : false;
     this.commonService.accept_security = (await this.commonService.getEnvValue('ACCEPT_SECURITY') === 'true') && this.commonService.security_link.endsWith(lc_security) ? true : false;
     
-    setTimeout(() => {
+    setTimeout(() => {      
       this.ollamaService.startServicesIfNecessary(this.systemService.osType, this.toastOllamaNotRunning);
       /*
       * Comment out since only necessary for reload
@@ -781,6 +783,7 @@ export class AppComponent implements OnInit {
             this.ollamaService.selectedModel = this.ollamaService.models[0].value;
             this.ollamaService.downloadedLLM = this.ollamaService.models[0].value;
           }
+          this.systemService.setMaxCtxTokens(this.ollamaService.getModelByName(this.ollamaService.selectedModel).size, this.ollamaService.getModelByName(this.ollamaService.selectedModel).parameter_count);
         })
       }
       if (this.ollamaService.embeddings_model === '') {

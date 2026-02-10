@@ -34,7 +34,7 @@ export class SystemService {
   ocr_pdf_link: string = "https://acrobat.adobe.com/link/acrobat/ocr-pdf?x_api_client_id=adobe_com&x_api_client_location=ocr_pdf";
   ollama_get_link: string = "https://ollama.com/download";
   appVersionChange: boolean = false;
-
+  
   MAX_FILES: number = 10;
   ragFiles: any[] = [];
   dark: boolean = true;
@@ -58,9 +58,7 @@ export class SystemService {
   toolPrompt: string | undefined = undefined;
   userPrompt: string | undefined = undefined;
   ocrPrompt: string | undefined = undefined;
-  ocr_num_ctx: number | undefined = undefined;
-  slow_max_ctx_tokens: number = 4096;
-  fast_max_ctx_tokens: number = 4096;
+  ocr_num_ctx: number = 0;
   
   currentState!: ConnectionState;
   subscription = new Subscription();
@@ -109,7 +107,7 @@ export class SystemService {
             if (this.firstTime) {
               this.firstTime = false;
               this.settingsService.getLicense().then(() => {
-                this.ollamaService.fetchModelList(); 
+                this.ollamaService.fetchModelList();
                 if (this.settingsService.isActivePro()) {
                   this.MAX_FILES = 50;
                 }
@@ -170,12 +168,12 @@ export class SystemService {
       userPrompt: this.userPrompt,
       chatPrompt: this.chatPrompt,
       toolPrompt: this.toolPrompt
-    }))
+    }));
   }
 
   setOverallStatus = (): EStatus => {
     if (this.ollamaService.status.get() === EStatus.running) {
-      if (this.modelStatus.get() === EStatus.running && this.rerankerService.status.get() === EStatus.running && this.ingestStatus.get() === EStatus.not_running && this.gpuChangeStatus.get() === EStatus.not_running) {
+      if (this.ollamaService.mrStatus.get() === EStatus.running && this.modelStatus.get() === EStatus.running && this.rerankerService.status.get() === EStatus.running && this.ingestStatus.get() === EStatus.not_running && this.gpuChangeStatus.get() === EStatus.not_running) {
         this.mainStatus.update(EStatus.running_healthy);
       } else {
         this.mainStatus.update(EStatus.running_unhealthy);
@@ -310,11 +308,12 @@ export class SystemService {
       kv_cost_per_ktoken_gb = 0.2; // 0.2 GB per 1000 tokens (<9B model)
     }
     console.log('setting max_ctx_tokens with model weight size:', this.gpu.vram, this.totalMainMemory, sizeMB, parameter_count, 'availableMem', availableMem);
-    this.slow_max_ctx_tokens = Math.floor(availableMem / kv_cost_per_ktoken_gb) * 1000;
-    this.fast_max_ctx_tokens = Math.floor((this.gpu.vram - sizeMB/1024 - 0.5) / kv_cost_per_ktoken_gb) * 1000;
+    this.ollamaService.slow_max_ctx_tokens = Math.floor(availableMem / kv_cost_per_ktoken_gb) * 1000;
+    this.ollamaService.fast_max_ctx_tokens = Math.floor((this.gpu.vram - sizeMB/1024 - 0.5) / kv_cost_per_ktoken_gb) * 1000;
     if (this.gpu.vram < 4) { 
-      this.fast_max_ctx_tokens = this.slow_max_ctx_tokens;
+      this.ollamaService.fast_max_ctx_tokens = this.ollamaService.slow_max_ctx_tokens;
     }
+    this.ollamaService.setLlmMaxCtxLength();
   }
 
   getVram = (): number => {

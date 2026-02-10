@@ -43,8 +43,8 @@ bootstrapApplication(AppComponent, {
       
         const chunkSettingsStr: string | null = localStorage.getItem('chunk-settings');
         console.log(chunkSettingsStr);
-        systemService.chunkSize = chunkSettingsStr ? JSON.parse(chunkSettingsStr).chunkSize : 512;
-        systemService.overlap = chunkSettingsStr ? JSON.parse(chunkSettingsStr).overlap : 48;
+        systemService.chunkSize = chunkSettingsStr ? Number(JSON.parse(chunkSettingsStr).chunkSize) : 512;
+        systemService.overlap = chunkSettingsStr ? Number(JSON.parse(chunkSettingsStr).overlap) : 48;
         systemService.useSemantic = chunkSettingsStr ? JSON.parse(chunkSettingsStr).useSemantic : false;
         if (systemService.useSemantic === undefined) {
           systemService.useSemantic = false;
@@ -55,12 +55,13 @@ bootstrapApplication(AppComponent, {
           systemService.collection = "general";          
         }
         systemService.ocrPrompt = chunkSettingsStr ? JSON.parse(chunkSettingsStr).ocrPrompt : undefined;
-        systemService.ocr_num_ctx = chunkSettingsStr ? JSON.parse(chunkSettingsStr).ocrNumCtx : undefined;
+        systemService.ocr_num_ctx = chunkSettingsStr ? Number(JSON.parse(chunkSettingsStr).ocrNumCtx) : 0;
 
         const insightSettingsStr: string | null = localStorage.getItem('insight-settings');
-        systemService.k = insightSettingsStr ? JSON.parse(insightSettingsStr).k : 4;
+        systemService.k = insightSettingsStr ? Number(JSON.parse(insightSettingsStr).k) : 4;
         // systemService.filter = insightSettingsStr ? JSON.parse(insightSettingsStr).filter : undefined;
-        systemService.numCtx = insightSettingsStr ? JSON.parse(insightSettingsStr).numCtx : undefined;
+        
+        systemService.numCtx = insightSettingsStr ? Number(JSON.parse(insightSettingsStr).numCtx) : 4096;
         systemService.ragPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).ragPrompt : undefined;
         systemService.userPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).userPrompt : undefined;
         systemService.chatPrompt = insightSettingsStr ? JSON.parse(insightSettingsStr).chatPrompt : undefined;

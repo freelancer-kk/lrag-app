@@ -2,6 +2,7 @@ import { app, Menu, BrowserWindow, nativeImage, screen, Tray } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
+import windowStateKeeper from 'electron-window-state';
 
 import DockerEnv from './DockerEnv';
 import SystemInfo, { isLinux, isMac, isWindows } from './SystemInfo';
@@ -211,14 +212,19 @@ async function createWindow(): Promise<BrowserWindow> {
 
   const size = screen.getPrimaryDisplay().workAreaSize;
 
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: runType === 2 ? size.width/2 : size.width/2.1,
+    defaultHeight: size.height
+  });
+
   // Create the browser window.
   win = new BrowserWindow({
-    x: 0,
-    y: 0,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
     show: false,
     frame: false,
-    width: runType === 2 ? size.width/2 : size.width/2.1,
-    height: size.height,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     minWidth: 400, // Optional: Set a minimum width
     minHeight: 300, // Optional: Set a minimum height
     resizable: true,
@@ -233,6 +239,8 @@ async function createWindow(): Promise<BrowserWindow> {
       devTools: runType !== 2
     },
   });
+
+  mainWindowState.manage(win);
   
   if (serve) {
     import('electron-debug').then(debug => {

@@ -97,7 +97,7 @@ export class InsightsComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private mediaService: MediaService,
     private ngZone: NgZone,
-    private clipboard: Clipboard,
+    private clipboard: Clipboard
   ) {
 
     this.bridgeService.chatCallback((ev: any, response: any) => {
@@ -220,8 +220,7 @@ export class InsightsComponent implements OnInit {
     console.log('selected:', selectedCollection);
     this.systemService.selectedCollections.setValue(selectedCollection);
     await this.systemService.refreshFileList(this.mediaService);
-    this.systemService.setMaxCtxTokens(this.ollamaService.getModelByName(this.ollamaService.selectedModel).size, this.ollamaService.getModelByName(this.ollamaService.selectedModel).parameter_count);
-    console.log('max_ctx_tokens set to:', this.systemService.slow_max_ctx_tokens, this.systemService.fast_max_ctx_tokens);
+    console.log('max_ctx_tokens set to:', this.systemService.numCtx, this.ollamaService.llmCtxLength, this.ollamaService.slow_max_ctx_tokens, this.ollamaService.fast_max_ctx_tokens);
   }
 
   check = () => {
@@ -235,11 +234,6 @@ export class InsightsComponent implements OnInit {
     })
   }
   
-  getMaxContextTokens = (): number => {
-    const llmCtxLength: number = this.ollamaService.getContextLength(this.ollamaService.selectedModel);
-    return llmCtxLength > this.systemService.fast_max_ctx_tokens ? this.systemService.fast_max_ctx_tokens : llmCtxLength;
-  }
-
   clearHistory = async () => {
     this.ollamaService.resetChatHistory();
     this.ollamaService.useDocContext = false;    

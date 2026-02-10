@@ -10,6 +10,7 @@ import { BridgeService } from './bridge/bridge.service';
 export class OllamaService { 
   serviceName: string = 'ollama';
   status: LStatus = new LStatus(EStatus.not_running);
+  mrStatus: LStatus = new LStatus(EStatus.not_running);
   servicePID: number = -1;
   apiKey: string = '';
   cloudSelected: boolean = false;
@@ -17,6 +18,10 @@ export class OllamaService {
   useTesseractJS: boolean = true;
   chatHistory: IChat[] = [];
   ollama_url: string = "http://localhost:11434";
+  llmCtxLength: number = 4096;
+  slow_max_ctx_tokens: number = 4096;
+  fast_max_ctx_tokens: number = 4096;
+  
   
   availableModels: any[] = [];
   showDetails: any[] = [];
@@ -228,7 +233,7 @@ export class OllamaService {
         }
       )).json();
       console.log('models downloaded!');
-      this.getAvailableLLMs().then(() => {
+      return this.getAvailableLLMs().then(() => {
         return this.getAllModelDetails();
       });
     }
@@ -334,9 +339,15 @@ export class OllamaService {
           context_length: sd ? sd.context_length : undefined,
           parameter_count: sd ? sd.parameter_count : undefined,
         })
-      }
+      }      
     }
     // console.log('getAvailableLLMs:', this.availableModels);
+  }
+
+  setLlmMaxCtxLength = () => {
+    const llmCtxLen: number = this.getContextLength(this.selectedModel);
+    this.llmCtxLength = llmCtxLen > this.fast_max_ctx_tokens ? this.fast_max_ctx_tokens : llmCtxLen;
+    console.log('setMaxCtxTokens:', this.llmCtxLength);    
   }
 
   getModelByName = (modelName: string): any => {
@@ -349,7 +360,7 @@ export class OllamaService {
       return modelEntry.context_length;
     } else {
       // console.warn('getContextLength: context length not found for model:', modelName);
-      return 4096; // Default
+      return 4096;
     }
   }
 
@@ -378,6 +389,10 @@ export class OllamaService {
             context_length: this.availableModels[index].context_length,
             parameter_count: this.availableModels[index].parameter_count
           })
+          if (modelEntry.name === this.selectedModel) {
+            this.setLlmMaxCtxLength();
+            this.mrStatus.update(EStatus.running);
+          }
           try {
             this.models.find((m: any) => m.value === modelEntry.name).context_length = this.availableModels[index].context_length;
           } catch (ne2) {
