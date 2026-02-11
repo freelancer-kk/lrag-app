@@ -282,7 +282,7 @@
         "OCR_CONTEXT_SIZE": "OCR Context Size",
         "OCR_CONTEXT_SIZE_TIP": "Optionally adjust the OCR context size to best fit the documents you are attempting to OCR. Set to 0 to use default",
         "DOC_REMOVE_CONTEXT_TIP": "Remove attached documents",
-        "QUERY_TOO_LONG_WARNING": "Your question is taking a long time to process, it is possible your PC is overloaded. This could be due to too large a model and/or too large a context size. Exit the application and try again with a more precise question and smaller model/context size",
+        "QUERY_TOO_LONG_WARNING": "Your question is taking a long time to process, it is possible your PC is overloaded. This could be due to too large a model and/or too large a context size. You may have to exit the application and try again with a more precise question and smaller model/context size",
         "USE_CASE": {
           "TOOLTIP_1": "Summarisations, simple Q&A, short context.",
           "TOOLTIP_2": "Longer context, complex Q&A, multi-document analysis. Your PC should have a dedicated GPU and 16GB+ RAM.",

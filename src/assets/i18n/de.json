@@ -282,7 +282,7 @@
       "OCR_CONTEXT_SIZE": "OCR-Kontextgröße",
       "OCR_CONTEXT_SIZE_TIP": "Passen Sie optional die OCR-Kontextgröße an, um sie optimal an die Dokumente anzupassen, die Sie per OCR erfassen möchten. Auf 0 setzen, um die Standardeinstellung zu verwenden",
       "DOC_REMOVE_CONTEXT_TIP": "Angehängte Dokumente entfernen",
-      "QUERY_TOO_LONG_WARNING": "Die Bearbeitung Ihrer Frage dauert sehr lange. Möglicherweise ist Ihr PC überlastet. Beenden Sie die Anwendung und versuchen Sie es erneut mit einer genaueren Frage",
+      "QUERY_TOO_LONG_WARNING": "Die Bearbeitung Ihrer Frage dauert sehr lange. Möglicherweise ist Ihr PC überlastet. Dies könnte an einem zu großen Modell und/oder einer zu großen Kontextgröße liegen. Möglicherweise müssen Sie die Anwendung beenden und es erneut mit einer präziseren Frage und einer kleineren Modell-/Kontextgröße versuchen",
       "USE_CASE": {
         "TOOLTIP_1": "Zusammenfassungen, einfache Fragen und Antworten, kurzer Kontext.",
         "TOOLTIP_2": "Längerer Kontext, komplexe Fragen und Antworten, Analyse mehrerer Dokumente. Ihr PC sollte über eine dedizierte GPU und mehr als 16 GB RAM verfügen.",
