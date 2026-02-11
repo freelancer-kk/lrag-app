@@ -26,7 +26,7 @@ const appDataPath: string = app.getPath('appData');
 const userTempPath: string = app.getPath('temp');
 const separator: string = path.sep;
 
-let win: BrowserWindow | null = null;
+export let win: BrowserWindow | null = null;
 let assetsFolderPath: string = '';
 let dockerEnv: DockerEnv;
 let lragFiles: LRagFiles;

@@ -301,6 +301,22 @@ export class SystemService {
     })    
   }
 
+  saveAsHTML = (content: string, fileName: string = 'download.html'): void => {
+    const blob: Blob = new Blob([content], { type: 'text/html' });
+    const url: string = URL.createObjectURL(blob);
+    
+    const link: HTMLAnchorElement = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    
+    document.body.appendChild(link);
+    link.click();
+    
+    // Cleanup
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
   setMaxCtxTokens = (sizeMB: number, parameter_count: number): void => {  
     const availableMem: number = this.gpu.vram + this.totalMainMemory - 4 - (sizeMB / 1024);    
     let kv_cost_per_ktoken_gb: number = 0.3; // 0.3 GB per 1000 tokens (>12B model)

@@ -23,6 +23,7 @@ import { Converter } from 'showdown';
 import { isString } from 'mathjs'
 import { createAgent } from "langchain";
 import { MemorySaver } from "@langchain/langgraph";
+import { win } from './main';
 
 const toolPrefixPrompt = "You are a helpful AI assistant with access to tools. When you use a tool, you MUST include the key findings or results from every tool call in your final answer to the user. If a tool is not required then respond with a conversational answer to the user question. In all cases be concise and provide sources where applicable.";
   
@@ -74,6 +75,13 @@ export default class ContextChat {
           response = { success: true };
         }
         break;
+        case 'share': {
+          const html = await win?.webContents.executeJavaScript('document.documentElement.outerHTML');
+          response = {
+            html,
+            success: true 
+          };
+        }
       }
       event.reply('reply', {
         callbackId,

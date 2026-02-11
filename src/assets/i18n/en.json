@@ -272,6 +272,7 @@
         "COPY_CONTENT": "Copied content to clipboard",
         "RATE": "Good answer?",
         "RATING_THANKS": "Thanks for your rating",
+        "SHARED_THANKS": "Your output will saved to an HTML file that you may share with others. Please note, personal data in the chat will be shared too.",
         "DOC_CONTEXT_TIP": "Add your private documents as part of the chat",
         "DOC_CONTEXT": "Include Docs",
         "MODEL_MANAGE_TIP": "Change the model used for more accurate answers, larger models work better",

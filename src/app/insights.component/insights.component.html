@@ -1,9 +1,12 @@
 <div class="container">
-<div class="top-div">
+<div id="chat-win" class="top-div">
 <mat-toolbar>
   <h1 class="title" #titleTip="matTooltip" [matTooltipDisabled]="!showTip" [matTooltip]="useCaseTooltip | translate">
     {{ (ollamaService.useDocContext ? 'PAGES.INSIGHT.MAIN_TITLE' : 'PAGES.INSIGHT.CHAT_TITLE') | translate }}
   </h1>
+  @if (ollamaService.chatHistory.length > 1) {
+    <mat-icon class="smallIcon info" (click)="share($event)">share</mat-icon>
+  }
   <span class="spacer"></span>
   <span class="small">{{ modelUsage }}</span>
   @if (insightStatus === EStatus.thinking) {    
@@ -122,7 +125,7 @@
               }              
               <small>{{ 'PAGES.INSIGHT.RATE' | translate }}&nbsp;
               <mat-icon class="smallIcon" (click)="rate($event, entry.id, 1)">thumb_up</mat-icon>&nbsp;
-              <mat-icon class="smallIcon" (click)="rate($event, entry.id, -1)">thumb_down</mat-icon>
+              <mat-icon class="smallIcon" (click)="rate($event, entry.id, -1)">thumb_down</mat-icon>              
               </small>
               <mat-icon matListItemIcon class="assistant">assistant</mat-icon>
           }              

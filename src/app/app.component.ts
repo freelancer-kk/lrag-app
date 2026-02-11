@@ -749,6 +749,7 @@ export class AppComponent implements OnInit {
       /*
       * Comment out since only necessary for reload
       */
+      // this.ollamaService.mrStatus.update(EStatus.running);
       // this.ollamaService.startOnTimer();
       // this.rerankerService.startIfNecessary();          
     }, 400)   
