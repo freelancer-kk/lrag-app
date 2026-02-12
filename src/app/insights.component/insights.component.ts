@@ -463,24 +463,10 @@ export class InsightsComponent implements OnInit {
   share = async (ev: any, id: string = '') => {
     // const shareResponse: any = await this.systemService.commandInsight('share', {});
     // const html: string | undefined = document.getElementById('chat-win')?.innerHTML;
-    const dialogRef = this.dialog.open(
-      AlertComponent, {
-        data: {
-          type: 1,
-          params: {
-            message: await this.commonService.get('PAGES.INSIGHT.SHARED_THANKS')
-          }
-        }
-    });
-    dialogRef.afterClosed().subscribe(async (result: boolean) => {
-      console.log(`Dialog result: ${result}`);
-      if (result === true) {
-        const html: string | undefined = document.documentElement.outerHTML;
-        if (html) {
-          this.systemService.saveAsHTML(html, 'lrag_share.html');          
-        }
-      }
-    });    
+      const html: string | undefined = document.documentElement.outerHTML;
+      if (html) {
+        this.systemService.saveAsHTML(html, 'lrag_share.html');          
+      }      
   }
 
   reset = async (event: any) => {

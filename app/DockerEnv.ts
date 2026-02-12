@@ -44,7 +44,8 @@ const overwriteKeys: string[] = [
   "LICENSE_ACTIVATE_URL",
   "OLLAMA_KEYS_URL",
   "FEEDBACK_URL",
-  "EMAIL_URL"
+  "EMAIL_URL",
+  "INSTALL_URL"
 ];
 
 export default class DockerEnv {
@@ -97,12 +98,33 @@ export default class DockerEnv {
       // this.ocrllm = "deepseek-ocr:latest";            
       // this.ocrllm = "gemma3:4b";
       // this.ocrllm = "granite3.2-vision:latest";
+
       this.generateEnvFile();
       this.kvFile = await parseFile(this.sourceEnvPath);
       const dp: string | undefined = this.kvFile.get('ROOT_DATA_PATH')?.toString();
-      this.dsp = this.kvFile.get('DOC_SOURCE_PATH')?.toString();      
+      this.dsp = this.kvFile.get('DOC_SOURCE_PATH')?.toString();
+      
+      await this.markInstall(this.kvFile.get('INSTALL_URL')?.toString());
       await this.docPathsCB(this.kvFile.get('LICENSE_KEY')?.toString(), this.dsp, dp);
     });
+  }
+
+  markInstall = async (installURL: string | undefined) => {
+    if (installURL) {
+      try {
+        await (await fetch(
+          installURL,
+          {
+            method: 'GET',          
+          }
+        )).json();      
+      } catch (e) {
+        log.info('markInstall:check:error');
+        log.error(e);      
+      }
+    } else {
+      log.info('markInstall:no install url');
+    }
   }
 
   register = () => {

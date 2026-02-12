@@ -272,7 +272,7 @@
       "COPY_CONTENT": "Inhalt in die Zwischenablage kopiert",
       "RATE": "Gute Antwort?",
       "RATING_THANKS": "Vielen Dank für Ihre Bewertung",
-      "SHARED_THANKS": "Ihre Ausgabe wird in einer HTML-Datei gespeichert, die Sie mit anderen teilen können. Bitte beachten Sie, dass auch persönliche Daten im Chat weitergegeben werden.",
+      "SHARED_TOOLTIP": "Ihre Ausgabe wird in einer HTML-Datei gespeichert, die Sie mit anderen teilen können. Bitte beachten Sie, dass auch persönliche Daten im Chat weitergegeben werden.",
       "DOC_CONTEXT_TIP": "Fügen Sie Ihre privaten Dokumente im Rahmen des Chats hinzu",
       "DOC_CONTEXT": "Dokumenten Nutzen",
       "FILES": "Unterlagen",
