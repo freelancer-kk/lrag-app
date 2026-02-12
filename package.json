@@ -73,6 +73,7 @@
     "d3-dsv": "2.0.0",
     "decamelize": "6.0.1",
     "electron-log": "5.4.3",
+    "electron-progressbar": "2.2.1",
     "electron-window-state": "5.0.3",
     "events": "3.3.0",
     "find-process": "2.0.0",

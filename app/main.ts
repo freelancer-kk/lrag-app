@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
 import windowStateKeeper from 'electron-window-state';
+import ProgressBar from 'electron-progressbar';
 
 import DockerEnv from './DockerEnv';
 import SystemInfo, { isLinux, isMac, isWindows } from './SystemInfo';
@@ -218,6 +219,7 @@ async function createWindow(): Promise<BrowserWindow> {
   });
 
   // Create the browser window.
+  
   win = new BrowserWindow({
     x: mainWindowState.x,
     y: mainWindowState.y,
@@ -239,7 +241,7 @@ async function createWindow(): Promise<BrowserWindow> {
       devTools: runType !== 2
     },
   });
-
+  
   mainWindowState.manage(win);
   
   if (serve) {
@@ -292,9 +294,13 @@ try {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-  app.on('ready', () => {            
+  app.on('ready', () => {
     setTimeout(async () => {   
-      
+      const progressBar: ProgressBar = new ProgressBar({
+        detail: 'LRag starting',
+        text: 'Please wait...'        
+      });      
+
       quantum = new Quantum(configPath);
       await quantum.init();
       // await quantum.runTest('this is my message in');
@@ -318,8 +324,8 @@ try {
         tray = new Tray(favImage);
       }
       
-      tray.setToolTip('LRag - Local Document AI Insights!');    
-      const browserWin = await createWindow();
+      tray.setToolTip('LRag - Local Document AI Insights!');      
+      const browserWin: BrowserWindow = await createWindow();
       browserWin.once("ready-to-show", () => {
         log.info('main:ready-to-show');
         log.info('main:starting services if already installed:');   
@@ -328,7 +334,8 @@ try {
         if (managedExternally === false) {
           ollamaService.startIfInstalled();
         }
-        rerankerService.startIfInstalled();   
+        rerankerService.startIfInstalled();
+        progressBar.setCompleted();
         browserWin.show();
       })      
     }, 400)    
