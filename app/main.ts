@@ -1,4 +1,4 @@
-import { app, Menu, BrowserWindow, nativeImage, screen, Tray } from 'electron';
+import { app, Menu, BrowserWindow, nativeImage, screen, Tray, MenuItemConstructorOptions } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import log from 'electron-log/main';
@@ -54,6 +54,23 @@ let configPath: string = path.join(__dirname, '..');
 
 const args = process.argv.slice(1), serve = args.some(val => val === '--serve');
 
+const template: MenuItemConstructorOptions[] = [
+  // { role: 'appMenu' } - Required for macOS to show the App Name menu first
+  ...(isMac ? [{ role: 'appMenu' } as MenuItemConstructorOptions] : []),
+  {
+    label: 'Edit',
+    submenu: [
+      { role: 'undo' },
+      { role: 'redo' },
+      { type: 'separator' },
+      { role: 'cut' },
+      { role: 'copy' },
+      { role: 'paste' },
+      { role: 'selectAll' }
+    ]
+  }
+];
+
 let runType = 0;
 if (serve) {
   runType = 0;  
@@ -63,8 +80,9 @@ if (serve) {
     configPath = path.join(__dirname, '..');
   } else {
     runType = 2;  
-    configPath = path.join(userDataPath, 'config')
-    Menu.setApplicationMenu(null);
+    configPath = path.join(userDataPath, 'config');
+    const menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
     log.info("MAC: Removing application menu");   
   }
 }
