@@ -63,6 +63,15 @@
     "description": "DeepSeek-R1 is a family of open reasoning models with performance approaching that of leading models, such as O3 and Gemini 2.5 Pro"
   },
   {
+    "value": "deepseek-v4-pro:cloud",
+    "viewValue": "deepseek-v4-pro:cloud - Advanced thinking model (~)",
+    "thinking": true,
+    "cloud": true,
+    "memory": 4,
+    "input": "Text",
+    "description": "DeepSeek-V4-Pro is a frontier Mixture-of-Experts model with a 1M-token context window and three reasoning modes"
+  },
+  {
     "value": "kimi-k2-thinking:cloud",
     "viewValue": "kimi-k2-thinking:cloud - One of the best open source thinking models (~)",
     "thinking": true,
