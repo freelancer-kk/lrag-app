@@ -4,7 +4,7 @@
   "ROCM_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.24.0/ollama-windows-amd64-rocm.zip",
   "DEFAULT_DOWNLOAD_LINK": "https://github.com/ollama/ollama/releases/download/v0.24.0/ollama-windows-amd64.zip",
   "IPEX_VERSION": "2.2.0",
-  "IPEX_DOWNLOAD_LINK": "https://github.com/ipex-llm/ipex-llm/releases/download/v2.2.0/ollama-ipex-llm-2.2.0-win.zip",
+  "IPEX_DOWNLOAD_LINK": "https://github.com/ipex-llm/ipex-llm/releases/download/v0.2.0/ollama-ipex-llm-2.2.0-win.zip",
   "RERANKER_VERSION": "1.0.0",
   "RERANKER_WIN_DOWNLOAD_LINK": "https://www.smartdater.biz/rest-reranker-win.zip",
   "RERANKER_MAC_DOWNLOAD_LINK": "https://www.smartdater.biz/rest-reranker.app.zip",
