@@ -16,6 +16,7 @@ scripts/.env
 encap/*
 app/scripts/encap/*
 llmend.json
+apple.env
 
 # dependencies
 node_modules
